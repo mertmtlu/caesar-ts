@@ -93,8 +93,8 @@ const ProjectDetailPage: React.FC = () => {
       // Load project details, versions, and recent executions in parallel
       const [projectResponse, versionsResponse, executionsResponse] = await Promise.all([
         api.programs.programs_GetById(projectId).catch(() => null),
-        api.versions.versions_GetByProgram(projectId, 1, 10, 'versionNumber', SortDirection._1).catch(() => null),
-        api.executions.executions_GetByProgram(projectId, 1, 5, 'startedAt', SortDirection._1).catch(() => null)
+        api.versions.versions_GetByProgram(projectId, 1, 10, 'createdDate', SortDirection._1).catch(() => null),
+        api.executions.executions_GetByProgram(projectId, 1, 5, 'createdDate', SortDirection._1).catch(() => null)
       ]);
 
       // Process project data

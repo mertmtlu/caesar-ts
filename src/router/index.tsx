@@ -22,11 +22,11 @@ import CreateProjectPage from '@/pages/projects/CreateProjectPage';
 import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
 
 // Editor Pages (to be created)
-// import EditorPage from '@/pages/editor/EditorPage';
+import EditorPage from '@/pages/editor/EditorPage';
 
-// // Execution Pages (to be created)
-// import ExecutionsPage from '@/pages/executions/ExecutionsPage';
-// import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
+// Execution Pages (to be created)
+import ExecutionsPage from '@/pages/executions/ExecutionsPage';
+import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
 
 // // Settings Pages (to be created)
 // import SettingsPage from '@/pages/settings/SettingsPage';
@@ -120,41 +120,41 @@ export const router = createBrowserRouter([
         ]
       },
 
-      // // Code Editor routes
-      // {
-      //   path: 'editor',
-      //   element: (
-      //     <ProtectedRoute>
-      //       <DashboardLayout />
-      //     </ProtectedRoute>
-      //   ),
-      //   children: [
-      //     {
-      //       path: ':projectId/:versionId?',
-      //       element: <EditorPage />
-      //     }
-      //   ]
-      // },
+      // Code Editor routes
+      {
+        path: 'editor',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: ':projectId/:versionId?',
+            element: <EditorPage />
+          }
+        ]
+      },
 
-      // // Executions routes
-      // {
-      //   path: 'executions',
-      //   element: (
-      //     <ProtectedRoute>
-      //       <DashboardLayout />
-      //     </ProtectedRoute>
-      //   ),
-      //   children: [
-      //     {
-      //       index: true,
-      //       element: <ExecutionsPage />
-      //     },
-      //     {
-      //       path: ':executionId',
-      //       element: <ExecutionDetailPage />
-      //     }
-      //   ]
-      // },
+      // Executions routes
+      {
+        path: 'executions',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <ExecutionsPage />
+          },
+          {
+            path: ':executionId',
+            element: <ExecutionDetailPage />
+          }
+        ]
+      },
 
       // // Settings routes
       // {
@@ -176,29 +176,29 @@ export const router = createBrowserRouter([
       //   ]
       // },
 
-      // // Admin routes (protected by admin role)
-      // {
-      //   path: 'admin',
-      //   element: (
-      //     <AdminRoute>
-      //       <DashboardLayout />
-      //     </AdminRoute>
-      //   ),
-      //   children: [
-      //     {
-      //       index: true,
-      //       element: <AdminDashboard />
-      //     },
-      //     {
-      //       path: 'users',
-      //       element: <UserManagementPage />
-      //     },
-      //     {
-      //       path: 'monitoring',
-      //       element: <SystemMonitoringPage />
-      //     }
-      //   ]
-      // },
+      // Admin routes (protected by admin role)
+      {
+        path: 'admin',
+        element: (
+          <AdminRoute>
+            <DashboardLayout />
+          </AdminRoute>
+        ),
+        children: [
+          // {
+          //   index: true,
+          //   element: <AdminDashboard />
+          // },
+          // {
+          //   path: 'users',
+          //   element: <UserManagementPage />
+          // },
+          // {
+          //   path: 'monitoring',
+          //   element: <SystemMonitoringPage />
+          // }
+        ]
+      },
 
       // Catch-all route
       {
