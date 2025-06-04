@@ -1,5 +1,76 @@
+// src/api/api.ts
 import * as interfaces from './interfaces';
 import * as clients from './clients';
+
+/**
+ * Custom HTTP implementation that automatically adds authentication headers
+ */
+class AuthenticatedHttpClient {
+    private getToken: () => string | null;
+    private refreshToken: () => Promise<string | null>;
+    private onTokenExpired: () => void;
+
+    constructor(
+        getToken: () => string | null,
+        refreshToken: () => Promise<string | null>,
+        onTokenExpired: () => void
+    ) {
+        this.getToken = getToken;
+        this.refreshToken = refreshToken;
+        this.onTokenExpired = onTokenExpired;
+    }
+
+    fetch = async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
+        // Get current token
+        const token = this.getToken();
+        
+        // Prepare headers
+        const headers = new Headers(init?.headers);
+        
+        // Add Authorization header if token exists
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+        
+        // Add default headers
+        if (!headers.has('Content-Type') && init?.method !== 'GET') {
+            headers.set('Content-Type', 'application/json');
+        }
+
+        // Make the request
+        const response = await fetch(url, {
+            ...init,
+            headers
+        });
+
+        // Handle 401 Unauthorized - token might be expired
+        if (response.status === 401 && token) {
+            try {
+                // Try to refresh the token
+                const newToken = await this.refreshToken();
+                
+                if (newToken) {
+                    // Retry the request with new token
+                    headers.set('Authorization', `Bearer ${newToken}`);
+                    return fetch(url, {
+                        ...init,
+                        headers
+                    });
+                } else {
+                    // Refresh failed, trigger logout
+                    this.onTokenExpired();
+                    return response;
+                }
+            } catch (error) {
+                console.error('Token refresh failed:', error);
+                this.onTokenExpired();
+                return response;
+            }
+        }
+
+        return response;
+    };
+}
 
 /**
  * API Client that provides centralized access to all service endpoints
@@ -8,35 +79,51 @@ import * as clients from './clients';
 export class ApiClient {
     private baseUrl: string;
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private authenticatedHttp!: AuthenticatedHttpClient;
 
     // Client instances
-    private _alternativeTMs: interfaces.IAlternativeTMsClient;
-    private _auth: interfaces.IAuthClient;
-    private _blocks: interfaces.IBlocksClient;
-    private _buildings: interfaces.IBuildingsClient;
-    private _clients: interfaces.IClientsClient;
-    private _deployments: interfaces.IDeploymentsClient;
-    private _documentation: interfaces.IDocumentationClient;
-    private _executions: interfaces.IExecutionsClient;
-    private _files: interfaces.IFilesClient;
-    private _programs: interfaces.IProgramsClient;
-    private _regions: interfaces.IRegionsClient;
-    private _requests: interfaces.IRequestsClient;
-    private _tMs: interfaces.ITMsClient;
-    private _uiComponents: interfaces.IUiComponentsClient;
-    private _users: interfaces.IUsersClient;
-    private _versions: interfaces.IVersionsClient;
+    private _alternativeTMs!: interfaces.IAlternativeTMsClient;
+    private _auth!: interfaces.IAuthClient;
+    private _blocks!: interfaces.IBlocksClient;
+    private _buildings!: interfaces.IBuildingsClient;
+    private _clients!: interfaces.IClientsClient;
+    private _deployments!: interfaces.IDeploymentsClient;
+    private _documentation!: interfaces.IDocumentationClient;
+    private _executions!: interfaces.IExecutionsClient;
+    private _files!: interfaces.IFilesClient;
+    private _programs!: interfaces.IProgramsClient;
+    private _regions!: interfaces.IRegionsClient;
+    private _requests!: interfaces.IRequestsClient;
+    private _tMs!: interfaces.ITMsClient;
+    private _uiComponents!: interfaces.IUiComponentsClient;
+    private _users!: interfaces.IUsersClient;
+    private _versions!: interfaces.IVersionsClient;
 
     /**
-     * Initialize API client with base URL and optional HTTP implementation
-     * @param baseUrl Base URL for the API (defaults to empty string)
-     * @param http HTTP implementation (defaults to window.fetch)
+     * Initialize API client with base URL and authentication handlers
      */
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+    constructor(
+        baseUrl?: string,
+        getToken?: () => string | null,
+        refreshToken?: () => Promise<string | null>,
+        onTokenExpired?: () => void
+    ) {
         this.baseUrl = baseUrl ?? "";
-        this.http = http ?? window as any;
+        
+        // Create authenticated HTTP client if auth handlers provided
+        if (getToken && refreshToken && onTokenExpired) {
+            this.authenticatedHttp = new AuthenticatedHttpClient(getToken, refreshToken, onTokenExpired);
+            this.http = this.authenticatedHttp;
+        } else {
+            // Fallback to regular fetch
+            this.http = window as any;
+        }
         
         // Initialize all client instances
+        this.initializeClients();
+    }
+
+    private initializeClients() {
         this._alternativeTMs = new clients.AlternativeTMsClient(this.baseUrl, this.http);
         this._auth = new clients.AuthClient(this.baseUrl, this.http);
         this._blocks = new clients.BlocksClient(this.baseUrl, this.http);
@@ -168,29 +255,26 @@ export class ApiClient {
     }
 
     /**
+     * Update authentication configuration
+     */
+    updateAuth(
+        getToken: () => string | null,
+        refreshToken: () => Promise<string | null>,
+        onTokenExpired: () => void
+    ): void {
+        this.authenticatedHttp = new AuthenticatedHttpClient(getToken, refreshToken, onTokenExpired);
+        this.http = this.authenticatedHttp;
+        
+        // Reinitialize all clients with new HTTP instance
+        this.initializeClients();
+    }
+
+    /**
      * Update base URL for all clients
-     * @param newBaseUrl New base URL to use
      */
     updateBaseUrl(newBaseUrl: string): void {
         this.baseUrl = newBaseUrl;
-        
-        // Reinitialize all clients with new base URL
-        this._alternativeTMs = new clients.AlternativeTMsClient(this.baseUrl, this.http);
-        this._auth = new clients.AuthClient(this.baseUrl, this.http);
-        this._blocks = new clients.BlocksClient(this.baseUrl, this.http);
-        this._buildings = new clients.BuildingsClient(this.baseUrl, this.http);
-        this._clients = new clients.ClientsClient(this.baseUrl, this.http);
-        this._deployments = new clients.DeploymentsClient(this.baseUrl, this.http);
-        this._documentation = new clients.DocumentationClient(this.baseUrl, this.http);
-        this._executions = new clients.ExecutionsClient(this.baseUrl, this.http);
-        this._files = new clients.FilesClient(this.baseUrl, this.http);
-        this._programs = new clients.ProgramsClient(this.baseUrl, this.http);
-        this._regions = new clients.RegionsClient(this.baseUrl, this.http);
-        this._requests = new clients.RequestsClient(this.baseUrl, this.http);
-        this._tMs = new clients.TMsClient(this.baseUrl, this.http);
-        this._uiComponents = new clients.UiComponentsClient(this.baseUrl, this.http);
-        this._users = new clients.UsersClient(this.baseUrl, this.http);
-        this._versions = new clients.VersionsClient(this.baseUrl, this.http);
+        this.initializeClients();
     }
 
     /**
@@ -202,9 +286,14 @@ export class ApiClient {
 }
 
 // Export a factory function for creating API client instances
-export function createApiClient(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }): ApiClient {
-    return new ApiClient(baseUrl, http);
+export function createApiClient(
+    baseUrl?: string,
+    getToken?: () => string | null,
+    refreshToken?: () => Promise<string | null>,
+    onTokenExpired?: () => void
+): ApiClient {
+    return new ApiClient(baseUrl, getToken, refreshToken, onTokenExpired);
 }
 
-// Export default instance that can be configured
+// Export default instance that will be configured later
 export const api = createApiClient('https://localhost:7058');

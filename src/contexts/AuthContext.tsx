@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
+import { RefreshTokenDto } from '@/api';
 
 interface User {
   id?: string;
@@ -46,8 +47,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Initialize auth state on app load
+  // Token management functions for API client
+  const getToken = (): string | null => {
+    return localStorage.getItem('accessToken');
+  };
+
+  const refreshTokenAsync = async (): Promise<string | null> => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        return null;
+      }
+
+      const response = await api.auth.auth_RefreshToken(new RefreshTokenDto({
+        accessToken: getToken() || '',
+        refreshToken: refreshToken
+      }));
+
+      if (response.success && response.data) {
+        const newAccessToken = response.data.accessToken;
+        const newRefreshToken = response.data.refreshToken;
+        
+        if (newAccessToken) {
+          localStorage.setItem('accessToken', newAccessToken);
+          if (newRefreshToken) {
+            localStorage.setItem('refreshToken', newRefreshToken);
+          }
+          return newAccessToken;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return null;
+    }
+  };
+
+  const onTokenExpired = (): void => {
+    console.log('Token expired, logging out...');
+    logout();
+  };
+
+  // Configure API client with authentication on component mount
   useEffect(() => {
+    // Configure the API client with authentication
+    api.updateAuth(getToken, refreshTokenAsync, onTokenExpired);
+    
+    // Initialize auth state
     initializeAuth();
   }, []);
 
@@ -109,9 +156,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('currentUser', JSON.stringify(userData));
     setUser(userData);
+    
+    // Reconfigure API client with new auth state
+    api.updateAuth(getToken, refreshTokenAsync, onTokenExpired);
   };
 
   const logout = () => {
+    // Call logout API if we have a token
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      api.auth.auth_Logout().catch(error => {
+        console.error('Logout API call failed:', error);
+      });
+    }
+
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('currentUser');
