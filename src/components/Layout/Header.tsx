@@ -9,21 +9,22 @@ import {
   ArrowRightOnRectangleIcon,
   CogIcon
 } from '@heroicons/react/24/outline';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  
-  // TODO: Get user data from auth context
-  const user = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    avatar: null, // Will use placeholder
-  };
 
-  const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log('Logout clicked');
+  const handleLogout = async () => {
+    try {
+      // Attempt to call logout API endpoint
+      await logout();
+    } catch (error) {
+      // Even if API fails, still logout locally
+      console.error('Logout API call failed:', error);
+      logout();
+    }
   };
 
   const handleProfileClick = () => {
@@ -69,18 +70,10 @@ const Header: React.FC = () => {
               className="flex items-center space-x-3 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <div className="flex items-center space-x-2">
-                {user.avatar ? (
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src={user.avatar}
-                    alt={user.name}
-                  />
-                ) : (
-                  <UserCircleIcon className="h-8 w-8 text-gray-400" />
-                )}
+                <UserCircleIcon className="h-8 w-8 text-gray-400" />
                 <div className="text-left">
                   <div className="text-gray-900 dark:text-white font-medium">
-                    {user.name}
+                    {user?.fullName || `${user?.firstName} ${user?.lastName}`.trim() || user?.username || 'User'}
                   </div>
                 </div>
               </div>
@@ -94,10 +87,10 @@ const Header: React.FC = () => {
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                     <p className="text-sm text-gray-900 dark:text-white font-medium">
-                      {user.name}
+                      {user?.fullName || `${user?.firstName} ${user?.lastName}`.trim() || user?.username || 'User'}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                      {user.email}
+                      {user?.email || 'No email'}
                     </p>
                   </div>
                   

@@ -1,8 +1,8 @@
 // src/components/layout/RootLayout.tsx
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Header from './Header';
+import Sidebar from '@/components/Layout/Sidebar';
+import Header from '@/components/Layout/Header';
 
 const RootLayout: React.FC = () => {
   return (

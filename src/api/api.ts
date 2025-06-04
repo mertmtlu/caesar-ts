@@ -207,4 +207,4 @@ export function createApiClient(baseUrl?: string, http?: { fetch(url: RequestInf
 }
 
 // Export default instance that can be configured
-export const api = createApiClient('http://localhost:5090');
+export const api = createApiClient('https://localhost:7058');

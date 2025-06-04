@@ -9,6 +9,7 @@ import {
   ShieldCheckIcon,
   CodeBracketIcon
 } from '@heroicons/react/24/outline';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface NavigationItem {
   name: string;
@@ -48,9 +49,7 @@ const navigation: NavigationItem[] = [
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  
-  // TODO: Get user role from auth context
-  const isAdmin = true; // Placeholder - will come from auth context
+  const { isAdmin } = useAuth();
 
   const filteredNavigation = navigation.filter(item => 
     !item.adminOnly || (item.adminOnly && isAdmin)

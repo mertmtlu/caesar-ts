@@ -4,11 +4,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { api } from '@/api/api';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserLoginDto } from '@/api/types';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
   
   const [formData, setFormData] = useState({
     usernameOrEmail: '',
@@ -47,14 +49,12 @@ const LoginPage: React.FC = () => {
       }));
 
       if (response.success && response.data) {
-        // Store tokens
-        localStorage.setItem('accessToken', response.data.accessToken || '');
-        localStorage.setItem('refreshToken', response.data.refreshToken || '');
-        
-        // Store user info if needed
-        if (response.data.user) {
-          localStorage.setItem('currentUser', JSON.stringify(response.data.user));
-        }
+        // Use AuthContext login method instead of manual localStorage
+        login(
+          response.data.accessToken || '',
+          response.data.refreshToken || '',
+          response.data.user || {}
+        );
 
         // Navigate to intended destination
         navigate(from, { replace: true });

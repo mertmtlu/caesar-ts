@@ -4,10 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { api } from '@/api/api';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserRegisterDto } from '@/api';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   
   const [formData, setFormData] = useState({
     email: '',
@@ -94,14 +96,12 @@ const RegisterPage: React.FC = () => {
       }));
 
       if (response.success && response.data) {
-        // Store tokens
-        localStorage.setItem('accessToken', response.data.accessToken || '');
-        localStorage.setItem('refreshToken', response.data.refreshToken || '');
-        
-        // Store user info if needed
-        if (response.data.user) {
-          localStorage.setItem('currentUser', JSON.stringify(response.data.user));
-        }
+        // Use AuthContext login method instead of manual localStorage
+        login(
+          response.data.accessToken || '',
+          response.data.refreshToken || '',
+          response.data.user || {}
+        );
 
         // Navigate to dashboard
         navigate('/dashboard', { replace: true });
