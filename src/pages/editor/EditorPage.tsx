@@ -167,6 +167,9 @@ const EditorPage: React.FC = () => {
           currentVersion: projectResponse.data.currentVersion,
           type: projectResponse.data.type || 'web'
         });
+      } else {
+        setError('Project not found or access denied.');
+        return;
       }
 
       // Load versions
@@ -181,6 +184,12 @@ const EditorPage: React.FC = () => {
         }));
         setVersions(versionList);
 
+        // Check if we have any versions
+        if (versionList.length === 0) {
+          setError('This project has no versions yet. Please create a version first.');
+          return;
+        }
+
         // Set current version
         const currentVersion = versionId 
           ? versionList.find(v => v.id === versionId)
@@ -189,7 +198,11 @@ const EditorPage: React.FC = () => {
         if (currentVersion) {
           setVersion(currentVersion);
           await loadFiles(projectId, currentVersion.id);
+        } else if (versionId) {
+          setError('The requested version was not found.');
         }
+      } else {
+        setError('Failed to load project versions.');
       }
     } catch (error) {
       console.error('Failed to load project data:', error);
@@ -287,7 +300,8 @@ const EditorPage: React.FC = () => {
     try {
       const response = await api.files.files_GetVersionFile(project.id, version.id, filePath);
       if (response.success && response.data) {
-        const content = response.data.content || '';
+        // The content is base64-encoded, so decode it
+        const content = response.data.content ? atob(response.data.content) : '';
         const language = detectLanguage(filePath, project.language);
         
         const newFile: EditorFile = {
@@ -370,13 +384,13 @@ const EditorPage: React.FC = () => {
         // Create new file
         await api.files.files_StoreVersionFiles(project.id, version.id, [new VersionFileCreateDto({
           path: filePath,
-          content: file.content,
+          content: btoa(file.content),
           contentType: 'text/plain'
         })]);
       } else {
         // Update existing file
         await api.files.files_UpdateVersionFile(project.id, version.id, filePath, new VersionFileUpdateDto({
-          content: file.content,
+          content: btoa(file.content),
           contentType: 'text/plain'
         }));
       }

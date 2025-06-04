@@ -1,155 +1,149 @@
 // src/pages/projects/ProjectsPage.tsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
-import { ProgramSearchDto } from '@/api';
-import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
-import Modal, { ConfirmationModal } from '@/components/common/Modal';
+import Input from '@/components/common/Input';
+import { ProgramSearchDto } from '@/api';
 
-// Types
-interface Project {
+// Interfaces
+interface ProjectListItem {
   id: string;
   name: string;
   description?: string;
-  type: string;
   language: string;
-  uiType: string;
+  type: string;
   creator: string;
   createdAt: Date;
   status: string;
   currentVersion?: string;
-  deploymentType?: string;
   deploymentStatus?: string;
+  hasVersions: boolean; // We'll determine this
+  versionCount: number;
 }
 
-interface ProjectFilters {
-  search: string;
-  language: string;
-  type: string;
-  status: string;
-  creator: string;
+// Sort options
+interface SortOption {
+  label: string;
+  field: string;
+  direction: SortDirection;
 }
 
-interface PaginationInfo {
-  currentPage: number;
-  pageSize: number;
-  totalPages: number;
-  totalCount: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+const SORT_OPTIONS: SortOption[] = [
+  { label: 'Recently Created', field: 'CreatedDate', direction: SortDirection._1 },
+  { label: 'Oldest First', field: 'CreatedDate', direction: SortDirection._0 },
+  { label: 'Recently Updated', field: 'UpdatedDate', direction: SortDirection._1 },
+  { label: 'Name A-Z', field: 'Name', direction: SortDirection._0 },
+  { label: 'Name Z-A', field: 'Name', direction: SortDirection._1 },
+];
+
+const getSortOptionKey = (field: string, direction: SortDirection): string => {
+  return `${field}-${direction}`;
+};
 
 const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
-
+  
   // State management
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [sortField, setSortField] = useState('createdDate');
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection._1); // Descending
   
-  // Filters
-  const [filters, setFilters] = useState<ProjectFilters>({
-    search: searchParams.get('search') || '',
-    language: searchParams.get('language') || '',
-    type: searchParams.get('type') || '',
-    status: searchParams.get('status') || '',
-    creator: searchParams.get('creator') || ''
-  });
-
   // Pagination
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: parseInt(searchParams.get('page') || '1'),
-    pageSize: parseInt(searchParams.get('pageSize') || '12'),
-    totalPages: 0,
-    totalCount: 0,
-    hasNextPage: false,
-    hasPreviousPage: false
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  
+  // Filtering and search
+  const [searchTerm, setSearchTerm] = useState('');
+  const [languageFilter, setLanguageFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sortField, setSortField] = useState('CreatedDate');
+  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection._1);
+  
+  // Available filter options
+  const [availableLanguages, setAvailableLanguages] = useState<string[]>([]);
+  const [availableStatuses] = useState(['draft', 'active', 'archived', 'deprecated']);
 
-  // Modal states
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  useEffect(() => {
+    loadProjects();
+  }, [currentPage, pageSize, sortField, sortDirection, languageFilter, statusFilter]);
 
-  // Available filter options (these could come from API)
-  const languageOptions = ['All', 'JavaScript', 'Python', 'Java', 'C#', 'TypeScript', 'Go', 'Rust'];
-  const typeOptions = ['All', 'Web', 'API', 'Console', 'Mobile', 'Desktop'];
-  const statusOptions = ['All', 'Draft', 'Active', 'Archived', 'Deprecated'];
+  useEffect(() => {
+    const delayedSearch = setTimeout(() => {
+      if (searchTerm || currentPage !== 1) {
+        setCurrentPage(1);
+        searchProjects();
+      } else {
+        loadProjects();
+      }
+    }, 500);
 
-  // Load projects
-  const loadProjects = useCallback(async () => {
+    return () => clearTimeout(delayedSearch);
+  }, [searchTerm]);
+
+  const loadProjects = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      let response;
+      const response = await api.programs.programs_GetUserAccessiblePrograms(
+        currentPage,
+        pageSize,
+        sortField,
+        sortDirection
+      );
 
-      // Check if we have active filters (excluding empty/default values)
-      const hasActiveFilters = filters.search || 
-        (filters.language && filters.language !== 'All') ||
-        (filters.type && filters.type !== 'All') ||
-        (filters.status && filters.status !== 'All') ||
-        (filters.creator && filters.creator !== 'All');
+      if (response.success && response.data) {
+        const projectItems = await Promise.all(
+          (response.data.items || []).map(async (project) => {
+            // Check if project has versions
+            let hasVersions = false;
+            let versionCount = 0;
+            
+            try {
+              const versionsResponse = await api.versions.versions_GetByProgram(
+                project.id || '', 
+                1, 
+                1, 
+                'CreatedDate', 
+                SortDirection._1
+              );
+              
+              if (versionsResponse.success && versionsResponse.data) {
+                versionCount = versionsResponse.data.totalCount || 0;
+                hasVersions = versionCount > 0;
+              }
+            } catch (error) {
+              console.warn(`Failed to check versions for project ${project.id}:`, error);
+            }
 
-      if (hasActiveFilters) {
-        // Use search endpoint with filters
-        const searchDto = new ProgramSearchDto({
-          name: filters.search || undefined,
-          language: filters.language && filters.language !== 'All' ? filters.language : undefined,
-          type: filters.type && filters.type !== 'All' ? filters.type : undefined,
-          status: filters.status && filters.status !== 'All' ? filters.status : undefined,
-          creator: filters.creator && filters.creator !== 'All' ? filters.creator : undefined
-        });
-
-        response = await api.programs.programs_Search(
-          pagination.currentPage,
-          pagination.pageSize,
-          sortField,
-          sortDirection,
-          searchDto
+            return {
+              id: project.id || '',
+              name: project.name || 'Untitled Project',
+              description: project.description,
+              language: project.language || 'Unknown',
+              type: project.type || 'Unknown',
+              creator: project.creator || 'Unknown',
+              createdAt: project.createdAt || new Date(),
+              status: project.status || 'draft',
+              currentVersion: project.currentVersion,
+              deploymentStatus: project.deploymentStatus,
+              hasVersions,
+              versionCount
+            };
+          })
         );
-      } else {
-        // Use regular get all endpoint
-        response = await api.programs.programs_GetUserAccessiblePrograms(
-          pagination.currentPage,
-          pagination.pageSize,
-          sortField,
-          sortDirection
-        );
-      }
 
-      if (response.success && response.data?.items) {
-        const projectData = response.data.items.map(item => ({
-          id: item.id || '',
-          name: item.name || 'Untitled Project',
-          description: item.description,
-          type: item.type || 'Unknown',
-          language: item.language || 'Unknown',
-          uiType: item.uiType || 'Unknown',
-          creator: item.creator || 'Unknown',
-          createdAt: item.createdAt || new Date(),
-          status: item.status || 'Unknown',
-          currentVersion: item.currentVersion,
-          deploymentType: item.deploymentType?.toString(),
-          deploymentStatus: item.deploymentStatus
-        }));
+        setProjects(projectItems);
+        setTotalCount(response.data.totalCount || 0);
+        setTotalPages(response.data.totalPages || 0);
 
-        setProjects(projectData);
-        setPagination(prev => ({
-          ...prev,
-          totalPages: response.data?.totalPages || 0,
-          totalCount: response.data?.totalCount || 0,
-          hasNextPage: response.data?.hasNextPage || false,
-          hasPreviousPage: response.data?.hasPreviousPage || false
-        }));
+        // Extract unique languages for filter
+        const languages = [...new Set(projectItems.map(p => p.language))].filter(Boolean);
+        setAvailableLanguages(languages);
       } else {
         setError(response.message || 'Failed to load projects');
       }
@@ -159,113 +153,99 @@ const ProjectsPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [filters, pagination.currentPage, pagination.pageSize, sortField, sortDirection]);
-
-  // Update URL params when filters change
-  useEffect(() => {
-    const params = new URLSearchParams();
-    
-    if (filters.search) params.set('search', filters.search);
-    if (filters.language && filters.language !== 'All') params.set('language', filters.language);
-    if (filters.type && filters.type !== 'All') params.set('type', filters.type);
-    if (filters.status && filters.status !== 'All') params.set('status', filters.status);
-    if (filters.creator && filters.creator !== 'All') params.set('creator', filters.creator);
-    if (pagination.currentPage > 1) params.set('page', pagination.currentPage.toString());
-    if (pagination.pageSize !== 12) params.set('pageSize', pagination.pageSize.toString());
-
-    setSearchParams(params);
-  }, [filters, pagination.currentPage, pagination.pageSize, setSearchParams]);
-
-  // Load projects when dependencies change
-  useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
-
-  // Filter handlers
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters(prev => ({ ...prev, search: e.target.value }));
-    setPagination(prev => ({ ...prev, currentPage: 1 })); // Reset to first page
   };
 
-  const handleFilterChange = (key: keyof ProjectFilters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setPagination(prev => ({ ...prev, currentPage: 1 })); // Reset to first page
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      search: '',
-      language: '',
-      type: '',
-      status: '',
-      creator: ''
-    });
-    setPagination(prev => ({ ...prev, currentPage: 1 }));
-  };
-
-  // Sorting handlers
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      // Toggle direction if same field
-      setSortDirection(prev => prev === SortDirection._0 ? SortDirection._1 : SortDirection._0);
-    } else {
-      // New field, default to descending
-      setSortField(field);
-      setSortDirection(SortDirection._1);
-    }
-    setPagination(prev => ({ ...prev, currentPage: 1 }));
-  };
-
-  // Pagination handlers
-  const handlePageChange = (page: number) => {
-    setPagination(prev => ({ ...prev, currentPage: page }));
-  };
-
-  const handlePageSizeChange = (pageSize: number) => {
-    setPagination(prev => ({ ...prev, pageSize, currentPage: 1 }));
-  };
-
-  // Project actions
-  const handleDeleteProject = async () => {
-    if (!projectToDelete) return;
-
-    setIsDeleting(true);
+  const searchProjects = async () => {
     try {
-      const response = await api.programs.programs_Delete(projectToDelete.id);
-      
-      if (response.success) {
-        // Remove from local state
-        setProjects(prev => prev.filter(p => p.id !== projectToDelete.id));
-        setShowDeleteModal(false);
-        setProjectToDelete(null);
-        
-        // Show success message (you can implement toast notifications)
-        if ((window as any).addToast) {
-          (window as any).addToast({
-            type: 'success',
-            title: 'Project deleted successfully'
-          });
-        }
-      } else {
-        setError(response.message || 'Failed to delete project');
+      setIsLoading(true);
+      setError(null);
+
+      const searchDto = new ProgramSearchDto({
+        name: searchTerm || undefined,
+        language: languageFilter || undefined,
+        status: statusFilter || undefined
+      });
+
+      const response = await api.programs.programs_Search(
+        currentPage,
+        pageSize,
+        sortField,
+        sortDirection,
+        searchDto
+      );
+
+      if (response.success && response.data) {
+        const projectItems = await Promise.all(
+          (response.data.items || []).map(async (project) => {
+            let hasVersions = false;
+            let versionCount = 0;
+            
+            try {
+              const versionsResponse = await api.versions.versions_GetByProgram(
+                project.id || '', 
+                1, 
+                1, 
+                'CreatedDate', 
+                SortDirection._1
+              );
+              
+              if (versionsResponse.success && versionsResponse.data) {
+                versionCount = versionsResponse.data.totalCount || 0;
+                hasVersions = versionCount > 0;
+              }
+            } catch (error) {
+              console.warn(`Failed to check versions for project ${project.id}:`, error);
+            }
+
+            return {
+              id: project.id || '',
+              name: project.name || 'Untitled Project',
+              description: project.description,
+              language: project.language || 'Unknown',
+              type: project.type || 'Unknown',
+              creator: project.creator || 'Unknown',
+              createdAt: project.createdAt || new Date(),
+              status: project.status || 'draft',
+              currentVersion: project.currentVersion,
+              deploymentStatus: project.deploymentStatus,
+              hasVersions,
+              versionCount
+            };
+          })
+        );
+
+        setProjects(projectItems);
+        setTotalCount(response.data.totalCount || 0);
+        setTotalPages(response.data.totalPages || 0);
       }
     } catch (error) {
-      console.error('Failed to delete project:', error);
-      setError('Failed to delete project. Please try again.');
+      console.error('Failed to search projects:', error);
+      setError('Failed to search projects. Please try again.');
     } finally {
-      setIsDeleting(false);
+      setIsLoading(false);
     }
   };
 
-  const confirmDeleteProject = (project: Project) => {
-    setProjectToDelete(project);
-    setShowDeleteModal(true);
+  const getStatusColor = (status: string): string => {
+    const statusLower = status.toLowerCase();
+    if (statusLower === 'active') {
+      return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30';
+    }
+    if (statusLower === 'draft') {
+      return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30';
+    }
+    if (statusLower === 'archived') {
+      return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
+    }
+    if (statusLower === 'deprecated') {
+      return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
+    }
+    return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30';
   };
 
-  // Utility functions
   const getLanguageIcon = (language: string): React.ReactNode => {
     const lang = language.toLowerCase();
-    const iconClass = "w-4 h-4";
+    const iconClass = "w-5 h-5";
     
     if (lang.includes('javascript') || lang.includes('js')) {
       return <div className={`${iconClass} bg-yellow-400 rounded`}></div>;
@@ -287,266 +267,34 @@ const ProjectsPage: React.FC = () => {
     );
   };
 
-  const getStatusColor = (status: string): string => {
-    const statusLower = status.toLowerCase();
-    if (statusLower === 'active') return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30';
-    if (statusLower === 'draft') return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30';
-    if (statusLower === 'archived') return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
-    if (statusLower === 'deprecated') return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
-    return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
+  const formatRelativeTime = (date: Date): string => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffMinutes > 0) return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+    return 'Just now';
   };
 
-  const formatDate = (date: Date): string => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(date);
-  };
-
-  // Render functions
-  const renderProjectCard = (project: Project) => (
-    <div
-      key={project.id}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => navigate(`/projects/${project.id}`)}
-    >
+  if (isLoading && projects.length === 0) {
+    return (
       <div className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3 flex-1 min-w-0">
-            <div className="flex-shrink-0">
-              {getLanguageIcon(project.language)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">
-                {project.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {project.language} • {project.type}
-              </p>
-            </div>
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            ))}
           </div>
-          
-          <div className="flex items-center space-x-2">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
-              {project.status}
-            </span>
-            <div className="relative">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // You can implement a dropdown menu here
-                }}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-            {project.description || 'No description provided'}
-          </p>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>Created {formatDate(project.createdAt)}</span>
-          <span>by {project.creator}</span>
-        </div>
-
-        <div className="mt-4 flex space-x-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/editor/${project.id}`);
-            }}
-            leftIcon={
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-            }
-          >
-            Edit
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={(e) => {
-              e.stopPropagation();
-              confirmDeleteProject(project);
-            }}
-            leftIcon={
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            }
-          >
-            Delete
-          </Button>
         </div>
       </div>
-    </div>
-  );
-
-  const renderProjectRow = (project: Project) => (
-    <tr
-      key={project.id}
-      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
-      onClick={() => navigate(`/projects/${project.id}`)}
-    >
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 mr-3">
-            {getLanguageIcon(project.language)}
-          </div>
-          <div>
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
-              {project.name}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {project.description}
-            </div>
-          </div>
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {project.language}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {project.type}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
-          {project.status}
-        </span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {formatDate(project.createdAt)}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {project.creator}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <div className="flex items-center space-x-2">
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/editor/${project.id}`);
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            size="xs"
-            variant="ghost"
-            onClick={(e) => {
-              e.stopPropagation();
-              confirmDeleteProject(project);
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      </td>
-    </tr>
-  );
-
-  const renderPagination = () => (
-    <div className="flex items-center justify-between">
-      <div className="flex-1 flex justify-between sm:hidden">
-        <Button
-          variant="outline"
-          onClick={() => handlePageChange(pagination.currentPage - 1)}
-          disabled={!pagination.hasPreviousPage}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => handlePageChange(pagination.currentPage + 1)}
-          disabled={!pagination.hasNextPage}
-        >
-          Next
-        </Button>
-      </div>
-      
-      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            Showing{' '}
-            <span className="font-medium">
-              {((pagination.currentPage - 1) * pagination.pageSize) + 1}
-            </span>{' '}
-            to{' '}
-            <span className="font-medium">
-              {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)}
-            </span>{' '}
-            of{' '}
-            <span className="font-medium">{pagination.totalCount}</span>{' '}
-            results
-          </p>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <select
-            value={pagination.pageSize}
-            onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
-            className="text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-          >
-            <option value={6}>6 per page</option>
-            <option value={12}>12 per page</option>
-            <option value={24}>24 per page</option>
-            <option value={48}>48 per page</option>
-          </select>
-          
-          <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handlePageChange(pagination.currentPage - 1)}
-              disabled={!pagination.hasPreviousPage}
-            >
-              Previous
-            </Button>
-            
-            {/* Page numbers */}
-            {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-              const pageNumber = i + 1;
-              const isActive = pageNumber === pagination.currentPage;
-              
-              return (
-                <Button
-                  key={pageNumber}
-                  size="sm"
-                  variant={isActive ? "primary" : "outline"}
-                  onClick={() => handlePageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </Button>
-              );
-            })}
-            
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handlePageChange(pagination.currentPage + 1)}
-              disabled={!pagination.hasNextPage}
-            >
-              Next
-            </Button>
-          </nav>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -557,7 +305,7 @@ const ProjectsPage: React.FC = () => {
             Projects
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage and browse your programming projects
+            Manage your programming projects and code repositories
           </p>
         </div>
         
@@ -571,121 +319,12 @@ const ProjectsPage: React.FC = () => {
               </svg>
             }
           >
-            Create Project
+            New Project
           </Button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-2">
-            <Input
-              placeholder="Search projects..."
-              value={filters.search}
-              onChange={handleSearchChange}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              }
-            />
-          </div>
-          
-          <select
-            value={filters.language}
-            onChange={(e) => handleFilterChange('language', e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
-          >
-            {languageOptions.map(lang => (
-              <option key={lang} value={lang === 'All' ? '' : lang}>{lang}</option>
-            ))}
-          </select>
-          
-          <select
-            value={filters.type}
-            onChange={(e) => handleFilterChange('type', e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
-          >
-            {typeOptions.map(type => (
-              <option key={type} value={type === 'All' ? '' : type}>{type}</option>
-            ))}
-          </select>
-          
-          <select
-            value={filters.status}
-            onChange={(e) => handleFilterChange('status', e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
-          >
-            {statusOptions.map(status => (
-              <option key={status} value={status === 'All' ? '' : status}>{status}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={clearFilters}
-            >
-              Clear filters
-            </Button>
-            
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
-              <select
-                value={sortField}
-                onChange={(e) => handleSort(e.target.value)}
-                className="text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-2 py-1"
-              >
-                <option value="name">Name</option>
-                <option value="createdDate">Created Date</option>
-                <option value="status">Status</option>
-                <option value="language">Language</option>
-              </select>
-              
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setSortDirection(prev => prev === SortDirection._0 ? SortDirection._1 : SortDirection._0)}
-              >
-                {sortDirection === SortDirection._0 ? '↑' : '↓'}
-              </Button>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Button
-              size="sm"
-              variant={viewMode === 'grid' ? 'primary' : 'ghost'}
-              onClick={() => setViewMode('grid')}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-              }
-            >
-              Grid
-            </Button>
-            <Button
-              size="sm"
-              variant={viewMode === 'list' ? 'primary' : 'ghost'}
-              onClick={() => setViewMode('list')}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-              }
-            >
-              List
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Error message */}
+      {/* Error Message */}
       {error && (
         <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
           <div className="flex">
@@ -709,121 +348,264 @@ const ProjectsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Content */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-48 rounded-lg"></div>
-          ))}
+      {/* Filters and Search */}
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Input
+            label="Search projects"
+            placeholder="Search by name or description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            }
+          />
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Language
+            </label>
+            <select
+              value={languageFilter}
+              onChange={(e) => setLanguageFilter(e.target.value)}
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="">All Languages</option>
+              {availableLanguages.map((lang) => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Status
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="">All Statuses</option>
+              {availableStatuses.map((status) => (
+                <option key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Sort By
+            </label>
+            <select
+              value={getSortOptionKey(sortField, sortDirection)}
+              onChange={(e) => {
+                const [field, direction] = e.target.value.split('-');
+                setSortField(field);
+                setSortDirection(parseInt(direction) as SortDirection);
+              }}
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={getSortOptionKey(option.field, option.direction)} value={getSortOptionKey(option.field, option.direction)}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      ) : projects.length === 0 ? (
+      </div>
+
+      {/* Projects Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => (
+          <div
+            key={project.id}
+            className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
+          >
+            <div className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                  <div className="flex-shrink-0">
+                    {getLanguageIcon(project.language)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">
+                      {project.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {project.language} • {project.type}
+                    </p>
+                  </div>
+                </div>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                  {project.status}
+                </span>
+              </div>
+
+              {project.description && (
+                <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                  {project.description}
+                </p>
+              )}
+
+              <div className="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                <span>{formatRelativeTime(project.createdAt)}</span>
+                <div className="flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.414 1.414 0 01-2.828 0l-7-7A1.414 1.414 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  <span>{project.versionCount} version{project.versionCount !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-4 flex space-x-2">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => navigate(`/projects/${project.id}`)}
+                  className="flex-1"
+                >
+                  View Details
+                </Button>
+                
+                {project.hasVersions ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/editor/${project.id}`)}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                    }
+                  >
+                    Code
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled
+                    title="Create a version first to enable code editing"
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                    }
+                  >
+                    No Code
+                  </Button>
+                )}
+              </div>
+
+              {!project.hasVersions && (
+                <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded text-xs text-yellow-700 dark:text-yellow-400">
+                  This project has no versions yet. Create a version to start coding.
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {projects.length === 0 && !isLoading && (
         <div className="text-center py-12">
           <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No projects found</h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {Object.values(filters).some(v => v) ? 'Try adjusting your filters or search terms.' : 'Get started by creating your first project.'}
+            {searchTerm || languageFilter || statusFilter ? 'Try adjusting your search criteria.' : 'Get started by creating your first project.'}
           </p>
-          <div className="mt-6">
-            <Button
-              variant="primary"
-              onClick={() => navigate('/projects/create')}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-              }
-            >
-              Create Project
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <>
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map(renderProjectCard)}
-            </div>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('name')}
-                    >
-                      Project
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('language')}
-                    >
-                      Language
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('type')}
-                    >
-                      Type
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('status')}
-                    >
-                      Status
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('createdDate')}
-                    >
-                      Created
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                    >
-                      Creator
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {projects.map(renderProjectRow)}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
+          {!searchTerm && !languageFilter && !statusFilter && (
             <div className="mt-6">
-              {renderPagination()}
+              <Button
+                variant="primary"
+                onClick={() => navigate('/projects/create')}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                }
+              >
+                Create Your First Project
+              </Button>
             </div>
           )}
-        </>
+        </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleDeleteProject}
-        title="Delete Project"
-        message={`Are you sure you want to delete "${projectToDelete?.name}"? This action cannot be undone and will permanently delete all associated files and data.`}
-        confirmText="Delete Project"
-        cancelText="Cancel"
-        variant="danger"
-        loading={isDeleting}
-      />
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+          <div className="flex-1 flex justify-between sm:hidden">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Showing <span className="font-medium">{((currentPage - 1) * pageSize) + 1}</span> to{' '}
+                <span className="font-medium">{Math.min(currentPage * pageSize, totalCount)}</span> of{' '}
+                <span className="font-medium">{totalCount}</span> results
+              </p>
+            </div>
+            <div>
+              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                  const page = i + Math.max(1, currentPage - 2);
+                  if (page > totalPages) return null;
+                  return (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "primary" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
