@@ -1,0 +1,210 @@
+// src/router/index.tsx
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { AuthProvider } from '@/contexts/AuthContext';
+
+// Layout Components (to be created)
+import RootLayout from '@/components/Layout/RootLayout';
+import AuthLayout from '@/components/Layout/AuthLayout';
+import DashboardLayout from '@/components/Layout/DashboardLayout';
+
+// Auth Pages (to be created)
+import LoginPage from '@/pages/auth/LoginPage';
+import RegisterPage from '@/pages/auth/RegisterPage';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
+
+// Dashboard Pages (to be created)
+import DashboardHome from '@/pages/dashboard/DashboardHome';
+
+// Project Pages (to be created)
+import ProjectsPage from '@/pages/projects/ProjectsPage';
+import CreateProjectPage from '@/pages/projects/CreateProjectPage';
+import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
+
+// Editor Pages (to be created)
+import EditorPage from '@/pages/editor/EditorPage';
+
+// Execution Pages (to be created)
+import ExecutionsPage from '@/pages/executions/ExecutionsPage';
+import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
+
+// Settings Pages (to be created)
+import SettingsPage from '@/pages/settings/SettingsPage';
+import ProfilePage from '@/pages/settings/ProfilePage';
+
+// Admin Pages (to be created)
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import UserManagementPage from '@/pages/admin/UserManagementPage';
+import SystemMonitoringPage from '@/pages/admin/SystemMonitoringPage';
+
+// Protected Route Component (to be created)
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import AdminRoute from '@/components/auth/AdminRoute';
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <AuthProvider>
+        <RootLayout />
+      </AuthProvider>
+    ),
+    children: [
+      // Redirect root to dashboard
+      {
+        index: true,
+        element: <Navigate to="/dashboard" replace />
+      },
+      
+      // Authentication routes
+      {
+        path: 'auth',
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'login',
+            element: <LoginPage />
+          },
+          {
+            path: 'register',
+            element: <RegisterPage />
+          },
+          {
+            path: 'forgot-password',
+            element: <ForgotPasswordPage />
+          },
+          {
+            path: 'reset-password',
+            element: <ResetPasswordPage />
+          }
+        ]
+      },
+
+      // Protected application routes
+      {
+        path: 'dashboard',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <DashboardHome />
+          }
+        ]
+      },
+
+      // Projects routes
+      {
+        path: 'projects',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <ProjectsPage />
+          },
+          {
+            path: 'create',
+            element: <CreateProjectPage />
+          },
+          {
+            path: ':projectId',
+            element: <ProjectDetailPage />
+          }
+        ]
+      },
+
+      // Code Editor routes
+      {
+        path: 'editor',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: ':projectId/:versionId?',
+            element: <EditorPage />
+          }
+        ]
+      },
+
+      // Executions routes
+      {
+        path: 'executions',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <ExecutionsPage />
+          },
+          {
+            path: ':executionId',
+            element: <ExecutionDetailPage />
+          }
+        ]
+      },
+
+      // Settings routes
+      {
+        path: 'settings',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <SettingsPage />
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />
+          }
+        ]
+      },
+
+      // Admin routes (protected by admin role)
+      {
+        path: 'admin',
+        element: (
+          <AdminRoute>
+            <DashboardLayout />
+          </AdminRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <AdminDashboard />
+          },
+          {
+            path: 'users',
+            element: <UserManagementPage />
+          },
+          {
+            path: 'monitoring',
+            element: <SystemMonitoringPage />
+          }
+        ]
+      },
+
+      // Catch-all route
+      {
+        path: '*',
+        element: <Navigate to="/dashboard" replace />
+      }
+    ]
+  }
+]);
