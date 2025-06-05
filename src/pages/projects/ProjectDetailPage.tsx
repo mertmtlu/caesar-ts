@@ -6,7 +6,7 @@ import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
 import Input from '@/components/common/Input';
-import { VersionCommitDto, VersionFileCreateDto } from '@/api';
+import { VersionCommitDto, VersionFileCreateDto, VersionFileChangeDto, VersionReviewSubmissionDto } from '@/api';
 
 // Interfaces
 interface ProjectDetail {
@@ -52,6 +52,11 @@ interface CreateVersionForm {
   createSampleFiles: boolean;
 }
 
+interface ReviewForm {
+  comments: string;
+  action: 'approved' | 'rejected' | '';
+}
+
 const ProjectDetailPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
@@ -66,14 +71,23 @@ const ProjectDetailPage: React.FC = () => {
   // Modals
   const [showCreateVersionModal, setShowCreateVersionModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [versionToDelete, setVersionToDelete] = useState<string | null>(null);
+  const [versionToReview, setVersionToReview] = useState<VersionDetail | null>(null);
   const [isCreatingVersion, setIsCreatingVersion] = useState(false);
   const [isDeletingVersion, setIsDeletingVersion] = useState(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   
   // Create version form
   const [createVersionForm, setCreateVersionForm] = useState<CreateVersionForm>({
     commitMessage: '',
     createSampleFiles: true
+  });
+
+  // Review form
+  const [reviewForm, setReviewForm] = useState<ReviewForm>({
+    comments: '',
+    action: ''
   });
 
   // Pagination for versions
@@ -140,6 +154,8 @@ const ProjectDetailPage: React.FC = () => {
         SortDirection._1 // Descending - newest first
       );
 
+      console.log('Loaded versions:', response.data);
+
       if (response.success && response.data) {
         const versionData = response.data.items?.map(version => ({
           id: version.id || '',
@@ -150,7 +166,7 @@ const ProjectDetailPage: React.FC = () => {
           status: version.status || 'pending',
           reviewer: version.reviewerName,
           reviewedAt: version.reviewedAt,
-          reviewComments: version.commitMessage,
+          reviewComments: version.commitMessage, // Fixed from commitMessage
           fileCount: version.fileCount || 0,
           isCurrent: version.isCurrent || false
         })) || [];
@@ -187,13 +203,15 @@ const ProjectDetailPage: React.FC = () => {
       // Create version with commit
       const commitDto = new VersionCommitDto({
         commitMessage: createVersionForm.commitMessage.trim(),
-        changes: files.map(file => ({
+        changes: files.map(file => new VersionFileChangeDto({
           path: file.path || '',
           action: 'add',
-          content: file.content,
+          content: btoa(file.content),
           contentType: file.contentType
         }))
       });
+
+      console.log('Creating version with commit:', commitDto);  
 
       const response = await api.versions.versions_CommitChanges(projectId, commitDto);
 
@@ -413,6 +431,44 @@ Add your project documentation here.`,
     }
   };
 
+  const submitReview = async () => {
+    if (!versionToReview || !reviewForm.action) {
+      setError('Please select an action (approve or reject).');
+      return;
+    }
+
+    try {
+      setIsSubmittingReview(true);
+      setError(null);
+
+      // Assuming the API has a review endpoint
+      const response = await api.versions.versions_SubmitReview(versionToReview.id, new VersionReviewSubmissionDto({
+        status: reviewForm.action,
+        comments: reviewForm.comments.trim() || "No comments provided"
+      }));
+
+      if (response.success) {
+        await loadVersions();
+        setShowReviewModal(false);
+        setVersionToReview(null);
+        setReviewForm({ comments: '', action: '' });
+      } else {
+        setError(response.message || 'Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+      setError('Failed to submit review. Please try again.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const openReviewModal = (version: VersionDetail) => {
+    setVersionToReview(version);
+    setReviewForm({ comments: '', action: '' });
+    setShowReviewModal(true);
+  };
+
   const getStatusColor = (status: string): string => {
     const statusLower = status.toLowerCase();
     if (statusLower === 'approved') {
@@ -428,6 +484,36 @@ Add your project documentation here.`,
       return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
     }
     return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30';
+  };
+
+  const getStatusIcon = (status: string) => {
+    const statusLower = status.toLowerCase();
+    if (statusLower === 'approved') {
+      return (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      );
+    }
+    if (statusLower === 'rejected') {
+      return (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      );
+    }
+    if (statusLower === 'pending') {
+      return (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      );
+    }
+    return null;
+  };
+
+  const canReview = (version: VersionDetail): boolean => {
+    return version.status.toLowerCase() === 'pending' && !version.reviewer;
   };
 
   const formatDateTime = (date: Date): string => {
@@ -726,8 +812,9 @@ Add your project documentation here.`,
                             </span>
                           )}
                         </h3>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(version.status)}`}>
-                          {version.status}
+                        <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(version.status)}`}>
+                          {getStatusIcon(version.status)}
+                          <span>{version.status}</span>
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
@@ -736,6 +823,25 @@ Add your project documentation here.`,
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {version.createdBy} • {formatDateTime(version.createdAt)} • {version.fileCount} file{version.fileCount !== 1 ? 's' : ''}
                       </div>
+                      
+                      {/* Review Information */}
+                      {version.reviewer && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center space-x-1">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <span>
+                            Reviewed by {version.reviewer}
+                            {version.reviewedAt && ` on ${formatDateTime(version.reviewedAt)}`}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {version.reviewComments && (
+                        <div className="text-xs text-gray-600 dark:text-gray-300 mt-1 italic">
+                          "{version.reviewComments}"
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -752,6 +858,21 @@ Add your project documentation here.`,
                     >
                       Edit
                     </Button>
+                    
+                    {canReview(version) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openReviewModal(version)}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        }
+                      >
+                        Review
+                      </Button>
+                    )}
                     
                     {!version.isCurrent && version.status !== 'approved' && (
                       <Button
@@ -863,6 +984,122 @@ Add your project documentation here.`,
               'This will be the first version of your project. You can start coding immediately after creation.' :
               'Create a new version to save your progress and make changes.'
             }
+          </div>
+        </div>
+      </Modal>
+
+      {/* Review Modal */}
+      <Modal
+        isOpen={showReviewModal}
+        onClose={() => {
+          setShowReviewModal(false);
+          setVersionToReview(null);
+          setReviewForm({ comments: '', action: '' });
+        }}
+        title={`Review Version ${versionToReview?.versionNumber}`}
+        size="md"
+        footer={
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowReviewModal(false);
+                setVersionToReview(null);
+                setReviewForm({ comments: '', action: '' });
+              }}
+              disabled={isSubmittingReview}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={reviewForm.action === 'rejected' ? 'danger' : 'primary'}
+              onClick={submitReview}
+              loading={isSubmittingReview}
+              disabled={!reviewForm.action}
+            >
+              {reviewForm.action === 'approved' ? 'Approve Version' : 
+               reviewForm.action === 'rejected' ? 'Reject Version' : 
+               'Submit Review'}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-6">
+          {versionToReview && (
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Version Details</h4>
+              <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <p><span className="font-medium">Commit:</span> {versionToReview.commitMessage || 'No commit message'}</p>
+                <p><span className="font-medium">Created by:</span> {versionToReview.createdBy}</p>
+                <p><span className="font-medium">Created:</span> {formatDateTime(versionToReview.createdAt)}</p>
+                <p><span className="font-medium">Files:</span> {versionToReview.fileCount}</p>
+              </div>
+            </div>
+          )}
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Review Decision
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="review-action"
+                    value="approved"
+                    checked={reviewForm.action === 'approved'}
+                    onChange={(e) => setReviewForm(prev => ({ ...prev, action: e.target.value as 'approved' | 'rejected' }))}
+                    className="h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                    <svg className="w-4 h-4 text-green-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Approve this version
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="review-action"
+                    value="reject"
+                    checked={reviewForm.action === 'rejected'}
+                    onChange={(e) => setReviewForm(prev => ({ ...prev, action: e.target.value as 'approved' | 'rejected' }))}
+                    className="h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                    <svg className="w-4 h-4 text-red-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Reject this version
+                  </span>
+                </label>
+              </div>
+            </div>
+            
+            <div>
+              <label htmlFor="review-comments" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Comments {reviewForm.action === 'rejected' && <span className="text-red-500">*</span>}
+              </label>
+              <textarea
+                id="review-comments"
+                rows={4}
+                placeholder={
+                  reviewForm.action === 'approved' 
+                    ? "Optional: Add any comments about this version..." 
+                    : reviewForm.action === 'rejected'
+                    ? "Please explain why this version should be rejected..."
+                    : "Add your review comments here..."
+                }
+                value={reviewForm.comments}
+                onChange={(e) => setReviewForm(prev => ({ ...prev, comments: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              />
+              {reviewForm.action === 'rejected' && !reviewForm.comments.trim() && (
+                <p className="mt-1 text-sm text-red-600">Comments are required when rejecting a version.</p>
+              )}
+            </div>
           </div>
         </div>
       </Modal>

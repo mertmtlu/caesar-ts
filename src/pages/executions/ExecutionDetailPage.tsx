@@ -124,6 +124,8 @@ const ExecutionDetailPage: React.FC = () => {
       
       if (detailResponse.success && detailResponse.data) {
         const executionData = detailResponse.data;
+
+        console.log('Execution data loaded:', executionData);
         
         setExecution({
           id: executionData.id || '',

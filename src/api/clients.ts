@@ -57,7 +57,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMDetailResponseDtoApiResponse>(null as any);
@@ -98,7 +98,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMResponseDtoApiResponse>(null as any);
@@ -135,7 +135,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -191,7 +191,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse>(null as any);
@@ -247,7 +247,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse>(null as any);
@@ -303,7 +303,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse>(null as any);
@@ -341,7 +341,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMResponseDtoApiResponse>(null as any);
@@ -378,7 +378,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMComparisonResponseDtoListApiResponse>(null as any);
@@ -419,7 +419,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AlternativeTMResponseDtoApiResponse>(null as any);
@@ -466,7 +466,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AuthenticationResponseDtoApiResponse>(null as any);
@@ -504,7 +504,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.AuthenticationResponseDtoApiResponse>(null as any);
@@ -542,7 +542,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TokenResponseDtoApiResponse>(null as any);
@@ -576,7 +576,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -614,7 +614,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -652,7 +652,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.PasswordResetResponseDtoApiResponse>(null as any);
@@ -690,7 +690,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -729,7 +729,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -767,7 +767,7 @@ export class AuthClient implements interfaces.IAuthClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -813,7 +813,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockResponseDtoListApiResponse>(null as any);
@@ -853,7 +853,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockResponseDtoApiResponse>(null as any);
@@ -893,7 +893,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -933,7 +933,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockSummaryResponseDtoApiResponse>(null as any);
@@ -970,7 +970,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConcreteBlockResponseDtoListApiResponse>(null as any);
@@ -1011,7 +1011,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConcreteBlockResponseDtoApiResponse>(null as any);
@@ -1048,7 +1048,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.MasonryBlockResponseDtoListApiResponse>(null as any);
@@ -1089,7 +1089,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.MasonryBlockResponseDtoApiResponse>(null as any);
@@ -1133,7 +1133,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConcreteBlockResponseDtoApiResponse>(null as any);
@@ -1177,7 +1177,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.MasonryBlockResponseDtoApiResponse>(null as any);
@@ -1217,7 +1217,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockStatisticsResponseDtoApiResponse>(null as any);
@@ -1261,7 +1261,7 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockResponseDtoApiResponse>(null as any);
@@ -1323,7 +1323,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingListResponseDtoPagedResponseApiResponse>(null as any);
@@ -1361,7 +1361,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingResponseDtoApiResponse>(null as any);
@@ -1398,7 +1398,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingDetailResponseDtoApiResponse>(null as any);
@@ -1439,7 +1439,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingResponseDtoApiResponse>(null as any);
@@ -1476,7 +1476,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -1532,7 +1532,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingListResponseDtoPagedResponseApiResponse>(null as any);
@@ -1589,7 +1589,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingListResponseDtoPagedResponseApiResponse>(null as any);
@@ -1630,7 +1630,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingResponseDtoApiResponse>(null as any);
@@ -1670,7 +1670,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingResponseDtoApiResponse>(null as any);
@@ -1726,7 +1726,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingListResponseDtoPagedResponseApiResponse>(null as any);
@@ -1779,7 +1779,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingListResponseDtoPagedResponseApiResponse>(null as any);
@@ -1816,7 +1816,7 @@ export class BuildingsClient implements interfaces.IBuildingsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BuildingStatisticsResponseDtoApiResponse>(null as any);
@@ -1878,7 +1878,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ClientListResponseDtoPagedResponseApiResponse>(null as any);
@@ -1916,7 +1916,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ClientResponseDtoApiResponse>(null as any);
@@ -1953,7 +1953,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ClientDetailResponseDtoApiResponse>(null as any);
@@ -1994,7 +1994,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ClientResponseDtoApiResponse>(null as any);
@@ -2031,7 +2031,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2068,7 +2068,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ClientResponseDtoApiResponse>(null as any);
@@ -2105,7 +2105,7 @@ export class ClientsClient implements interfaces.IClientsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ClientStatisticsResponseDtoApiResponse>(null as any);
@@ -2155,7 +2155,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentDtoApiResponse>(null as any);
@@ -2196,7 +2196,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentDtoApiResponse>(null as any);
@@ -2237,7 +2237,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentDtoApiResponse>(null as any);
@@ -2274,7 +2274,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentStatusDtoApiResponse>(null as any);
@@ -2311,7 +2311,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2348,7 +2348,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2385,7 +2385,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2427,7 +2427,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -2468,7 +2468,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -2505,7 +2505,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ApplicationHealthDtoApiResponse>(null as any);
@@ -2546,7 +2546,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2583,7 +2583,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ApplicationMetricsDtoApiResponse>(null as any);
@@ -2620,7 +2620,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2661,7 +2661,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.DeploymentValidationResultApiResponse>(null as any);
@@ -2698,7 +2698,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.SupportedDeploymentOptionDtoListApiResponse>(null as any);
@@ -2740,7 +2740,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.DeploymentHistoryDtoListApiResponse>(null as any);
@@ -2774,7 +2774,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ActiveDeploymentDtoListApiResponse>(null as any);
@@ -2818,7 +2818,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.DeploymentStatisticsDtoApiResponse>(null as any);
@@ -2859,7 +2859,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentDtoApiResponse>(null as any);
@@ -2896,7 +2896,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringStringDictionaryApiResponse>(null as any);
@@ -2937,7 +2937,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -2974,7 +2974,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.DeploymentResourceUsageDtoApiResponse>(null as any);
@@ -3011,7 +3011,7 @@ export class DeploymentsClient implements interfaces.IDeploymentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConnectionTestResultApiResponse>(null as any);
@@ -3050,7 +3050,7 @@ export class DocumentationClient implements interfaces.IDocumentationClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -3080,7 +3080,7 @@ export class DocumentationClient implements interfaces.IDocumentationClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -3142,7 +3142,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3179,7 +3179,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDetailDtoApiResponse>(null as any);
@@ -3216,7 +3216,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -3273,7 +3273,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3329,7 +3329,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3385,7 +3385,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3441,7 +3441,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3497,7 +3497,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3550,7 +3550,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3603,7 +3603,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3656,7 +3656,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
@@ -3695,7 +3695,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoListApiResponse>(null as any);
@@ -3720,12 +3720,14 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ExecuteProgram(_response);
         });
     }
     protected processExecutions_ExecuteProgram(response: Response): Promise<types.ExecutionDtoApiResponse> {
         const status = response.status;
+        
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
@@ -3735,8 +3737,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
+            
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
@@ -3777,7 +3780,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
@@ -3815,7 +3818,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
@@ -3852,7 +3855,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -3889,7 +3892,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -3926,7 +3929,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -3963,7 +3966,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionStatusDtoApiResponse>(null as any);
@@ -4000,7 +4003,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
@@ -4042,7 +4045,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -4079,7 +4082,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResultDtoApiResponse>(null as any);
@@ -4116,7 +4119,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionOutputFileDtoListApiResponse>(null as any);
@@ -4156,7 +4159,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionOutputFileContentDtoApiResponse>(null as any);
@@ -4197,7 +4200,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -4238,7 +4241,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
@@ -4275,7 +4278,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
@@ -4312,7 +4315,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.WebAppStatusDtoApiResponse>(null as any);
@@ -4349,7 +4352,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -4386,7 +4389,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -4423,7 +4426,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResourceUsageDtoApiResponse>(null as any);
@@ -4464,7 +4467,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -4506,7 +4509,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResourceTrendDtoListApiResponse>(null as any);
@@ -4543,7 +4546,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResourceLimitsDtoApiResponse>(null as any);
@@ -4584,7 +4587,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -4648,7 +4651,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionStatsDtoApiResponse>(null as any);
@@ -4692,7 +4695,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionTrendDtoListApiResponse>(null as any);
@@ -4729,7 +4732,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionPerformanceDtoListApiResponse>(null as any);
@@ -4766,7 +4769,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionSummaryDtoApiResponse>(null as any);
@@ -4803,7 +4806,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionEnvironmentDtoApiResponse>(null as any);
@@ -4844,7 +4847,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -4883,7 +4886,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionTemplateDtoListApiResponse>(null as any);
@@ -4921,7 +4924,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionValidationResultApiResponse>(null as any);
@@ -4955,7 +4958,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionQueueStatusDtoApiResponse>(null as any);
@@ -4996,7 +4999,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
@@ -5033,7 +5036,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -5067,7 +5070,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoListApiResponse>(null as any);
@@ -5101,7 +5104,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -5143,7 +5146,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProjectStructureAnalysisDtoApiResponse>(null as any);
@@ -5185,7 +5188,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProjectValidationResultDtoApiResponse>(null as any);
@@ -5224,7 +5227,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.Int32ApiResponse>(null as any);
@@ -5261,7 +5264,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -5295,7 +5298,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionCleanupReportDtoListApiResponse>(null as any);
@@ -5332,7 +5335,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionSecurityScanResultApiResponse>(null as any);
@@ -5372,7 +5375,7 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -5425,7 +5428,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.FileStorageResultListApiResponse>(null as any);
@@ -5465,7 +5468,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionFileDtoListApiResponse>(null as any);
@@ -5505,7 +5508,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -5548,7 +5551,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionFileDetailDtoApiResponse>(null as any);
@@ -5595,7 +5598,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
@@ -5638,7 +5641,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -5681,7 +5684,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.FileStorageResultListApiResponse>(null as any);
@@ -5718,7 +5721,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -5755,7 +5758,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StorageStatisticsApiResponse>(null as any);
@@ -5793,7 +5796,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.FileValidationResultApiResponse>(null as any);
@@ -5831,7 +5834,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
@@ -5876,7 +5879,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
@@ -5920,7 +5923,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BulkOperationResultApiResponse>(null as any);
@@ -5964,7 +5967,7 @@ export class FilesClient implements interfaces.IFilesClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BulkOperationResultApiResponse>(null as any);
@@ -6026,7 +6029,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6065,7 +6068,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -6102,7 +6105,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDetailDtoApiResponse>(null as any);
@@ -6144,7 +6147,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -6182,7 +6185,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -6239,7 +6242,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6295,7 +6298,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6351,7 +6354,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6407,7 +6410,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6463,7 +6466,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6516,7 +6519,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6572,7 +6575,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
@@ -6613,7 +6616,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -6655,7 +6658,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -6692,7 +6695,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramPermissionDtoListApiResponse>(null as any);
@@ -6733,7 +6736,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -6777,7 +6780,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -6817,7 +6820,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -6858,7 +6861,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -6902,7 +6905,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
@@ -6942,7 +6945,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -6980,7 +6983,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentStatusDtoApiResponse>(null as any);
@@ -7022,7 +7025,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -7060,7 +7063,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -7103,7 +7106,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -7145,7 +7148,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -7207,7 +7210,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionListResponseDtoPagedResponseApiResponse>(null as any);
@@ -7245,7 +7248,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionResponseDtoApiResponse>(null as any);
@@ -7282,7 +7285,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionDetailResponseDtoApiResponse>(null as any);
@@ -7323,7 +7326,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionResponseDtoApiResponse>(null as any);
@@ -7360,7 +7363,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -7397,7 +7400,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionResponseDtoApiResponse>(null as any);
@@ -7453,7 +7456,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionListResponseDtoPagedResponseApiResponse>(null as any);
@@ -7494,7 +7497,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionResponseDtoApiResponse>(null as any);
@@ -7531,7 +7534,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionStatisticsResponseDtoApiResponse>(null as any);
@@ -7568,7 +7571,7 @@ export class RegionsClient implements interfaces.IRegionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RegionSummaryResponseDtoListApiResponse>(null as any);
@@ -7630,7 +7633,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -7668,7 +7671,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
@@ -7705,7 +7708,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDetailDtoApiResponse>(null as any);
@@ -7746,7 +7749,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
@@ -7783,7 +7786,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -7840,7 +7843,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -7896,7 +7899,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -7952,7 +7955,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -8008,7 +8011,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -8064,7 +8067,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -8120,7 +8123,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -8176,7 +8179,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -8229,7 +8232,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -8270,7 +8273,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8311,7 +8314,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
@@ -8348,7 +8351,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8389,7 +8392,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8430,7 +8433,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestResponseDtoApiResponse>(null as any);
@@ -8467,7 +8470,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestResponseDtoListApiResponse>(null as any);
@@ -8511,7 +8514,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8551,7 +8554,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8588,7 +8591,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8629,7 +8632,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8670,7 +8673,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
@@ -8711,7 +8714,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
@@ -8752,7 +8755,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -8816,7 +8819,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestStatsDtoApiResponse>(null as any);
@@ -8855,7 +8858,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestTrendDtoListApiResponse>(null as any);
@@ -8889,7 +8892,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestMetricDtoListApiResponse>(null as any);
@@ -8923,7 +8926,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestMetricDtoListApiResponse>(null as any);
@@ -8957,7 +8960,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestPerformanceDtoListApiResponse>(null as any);
@@ -8996,7 +8999,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestTemplateDtoListApiResponse>(null as any);
@@ -9034,7 +9037,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestTemplateDtoApiResponse>(null as any);
@@ -9075,7 +9078,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
@@ -9116,7 +9119,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -9157,7 +9160,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -9194,7 +9197,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -9232,7 +9235,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestValidationResultApiResponse>(null as any);
@@ -9274,7 +9277,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -9308,7 +9311,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -9342,7 +9345,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -9376,7 +9379,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -9429,7 +9432,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -9482,7 +9485,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -9521,7 +9524,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoListApiResponse>(null as any);
@@ -9574,7 +9577,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -9627,7 +9630,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
@@ -9665,7 +9668,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -9727,7 +9730,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMListResponseDtoPagedResponseApiResponse>(null as any);
@@ -9765,7 +9768,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
@@ -9802,7 +9805,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMDetailResponseDtoApiResponse>(null as any);
@@ -9843,7 +9846,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
@@ -9880,7 +9883,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -9917,7 +9920,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
@@ -9973,7 +9976,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMListResponseDtoPagedResponseApiResponse>(null as any);
@@ -10030,7 +10033,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMListResponseDtoPagedResponseApiResponse>(null as any);
@@ -10071,7 +10074,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
@@ -10112,7 +10115,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
@@ -10149,7 +10152,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMStatisticsResponseDtoApiResponse>(null as any);
@@ -10186,7 +10189,7 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMHazardSummaryResponseDtoApiResponse>(null as any);
@@ -10248,7 +10251,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10285,7 +10288,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDetailDtoApiResponse>(null as any);
@@ -10326,7 +10329,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDtoApiResponse>(null as any);
@@ -10363,7 +10366,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -10407,7 +10410,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDtoApiResponse>(null as any);
@@ -10466,7 +10469,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10513,7 +10516,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoListApiResponse>(null as any);
@@ -10561,7 +10564,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -10620,7 +10623,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10677,7 +10680,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10733,7 +10736,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10789,7 +10792,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10845,7 +10848,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10901,7 +10904,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -10942,7 +10945,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -10979,7 +10982,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11016,7 +11019,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11057,7 +11060,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11094,7 +11097,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentBundleDtoApiResponse>(null as any);
@@ -11135,7 +11138,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11176,7 +11179,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11213,7 +11216,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentAssetDtoListApiResponse>(null as any);
@@ -11250,7 +11253,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentConfigDtoApiResponse>(null as any);
@@ -11291,7 +11294,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11328,7 +11331,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentSchemaDtoApiResponse>(null as any);
@@ -11369,7 +11372,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11410,7 +11413,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11447,7 +11450,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentUsageDtoListApiResponse>(null as any);
@@ -11487,7 +11490,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramComponentMappingDtoListApiResponse>(null as any);
@@ -11531,7 +11534,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11574,7 +11577,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11614,7 +11617,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentRecommendationDtoListApiResponse>(null as any);
@@ -11652,7 +11655,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoListApiResponse>(null as any);
@@ -11701,7 +11704,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11745,7 +11748,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentValidationResultApiResponse>(null as any);
@@ -11779,7 +11782,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -11813,7 +11816,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentCategoryDtoListApiResponse>(null as any);
@@ -11854,7 +11857,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11895,7 +11898,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -11948,7 +11951,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
@@ -11995,7 +11998,7 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDtoApiResponse>(null as any);
@@ -12057,7 +12060,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
@@ -12095,7 +12098,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12132,7 +12135,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDetailDtoApiResponse>(null as any);
@@ -12173,7 +12176,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12210,7 +12213,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -12244,7 +12247,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserProfileDtoApiResponse>(null as any);
@@ -12282,7 +12285,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12316,7 +12319,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -12373,7 +12376,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
@@ -12429,7 +12432,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
@@ -12482,7 +12485,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
@@ -12523,7 +12526,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12564,7 +12567,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12601,7 +12604,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -12642,7 +12645,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12679,7 +12682,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -12716,7 +12719,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -12753,7 +12756,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -12790,7 +12793,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12827,7 +12830,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
@@ -12861,7 +12864,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
@@ -12895,7 +12898,7 @@ export class UsersClient implements interfaces.IUsersClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringStringListDictionaryApiResponse>(null as any);
@@ -12957,7 +12960,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -12996,7 +12999,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
@@ -13033,7 +13036,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDetailDtoApiResponse>(null as any);
@@ -13075,7 +13078,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
@@ -13113,7 +13116,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -13170,7 +13173,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -13226,7 +13229,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -13263,7 +13266,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
@@ -13303,7 +13306,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
@@ -13340,7 +13343,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.Int32ApiResponse>(null as any);
@@ -13396,7 +13399,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -13452,7 +13455,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -13505,7 +13508,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -13561,7 +13564,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
@@ -13602,7 +13605,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -13643,7 +13646,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionReviewDtoApiResponse>(null as any);
@@ -13684,7 +13687,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionReviewDtoApiResponse>(null as any);
@@ -13725,7 +13728,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionReviewDtoApiResponse>(null as any);
@@ -13768,7 +13771,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
@@ -13810,7 +13813,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -13850,7 +13853,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDiffDtoApiResponse>(null as any);
@@ -13887,7 +13890,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDiffDtoApiResponse>(null as any);
@@ -13924,7 +13927,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionChangeDtoListApiResponse>(null as any);
@@ -13965,7 +13968,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDeploymentDtoApiResponse>(null as any);
@@ -14005,7 +14008,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -14045,7 +14048,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
@@ -14082,7 +14085,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionStatsDtoApiResponse>(null as any);
@@ -14124,7 +14127,7 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionActivityDtoListApiResponse>(null as any);

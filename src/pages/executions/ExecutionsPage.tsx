@@ -149,6 +149,7 @@ const ExecutionsPage: React.FC = () => {
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
       } else {
+        
         setError(response.message || 'Failed to load executions');
       }
     } catch (error) {
@@ -219,7 +220,7 @@ const ExecutionsPage: React.FC = () => {
 
       if (response.success && response.data?.items) {
         const programOptions = response.data.items
-          .filter(program => program.status === 'active') // Only show active programs
+          // .filter(program => program.status === 'active') // Only show active programs
           .map(program => ({
             id: program.id || '',
             name: program.name || 'Untitled Program',
@@ -244,7 +245,6 @@ const ExecutionsPage: React.FC = () => {
 
     try {
       setIsExecuting(true);
-      
       let parameters: any = {};
       if (quickExecutionForm.parameters.trim()) {
         try {
@@ -253,7 +253,7 @@ const ExecutionsPage: React.FC = () => {
           throw new Error('Invalid JSON in parameters field');
         }
       }
-
+      
       const response = await api.executions.executions_ExecuteProgram(
         quickExecutionForm.programId,
         new ProgramExecutionRequestDto({
@@ -294,6 +294,7 @@ const ExecutionsPage: React.FC = () => {
       setError(error instanceof Error ? error.message : 'Failed to start execution');
     } finally {
       setIsExecuting(false);
+      setShowQuickExecution(false);
     }
   };
 

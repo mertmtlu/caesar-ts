@@ -1,10 +1,11 @@
 // src/pages/projects/ProjectsPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import { ConfirmationModal } from '@/components/common/Modal';
 import { ProgramSearchDto } from '@/api';
 
 // Interfaces
@@ -14,16 +15,19 @@ interface ProjectListItem {
   description?: string;
   language: string;
   type: string;
-  creator: string;
   createdAt: Date;
   status: string;
-  currentVersion?: string;
-  deploymentStatus?: string;
-  hasVersions: boolean; // We'll determine this
   versionCount: number;
+  hasVersions: boolean;
+  currentVersion?: string;
 }
 
-// Sort options
+interface ProjectToDelete {
+  id: string;
+  name: string;
+}
+
+// Sort options configuration
 interface SortOption {
   label: string;
   field: string;
@@ -31,16 +35,12 @@ interface SortOption {
 }
 
 const SORT_OPTIONS: SortOption[] = [
-  { label: 'Recently Created', field: 'CreatedDate', direction: SortDirection._1 },
+  { label: 'Newest First', field: 'CreatedDate', direction: SortDirection._1 },
   { label: 'Oldest First', field: 'CreatedDate', direction: SortDirection._0 },
-  { label: 'Recently Updated', field: 'UpdatedDate', direction: SortDirection._1 },
   { label: 'Name A-Z', field: 'Name', direction: SortDirection._0 },
   { label: 'Name Z-A', field: 'Name', direction: SortDirection._1 },
+  { label: 'Recently Updated', field: 'UpdatedDate', direction: SortDirection._1 },
 ];
-
-const getSortOptionKey = (field: string, direction: SortDirection): string => {
-  return `${field}-${direction}`;
-};
 
 const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,6 +49,7 @@ const ProjectsPage: React.FC = () => {
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,23 +59,24 @@ const ProjectsPage: React.FC = () => {
   
   // Filtering and search
   const [searchTerm, setSearchTerm] = useState('');
-  const [languageFilter, setLanguageFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [languageFilter, setLanguageFilter] = useState('');
   const [sortField, setSortField] = useState('CreatedDate');
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection._1);
   
-  // Available filter options
-  const [availableLanguages, setAvailableLanguages] = useState<string[]>([]);
-  const [availableStatuses] = useState(['draft', 'active', 'archived', 'deprecated']);
+  // Delete modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<ProjectToDelete | null>(null);
 
+  // Load projects
   useEffect(() => {
     loadProjects();
-  }, [currentPage, pageSize, sortField, sortDirection, languageFilter, statusFilter]);
+  }, [currentPage, pageSize, sortField, sortDirection, statusFilter, languageFilter]);
 
+  // Load projects with search when search term changes
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
-      if (searchTerm || currentPage !== 1) {
-        setCurrentPage(1);
+      if (searchTerm) {
         searchProjects();
       } else {
         loadProjects();
@@ -97,53 +99,39 @@ const ProjectsPage: React.FC = () => {
       );
 
       if (response.success && response.data) {
-        const projectItems = await Promise.all(
-          (response.data.items || []).map(async (project) => {
-            // Check if project has versions
-            let hasVersions = false;
-            let versionCount = 0;
-            
-            try {
-              const versionsResponse = await api.versions.versions_GetByProgram(
-                project.id || '', 
-                1, 
-                1, 
-                'CreatedDate', 
-                SortDirection._1
-              );
-              
-              if (versionsResponse.success && versionsResponse.data) {
-                versionCount = versionsResponse.data.totalCount || 0;
-                hasVersions = versionCount > 0;
-              }
-            } catch (error) {
-              console.warn(`Failed to check versions for project ${project.id}:`, error);
-            }
+        const projectItems = response.data.items?.map(project => ({
+          id: project.id || '',
+          name: project.name || 'Untitled Project',
+          description: project.description,
+          language: project.language || 'Unknown',
+          type: project.type || 'Unknown',
+          createdAt: project.createdAt || new Date(),
+          status: project.status || 'unknown',
+          versionCount: 0, // Will be populated by version check
+          hasVersions: false, // Will be populated by version check
+          currentVersion: project.currentVersion
+        })) || [];
 
-            return {
-              id: project.id || '',
-              name: project.name || 'Untitled Project',
-              description: project.description,
-              language: project.language || 'Unknown',
-              type: project.type || 'Unknown',
-              creator: project.creator || 'Unknown',
-              createdAt: project.createdAt || new Date(),
-              status: project.status || 'draft',
-              currentVersion: project.currentVersion,
-              deploymentStatus: project.deploymentStatus,
-              hasVersions,
-              versionCount
-            };
+        // Check versions for each project
+        const projectsWithVersions = await Promise.all(
+          projectItems.map(async (project) => {
+            try {
+              const versionsResponse = await api.versions.versions_GetByProgram(project.id, 1, 1, 'CreatedDate', SortDirection._1);
+              const versionCount = versionsResponse.data?.totalCount || 0;
+              return {
+                ...project,
+                versionCount,
+                hasVersions: versionCount > 0
+              };
+            } catch {
+              return { ...project, versionCount: 0, hasVersions: false };
+            }
           })
         );
 
-        setProjects(projectItems);
+        setProjects(projectsWithVersions);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
-
-        // Extract unique languages for filter
-        const languages = [...new Set(projectItems.map(p => p.language))].filter(Boolean);
-        setAvailableLanguages(languages);
       } else {
         setError(response.message || 'Failed to load projects');
       }
@@ -160,59 +148,31 @@ const ProjectsPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const searchDto = new ProgramSearchDto({
-        name: searchTerm || undefined,
-        language: languageFilter || undefined,
-        status: statusFilter || undefined
-      });
-
       const response = await api.programs.programs_Search(
         currentPage,
         pageSize,
         sortField,
         sortDirection,
-        searchDto
+        new ProgramSearchDto({
+          name: searchTerm,
+          language: languageFilter || undefined,
+          status: statusFilter || undefined
+        })
       );
 
       if (response.success && response.data) {
-        const projectItems = await Promise.all(
-          (response.data.items || []).map(async (project) => {
-            let hasVersions = false;
-            let versionCount = 0;
-            
-            try {
-              const versionsResponse = await api.versions.versions_GetByProgram(
-                project.id || '', 
-                1, 
-                1, 
-                'CreatedDate', 
-                SortDirection._1
-              );
-              
-              if (versionsResponse.success && versionsResponse.data) {
-                versionCount = versionsResponse.data.totalCount || 0;
-                hasVersions = versionCount > 0;
-              }
-            } catch (error) {
-              console.warn(`Failed to check versions for project ${project.id}:`, error);
-            }
-
-            return {
-              id: project.id || '',
-              name: project.name || 'Untitled Project',
-              description: project.description,
-              language: project.language || 'Unknown',
-              type: project.type || 'Unknown',
-              creator: project.creator || 'Unknown',
-              createdAt: project.createdAt || new Date(),
-              status: project.status || 'draft',
-              currentVersion: project.currentVersion,
-              deploymentStatus: project.deploymentStatus,
-              hasVersions,
-              versionCount
-            };
-          })
-        );
+        const projectItems = response.data.items?.map(project => ({
+          id: project.id || '',
+          name: project.name || 'Untitled Project',
+          description: project.description,
+          language: project.language || 'Unknown',
+          type: project.type || 'Unknown',
+          createdAt: project.createdAt || new Date(),
+          status: project.status || 'unknown',
+          versionCount: 0,
+          hasVersions: false,
+          currentVersion: project.currentVersion
+        })) || [];
 
         setProjects(projectItems);
         setTotalCount(response.data.totalCount || 0);
@@ -223,6 +183,57 @@ const ProjectsPage: React.FC = () => {
       setError('Failed to search projects. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteProject = (projectId: string, projectName: string) => {
+    setProjectToDelete({ id: projectId, name: projectName });
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete) return;
+    
+    try {
+      setIsDeleting(true);
+      api.files.files_DeleteProgramFiles(projectToDelete.id);
+      const response = await api.programs.programs_Delete(projectToDelete.id);
+      
+      if (response.success) {
+        // Remove from projects list
+        setProjects(prev => prev.filter(p => p.id !== projectToDelete.id));
+        setTotalCount(prev => prev - 1);
+
+        
+        // Close modal and reset state
+        setShowDeleteModal(false);
+        setProjectToDelete(null);
+        
+        // If this was the last item on the current page and we're not on page 1, go to previous page
+        if (projects.length === 1 && currentPage > 1) {
+          setCurrentPage(prev => prev - 1);
+        } else {
+          // Reload the current page to get fresh data
+          loadProjects();
+        }
+      } else {
+        setError(response.message || 'Failed to delete project');
+      }
+    } catch (error) {
+      console.error('Failed to delete project:', error);
+      setError('Failed to delete project. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleExecuteProject = async (projectId: string) => {
+    try {
+      // Navigate to executions page with quick execution for this project
+      navigate(`/executions?execute=${projectId}`);
+    } catch (error) {
+      console.error('Failed to execute project:', error);
+      setError('Failed to execute project. Please try again.');
     }
   };
 
@@ -237,34 +248,7 @@ const ProjectsPage: React.FC = () => {
     if (statusLower === 'archived') {
       return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
     }
-    if (statusLower === 'deprecated') {
-      return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
-    }
     return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30';
-  };
-
-  const getLanguageIcon = (language: string): React.ReactNode => {
-    const lang = language.toLowerCase();
-    const iconClass = "w-5 h-5";
-    
-    if (lang.includes('javascript') || lang.includes('js')) {
-      return <div className={`${iconClass} bg-yellow-400 rounded`}></div>;
-    }
-    if (lang.includes('python')) {
-      return <div className={`${iconClass} bg-blue-500 rounded`}></div>;
-    }
-    if (lang.includes('java')) {
-      return <div className={`${iconClass} bg-red-500 rounded`}></div>;
-    }
-    if (lang.includes('c#') || lang.includes('csharp')) {
-      return <div className={`${iconClass} bg-purple-500 rounded`}></div>;
-    }
-    
-    return (
-      <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-      </svg>
-    );
   };
 
   const formatRelativeTime = (date: Date): string => {
@@ -274,17 +258,47 @@ const ProjectsPage: React.FC = () => {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffMinutes = Math.floor(diffMs / (1000 * 60));
 
-    if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    if (diffMinutes > 0) return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+    if (diffDays > 0) return `${diffDays}d ago`;
+    if (diffHours > 0) return `${diffHours}h ago`;
+    if (diffMinutes > 0) return `${diffMinutes}m ago`;
     return 'Just now';
+  };
+
+  const getLanguageIcon = (language: string): React.ReactNode => {
+    const lang = language.toLowerCase();
+    const iconClass = "w-6 h-6 rounded";
+    
+    if (lang.includes('javascript') || lang.includes('js')) {
+      return <div className={`${iconClass} bg-yellow-400 flex items-center justify-center text-black font-bold text-xs`}>JS</div>;
+    }
+    if (lang.includes('python')) {
+      return <div className={`${iconClass} bg-blue-500 flex items-center justify-center text-white font-bold text-xs`}>PY</div>;
+    }
+    if (lang.includes('java')) {
+      return <div className={`${iconClass} bg-red-500 flex items-center justify-center text-white font-bold text-xs`}>JA</div>;
+    }
+    if (lang.includes('c#') || lang.includes('csharp')) {
+      return <div className={`${iconClass} bg-purple-500 flex items-center justify-center text-white font-bold text-xs`}>C#</div>;
+    }
+    
+    return (
+      <div className={`${iconClass} bg-gray-400 flex items-center justify-center`}>
+        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+      </div>
+    );
+  };
+
+  const getSortOptionKey = (field: string, direction: SortDirection): string => {
+    return `${field}-${direction}`;
   };
 
   if (isLoading && projects.length === 0) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
           <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -305,7 +319,7 @@ const ProjectsPage: React.FC = () => {
             Projects
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage your programming projects and code repositories
+            Manage and collaborate on your programming projects
           </p>
         </div>
         
@@ -365,23 +379,7 @@ const ProjectsPage: React.FC = () => {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Language
-            </label>
-            <select
-              value={languageFilter}
-              onChange={(e) => setLanguageFilter(e.target.value)}
-              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="">All Languages</option>
-              {availableLanguages.map((lang) => (
-                <option key={lang} value={lang}>{lang}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Status
+              Status Filter
             </label>
             <select
               value={statusFilter}
@@ -389,11 +387,28 @@ const ProjectsPage: React.FC = () => {
               className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">All Statuses</option>
-              {availableStatuses.map((status) => (
-                <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </option>
-              ))}
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Language Filter
+            </label>
+            <select
+              value={languageFilter}
+              onChange={(e) => setLanguageFilter(e.target.value)}
+              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="">All Languages</option>
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="csharp">C#</option>
+              <option value="go">Go</option>
+              <option value="rust">Rust</option>
             </select>
           </div>
           
@@ -464,44 +479,83 @@ const ProjectsPage: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-4 flex space-x-2">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => navigate(`/projects/${project.id}`)}
-                  className="flex-1"
-                >
-                  View Details
-                </Button>
-                
-                {project.hasVersions ? (
+              <div className="mt-4 space-y-2">
+                {/* Primary Actions Row */}
+                <div className="flex space-x-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => navigate(`/projects/${project.id}`)}
+                    className="flex-1"
+                  >
+                    View Details
+                  </Button>
+                  
+                  {project.hasVersions ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/editor/${project.id}`)}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                      }
+                    >
+                      Code
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled
+                      title="Create a version first to enable code editing"
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                      }
+                    >
+                      No Code
+                    </Button>
+                  )}
+                </div>
+
+                {/* Secondary Actions Row */}
+                <div className="flex space-x-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/editor/${project.id}`)}
+                    onClick={() => handleExecuteProject(project.id)}
+                    className="flex-1"
                     leftIcon={
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
                       </svg>
                     }
+                    disabled={!project.hasVersions}
+                    title={!project.hasVersions ? "No versions available to execute" : "Execute project"}
                   >
-                    Code
+                    Execute
                   </Button>
-                ) : (
+                  
                   <Button
-                    variant="ghost"
+                    variant="danger"
                     size="sm"
-                    disabled
-                    title="Create a version first to enable code editing"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteProject(project.id, project.name);
+                    }}
                     leftIcon={
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     }
+                    title={`Delete ${project.name}`}
                   >
-                    No Code
+                    Delete
                   </Button>
-                )}
+                </div>
               </div>
 
               {!project.hasVersions && (
@@ -522,9 +576,9 @@ const ProjectsPage: React.FC = () => {
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No projects found</h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {searchTerm || languageFilter || statusFilter ? 'Try adjusting your search criteria.' : 'Get started by creating your first project.'}
+            {searchTerm || statusFilter || languageFilter ? 'Try adjusting your search criteria.' : 'Get started by creating your first project.'}
           </p>
-          {!searchTerm && !languageFilter && !statusFilter && (
+          {!searchTerm && !statusFilter && !languageFilter && (
             <div className="mt-6">
               <Button
                 variant="primary"
@@ -606,6 +660,26 @@ const ProjectsPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setProjectToDelete(null);
+        }}
+        onConfirm={confirmDeleteProject}
+        title="Delete Project"
+        message={
+          projectToDelete 
+            ? `Are you sure you want to delete "${projectToDelete.name}"? This action cannot be undone and will permanently delete all project files, versions, and execution history.`
+            : 'Are you sure you want to delete this project?'
+        }
+        confirmText="Delete Project"
+        cancelText="Cancel"
+        variant="danger"
+        loading={isDeleting}
+      />
     </div>
   );
 };
