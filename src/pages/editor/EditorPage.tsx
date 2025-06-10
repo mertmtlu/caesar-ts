@@ -7,7 +7,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
 import * as monaco from 'monaco-editor';
-import { VersionFileCreateDto, VersionFileUpdateDto } from '@/api';
+import { VersionFileCreateDto, VersionFileUpdateDto, VersionCommitDto, VersionFileChangeDto, VersionUpdateDto } from '@/api';
 
 // Monaco Editor (lazy loaded)
 let MonacoEditor: React.ComponentType<{
@@ -58,6 +58,8 @@ interface VersionInfo {
 const EditorPage: React.FC = () => {
   const { projectId, versionId } = useParams<{ projectId?: string; versionId?: string }>();
   const navigate = useNavigate();
+  const searchParams = new URLSearchParams(window.location.search);
+  const mode = searchParams.get('mode') || 'edit'; // 'view' or 'edit'
 
   // State management
   const [project, setProject] = useState<ProjectInfo | null>(null);
@@ -82,9 +84,24 @@ const EditorPage: React.FC = () => {
   const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
+  const [showCommitModal, setShowCommitModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [newFileName, setNewFileName] = useState('');
   const [newFolderName, setNewFolderName] = useState('');
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
+  
+  // Upload state
+  const [uploadingFiles, setUploadingFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  
+  // Commit state
+  const [commitMessage, setCommitMessage] = useState('');
+  const [isCommitting, setIsCommitting] = useState(false);
+  
+  // Mode state
+  const isViewMode = mode === 'view';
+  const isEditingExistingVersion = mode === 'edit' && versionId;
   
   // Refs
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -421,6 +438,248 @@ const EditorPage: React.FC = () => {
     }
   };
 
+  const commitChanges = async () => {
+    if (!project || !commitMessage.trim()) {
+      setError('Please enter a commit message.');
+      return;
+    }
+
+    try {
+      setIsCommitting(true);
+      setError(null);
+
+      // Get all modified files
+      const modifiedFiles = openFiles.filter(f => f.isModified);
+      const newFiles = openFiles.filter(f => f.isNew);
+
+      // Prepare changes for commit
+      const changes: VersionFileChangeDto[] = [
+        ...modifiedFiles.map(file => new VersionFileChangeDto({
+          path: file.path,
+          action: 'modify',
+          content: btoa(file.content),
+          contentType: 'text/plain'
+        })),
+        ...newFiles.map(file => new VersionFileChangeDto({
+          path: file.path,
+          action: 'add',
+          content: btoa(file.content),
+          contentType: 'text/plain'
+        }))
+      ];
+
+      // Create commit DTO
+      const commitDto = new VersionCommitDto({
+        commitMessage: commitMessage.trim(),
+        changes: changes
+      });
+
+      // Commit the changes to create a new version
+      const response = await api.versions.versions_CommitChanges(project.id, commitDto);
+
+      if (response.success && response.data) {
+        // Navigate to the new version
+        navigate(`/editor/${project.id}/${response.data.id}?mode=edit`, { replace: true });
+        setShowCommitModal(false);
+        setCommitMessage('');
+        
+        // Mark all files as saved
+        setOpenFiles(prev => prev.map(f => ({
+          ...f,
+          isModified: false,
+          isNew: false,
+          originalContent: f.content
+        })));
+      } else {
+        setError(response.message || 'Failed to commit changes');
+      }
+    } catch (error) {
+      console.error('Failed to commit changes:', error);
+      setError('Failed to commit changes. Please try again.');
+    } finally {
+      setIsCommitting(false);
+    }
+  };
+
+  const updateCommitMessage = async () => {
+    if (!version || !commitMessage.trim()) {
+      setError('Please enter a commit message.');
+      return;
+    }
+
+    try {
+      setIsCommitting(true);
+      setError(null);
+
+      const updateDto = new VersionUpdateDto({
+        commitMessage: commitMessage.trim()
+      });
+
+      const response = await api.versions.versions_Update(version.id, updateDto);
+
+      if (response.success && response.data) {
+        // Update local version state
+        setVersion(prev => prev ? { ...prev, commitMessage: commitMessage.trim() } : null);
+        setShowCommitModal(false);
+        setCommitMessage('');
+      } else {
+        setError(response.message || 'Failed to update commit message');
+      }
+    } catch (error) {
+      console.error('Failed to update commit message:', error);
+      setError('Failed to update commit message. Please try again.');
+    } finally {
+      setIsCommitting(false);
+    }
+  };
+
+  const handleFileUpload = async (files: FileList | File[]) => {
+    if (!project || !version) {
+      setError('Project or version information is missing. Please try refreshing the page.');
+      return;
+    }
+
+    const fileArray = Array.from(files);
+    
+    // Check for very large files and warn user
+    const maxSize = 50 * 1024 * 1024; // 50MB limit
+    const largeFiles = fileArray.filter(file => file.size > maxSize);
+    
+    if (largeFiles.length > 0) {
+      const fileNames = largeFiles.map(f => f.name).join(', ');
+      setError(`Files too large (>50MB): ${fileNames}. Please upload smaller files.`);
+      return;
+    }
+    
+    setUploadingFiles(fileArray);
+
+    try {
+      setIsUploading(true);
+      setError(null);
+
+      for (const file of fileArray) {
+        // Determine file path based on selected directory
+        const filePath = selectedTreeItem && selectedTreeItem !== '/' 
+          ? `${selectedTreeItem}/${file.name}`
+          : file.name;
+
+        // Check if file already exists
+        const existsInOpenFiles = openFiles.some(f => f.path === filePath);
+        const existsInFileTree = fileTree.some(item => findFileInTree(item, filePath));
+
+        if (existsInOpenFiles || existsInFileTree) {
+          // If file exists, we'll overwrite it
+          console.log(`File ${filePath} already exists, will be overwritten`);
+        }
+
+        // Read file content
+        const content = await readFileAsText(file);
+        const language = detectLanguage(filePath, project.language);
+
+        // Create editor file
+        const newFile: EditorFile = {
+          path: filePath,
+          content,
+          language,
+          isModified: true,
+          isNew: true,
+          originalContent: ''
+        };
+
+        // Add to open files if not already open
+        setOpenFiles(prev => {
+          const filtered = prev.filter(f => f.path !== filePath);
+          return [...filtered, newFile];
+        });
+
+        // Set as active file if it's the first uploaded file
+        if (fileArray.indexOf(file) === 0) {
+          setActiveFile(filePath);
+        }
+      }
+      
+      setShowUploadModal(false);
+      setUploadingFiles([]);
+    } catch (error) {
+      console.error('Failed to upload files:', error);
+      setError('Failed to upload files. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const readFileAsText = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (typeof result === 'string') {
+          resolve(result);
+        } else if (result instanceof ArrayBuffer) {
+          // For binary files, convert to base64 efficiently
+          try {
+            const base64String = arrayBufferToBase64(result);
+            resolve(base64String);
+          } catch (error) {
+            reject(new Error('Failed to convert binary file to base64'));
+          }
+        } else {
+          reject(new Error('Unexpected file format'));
+        }
+      };
+      
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      
+      // Check if file should be read as text
+      const isTextFile = file.type.startsWith('text/') || 
+                        file.type === 'application/json' || 
+                        file.type === 'application/javascript' ||
+                        file.type === 'application/typescript' ||
+                        file.type === '' || 
+                        file.name.match(/\.(js|jsx|ts|tsx|html|css|scss|sass|less|json|md|txt|xml|yml|yaml|svg|csv|log|ini|conf|cfg|env|gitignore|dockerfile|makefile)$/i);
+      
+      if (isTextFile) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
+    });
+  };
+
+  const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000; // 32KB chunks to avoid call stack overflow
+    
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    }
+    
+    return btoa(binary);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFileUpload(e.dataTransfer.files);
+    }
+  };
+
  const createNewFile = async () => {
     // Add validation with proper error messages
     if (!newFileName.trim()) {
@@ -654,34 +913,109 @@ const EditorPage: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-3">
-            {openFiles.some(f => f.isModified) && (
+            {isViewMode ? (
+              // View mode - only show edit version button
               <Button
                 variant="primary"
                 size="sm"
-                onClick={saveAllFiles}
-                loading={isSaving}
+                onClick={() => navigate(`/editor/${project?.id}/${version?.id}?mode=edit`)}
                 leftIcon={
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                   </svg>
                 }
               >
-                Save All
+                Edit Version
               </Button>
+            ) : (
+              // Edit mode
+              <>
+                {/* Save button for existing versions */}
+                {isEditingExistingVersion && openFiles.some(f => f.isModified) && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={saveAllFiles}
+                    loading={isSaving}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    }
+                  >
+                    Save All
+                  </Button>
+                )}
+
+                {/* Commit Changes button for editing existing versions */}
+                {isEditingExistingVersion && openFiles.some(f => f.isModified || f.isNew) && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => {
+                      setCommitMessage('');
+                      setShowCommitModal(true);
+                    }}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    }
+                  >
+                    Commit Changes
+                  </Button>
+                )}
+
+                {/* Edit Commit Message button for non-approved versions */}
+                {version && version.status === 'pending' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setCommitMessage(version.commitMessage || '');
+                      setShowCommitModal(true);
+                    }}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    }
+                  >
+                    Edit Commit Message
+                  </Button>
+                )}
+                
+                {!isViewMode && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowNewFileModal(true)}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      }
+                    >
+                      New File
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowUploadModal(true)}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                      }
+                    >
+                      Upload Files
+                    </Button>
+                  </>
+                )}
+              </>
             )}
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowNewFileModal(true)}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-              }
-            >
-              New File
-            </Button>
           </div>
         </div>
       </div>
@@ -843,6 +1177,7 @@ const EditorPage: React.FC = () => {
                   automaticLayout: true,
                   scrollBeyondLastLine: false,
                   renderWhitespace: 'selection',
+                  readOnly: isViewMode,
                   tabSize: 2,
                   insertSpaces: true
                 }}
@@ -971,6 +1306,173 @@ const EditorPage: React.FC = () => {
         confirmText="Close Without Saving"
         variant="warning"
       />
+
+      {/* Commit Changes Modal */}
+      <Modal
+        isOpen={showCommitModal}
+        onClose={() => {
+          setShowCommitModal(false);
+          setCommitMessage('');
+        }}
+        title={isEditingExistingVersion && !openFiles.some(f => f.isModified || f.isNew) ? "Edit Commit Message" : "Commit Changes"}
+        size="md"
+        footer={
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCommitModal(false);
+                setCommitMessage('');
+              }}
+              disabled={isCommitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={isEditingExistingVersion && !openFiles.some(f => f.isModified || f.isNew) ? updateCommitMessage : commitChanges}
+              loading={isCommitting}
+              disabled={!commitMessage.trim()}
+            >
+              {isEditingExistingVersion && !openFiles.some(f => f.isModified || f.isNew) ? "Update Message" : "Commit Changes"}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <Input
+            label="Commit Message"
+            placeholder="Describe the changes you made..."
+            value={commitMessage}
+            onChange={(e) => setCommitMessage(e.target.value)}
+            required
+            autoFocus
+          />
+          
+          {openFiles.some(f => f.isModified || f.isNew) && (
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="font-medium mb-2">Files to be committed:</div>
+              <ul className="space-y-1">
+                {openFiles.filter(f => f.isModified || f.isNew).map(file => (
+                  <li key={file.path} className="font-mono text-xs">
+                    <span className={`inline-block w-4 ${file.isNew ? 'text-green-600' : 'text-blue-600'}`}>
+                      {file.isNew ? '+' : 'M'}
+                    </span>
+                    {file.path}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* Upload Files Modal */}
+      <Modal
+        isOpen={showUploadModal}
+        onClose={() => {
+          setShowUploadModal(false);
+          setUploadingFiles([]);
+          setDragActive(false);
+        }}
+        title="Upload Files"
+        size="md"
+        footer={
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowUploadModal(false);
+                setUploadingFiles([]);
+                setDragActive(false);
+              }}
+              disabled={isUploading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.multiple = true;
+                input.onchange = (e) => {
+                  const files = (e.target as HTMLInputElement).files;
+                  if (files) {
+                    handleFileUpload(files);
+                  }
+                };
+                input.click();
+              }}
+              loading={isUploading}
+              disabled={isUploading}
+            >
+              Select Files
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          {/* Drag and Drop Area */}
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+              dragActive 
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Drop files here or click to select
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Supports all file types. Multiple files can be uploaded at once.
+            </p>
+            {selectedTreeItem && selectedTreeItem !== '/' && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                Files will be uploaded to: <span className="font-mono">{selectedTreeItem}/</span>
+              </p>
+            )}
+          </div>
+
+          {/* Upload Progress */}
+          {uploadingFiles.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Uploading {uploadingFiles.length} file(s)...
+              </div>
+              {uploadingFiles.map((file, index) => (
+                <div key={index} className="flex items-center space-x-2 text-sm">
+                  <div className="flex-1 truncate">
+                    <span className="font-mono text-xs">{file.name}</span>
+                    <span className="text-gray-500 dark:text-gray-400 ml-2">
+                      ({(file.size / 1024).toFixed(1)} KB)
+                    </span>
+                  </div>
+                  {isUploading && (
+                    <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* File Type Support Info */}
+          <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+            <div className="font-medium">File upload limits:</div>
+            <div>• Maximum file size: 50MB per file</div>
+            <div>• All file types supported</div>
+            <div>• Text files: .js, .jsx, .ts, .tsx, .html, .css, .scss, .json, .md, .txt, .xml, .yml, .yaml</div>
+            <div>• Binary files: Images, documents, and other formats (will be base64 encoded)</div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

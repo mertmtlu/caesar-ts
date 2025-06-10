@@ -6,7 +6,7 @@ import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
 import Input from '@/components/common/Input';
-import { VersionCommitDto, VersionFileCreateDto, VersionFileChangeDto, VersionReviewSubmissionDto } from '@/api';
+import { VersionCreateDto, VersionFileCreateDto, VersionReviewSubmissionDto } from '@/api';
 
 // Interfaces
 interface ProjectDetail {
@@ -47,10 +47,6 @@ interface VersionDetail {
   isCurrent: boolean;
 }
 
-interface CreateVersionForm {
-  commitMessage: string;
-  createSampleFiles: boolean;
-}
 
 interface ReviewForm {
   comments: string;
@@ -69,20 +65,13 @@ const ProjectDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   
   // Modals
-  const [showCreateVersionModal, setShowCreateVersionModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [versionToDelete, setVersionToDelete] = useState<string | null>(null);
   const [versionToReview, setVersionToReview] = useState<VersionDetail | null>(null);
-  const [isCreatingVersion, setIsCreatingVersion] = useState(false);
   const [isDeletingVersion, setIsDeletingVersion] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   
-  // Create version form
-  const [createVersionForm, setCreateVersionForm] = useState<CreateVersionForm>({
-    commitMessage: '',
-    createSampleFiles: true
-  });
 
   // Review form
   const [reviewForm, setReviewForm] = useState<ReviewForm>({
@@ -182,58 +171,42 @@ const ProjectDetailPage: React.FC = () => {
     }
   };
 
-  const createVersion = async () => {
-    if (!projectId || !createVersionForm.commitMessage.trim()) {
-      setError('Please enter a commit message.');
+  const createNewVersion = async () => {
+    if (!projectId || !project) {
+      setError('Project information is missing. Please try refreshing the page.');
       return;
     }
 
     try {
-      setIsCreatingVersion(true);
       setError(null);
 
       // Prepare files for the version if this is the first version
       let files: VersionFileCreateDto[] = [];
       
-      if (versions.length === 0 && createVersionForm.createSampleFiles && project) {
+      if (versions.length === 0) {
         // Create sample files based on project language
-        files = createSampleFiles(project.language, project.type);
+        // files = createSampleFiles(project.language, project.type);
       }
 
-      // Create version with commit
-      const commitDto = new VersionCommitDto({
-        commitMessage: createVersionForm.commitMessage.trim(),
-        changes: files.map(file => new VersionFileChangeDto({
-          path: file.path || '',
-          action: 'add',
-          content: btoa(file.content),
-          contentType: file.contentType
-        }))
+      // Create version using create endpoint with empty commit message
+      const createDto = new VersionCreateDto({
+        programId: projectId,
+        commitMessage: 'Initial version',
+        files: files
       });
 
-      console.log('Creating version with commit:', commitDto);  
-
-      const response = await api.versions.versions_CommitChanges(projectId, commitDto);
+      console.log('Creating new version with DTO:', createDto);
+      const response = await api.versions.versions_Create(createDto);
 
       if (response.success && response.data) {
-        // Success - reload versions and close modal
-        await loadVersions();
-        setShowCreateVersionModal(false);
-        setCreateVersionForm({
-          commitMessage: '',
-          createSampleFiles: true
-        });
-
-        // Navigate to editor with the new version
-        navigate(`/editor/${projectId}/${response.data.id}`);
+        // Navigate directly to editor with the new version
+        navigate(`/editor/${projectId}/${response.data.id}?mode=edit`);
       } else {
         setError(response.message || 'Failed to create version');
       }
     } catch (error) {
       console.error('Failed to create version:', error);
       setError('Failed to create version. Please try again.');
-    } finally {
-      setIsCreatingVersion(false);
     }
   };
 
@@ -635,7 +608,7 @@ Add your project documentation here.`,
           ) : (
             <Button
               variant="primary"
-              onClick={() => setShowCreateVersionModal(true)}
+              onClick={createNewVersion}
               leftIcon={
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -649,7 +622,7 @@ Add your project documentation here.`,
           {versions.length > 0 && (
             <Button
               variant="outline"
-              onClick={() => setShowCreateVersionModal(true)}
+              onClick={createNewVersion}
               leftIcon={
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.414 1.414 0 01-2.828 0l-7-7A1.414 1.414 0 013 12V7a4 4 0 014-4z" />
@@ -767,7 +740,7 @@ Add your project documentation here.`,
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setShowCreateVersionModal(true)}
+                onClick={createNewVersion}
                 leftIcon={
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -849,7 +822,21 @@ Add your project documentation here.`,
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/editor/${project.id}/${version.id}`)}
+                      onClick={() => navigate(`/editor/${project.id}/${version.id}?mode=view`)}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      }
+                    >
+                      View
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/editor/${project.id}/${version.id}?mode=edit`)}
                       leftIcon={
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -907,7 +894,7 @@ Add your project documentation here.`,
               <div className="mt-6">
                 <Button
                   variant="primary"
-                  onClick={() => setShowCreateVersionModal(true)}
+                  onClick={createNewVersion}
                   leftIcon={
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -922,71 +909,6 @@ Add your project documentation here.`,
         </div>
       </div>
 
-      {/* Create Version Modal */}
-      <Modal
-        isOpen={showCreateVersionModal}
-        onClose={() => {
-          setShowCreateVersionModal(false);
-          setCreateVersionForm({ commitMessage: '', createSampleFiles: true });
-        }}
-        title={versions.length === 0 ? "Create First Version" : "Create New Version"}
-        size="md"
-        footer={
-          <>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowCreateVersionModal(false);
-                setCreateVersionForm({ commitMessage: '', createSampleFiles: true });
-              }}
-              disabled={isCreatingVersion}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={createVersion}
-              loading={isCreatingVersion}
-              disabled={!createVersionForm.commitMessage.trim()}
-            >
-              Create Version
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <Input
-            label="Commit Message"
-            placeholder="Describe what's in this version..."
-            value={createVersionForm.commitMessage}
-            onChange={(e) => setCreateVersionForm(prev => ({ ...prev, commitMessage: e.target.value }))}
-            required
-            autoFocus
-          />
-          
-          {versions.length === 0 && (
-            <div className="flex items-center">
-              <input
-                id="create-sample-files"
-                type="checkbox"
-                checked={createVersionForm.createSampleFiles}
-                onChange={(e) => setCreateVersionForm(prev => ({ ...prev, createSampleFiles: e.target.checked }))}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <label htmlFor="create-sample-files" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                Create sample files to get started
-              </label>
-            </div>
-          )}
-          
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {versions.length === 0 ? 
-              'This will be the first version of your project. You can start coding immediately after creation.' :
-              'Create a new version to save your progress and make changes.'
-            }
-          </div>
-        </div>
-      </Modal>
 
       {/* Review Modal */}
       <Modal
