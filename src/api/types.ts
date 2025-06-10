@@ -396,7 +396,6 @@ import {
     Level,
     Operation,
     PerimeterWallType, 
-    SortDirection,
     TBDY2018SoilClass,
     TDY2007SoilClass,
     TMState,
