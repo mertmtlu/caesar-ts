@@ -28,6 +28,7 @@ interface EditorFile {
   isModified: boolean;
   isNew: boolean;
   originalContent: string;
+  isBinary?: boolean;
 }
 
 interface FileTreeItem {
@@ -397,19 +398,90 @@ const EditorPage: React.FC = () => {
     try {
       setIsSaving(true);
       
+      let content: string;
+      let contentType: string;
+      
+      if (file.isBinary) {
+        // For binary files, the content is already in base64 format with data URL
+        const dataUrlMatch = file.content.match(/^data:([^;]+);base64,(.+)$/);
+        if (dataUrlMatch) {
+          content = dataUrlMatch[2]; // Extract just the base64 part
+          contentType = dataUrlMatch[1]; // Extract the MIME type
+        } else {
+          // Fallback - maybe it's already base64 without data URL prefix
+          content = file.content;
+          contentType = 'application/octet-stream';
+        }
+        
+        // Validate that content is valid base64
+        try {
+          atob(content);
+        } catch (e) {
+          throw new Error('Invalid base64 content for binary file');
+        }
+        
+        // Check content length - some servers have limits
+        if (content.length > 10 * 1024 * 1024) { // 10MB base64 limit
+          throw new Error('File too large for upload (base64 content exceeds 10MB)');
+        }
+      } else {
+        // For text files, encode as base64
+        try {
+          content = btoa(file.content);
+          contentType = file.language === 'json' ? 'application/json' : 
+                       file.language === 'html' ? 'text/html' :
+                       file.language === 'css' ? 'text/css' :
+                       file.language === 'javascript' ? 'text/javascript' :
+                       'text/plain';
+        } catch (e) {
+          throw new Error('Failed to encode text file content as base64');
+        }
+      }
+      
+      // Validate and clean the file path
+      const cleanPath = filePath.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/^\//, '');
+      
+      // Validate required fields
+      if (!cleanPath || !cleanPath.trim()) {
+        throw new Error('File path is required and cannot be empty');
+      }
+      if (!content) {
+        throw new Error('File content is required');
+      }
+      
+      // Log the data being sent for debugging
+      console.log('Saving file:', {
+        originalPath: filePath,
+        cleanPath: cleanPath,
+        contentLength: content.length,
+        contentType: contentType,
+        isBinary: file.isBinary,
+        isNew: file.isNew
+      });
+
       if (file.isNew) {
-        // Create new file
-        await api.files.files_StoreVersionFiles(project.id, version.id, [new VersionFileCreateDto({
-          path: filePath,
-          content: btoa(file.content),
-          contentType: 'text/plain'
-        })]);
+        // Create new file with proper content type
+        const fileDto = new VersionFileCreateDto({
+          path: cleanPath,
+          content: content,
+          contentType: contentType
+        });
+        
+        console.log('Creating file DTO:', fileDto);
+        console.log('JSON payload:', JSON.stringify([fileDto], null, 2));
+        
+        // Use bulk upload endpoint (confirmed working)
+        const response = await api.files.files_BulkUploadFiles(project.id, version.id, [fileDto]);
+        console.log('Upload response:', response);
       } else {
         // Update existing file
-        await api.files.files_UpdateVersionFile(project.id, version.id, filePath, new VersionFileUpdateDto({
-          content: btoa(file.content),
-          contentType: 'text/plain'
-        }));
+        const updateDto = new VersionFileUpdateDto({
+          content: content,
+          contentType: contentType
+        });
+        
+        console.log('Updating file DTO:', updateDto);
+        await api.files.files_UpdateVersionFile(project.id, version.id, filePath, updateDto);
       }
 
       // Update file state
@@ -423,9 +495,19 @@ const EditorPage: React.FC = () => {
       // Reload file tree
       await loadFiles(project.id, version.id);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save file:', error);
-      setError(`Failed to save file: ${filePath}`);
+      
+      // Extract more detailed error information
+      let errorMessage = `Failed to save file: ${filePath}`;
+      if (error?.message) {
+        errorMessage += ` - ${error.message}`;
+      }
+      if (error?.details) {
+        errorMessage += ` (${error.details})`;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -452,20 +534,68 @@ const EditorPage: React.FC = () => {
       const modifiedFiles = openFiles.filter(f => f.isModified);
       const newFiles = openFiles.filter(f => f.isNew);
 
+      // Helper function to prepare file content for commit
+      const prepareFileForCommit = (file: any) => {
+        let content: string;
+        let contentType: string;
+        
+        if (file.isBinary) {
+          // For binary files, extract base64 content and MIME type
+          const dataUrlMatch = file.content.match(/^data:([^;]+);base64,(.+)$/);
+          if (dataUrlMatch) {
+            content = dataUrlMatch[2];
+            contentType = dataUrlMatch[1];
+          } else {
+            content = file.content;
+            contentType = 'application/octet-stream';
+          }
+          
+          // Validate base64 content
+          try {
+            atob(content);
+          } catch (e) {
+            throw new Error(`Invalid base64 content for binary file: ${file.path}`);
+          }
+        } else {
+          // For text files, encode as base64
+          try {
+            content = btoa(file.content);
+            contentType = file.language === 'json' ? 'application/json' : 
+                         file.language === 'html' ? 'text/html' :
+                         file.language === 'css' ? 'text/css' :
+                         file.language === 'javascript' ? 'text/javascript' :
+                         'text/plain';
+          } catch (e) {
+            throw new Error(`Failed to encode text file content as base64: ${file.path}`);
+          }
+        }
+        
+        // Clean the file path
+        const cleanPath = file.path.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/^\//, '');
+        
+        return { content, contentType, path: cleanPath };
+      };
+
       // Prepare changes for commit
       const changes: VersionFileChangeDto[] = [
-        ...modifiedFiles.map(file => new VersionFileChangeDto({
-          path: file.path,
-          action: 'modify',
-          content: btoa(file.content),
-          contentType: 'text/plain'
-        })),
-        ...newFiles.map(file => new VersionFileChangeDto({
-          path: file.path,
-          action: 'add',
-          content: btoa(file.content),
-          contentType: 'text/plain'
-        }))
+        ...modifiedFiles.map(file => {
+          const { content, contentType, path } = prepareFileForCommit(file);
+          return new VersionFileChangeDto({
+            path: path,
+            action: 'modify',
+            content: content,
+            contentType: contentType
+          });
+        }),
+        ...newFiles.map(file => {
+          const { content, contentType, path } = prepareFileForCommit(file);
+          return new VersionFileChangeDto({
+            path: path,
+            action: 'add',
+            content: content,
+            contentType: contentType
+          });
+        })
       ];
 
       // Create commit DTO
@@ -557,44 +687,100 @@ const EditorPage: React.FC = () => {
       setIsUploading(true);
       setError(null);
 
+      // Prepare all files for bulk upload
+      const filesToUpload: VersionFileCreateDto[] = [];
+      const editorFiles: EditorFile[] = [];
+
       for (const file of fileArray) {
+        // Validate file name
+        if (!file.name || !file.name.trim()) {
+          setError(`Invalid file name: File ${fileArray.indexOf(file) + 1} has no name`);
+          continue;
+        }
+
         // Determine file path based on selected directory
         const filePath = selectedTreeItem && selectedTreeItem !== '/' 
           ? `${selectedTreeItem}/${file.name}`
           : file.name;
 
+        // Clean and validate file path
+        const cleanPath = filePath.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/^\//, '');
+        if (!cleanPath || cleanPath.includes('..') || cleanPath.startsWith('/')) {
+          setError(`Invalid file path: ${filePath}`);
+          continue;
+        }
+
         // Check if file already exists
-        const existsInOpenFiles = openFiles.some(f => f.path === filePath);
-        const existsInFileTree = fileTree.some(item => findFileInTree(item, filePath));
+        const existsInOpenFiles = openFiles.some(f => f.path === cleanPath);
+        const existsInFileTree = fileTree.some(item => findFileInTree(item, cleanPath));
 
         if (existsInOpenFiles || existsInFileTree) {
           // If file exists, we'll overwrite it
-          console.log(`File ${filePath} already exists, will be overwritten`);
+          console.log(`File ${cleanPath} already exists, will be overwritten`);
         }
 
         // Read file content
-        const content = await readFileAsText(file);
-        const language = detectLanguage(filePath, project.language);
+        const { content, isBinary } = await readFileContent(file);
+        const language = detectLanguage(cleanPath, project.language);
+
+        // Prepare content for upload
+        let uploadContent: string;
+        let contentType: string;
+        
+        if (isBinary) {
+          const dataUrlMatch = content.match(/^data:([^;]+);base64,(.+)$/);
+          if (dataUrlMatch) {
+            uploadContent = dataUrlMatch[2];
+            contentType = dataUrlMatch[1];
+          } else {
+            uploadContent = content;
+            contentType = 'application/octet-stream';
+          }
+        } else {
+          uploadContent = btoa(content);
+          contentType = language === 'json' ? 'application/json' : 
+                       language === 'html' ? 'text/html' :
+                       language === 'css' ? 'text/css' :
+                       language === 'javascript' ? 'text/javascript' :
+                       'text/plain';
+        }
+
+        // Add to upload batch
+        filesToUpload.push(new VersionFileCreateDto({
+          path: cleanPath,
+          content: uploadContent,
+          contentType: contentType
+        }));
 
         // Create editor file
         const newFile: EditorFile = {
-          path: filePath,
+          path: cleanPath,
           content,
           language,
           isModified: true,
           isNew: true,
-          originalContent: ''
+          originalContent: '',
+          isBinary
         };
 
-        // Add to open files if not already open
+        editorFiles.push(newFile);
+      }
+
+      // Bulk upload all files at once
+      if (filesToUpload.length > 0) {
+        console.log(`Uploading ${filesToUpload.length} files:`, filesToUpload.map(f => f.path));
+        const response = await api.files.files_BulkUploadFiles(project.id, version.id, filesToUpload);
+        console.log('Bulk upload response:', response);
+
+        // Add all files to editor
         setOpenFiles(prev => {
-          const filtered = prev.filter(f => f.path !== filePath);
-          return [...filtered, newFile];
+          const filtered = prev.filter(f => !editorFiles.some(nf => nf.path === f.path));
+          return [...filtered, ...editorFiles];
         });
 
-        // Set as active file if it's the first uploaded file
-        if (fileArray.indexOf(file) === 0) {
-          setActiveFile(filePath);
+        // Set first file as active
+        if (editorFiles.length > 0) {
+          setActiveFile(editorFiles[0].path);
         }
       }
       
@@ -608,19 +794,29 @@ const EditorPage: React.FC = () => {
     }
   };
 
-  const readFileAsText = (file: File): Promise<string> => {
+  const readFileContent = (file: File): Promise<{ content: string; isBinary: boolean }> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       
+      // Check if file should be read as text
+      const isTextFile = file.type.startsWith('text/') || 
+                        file.type === 'application/json' || 
+                        file.type === 'application/javascript' ||
+                        file.type === 'application/typescript' ||
+                        file.type === 'application/xml' ||
+                        file.type === '' || 
+                        file.name.match(/\.(js|jsx|ts|tsx|html|css|scss|sass|less|json|md|txt|xml|yml|yaml|svg|csv|log|ini|conf|cfg|env|gitignore|dockerfile|makefile|py|java|cpp|c|h|php|rb|go|rs|swift|kt|scala|sh|bat|ps1)$/i);
+      
       reader.onload = (e) => {
         const result = e.target?.result;
-        if (typeof result === 'string') {
-          resolve(result);
-        } else if (result instanceof ArrayBuffer) {
-          // For binary files, convert to base64 efficiently
+        
+        if (isTextFile && typeof result === 'string') {
+          resolve({ content: result, isBinary: false });
+        } else if (!isTextFile && result instanceof ArrayBuffer) {
+          // For binary files, use proper base64 encoding
           try {
             const base64String = arrayBufferToBase64(result);
-            resolve(base64String);
+            resolve({ content: `data:${file.type || 'application/octet-stream'};base64,${base64String}`, isBinary: true });
           } catch (error) {
             reject(new Error('Failed to convert binary file to base64'));
           }
@@ -630,14 +826,6 @@ const EditorPage: React.FC = () => {
       };
       
       reader.onerror = () => reject(new Error('Failed to read file'));
-      
-      // Check if file should be read as text
-      const isTextFile = file.type.startsWith('text/') || 
-                        file.type === 'application/json' || 
-                        file.type === 'application/javascript' ||
-                        file.type === 'application/typescript' ||
-                        file.type === '' || 
-                        file.name.match(/\.(js|jsx|ts|tsx|html|css|scss|sass|less|json|md|txt|xml|yml|yaml|svg|csv|log|ini|conf|cfg|env|gitignore|dockerfile|makefile)$/i);
       
       if (isTextFile) {
         reader.readAsText(file);
@@ -1164,36 +1352,67 @@ const EditorPage: React.FC = () => {
           {/* Monaco Editor */}
           <div className="flex-1 overflow-hidden">
             {isMonacoLoaded && MonacoEditor && activeFileData ? (
-              <MonacoEditor
-                height="100%"
-                language={activeFileData.language}
-                value={activeFileData.content}
-                onChange={(value: string | undefined) => handleEditorChange(value, activeFileData.path)}
-                theme="vs-dark"
-                options={{
-                  minimap: { enabled: true },
-                  fontSize: 14,
-                  wordWrap: 'on',
-                  automaticLayout: true,
-                  scrollBeyondLastLine: false,
-                  renderWhitespace: 'selection',
-                  readOnly: isViewMode,
-                  tabSize: 2,
-                  insertSpaces: true
-                }}
-                onMount={(editor: monaco.editor.IStandaloneCodeEditor) => {
-                  editorRef.current = editor;
-                  
-                  // Add keyboard shortcuts
-                  if (typeof monaco !== 'undefined') {
-                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-                      if (activeFileData) {
-                        saveFile(activeFileData.path);
-                      }
-                    });
-                  }
-                }}
-              />
+              activeFileData.isBinary ? (
+                <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                  <div className="text-center max-w-md">
+                    <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Binary File</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
+                      This is a binary file (like an image, document, or executable) and cannot be edited in the text editor.
+                    </p>
+                    <div className="text-sm text-gray-400 dark:text-gray-500 space-y-1">
+                      <p><span className="font-medium">File:</span> {activeFileData.path}</p>
+                      <p><span className="font-medium">Size:</span> {activeFileData.content.length > 100 ? `${Math.round(activeFileData.content.length / 1024)} KB` : `${activeFileData.content.length} bytes`}</p>
+                    </div>
+                    {activeFileData.content.startsWith('data:image/') && (
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Preview:</p>
+                        <img 
+                          src={activeFileData.content} 
+                          alt={activeFileData.path}
+                          className="max-w-full max-h-64 mx-auto rounded border border-gray-200 dark:border-gray-700"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <MonacoEditor
+                  height="100%"
+                  language={activeFileData.language}
+                  value={activeFileData.content}
+                  onChange={(value: string | undefined) => handleEditorChange(value, activeFileData.path)}
+                  theme="vs-dark"
+                  options={{
+                    minimap: { enabled: true },
+                    fontSize: 14,
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    scrollBeyondLastLine: false,
+                    renderWhitespace: 'selection',
+                    readOnly: isViewMode,
+                    tabSize: 2,
+                    insertSpaces: true
+                  }}
+                  onMount={(editor: monaco.editor.IStandaloneCodeEditor) => {
+                    editorRef.current = editor;
+                    
+                    // Add keyboard shortcuts
+                    if (typeof monaco !== 'undefined') {
+                      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+                        if (activeFileData) {
+                          saveFile(activeFileData.path);
+                        }
+                      });
+                    }
+                  }}
+                />
+              )
             ) : (
               <div className="h-full flex items-center justify-center bg-gray-50 dark:bg-gray-900">
                 <div className="text-center">
