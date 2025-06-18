@@ -133,8 +133,27 @@ const LoginPage: React.FC = () => {
     } catch (error) {
       console.error('Login error:', error);
       
-      // Handle different types of errors
-      if (error instanceof Error) {
+      // Handle SwaggerException (API errors) vs network errors
+      if (error && typeof error === 'object' && 'status' in error) {
+        const apiError = error as any;
+        if (apiError.status === 401) {
+          setErrors([{
+            message: 'Invalid credentials. Please check your email/username and password.'
+          }]);
+        } else if (apiError.status === 403) {
+          setErrors([{
+            message: 'Access denied. Your account may be disabled or locked.'
+          }]);
+        } else if (apiError.status >= 500) {
+          setErrors([{
+            message: 'Server error. Please try again later.'
+          }]);
+        } else {
+          setErrors([{
+            message: apiError.message || 'Login failed. Please try again.'
+          }]);
+        }
+      } else if (error instanceof Error) {
         setErrors([{
           message: 'Network error. Please check your connection and try again.'
         }]);
