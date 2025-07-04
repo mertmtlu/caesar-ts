@@ -1,18 +1,18 @@
 import * as types from './types';
 import * as interfaces from './interfaces';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
+import { SortDirection } from './enums';
 
 export class VersionsClient implements interfaces.IVersionsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all versions with pagination
      * @param pageNumber (optional) 
@@ -39,16 +39,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetAll(_response);
         });
     }
+
     protected processVersions_GetAll(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -61,11 +64,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new version for a program
     Note: This creates the version entity. Files are uploaded separately through the commit process.
@@ -75,7 +79,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
     versions_Create(body: types.VersionCreateDto | undefined): Promise<types.VersionDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Versions";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -84,10 +90,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_Create(_response);
         });
     }
+
     protected processVersions_Create(response: Response): Promise<types.VersionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -100,11 +108,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
     }
+
     /**
      * Get version by ID with full details including files
      * @return OK
@@ -115,16 +124,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetById(_response);
         });
     }
+
     protected processVersions_GetById(response: Response): Promise<types.VersionDetailDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -137,11 +149,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDetailDtoApiResponse>(null as any);
     }
+
     /**
      * Update version metadata (commit message, review comments)
     Note: File changes should be done through the commit process
@@ -154,7 +167,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -163,10 +178,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_Update(_response);
         });
     }
+
     protected processVersions_Update(response: Response): Promise<types.VersionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -179,11 +196,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
     }
+
     /**
      * Delete version (only if pending and not current)
     This will also delete associated files through IFileStorageService
@@ -195,16 +213,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_Delete(_response);
         });
     }
+
     protected processVersions_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -217,11 +238,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Advanced version search with filtering
      * @param pageNumber (optional) 
@@ -249,7 +271,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -258,10 +282,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_Search(_response);
         });
     }
+
     protected processVersions_Search(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -274,11 +300,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get all versions for a specific program
      * @param pageNumber (optional) 
@@ -308,16 +335,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetByProgram(_response);
         });
     }
+
     protected processVersions_GetByProgram(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -330,11 +360,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get latest version for a program
      * @return OK
@@ -345,16 +376,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetLatestVersionForProgram(_response);
         });
     }
+
     protected processVersions_GetLatestVersionForProgram(response: Response): Promise<types.VersionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -367,11 +401,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
     }
+
     /**
      * Get specific version by program and version number
      * @return OK
@@ -385,16 +420,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'versionNumber' must be defined.");
         url_ = url_.replace("{versionNumber}", encodeURIComponent("" + versionNumber));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetByProgramAndVersionNumber(_response);
         });
     }
+
     protected processVersions_GetByProgramAndVersionNumber(response: Response): Promise<types.VersionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -407,11 +445,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
     }
+
     /**
      * Get next version number for a program
      * @return OK
@@ -422,16 +461,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetNextVersionNumber(_response);
         });
     }
+
     protected processVersions_GetNextVersionNumber(response: Response): Promise<types.Int32ApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -444,11 +486,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.Int32ApiResponse>(null as any);
     }
+
     /**
      * Get versions by creator
      * @param pageNumber (optional) 
@@ -478,16 +521,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetByCreator(_response);
         });
     }
+
     protected processVersions_GetByCreator(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -500,11 +546,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get versions by status (pending, approved, rejected)
      * @param pageNumber (optional) 
@@ -534,16 +581,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetByStatus(_response);
         });
     }
+
     protected processVersions_GetByStatus(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -556,11 +606,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get all versions pending review
      * @param pageNumber (optional) 
@@ -587,16 +638,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetPendingReviews(_response);
         });
     }
+
     protected processVersions_GetPendingReviews(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -609,11 +663,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get versions by reviewer
      * @param pageNumber (optional) 
@@ -643,16 +698,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetByReviewer(_response);
         });
     }
+
     protected processVersions_GetByReviewer(response: Response): Promise<types.VersionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -665,11 +723,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Update version status
      * @param body (optional) 
@@ -681,7 +740,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -690,10 +751,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_UpdateStatus(_response);
         });
     }
+
     protected processVersions_UpdateStatus(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -706,11 +769,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Submit version review (approve or reject)
      * @param body (optional) 
@@ -722,7 +786,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -731,10 +797,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_SubmitReview(_response);
         });
     }
+
     protected processVersions_SubmitReview(response: Response): Promise<types.VersionReviewDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -747,11 +815,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionReviewDtoApiResponse>(null as any);
     }
+
     /**
      * Quick approve version
      * @param body (optional) 
@@ -763,7 +832,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -772,10 +843,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_ApproveVersion(_response);
         });
     }
+
     protected processVersions_ApproveVersion(response: Response): Promise<types.VersionReviewDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -788,11 +861,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionReviewDtoApiResponse>(null as any);
     }
+
     /**
      * Quick reject version
      * @param body (optional) 
@@ -804,7 +878,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -813,10 +889,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_RejectVersion(_response);
         });
     }
+
     protected processVersions_RejectVersion(response: Response): Promise<types.VersionReviewDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -829,11 +907,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionReviewDtoApiResponse>(null as any);
     }
+
     /**
      * Commit changes to create a new version with files
     This uses IFileStorageService internally to handle file operations
@@ -847,7 +926,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -856,10 +937,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_CommitChanges(_response);
         });
     }
+
     protected processVersions_CommitChanges(response: Response): Promise<types.VersionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -872,11 +955,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDtoApiResponse>(null as any);
     }
+
     /**
      * Validate commit before actual commit
     This checks file validity and other constraints
@@ -889,7 +973,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -898,10 +984,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_ValidateCommit(_response);
         });
     }
+
     protected processVersions_ValidateCommit(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -914,11 +1002,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Compare two versions and get differences
      * @return OK
@@ -932,16 +1021,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'toVersionId' must be defined.");
         url_ = url_.replace("{toVersionId}", encodeURIComponent("" + toVersionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_CompareVersions(_response);
         });
     }
+
     protected processVersions_CompareVersions(response: Response): Promise<types.VersionDiffDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -954,11 +1046,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDiffDtoApiResponse>(null as any);
     }
+
     /**
      * Get diff from previous version
      * @return OK
@@ -969,16 +1062,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetDiffFromPrevious(_response);
         });
     }
+
     protected processVersions_GetDiffFromPrevious(response: Response): Promise<types.VersionDiffDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -991,11 +1087,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDiffDtoApiResponse>(null as any);
     }
+
     /**
      * Get change summary for a version
      * @return OK
@@ -1006,16 +1103,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetChangeSummary(_response);
         });
     }
+
     protected processVersions_GetChangeSummary(response: Response): Promise<types.VersionChangeDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1028,11 +1128,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionChangeDtoListApiResponse>(null as any);
     }
+
     /**
      * Deploy approved version
      * @param body (optional) 
@@ -1044,7 +1145,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1053,10 +1156,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_DeployVersion(_response);
         });
     }
+
     protected processVersions_DeployVersion(response: Response): Promise<types.VersionDeploymentDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1069,11 +1174,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionDeploymentDtoApiResponse>(null as any);
     }
+
     /**
      * Revert program to previous version
      * @return OK
@@ -1087,16 +1193,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_RevertToPreviousVersion(_response);
         });
     }
+
     protected processVersions_RevertToPreviousVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1109,11 +1218,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Set version as current for program
      * @return OK
@@ -1127,16 +1237,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_SetAsCurrentVersion(_response);
         });
     }
+
     protected processVersions_SetAsCurrentVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1149,11 +1262,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get version statistics for a program
      * @return OK
@@ -1164,16 +1278,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetVersionStats(_response);
         });
     }
+
     protected processVersions_GetVersionStats(response: Response): Promise<types.VersionStatsDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1186,11 +1303,12 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionStatsDtoApiResponse>(null as any);
     }
+
     /**
      * Get version activity for a program
      * @param days (optional) 
@@ -1206,16 +1324,19 @@ export class VersionsClient implements interfaces.IVersionsClient {
         else if (days !== undefined)
             url_ += "days=" + encodeURIComponent("" + days) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processVersions_GetVersionActivity(_response);
         });
     }
+
     protected processVersions_GetVersionActivity(response: Response): Promise<types.VersionActivityDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1228,9 +1349,9 @@ export class VersionsClient implements interfaces.IVersionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.VersionActivityDtoListApiResponse>(null as any);
     }
-}
+}

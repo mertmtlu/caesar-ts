@@ -1,18 +1,18 @@
 import * as types from './types';
 import * as interfaces from './interfaces';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
+import { Level, SortDirection } from './enums';
 
 export class ProgramsClient implements interfaces.IProgramsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all programs with pagination
      * @param pageNumber (optional) 
@@ -39,16 +39,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetAll(_response);
         });
     }
+
     protected processPrograms_GetAll(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -61,11 +64,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new program entity
     Note: This creates the program metadata only. Use VersionsController commit process to add files.
@@ -75,7 +79,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
     programs_Create(body: types.ProgramCreateDto | undefined): Promise<types.ProgramDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Programs";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -84,10 +90,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_Create(_response);
         });
     }
+
     protected processPrograms_Create(response: Response): Promise<types.ProgramDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -100,11 +108,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
     }
+
     /**
      * Get program by ID with full details (excluding files - use VersionsController for files)
      * @return OK
@@ -115,16 +124,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetById(_response);
         });
     }
+
     protected processPrograms_GetById(response: Response): Promise<types.ProgramDetailDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -137,11 +149,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDetailDtoApiResponse>(null as any);
     }
+
     /**
      * Update program metadata
     Note: File changes should be done through VersionsController commit process
@@ -154,7 +167,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -163,10 +178,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_Update(_response);
         });
     }
+
     protected processPrograms_Update(response: Response): Promise<types.ProgramDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -179,11 +196,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
     }
+
     /**
      * Delete program
     Note: This will also trigger cleanup of associated versions and files through service layer
@@ -195,16 +213,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_Delete(_response);
         });
     }
+
     protected processPrograms_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -217,11 +238,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Advanced program search with filtering
      * @param pageNumber (optional) 
@@ -249,7 +271,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -258,10 +282,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_Search(_response);
         });
     }
+
     protected processPrograms_Search(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -274,11 +300,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get programs by creator
      * @param pageNumber (optional) 
@@ -308,16 +335,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetByCreator(_response);
         });
     }
+
     protected processPrograms_GetByCreator(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -330,11 +360,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get programs by status (draft, active, archived, etc.)
      * @param pageNumber (optional) 
@@ -364,16 +395,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetByStatus(_response);
         });
     }
+
     protected processPrograms_GetByStatus(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -386,11 +420,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get programs by type (web, console, api, etc.)
      * @param pageNumber (optional) 
@@ -420,16 +455,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetByType(_response);
         });
     }
+
     protected processPrograms_GetByType(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -442,11 +480,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get programs by programming language
      * @param pageNumber (optional) 
@@ -476,16 +515,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetByLanguage(_response);
         });
     }
+
     protected processPrograms_GetByLanguage(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -498,11 +540,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get programs accessible to current user based on permissions
      * @param pageNumber (optional) 
@@ -529,16 +572,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetUserAccessiblePrograms(_response);
         });
     }
+
     protected processPrograms_GetUserAccessiblePrograms(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -551,11 +597,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get programs accessible to a group
      * @param pageNumber (optional) 
@@ -585,16 +632,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetGroupAccessiblePrograms(_response);
         });
     }
+
     protected processPrograms_GetGroupAccessiblePrograms(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -607,11 +657,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Update program status (draft, active, archived, deprecated)
      * @param body (optional) 
@@ -623,7 +674,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -632,10 +685,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_UpdateStatus(_response);
         });
     }
+
     protected processPrograms_UpdateStatus(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -648,11 +703,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Update program's current version (must be an approved version)
     Note: This sets which version is considered "current" for execution
@@ -665,7 +721,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -674,10 +732,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_UpdateCurrentVersion(_response);
         });
     }
+
     protected processPrograms_UpdateCurrentVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -690,11 +750,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get all permissions for a program
      * @return OK
@@ -705,16 +766,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetProgramPermissions(_response);
         });
     }
+
     protected processPrograms_GetProgramPermissions(response: Response): Promise<types.ProgramPermissionDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -727,11 +791,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramPermissionDtoListApiResponse>(null as any);
     }
+
     /**
      * Add user permission to program
      * @param body (optional) 
@@ -743,7 +808,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -752,10 +819,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_AddUserPermission(_response);
         });
     }
+
     protected processPrograms_AddUserPermission(response: Response): Promise<types.ProgramDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -768,11 +837,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
     }
+
     /**
      * Update user permission for program
      * @param body (optional) 
@@ -787,7 +857,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -796,10 +868,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_UpdateUserPermission(_response);
         });
     }
+
     protected processPrograms_UpdateUserPermission(response: Response): Promise<types.ProgramDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -812,11 +886,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
     }
+
     /**
      * Remove user permission from program
      * @return OK
@@ -830,16 +905,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_RemoveUserPermission(_response);
         });
     }
+
     protected processPrograms_RemoveUserPermission(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -852,11 +930,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Add group permission to program
      * @param body (optional) 
@@ -868,7 +947,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -877,10 +958,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_AddGroupPermission(_response);
         });
     }
+
     protected processPrograms_AddGroupPermission(response: Response): Promise<types.ProgramDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -893,11 +976,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
     }
+
     /**
      * Update group permission for program
      * @param body (optional) 
@@ -912,7 +996,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'groupId' must be defined.");
         url_ = url_.replace("{groupId}", encodeURIComponent("" + groupId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -921,10 +1007,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_UpdateGroupPermission(_response);
         });
     }
+
     protected processPrograms_UpdateGroupPermission(response: Response): Promise<types.ProgramDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -937,11 +1025,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDtoApiResponse>(null as any);
     }
+
     /**
      * Remove group permission from program
      * @return OK
@@ -955,16 +1044,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'groupId' must be defined.");
         url_ = url_.replace("{groupId}", encodeURIComponent("" + groupId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_RemoveGroupPermission(_response);
         });
     }
+
     protected processPrograms_RemoveGroupPermission(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -977,11 +1069,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get current deployment status for program
     Note: For deploying specific versions, use VersionsController
@@ -993,16 +1086,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetDeploymentStatus(_response);
         });
     }
+
     protected processPrograms_GetDeploymentStatus(response: Response): Promise<types.ProgramDeploymentStatusDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1015,11 +1111,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramDeploymentStatusDtoApiResponse>(null as any);
     }
+
     /**
      * Get application logs for deployed program
      * @param lines (optional) 
@@ -1035,16 +1132,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (lines !== undefined)
             url_ += "lines=" + encodeURIComponent("" + lines) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_GetApplicationLogs(_response);
         });
     }
+
     protected processPrograms_GetApplicationLogs(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1057,11 +1157,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Restart deployed application
     Note: This restarts the currently deployed version
@@ -1073,16 +1174,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_RestartApplication(_response);
         });
     }
+
     protected processPrograms_RestartApplication(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1095,11 +1199,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Validate program name uniqueness
      * @param excludeId (optional) 
@@ -1113,7 +1218,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (excludeId !== undefined)
             url_ += "excludeId=" + encodeURIComponent("" + excludeId) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1122,10 +1229,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_ValidateNameUnique(_response);
         });
     }
+
     protected processPrograms_ValidateNameUnique(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1138,11 +1247,12 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Validate user access to program
      * @param requiredAccessLevel (optional) 
@@ -1158,16 +1268,19 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         else if (requiredAccessLevel !== undefined)
             url_ += "requiredAccessLevel=" + encodeURIComponent("" + requiredAccessLevel) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processPrograms_ValidateUserAccess(_response);
         });
     }
+
     protected processPrograms_ValidateUserAccess(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1180,9 +1293,9 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
-}
+}

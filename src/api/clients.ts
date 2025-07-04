@@ -12,7 +12,7 @@ import {RegionsClient} from './RegionsClient'
 import {RequestsClient} from './RequestsClient'
 import {TMsClient} from './TMsClient'
 import {UiComponentsClient} from './UiComponentsClient'
-import {UsersClient, UserClientAssignmentDto} from './UsersClient'
+import {UsersClient} from './UsersClient'
 import {VersionsClient} from './VersionsClient'
 
 export {
@@ -31,6 +31,5 @@ export {
     TMsClient,
     UiComponentsClient,
     UsersClient,
-    VersionsClient,
-    UserClientAssignmentDto
+    VersionsClient
 }

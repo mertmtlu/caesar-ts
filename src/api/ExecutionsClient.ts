@@ -1,18 +1,18 @@
 import * as types from './types';
 import * as interfaces from './interfaces';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
+import { SortDirection } from './enums';
 
 export class ExecutionsClient implements interfaces.IExecutionsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all executions with pagination
      * @param pageNumber (optional) 
@@ -39,16 +39,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetAll(_response);
         });
     }
+
     protected processExecutions_GetAll(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -61,11 +64,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get execution by ID
      * @return OK
@@ -76,16 +80,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetById(_response);
         });
     }
+
     protected processExecutions_GetById(response: Response): Promise<types.ExecutionDetailDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -98,11 +105,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDetailDtoApiResponse>(null as any);
     }
+
     /**
      * Delete execution
      * @return OK
@@ -113,16 +121,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_Delete(_response);
         });
     }
+
     protected processExecutions_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -135,11 +146,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Advanced execution search
      * @param pageNumber (optional) 
@@ -167,7 +179,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -176,10 +190,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_Search(_response);
         });
     }
+
     protected processExecutions_Search(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -192,11 +208,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get executions by program
      * @param pageNumber (optional) 
@@ -226,16 +243,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetByProgram(_response);
         });
     }
+
     protected processExecutions_GetByProgram(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -248,11 +268,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get executions by version
      * @param pageNumber (optional) 
@@ -282,16 +303,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetByVersion(_response);
         });
     }
+
     protected processExecutions_GetByVersion(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -304,11 +328,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get executions by user
      * @param pageNumber (optional) 
@@ -338,16 +363,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetByUser(_response);
         });
     }
+
     protected processExecutions_GetByUser(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -360,11 +388,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get executions by status
      * @param pageNumber (optional) 
@@ -394,16 +423,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetByStatus(_response);
         });
     }
+
     protected processExecutions_GetByStatus(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -416,11 +448,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get running executions
      * @param pageNumber (optional) 
@@ -447,16 +480,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetRunningExecutions(_response);
         });
     }
+
     protected processExecutions_GetRunningExecutions(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -469,11 +505,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get completed executions
      * @param pageNumber (optional) 
@@ -500,16 +537,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetCompletedExecutions(_response);
         });
     }
+
     protected processExecutions_GetCompletedExecutions(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -522,11 +562,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get failed executions
      * @param pageNumber (optional) 
@@ -553,16 +594,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetFailedExecutions(_response);
         });
     }
+
     protected processExecutions_GetFailedExecutions(response: Response): Promise<types.ExecutionListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -575,11 +619,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get recent executions
      * @param count (optional) 
@@ -592,16 +637,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (count !== undefined)
             url_ += "count=" + encodeURIComponent("" + count) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetRecentExecutions(_response);
         });
     }
+
     protected processExecutions_GetRecentExecutions(response: Response): Promise<types.ExecutionListDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -614,11 +662,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoListApiResponse>(null as any);
     }
+
     /**
      * Execute program using current version
      * @param body (optional) 
@@ -630,7 +679,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -644,9 +695,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             return this.processExecutions_ExecuteProgram(_response);
         });
     }
+
     protected processExecutions_ExecuteProgram(response: Response): Promise<types.ExecutionDtoApiResponse> {
         const status = response.status;
-        
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
@@ -656,13 +707,13 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
-            
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
     }
+
     /**
      * Execute specific version
      * @param body (optional) 
@@ -674,7 +725,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -683,10 +736,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ExecuteVersion(_response);
         });
     }
+
     protected processExecutions_ExecuteVersion(response: Response): Promise<types.ExecutionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -699,11 +754,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
     }
+
     /**
      * Execute with advanced parameters
      * @param body (optional) 
@@ -712,7 +768,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     executions_ExecuteWithParameters(body: types.ExecutionParametersDto | undefined): Promise<types.ExecutionDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Executions/run/advanced";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -721,10 +779,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ExecuteWithParameters(_response);
         });
     }
+
     protected processExecutions_ExecuteWithParameters(response: Response): Promise<types.ExecutionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -737,11 +797,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
     }
+
     /**
      * Stop execution
      * @return OK
@@ -752,16 +813,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_StopExecution(_response);
         });
     }
+
     protected processExecutions_StopExecution(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -774,11 +838,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Pause execution
      * @return OK
@@ -789,16 +854,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_PauseExecution(_response);
         });
     }
+
     protected processExecutions_PauseExecution(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -811,11 +879,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Resume execution
      * @return OK
@@ -826,16 +895,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ResumeExecution(_response);
         });
     }
+
     protected processExecutions_ResumeExecution(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -848,11 +920,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get execution status
      * @return OK
@@ -863,16 +936,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionStatus(_response);
         });
     }
+
     protected processExecutions_GetExecutionStatus(response: Response): Promise<types.ExecutionStatusDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -885,11 +961,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionStatusDtoApiResponse>(null as any);
     }
+
     /**
      * Get execution output stream
      * @return OK
@@ -900,16 +977,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionOutputStream(_response);
         });
     }
+
     protected processExecutions_GetExecutionOutputStream(response: Response): Promise<types.StringApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -922,11 +1002,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
     }
+
     /**
      * Get execution logs
      * @param lines (optional) 
@@ -942,16 +1023,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (lines !== undefined)
             url_ += "lines=" + encodeURIComponent("" + lines) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionLogs(_response);
         });
     }
+
     protected processExecutions_GetExecutionLogs(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -964,11 +1048,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Get execution result
      * @return OK
@@ -979,16 +1064,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionResult(_response);
         });
     }
+
     protected processExecutions_GetExecutionResult(response: Response): Promise<types.ExecutionResultDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1001,129 +1089,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResultDtoApiResponse>(null as any);
     }
-    /**
-     * Get execution output files
-     * @return OK
-     */
-    executions_GetExecutionOutputFiles(id: string): Promise<types.ExecutionOutputFileDtoListApiResponse> {
-        let url_ = this.baseUrl + "/api/Executions/{id}/output-files";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processExecutions_GetExecutionOutputFiles(_response);
-        });
-    }
-    protected processExecutions_GetExecutionOutputFiles(response: Response): Promise<types.ExecutionOutputFileDtoListApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.ExecutionOutputFileDtoListApiResponse.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<types.ExecutionOutputFileDtoListApiResponse>(null as any);
-    }
-    /**
-     * Get specific execution output file
-     * @return OK
-     */
-    executions_GetExecutionOutputFile(id: string, fileName: string): Promise<types.ExecutionOutputFileContentDtoApiResponse> {
-        let url_ = this.baseUrl + "/api/Executions/{id}/output-files/{fileName}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (fileName === undefined || fileName === null)
-            throw new Error("The parameter 'fileName' must be defined.");
-        url_ = url_.replace("{fileName}", encodeURIComponent("" + fileName));
-        url_ = url_.replace(/[?&]$/, "");
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processExecutions_GetExecutionOutputFile(_response);
-        });
-    }
-    protected processExecutions_GetExecutionOutputFile(response: Response): Promise<types.ExecutionOutputFileContentDtoApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.ExecutionOutputFileContentDtoApiResponse.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<types.ExecutionOutputFileContentDtoApiResponse>(null as any);
-    }
-    /**
-     * Download execution results
-     * @param body (optional) 
-     * @return OK
-     */
-    executions_DownloadExecutionResults(id: string, body: types.DownloadRequest | undefined): Promise<types.BooleanApiResponse> {
-        let url_ = this.baseUrl + "/api/Executions/{id}/download";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-        const content_ = JSON.stringify(body);
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        };
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processExecutions_DownloadExecutionResults(_response);
-        });
-    }
-    protected processExecutions_DownloadExecutionResults(response: Response): Promise<types.BooleanApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.BooleanApiResponse.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<types.BooleanApiResponse>(null as any);
-    }
+
     /**
      * Deploy web application
      * @param body (optional) 
@@ -1135,7 +1106,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1144,10 +1117,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_DeployWebApplication(_response);
         });
     }
+
     protected processExecutions_DeployWebApplication(response: Response): Promise<types.ExecutionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1160,11 +1135,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
     }
+
     /**
      * Get web application URL
      * @return OK
@@ -1175,16 +1151,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetWebApplicationUrl(_response);
         });
     }
+
     protected processExecutions_GetWebApplicationUrl(response: Response): Promise<types.StringApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1197,11 +1176,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringApiResponse>(null as any);
     }
+
     /**
      * Get web application status
      * @return OK
@@ -1212,16 +1192,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetWebApplicationStatus(_response);
         });
     }
+
     protected processExecutions_GetWebApplicationStatus(response: Response): Promise<types.WebAppStatusDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1234,11 +1217,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.WebAppStatusDtoApiResponse>(null as any);
     }
+
     /**
      * Restart web application
      * @return OK
@@ -1249,16 +1233,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_RestartWebApplication(_response);
         });
     }
+
     protected processExecutions_RestartWebApplication(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1271,11 +1258,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Stop web application
      * @return OK
@@ -1286,16 +1274,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_StopWebApplication(_response);
         });
     }
+
     protected processExecutions_StopWebApplication(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1308,11 +1299,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get resource usage for execution
      * @return OK
@@ -1323,16 +1315,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetResourceUsage(_response);
         });
     }
+
     protected processExecutions_GetResourceUsage(response: Response): Promise<types.ExecutionResourceUsageDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1345,11 +1340,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResourceUsageDtoApiResponse>(null as any);
     }
+
     /**
      * Update resource usage for execution
      * @param body (optional) 
@@ -1361,7 +1357,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -1370,10 +1368,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_UpdateResourceUsage(_response);
         });
     }
+
     protected processExecutions_UpdateResourceUsage(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1386,11 +1386,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get resource trends for program
      * @param days (optional) 
@@ -1406,16 +1407,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (days !== undefined)
             url_ += "days=" + encodeURIComponent("" + days) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetResourceTrends(_response);
         });
     }
+
     protected processExecutions_GetResourceTrends(response: Response): Promise<types.ExecutionResourceTrendDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1428,11 +1432,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResourceTrendDtoListApiResponse>(null as any);
     }
+
     /**
      * Get resource limits for program
      * @return OK
@@ -1443,16 +1448,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetResourceLimits(_response);
         });
     }
+
     protected processExecutions_GetResourceLimits(response: Response): Promise<types.ExecutionResourceLimitsDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1465,11 +1473,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionResourceLimitsDtoApiResponse>(null as any);
     }
+
     /**
      * Update resource limits for program
      * @param body (optional) 
@@ -1481,7 +1490,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -1490,10 +1501,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_UpdateResourceLimits(_response);
         });
     }
+
     protected processExecutions_UpdateResourceLimits(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1506,11 +1519,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get execution statistics
      * @param programId (optional) 
@@ -1548,16 +1562,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (executionType !== undefined)
             url_ += "ExecutionType=" + encodeURIComponent("" + executionType) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionStats(_response);
         });
     }
+
     protected processExecutions_GetExecutionStats(response: Response): Promise<types.ExecutionStatsDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1570,11 +1587,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionStatsDtoApiResponse>(null as any);
     }
+
     /**
      * Get execution trends
      * @param programId (optional) 
@@ -1592,16 +1610,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (days !== undefined)
             url_ += "days=" + encodeURIComponent("" + days) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionTrends(_response);
         });
     }
+
     protected processExecutions_GetExecutionTrends(response: Response): Promise<types.ExecutionTrendDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1614,11 +1635,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionTrendDtoListApiResponse>(null as any);
     }
+
     /**
      * Get execution performance for program
      * @return OK
@@ -1629,16 +1651,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionPerformance(_response);
         });
     }
+
     protected processExecutions_GetExecutionPerformance(response: Response): Promise<types.ExecutionPerformanceDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1651,11 +1676,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionPerformanceDtoListApiResponse>(null as any);
     }
+
     /**
      * Get user execution summary
      * @return OK
@@ -1666,16 +1692,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetUserExecutionSummary(_response);
         });
     }
+
     protected processExecutions_GetUserExecutionSummary(response: Response): Promise<types.ExecutionSummaryDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1688,11 +1717,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionSummaryDtoApiResponse>(null as any);
     }
+
     /**
      * Get execution environment for program
      * @return OK
@@ -1703,16 +1733,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionEnvironment(_response);
         });
     }
+
     protected processExecutions_GetExecutionEnvironment(response: Response): Promise<types.ExecutionEnvironmentDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1725,11 +1758,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionEnvironmentDtoApiResponse>(null as any);
     }
+
     /**
      * Update execution environment for program
      * @param body (optional) 
@@ -1741,7 +1775,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -1750,10 +1786,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_UpdateExecutionEnvironment(_response);
         });
     }
+
     protected processExecutions_UpdateExecutionEnvironment(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1766,11 +1804,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get execution templates
      * @param language (optional) 
@@ -1783,16 +1822,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (language !== undefined)
             url_ += "language=" + encodeURIComponent("" + language) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionTemplates(_response);
         });
     }
+
     protected processExecutions_GetExecutionTemplates(response: Response): Promise<types.ExecutionTemplateDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1805,11 +1847,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionTemplateDtoListApiResponse>(null as any);
     }
+
     /**
      * Validate execution request
      * @param body (optional) 
@@ -1818,7 +1861,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     executions_ValidateExecutionRequest(body: types.ProgramExecutionRequestDto | undefined): Promise<types.ExecutionValidationResultApiResponse> {
         let url_ = this.baseUrl + "/api/Executions/validate";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1827,10 +1872,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ValidateExecutionRequest(_response);
         });
     }
+
     protected processExecutions_ValidateExecutionRequest(response: Response): Promise<types.ExecutionValidationResultApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1843,11 +1890,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionValidationResultApiResponse>(null as any);
     }
+
     /**
      * Get execution queue status
      * @return OK
@@ -1855,16 +1903,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     executions_GetExecutionQueueStatus(): Promise<types.ExecutionQueueStatusDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Executions/queue/status";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetExecutionQueueStatus(_response);
         });
     }
+
     protected processExecutions_GetExecutionQueueStatus(response: Response): Promise<types.ExecutionQueueStatusDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1877,11 +1928,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionQueueStatusDtoApiResponse>(null as any);
     }
+
     /**
      * Schedule execution for program
      * @param body (optional) 
@@ -1893,7 +1945,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1902,10 +1956,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ScheduleExecution(_response);
         });
     }
+
     protected processExecutions_ScheduleExecution(response: Response): Promise<types.ExecutionDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1918,11 +1974,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionDtoApiResponse>(null as any);
     }
+
     /**
      * Cancel scheduled execution
      * @return OK
@@ -1933,16 +1990,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_CancelScheduledExecution(_response);
         });
     }
+
     protected processExecutions_CancelScheduledExecution(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1955,11 +2015,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get scheduled executions
      * @return OK
@@ -1967,16 +2028,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     executions_GetScheduledExecutions(): Promise<types.ExecutionListDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Executions/scheduled";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetScheduledExecutions(_response);
         });
     }
+
     protected processExecutions_GetScheduledExecutions(response: Response): Promise<types.ExecutionListDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1989,11 +2053,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionListDtoListApiResponse>(null as any);
     }
+
     /**
      * Get supported programming languages
      * @return OK
@@ -2001,16 +2066,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     executions_GetSupportedLanguages(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/Executions/supported-languages";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetSupportedLanguages(_response);
         });
     }
+
     protected processExecutions_GetSupportedLanguages(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2023,11 +2091,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Analyze project structure
      * @param versionId (optional) 
@@ -2043,16 +2112,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (versionId !== undefined)
             url_ += "versionId=" + encodeURIComponent("" + versionId) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_AnalyzeProject(_response);
         });
     }
+
     protected processExecutions_AnalyzeProject(response: Response): Promise<types.ProjectStructureAnalysisDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2065,11 +2137,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProjectStructureAnalysisDtoApiResponse>(null as any);
     }
+
     /**
      * Validate project for execution
      * @param versionId (optional) 
@@ -2085,16 +2158,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (versionId !== undefined)
             url_ += "versionId=" + encodeURIComponent("" + versionId) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ValidateProject(_response);
         });
     }
+
     protected processExecutions_ValidateProject(response: Response): Promise<types.ProjectValidationResultDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2107,11 +2183,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProjectValidationResultDtoApiResponse>(null as any);
     }
+
     /**
      * Cleanup old executions
      * @param daysToKeep (optional) 
@@ -2124,16 +2201,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
         else if (daysToKeep !== undefined)
             url_ += "daysToKeep=" + encodeURIComponent("" + daysToKeep) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_CleanupOldExecutions(_response);
         });
     }
+
     protected processExecutions_CleanupOldExecutions(response: Response): Promise<types.Int32ApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2146,11 +2226,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.Int32ApiResponse>(null as any);
     }
+
     /**
      * Archive execution
      * @return OK
@@ -2161,16 +2242,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_ArchiveExecution(_response);
         });
     }
+
     protected processExecutions_ArchiveExecution(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2183,11 +2267,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get cleanup report
      * @return OK
@@ -2195,16 +2280,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     executions_GetCleanupReport(): Promise<types.ExecutionCleanupReportDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Executions/cleanup-report";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_GetCleanupReport(_response);
         });
     }
+
     protected processExecutions_GetCleanupReport(response: Response): Promise<types.ExecutionCleanupReportDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2217,11 +2305,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionCleanupReportDtoListApiResponse>(null as any);
     }
+
     /**
      * Run security scan on program
      * @return OK
@@ -2232,16 +2321,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'programId' must be defined.");
         url_ = url_.replace("{programId}", encodeURIComponent("" + programId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_RunSecurityScan(_response);
         });
     }
+
     protected processExecutions_RunSecurityScan(response: Response): Promise<types.ExecutionSecurityScanResultApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2254,11 +2346,12 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ExecutionSecurityScanResultApiResponse>(null as any);
     }
+
     /**
      * Check if execution is allowed for user on program
      * @return OK
@@ -2272,16 +2365,19 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             throw new Error("The parameter 'userId' must be defined.");
         url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processExecutions_IsExecutionAllowed(_response);
         });
     }
+
     protected processExecutions_IsExecutionAllowed(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2294,9 +2390,9 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
-}
+}

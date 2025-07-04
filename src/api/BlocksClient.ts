@@ -2,16 +2,16 @@ import * as types from './types';
 import * as interfaces from './interfaces';
 import { throwException } from './utils';
 
-
-
 export class BlocksClient implements interfaces.IBlocksClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all blocks in a building
      * @return OK
@@ -22,16 +22,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'buildingId' must be defined.");
         url_ = url_.replace("{buildingId}", encodeURIComponent("" + buildingId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_GetAll(_response);
         });
     }
+
     protected processBlocks_GetAll(response: Response): Promise<types.BlockResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -44,11 +47,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockResponseDtoListApiResponse>(null as any);
     }
+
     /**
      * Get block by ID
      * @return OK
@@ -62,16 +66,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_GetById(_response);
         });
     }
+
     protected processBlocks_GetById(response: Response): Promise<types.BlockResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -84,11 +91,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Delete block
      * @return OK
@@ -102,16 +110,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_Delete(_response);
         });
     }
+
     protected processBlocks_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -124,11 +135,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get block summary
      * @return OK
@@ -142,16 +154,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_GetSummary(_response);
         });
     }
+
     protected processBlocks_GetSummary(response: Response): Promise<types.BlockSummaryResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -164,11 +179,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockSummaryResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get all concrete blocks in a building
      * @return OK
@@ -179,16 +195,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'buildingId' must be defined.");
         url_ = url_.replace("{buildingId}", encodeURIComponent("" + buildingId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_GetConcreteBlocks(_response);
         });
     }
+
     protected processBlocks_GetConcreteBlocks(response: Response): Promise<types.ConcreteBlockResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -201,11 +220,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConcreteBlockResponseDtoListApiResponse>(null as any);
     }
+
     /**
      * Create new concrete block
      * @param body (optional) 
@@ -217,7 +237,9 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'buildingId' must be defined.");
         url_ = url_.replace("{buildingId}", encodeURIComponent("" + buildingId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -226,10 +248,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_CreateConcrete(_response);
         });
     }
+
     protected processBlocks_CreateConcrete(response: Response): Promise<types.ConcreteBlockResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -242,11 +266,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConcreteBlockResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get all masonry blocks in a building
      * @return OK
@@ -257,16 +282,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'buildingId' must be defined.");
         url_ = url_.replace("{buildingId}", encodeURIComponent("" + buildingId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_GetMasonryBlocks(_response);
         });
     }
+
     protected processBlocks_GetMasonryBlocks(response: Response): Promise<types.MasonryBlockResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -279,11 +307,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.MasonryBlockResponseDtoListApiResponse>(null as any);
     }
+
     /**
      * Create new masonry block
      * @param body (optional) 
@@ -295,7 +324,9 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'buildingId' must be defined.");
         url_ = url_.replace("{buildingId}", encodeURIComponent("" + buildingId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -304,10 +335,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_CreateMasonry(_response);
         });
     }
+
     protected processBlocks_CreateMasonry(response: Response): Promise<types.MasonryBlockResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -320,11 +353,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.MasonryBlockResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Update concrete block
      * @param body (optional) 
@@ -339,7 +373,9 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -348,10 +384,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_UpdateConcrete(_response);
         });
     }
+
     protected processBlocks_UpdateConcrete(response: Response): Promise<types.ConcreteBlockResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -364,11 +402,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ConcreteBlockResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Update masonry block
      * @param body (optional) 
@@ -383,7 +422,9 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -392,10 +433,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_UpdateMasonry(_response);
         });
     }
+
     protected processBlocks_UpdateMasonry(response: Response): Promise<types.MasonryBlockResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -408,11 +451,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.MasonryBlockResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get block statistics
      * @return OK
@@ -426,16 +470,19 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_GetStatistics(_response);
         });
     }
+
     protected processBlocks_GetStatistics(response: Response): Promise<types.BlockStatisticsResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -448,11 +495,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockStatisticsResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Copy block within the same building
      * @param body (optional) 
@@ -467,7 +515,9 @@ export class BlocksClient implements interfaces.IBlocksClient {
             throw new Error("The parameter 'blockId' must be defined.");
         url_ = url_.replace("{blockId}", encodeURIComponent("" + blockId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -476,10 +526,12 @@ export class BlocksClient implements interfaces.IBlocksClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processBlocks_CopyBlock(_response);
         });
     }
+
     protected processBlocks_CopyBlock(response: Response): Promise<types.BlockResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -492,9 +544,9 @@ export class BlocksClient implements interfaces.IBlocksClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BlockResponseDtoApiResponse>(null as any);
     }
-}
+}

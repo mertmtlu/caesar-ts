@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "api:generate": "node src/api/nswag-splitter.js",
+    "api:generate-from": "node src/api/nswag-splitter.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

@@ -1,18 +1,18 @@
 import * as types from './types';
 import * as interfaces from './interfaces';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
+import { SortDirection } from './enums';
 
 export class UiComponentsClient implements interfaces.IUiComponentsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all UI components with pagination
      * @param pageNumber (optional) 
@@ -39,16 +39,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetAll(_response);
         });
     }
+
     protected processUiComponents_GetAll(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -61,11 +64,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get UI component by ID
      * @return OK
@@ -76,16 +80,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetById(_response);
         });
     }
+
     protected processUiComponents_GetById(response: Response): Promise<types.UiComponentDetailDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -98,11 +105,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDetailDtoApiResponse>(null as any);
     }
+
     /**
      * Update UI component
      * @param body (optional) 
@@ -114,7 +122,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -123,10 +133,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_Update(_response);
         });
     }
+
     protected processUiComponents_Update(response: Response): Promise<types.UiComponentDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -139,11 +151,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDtoApiResponse>(null as any);
     }
+
     /**
      * Delete UI component
      * @return OK
@@ -154,16 +167,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_Delete(_response);
         });
     }
+
     protected processUiComponents_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -176,11 +192,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Create new UI component for a specific program version
      * @param body (optional) 
@@ -195,7 +212,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -204,10 +223,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_Create(_response);
         });
     }
+
     protected processUiComponents_Create(response: Response): Promise<types.UiComponentDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -220,11 +241,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDtoApiResponse>(null as any);
     }
+
     /**
      * Get UI components for a specific program version
      * @param pageNumber (optional) 
@@ -257,16 +279,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetByProgramVersion(_response);
         });
     }
+
     protected processUiComponents_GetByProgramVersion(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -279,11 +304,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Copy components from one version to another
      * @param body (optional) 
@@ -301,7 +327,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'toVersionId' must be defined.");
         url_ = url_.replace("{toVersionId}", encodeURIComponent("" + toVersionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -310,10 +338,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_CopyComponentsToNewVersion(_response);
         });
     }
+
     protected processUiComponents_CopyComponentsToNewVersion(response: Response): Promise<types.UiComponentListDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -326,11 +356,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoListApiResponse>(null as any);
     }
+
     /**
      * Copy a component to a different program version
      * @param newName (optional) 
@@ -352,16 +383,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (newName !== undefined)
             url_ += "newName=" + encodeURIComponent("" + newName) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_CopyComponentToVersion(_response);
         });
     }
+
     protected processUiComponents_CopyComponentToVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -374,11 +408,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get available components for a program version
      * @param pageNumber (optional) 
@@ -411,16 +446,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetAvailableForProgramVersion(_response);
         });
     }
+
     protected processUiComponents_GetAvailableForProgramVersion(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -433,11 +471,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Advanced UI component search
      * @param pageNumber (optional) 
@@ -465,7 +504,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -474,10 +515,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_Search(_response);
         });
     }
+
     protected processUiComponents_Search(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -490,11 +533,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get UI components by program
      * @param pageNumber (optional) 
@@ -524,16 +568,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetByProgram(_response);
         });
     }
+
     protected processUiComponents_GetByProgram(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -546,11 +593,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get UI components by type
      * @param pageNumber (optional) 
@@ -580,16 +628,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetByType(_response);
         });
     }
+
     protected processUiComponents_GetByType(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -602,11 +653,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get UI components by creator
      * @param pageNumber (optional) 
@@ -636,16 +688,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetByCreator(_response);
         });
     }
+
     protected processUiComponents_GetByCreator(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -658,11 +713,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get UI components by status
      * @param pageNumber (optional) 
@@ -692,16 +748,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetByStatus(_response);
         });
     }
+
     protected processUiComponents_GetByStatus(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -714,11 +773,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Update UI component status
      * @param body (optional) 
@@ -730,7 +790,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -739,10 +801,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_UpdateStatus(_response);
         });
     }
+
     protected processUiComponents_UpdateStatus(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -755,11 +819,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Activate UI component
      * @return OK
@@ -770,16 +835,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_ActivateComponent(_response);
         });
     }
+
     protected processUiComponents_ActivateComponent(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -792,11 +860,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Deactivate UI component
      * @return OK
@@ -807,16 +876,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_DeactivateComponent(_response);
         });
     }
+
     protected processUiComponents_DeactivateComponent(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -829,11 +901,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Deprecate UI component
      * @param body (optional) 
@@ -845,7 +918,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -854,10 +929,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_DeprecateComponent(_response);
         });
     }
+
     protected processUiComponents_DeprecateComponent(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -870,11 +947,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get UI component bundle
      * @return OK
@@ -885,16 +963,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetComponentBundle(_response);
         });
     }
+
     protected processUiComponents_GetComponentBundle(response: Response): Promise<types.UiComponentBundleDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -907,11 +988,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentBundleDtoApiResponse>(null as any);
     }
+
     /**
      * Upload UI component bundle (assets will be stored in version-specific storage)
      * @param body (optional) 
@@ -923,7 +1005,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -932,10 +1016,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_UploadComponentBundle(_response);
         });
     }
+
     protected processUiComponents_UploadComponentBundle(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -948,11 +1034,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Update UI component assets
      * @param body (optional) 
@@ -964,7 +1051,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -973,10 +1062,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_UpdateComponentAssets(_response);
         });
     }
+
     protected processUiComponents_UpdateComponentAssets(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -989,11 +1080,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get UI component assets (retrieved from version-specific storage)
      * @return OK
@@ -1004,16 +1096,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetComponentAssets(_response);
         });
     }
+
     protected processUiComponents_GetComponentAssets(response: Response): Promise<types.UiComponentAssetDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1026,11 +1121,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentAssetDtoListApiResponse>(null as any);
     }
+
     /**
      * Get UI component configuration
      * @return OK
@@ -1041,16 +1137,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetComponentConfiguration(_response);
         });
     }
+
     protected processUiComponents_GetComponentConfiguration(response: Response): Promise<types.UiComponentConfigDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1063,11 +1162,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentConfigDtoApiResponse>(null as any);
     }
+
     /**
      * Update UI component configuration
      * @param body (optional) 
@@ -1079,7 +1179,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -1088,10 +1190,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_UpdateComponentConfiguration(_response);
         });
     }
+
     protected processUiComponents_UpdateComponentConfiguration(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1104,11 +1208,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get UI component schema
      * @return OK
@@ -1119,16 +1224,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetComponentSchema(_response);
         });
     }
+
     protected processUiComponents_GetComponentSchema(response: Response): Promise<types.UiComponentSchemaDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1141,11 +1249,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentSchemaDtoApiResponse>(null as any);
     }
+
     /**
      * Update UI component schema
      * @param body (optional) 
@@ -1157,7 +1266,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -1166,10 +1277,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_UpdateComponentSchema(_response);
         });
     }
+
     protected processUiComponents_UpdateComponentSchema(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1182,11 +1295,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Validate UI component schema
      * @param body (optional) 
@@ -1198,7 +1312,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1207,10 +1323,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_ValidateComponentSchema(_response);
         });
     }
+
     protected processUiComponents_ValidateComponentSchema(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1223,11 +1341,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get UI component usage
      * @return OK
@@ -1238,16 +1357,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetComponentUsage(_response);
         });
     }
+
     protected processUiComponents_GetComponentUsage(response: Response): Promise<types.UiComponentUsageDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1260,11 +1382,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentUsageDtoListApiResponse>(null as any);
     }
+
     /**
      * Get program version component mappings
      * @return OK
@@ -1278,16 +1401,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetProgramVersionComponentMappings(_response);
         });
     }
+
     protected processUiComponents_GetProgramVersionComponentMappings(response: Response): Promise<types.ProgramComponentMappingDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1300,11 +1426,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.ProgramComponentMappingDtoListApiResponse>(null as any);
     }
+
     /**
      * Map component to program version
      * @param body (optional) 
@@ -1319,7 +1446,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1328,10 +1457,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_MapComponentToProgramVersion(_response);
         });
     }
+
     protected processUiComponents_MapComponentToProgramVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1344,11 +1475,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Unmap component from program version
      * @return OK
@@ -1365,16 +1497,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'componentId' must be defined.");
         url_ = url_.replace("{componentId}", encodeURIComponent("" + componentId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_UnmapComponentFromProgramVersion(_response);
         });
     }
+
     protected processUiComponents_UnmapComponentFromProgramVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1387,11 +1522,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get recommended components for program version
      * @return OK
@@ -1405,16 +1541,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetRecommendedComponents(_response);
         });
     }
+
     protected processUiComponents_GetRecommendedComponents(response: Response): Promise<types.UiComponentRecommendationDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1427,11 +1566,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentRecommendationDtoListApiResponse>(null as any);
     }
+
     /**
      * Search compatible components
      * @param body (optional) 
@@ -1440,7 +1580,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
     uiComponents_SearchCompatibleComponents(body: types.UiComponentCompatibilitySearchDto | undefined): Promise<types.UiComponentListDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/UiComponents/search-compatible";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1449,10 +1591,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_SearchCompatibleComponents(_response);
         });
     }
+
     protected processUiComponents_SearchCompatibleComponents(response: Response): Promise<types.UiComponentListDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1465,11 +1609,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoListApiResponse>(null as any);
     }
+
     /**
      * Validate component name uniqueness for program version
      * @param excludeId (optional) 
@@ -1489,7 +1634,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (excludeId !== undefined)
             url_ += "excludeId=" + encodeURIComponent("" + excludeId) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1498,10 +1645,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_ValidateNameUniqueForVersion(_response);
         });
     }
+
     protected processUiComponents_ValidateNameUniqueForVersion(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1514,11 +1663,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Validate component definition for program version
      * @param body (optional) 
@@ -1533,7 +1683,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'versionId' must be defined.");
         url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1542,10 +1694,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_ValidateComponentDefinition(_response);
         });
     }
+
     protected processUiComponents_ValidateComponentDefinition(response: Response): Promise<types.UiComponentValidationResultApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1558,11 +1712,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentValidationResultApiResponse>(null as any);
     }
+
     /**
      * Get available component types
      * @return OK
@@ -1570,16 +1725,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
     uiComponents_GetAvailableComponentTypes(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/UiComponents/types";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetAvailableComponentTypes(_response);
         });
     }
+
     protected processUiComponents_GetAvailableComponentTypes(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1592,11 +1750,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Get component categories
      * @return OK
@@ -1604,16 +1763,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
     uiComponents_GetComponentCategories(): Promise<types.UiComponentCategoryDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/UiComponents/categories";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetComponentCategories(_response);
         });
     }
+
     protected processUiComponents_GetComponentCategories(response: Response): Promise<types.UiComponentCategoryDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1626,11 +1788,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentCategoryDtoListApiResponse>(null as any);
     }
+
     /**
      * Add tags to component
      * @param body (optional) 
@@ -1642,7 +1805,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1651,10 +1816,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_AddComponentTags(_response);
         });
     }
+
     protected processUiComponents_AddComponentTags(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1667,11 +1834,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Remove tags from component
      * @param body (optional) 
@@ -1683,7 +1851,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "DELETE",
@@ -1692,10 +1862,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_RemoveComponentTags(_response);
         });
     }
+
     protected processUiComponents_RemoveComponentTags(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1708,11 +1880,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get current user's accessible components
      * @param pageNumber (optional) 
@@ -1739,16 +1912,19 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_GetMyComponents(_response);
         });
     }
+
     protected processUiComponents_GetMyComponents(response: Response): Promise<types.UiComponentListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1761,11 +1937,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Clone component to a specific program version
      * @param body (optional) 
@@ -1783,7 +1960,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             throw new Error("The parameter 'targetVersionId' must be defined.");
         url_ = url_.replace("{targetVersionId}", encodeURIComponent("" + targetVersionId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1792,10 +1971,12 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUiComponents_CloneComponent(_response);
         });
     }
+
     protected processUiComponents_CloneComponent(response: Response): Promise<types.UiComponentDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1808,9 +1989,9 @@ export class UiComponentsClient implements interfaces.IUiComponentsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.UiComponentDtoApiResponse>(null as any);
     }
-}
+}

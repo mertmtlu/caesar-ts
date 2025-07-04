@@ -1,18 +1,18 @@
 import * as types from './types';
 import * as interfaces from './interfaces';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
+import { SortDirection, TMState } from './enums';
 
 export class TMsClient implements interfaces.ITMsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all TMs with pagination
      * @param pageNumber (optional) 
@@ -39,16 +39,19 @@ export class TMsClient implements interfaces.ITMsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_GetAll(_response);
         });
     }
+
     protected processTMs_GetAll(response: Response): Promise<types.TMListResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -61,11 +64,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMListResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new TM
      * @param body (optional) 
@@ -74,7 +78,9 @@ export class TMsClient implements interfaces.ITMsClient {
     tMs_Create(body: types.TMCreateDto | undefined): Promise<types.TMResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/TMs";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -83,10 +89,12 @@ export class TMsClient implements interfaces.ITMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_Create(_response);
         });
     }
+
     protected processTMs_Create(response: Response): Promise<types.TMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -99,11 +107,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get TM by ID
      * @return OK
@@ -114,16 +123,19 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_GetById(_response);
         });
     }
+
     protected processTMs_GetById(response: Response): Promise<types.TMDetailResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -136,11 +148,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMDetailResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Update TM
      * @param body (optional) 
@@ -152,7 +165,9 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -161,10 +176,12 @@ export class TMsClient implements interfaces.ITMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_Update(_response);
         });
     }
+
     protected processTMs_Update(response: Response): Promise<types.TMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -177,11 +194,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Delete TM
      * @return OK
@@ -192,16 +210,19 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_Delete(_response);
         });
     }
+
     protected processTMs_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -214,11 +235,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get TM by name
      * @return OK
@@ -229,16 +251,19 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'name' must be defined.");
         url_ = url_.replace("{name}", encodeURIComponent("" + name));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_GetByName(_response);
         });
     }
+
     protected processTMs_GetByName(response: Response): Promise<types.TMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -251,11 +276,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get TMs by region ID
      * @param pageNumber (optional) 
@@ -285,16 +311,19 @@ export class TMsClient implements interfaces.ITMsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_GetByRegionId(_response);
         });
     }
+
     protected processTMs_GetByRegionId(response: Response): Promise<types.TMListResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -307,11 +336,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMListResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Search TMs
      * @param pageNumber (optional) 
@@ -339,7 +369,9 @@ export class TMsClient implements interfaces.ITMsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -348,10 +380,12 @@ export class TMsClient implements interfaces.ITMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_Search(_response);
         });
     }
+
     protected processTMs_Search(response: Response): Promise<types.TMListResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -364,11 +398,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMListResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Update TM state
      * @param body (optional) 
@@ -380,7 +415,9 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -389,10 +426,12 @@ export class TMsClient implements interfaces.ITMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_UpdateState(_response);
         });
     }
+
     protected processTMs_UpdateState(response: Response): Promise<types.TMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -405,11 +444,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Update TM voltages
      * @param body (optional) 
@@ -421,7 +461,9 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -430,10 +472,12 @@ export class TMsClient implements interfaces.ITMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_UpdateVoltages(_response);
         });
     }
+
     protected processTMs_UpdateVoltages(response: Response): Promise<types.TMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -446,11 +490,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get TM statistics
      * @return OK
@@ -461,16 +506,19 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_GetStatistics(_response);
         });
     }
+
     protected processTMs_GetStatistics(response: Response): Promise<types.TMStatisticsResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -483,11 +531,12 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMStatisticsResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get hazard summary for TM
      * @return OK
@@ -498,16 +547,19 @@ export class TMsClient implements interfaces.ITMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processTMs_GetHazardSummary(_response);
         });
     }
+
     protected processTMs_GetHazardSummary(response: Response): Promise<types.TMHazardSummaryResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -520,9 +572,9 @@ export class TMsClient implements interfaces.ITMsClient {
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<types.TMHazardSummaryResponseDtoApiResponse>(null as any);
     }
-}
+}
