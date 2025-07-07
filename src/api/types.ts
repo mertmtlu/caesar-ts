@@ -1,417 +1,10 @@
-import { formatDate } from './utils';
-import {
-    IActiveDeploymentDto,
-    IActiveDeploymentDtoListApiResponse,
-    IAddressDto,
-    IAddressResponseDto,
-    IAlternativeTMComparisonResponseDto,
-    IAlternativeTMComparisonResponseDtoListApiResponse,
-    IAlternativeTMCreateDto,
-    IAlternativeTMDetailResponseDto,
-    IAlternativeTMDetailResponseDtoApiResponse,
-    IAlternativeTMResponseDto,
-    IAlternativeTMResponseDtoApiResponse,
-    IAlternativeTMSummaryResponseDto,
-    IAlternativeTMSummaryResponseDtoPagedResponse,
-    IAlternativeTMSummaryResponseDtoPagedResponseApiResponse,
-    IAlternativeTMUpdateDto,
-    IAppDeploymentConfigUpdateDto,
-    IAppDeploymentInfo,
-    IAppDeploymentRequestDto,
-    IApplicationHealthDto,
-    IApplicationHealthDtoApiResponse,
-    IApplicationMetricsDto,
-    IApplicationMetricsDtoApiResponse,
-    IAuditInfoResponseDto,
-    IAuthenticationResponseDto,
-    IAuthenticationResponseDtoApiResponse,
-    IAvalancheHazardDto,
-    IAvalancheHazardResponseDto,
-    IBlockResponseDto,
-    IBlockResponseDtoApiResponse,
-    IBlockResponseDtoListApiResponse,
-    IBlockStatisticsResponseDto,
-    IBlockStatisticsResponseDtoApiResponse,
-    IBlockSummaryResponseDto,
-    IBlockSummaryResponseDtoApiResponse,
-    IBooleanApiResponse,
-    IBuildingBlockAddDto,
-    IBuildingCreateDto,
-    IBuildingDetailResponseDto,
-    IBuildingDetailResponseDtoApiResponse,
-    IBuildingListResponseDto,
-    IBuildingListResponseDtoPagedResponse,
-    IBuildingListResponseDtoPagedResponseApiResponse,
-    IBuildingResponseDto,
-    IBuildingResponseDtoApiResponse,
-    IBuildingSearchDto,
-    IBuildingStatisticsResponseDto,
-    IBuildingStatisticsResponseDtoApiResponse,
-    IBuildingSummaryResponseDto,
-    IBuildingUpdateDto,
-    IBulkOperationResult,
-    IBulkOperationResultApiResponse,
-    IBulkRequestStatusUpdateDto,
-    IClientCreateDto,
-    IClientDetailResponseDto,
-    IClientDetailResponseDtoApiResponse,
-    IClientListResponseDto,
-    IClientListResponseDtoPagedResponse,
-    IClientListResponseDtoPagedResponseApiResponse,
-    IClientResponseDto,
-    IClientResponseDtoApiResponse,
-    IClientStatisticsResponseDto,
-    IClientStatisticsResponseDtoApiResponse,
-    IClientSummaryResponseDto,
-    IClientUpdateDto,
-    IComparisonScoreDto,
-    IConcreteBlockResponseDto,
-    IConcreteBlockResponseDtoApiResponse,
-    IConcreteBlockResponseDtoListApiResponse,
-    IConcreteCreateDto,
-    IConcreteUpdateDto,
-    IConnectionTestResult,
-    IConnectionTestResultApiResponse,
-    IContainerDeploymentRequestDto,
-    IContainerHealthCheckDto,
-    IContainerPortMappingDto,
-    IContainerResourceLimitsDto,
-    IContainerVolumeMountDto,
-    ICopyBlockDto,
-    ICreateFromTMDto,
-    IDeploymentHistoryDto,
-    IDeploymentHistoryDtoListApiResponse,
-    IDeploymentResourceUsageDto,
-    IDeploymentResourceUsageDtoApiResponse,
-    IDeploymentStatisticsDto,
-    IDeploymentStatisticsDtoApiResponse,
-    IDeploymentValidationResult,
-    IDeploymentValidationResultApiResponse,
-    IDownloadRequest,
-    IEarthquakeLevelDto,
-    IEarthquakeLevelResponseDto,
-    IExecutionCleanupReportDto,
-    IExecutionCleanupReportDtoListApiResponse,
-    IExecutionDetailDto,
-    IExecutionDetailDtoApiResponse,
-    IExecutionDto,
-    IExecutionDtoApiResponse,
-    IExecutionEnvironmentDto,
-    IExecutionEnvironmentDtoApiResponse,
-    IExecutionEnvironmentUpdateDto,
-    IExecutionListDto,
-    IExecutionListDtoListApiResponse,
-    IExecutionListDtoPagedResponse,
-    IExecutionListDtoPagedResponseApiResponse,
-    IExecutionOutputFileContentDto,
-    IExecutionOutputFileContentDtoApiResponse,
-    IExecutionOutputFileDto,
-    IExecutionOutputFileDtoListApiResponse,
-    IExecutionParametersDto,
-    IExecutionPerformanceDto,
-    IExecutionPerformanceDtoListApiResponse,
-    IExecutionQueueStatusDto,
-    IExecutionQueueStatusDtoApiResponse,
-    IExecutionResourceLimitsDto,
-    IExecutionResourceLimitsDtoApiResponse,
-    IExecutionResourceLimitsUpdateDto,
-    IExecutionResourceTrendDto,
-    IExecutionResourceTrendDtoListApiResponse,
-    IExecutionResourceUpdateDto,
-    IExecutionResourceUsageDto,
-    IExecutionResourceUsageDtoApiResponse,
-    IExecutionResultDto,
-    IExecutionResultDtoApiResponse,
-    IExecutionScheduleRequestDto,
-    IExecutionSearchDto,
-    IExecutionSecurityScanResult,
-    IExecutionSecurityScanResultApiResponse,
-    IExecutionStatsDto,
-    IExecutionStatsDtoApiResponse,
-    IExecutionStatusDto,
-    IExecutionStatusDtoApiResponse,
-    IExecutionSummaryDto,
-    IExecutionSummaryDtoApiResponse,
-    IExecutionTemplateDto,
-    IExecutionTemplateDtoListApiResponse,
-    IExecutionTrendDto,
-    IExecutionTrendDtoListApiResponse,
-    IExecutionValidationResult,
-    IExecutionValidationResultApiResponse,
-    IFileStorageResult,
-    IFileStorageResultListApiResponse,
-    IFileValidationRequest,
-    IFileValidationResult,
-    IFileValidationResultApiResponse,
-    IFireHazardDto,
-    IFireHazardResponseDto,
-    IFloodHazardDto,
-    IFloodHazardResponseDto,
-    IHazardResponseDto,
-    IHazardSummaryResponseDto,
-    IHealthCheckResultDto,
-    IInt32ApiResponse,
-    ILandslideHazardDto,
-    ILandslideHazardResponseDto,
-    ILocationRequestDto,
-    ILocationResponseDto,
-    IMasonryBlockResponseDto,
-    IMasonryBlockResponseDtoApiResponse,
-    IMasonryBlockResponseDtoListApiResponse,
-    IMasonryCreateDto,
-    IMasonryUnitType,
-    IMasonryUnitTypeResponseDto,
-    IMasonryUpdateDto,
-    INoiseHazardDto,
-    INoiseHazardResponseDto,
-    IPasswordResetResponseDto,
-    IPasswordResetResponseDtoApiResponse,
-    IPollutionDto,
-    IPollutionResponseDto,
-    IProgramComponentMappingDto,
-    IProgramComponentMappingDtoListApiResponse,
-    IProgramCreateDto,
-    IProgramDeploymentDto,
-    IProgramDeploymentDtoApiResponse,
-    IProgramDeploymentStatusDto,
-    IProgramDeploymentStatusDtoApiResponse,
-    IProgramDetailDto,
-    IProgramDetailDtoApiResponse,
-    IProgramDto,
-    IProgramDtoApiResponse,
-    IProgramExecutionRequestDto,
-    IProgramFileDto,
-    IProgramGroupPermissionDto,
-    IProgramListDto,
-    IProgramListDtoPagedResponse,
-    IProgramListDtoPagedResponseApiResponse,
-    IProgramPermissionDto,
-    IProgramPermissionDtoListApiResponse,
-    IProgramSearchDto,
-    IProgramStatsDto,
-    IProgramUpdateDto,
-    IProgramUserPermissionDto,
-    IProjectComplexityDto,
-    IProjectFileDto,
-    IProjectSecurityScanDto,
-    IProjectStructureAnalysisDto,
-    IProjectStructureAnalysisDtoApiResponse,
-    IProjectValidationResultDto,
-    IProjectValidationResultDtoApiResponse,
-    IRefreshTokenDto,
-    IRegionCityUpdateDto,
-    IRegionCreateDto,
-    IRegionDetailResponseDto,
-    IRegionDetailResponseDtoApiResponse,
-    IRegionListResponseDto,
-    IRegionListResponseDtoPagedResponse,
-    IRegionListResponseDtoPagedResponseApiResponse,
-    IRegionResponseDto,
-    IRegionResponseDtoApiResponse,
-    IRegionStatisticsResponseDto,
-    IRegionStatisticsResponseDtoApiResponse,
-    IRegionSummaryResponseDto,
-    IRegionSummaryResponseDtoListApiResponse,
-    IRegionUpdateDto,
-    IRequestAssignmentDto,
-    IRequestCompletionDto,
-    IRequestCreateDto,
-    IRequestDetailDto,
-    IRequestDetailDtoApiResponse,
-    IRequestDto,
-    IRequestDtoApiResponse,
-    IRequestFromTemplateDto,
-    IRequestListDto,
-    IRequestListDtoListApiResponse,
-    IRequestListDtoPagedResponse,
-    IRequestListDtoPagedResponseApiResponse,
-    IRequestMetricDto,
-    IRequestMetricDtoListApiResponse,
-    IRequestPerformanceDto,
-    IRequestPerformanceDtoListApiResponse,
-    IRequestPriorityUpdateDto,
-    IRequestRejectionDto,
-    IRequestRelatedEntityDto,
-    IRequestResponseCreateDto,
-    IRequestResponseDto,
-    IRequestResponseDtoApiResponse,
-    IRequestResponseDtoListApiResponse,
-    IRequestResponseUpdateDto,
-    IRequestSearchDto,
-    IRequestStatsDto,
-    IRequestStatsDtoApiResponse,
-    IRequestStatusUpdateDto,
-    IRequestTemplateCreateDto,
-    IRequestTemplateDto,
-    IRequestTemplateDtoApiResponse,
-    IRequestTemplateDtoListApiResponse,
-    IRequestTimelineDto,
-    IRequestTimelineEventDto,
-    IRequestTrendDto,
-    IRequestTrendDtoListApiResponse,
-    IRequestUpdateDto,
-    IRequestValidationResult,
-    IRequestValidationResultApiResponse,
-    IRequestValidationSuggestionDto,
-    IRevokeTokenDto,
-    IRockFallHazardDto,
-    IRockFallHazardResponseDto,
-    IRollbackRequestDto,
-    ISecurityHazardDto,
-    ISecurityHazardResponseDto,
-    ISecurityIssueDto,
-    ISoilDto,
-    ISoilResponseDto,
-    IStaticSiteDeploymentRequestDto,
-    IStorageStatistics,
-    IStorageStatisticsApiResponse,
-    IStringApiResponse,
-    IStringListApiResponse,
-    IStringStringDictionaryApiResponse,
-    IStringStringListDictionaryApiResponse,
-    ISupportedDeploymentOptionDto,
-    ISupportedDeploymentOptionDtoListApiResponse,
-    ITMCreateDto,
-    ITMDetailResponseDto,
-    ITMDetailResponseDtoApiResponse,
-    ITMHazardSummaryResponseDto,
-    ITMHazardSummaryResponseDtoApiResponse,
-    ITMListResponseDto,
-    ITMListResponseDtoPagedResponse,
-    ITMListResponseDtoPagedResponseApiResponse,
-    ITMResponseDto,
-    ITMResponseDtoApiResponse,
-    ITMSearchDto,
-    ITMStateUpdateDto,
-    ITMStatisticsResponseDto,
-    ITMStatisticsResponseDtoApiResponse,
-    ITMSummaryResponseDto,
-    ITMUpdateDto,
-    ITMVoltageUpdateDto,
-    ITokenResponseDto,
-    ITokenResponseDtoApiResponse,
-    ITsunamiHazardDto,
-    ITsunamiHazardResponseDto,
-    IUiComponentAssetDto,
-    IUiComponentAssetDtoListApiResponse,
-    IUiComponentAssetUploadDto,
-    IUiComponentBundleDto,
-    IUiComponentBundleDtoApiResponse,
-    IUiComponentBundleInfoDto,
-    IUiComponentBundleUploadDto,
-    IUiComponentCategoryDto,
-    IUiComponentCategoryDtoListApiResponse,
-    IUiComponentCompatibilitySearchDto,
-    IUiComponentConfigDto,
-    IUiComponentConfigDtoApiResponse,
-    IUiComponentConfigUpdateDto,
-    IUiComponentCreateDto,
-    IUiComponentDetailDto,
-    IUiComponentDetailDtoApiResponse,
-    IUiComponentDto,
-    IUiComponentDtoApiResponse,
-    IUiComponentListDto,
-    IUiComponentListDtoListApiResponse,
-    IUiComponentListDtoPagedResponse,
-    IUiComponentListDtoPagedResponseApiResponse,
-    IUiComponentMappingDto,
-    IUiComponentRecommendationDto,
-    IUiComponentRecommendationDtoListApiResponse,
-    IUiComponentSchemaDto,
-    IUiComponentSchemaDtoApiResponse,
-    IUiComponentSchemaUpdateDto,
-    IUiComponentSearchDto,
-    IUiComponentStatsDto,
-    IUiComponentUpdateDto,
-    IUiComponentUsageDto,
-    IUiComponentUsageDtoListApiResponse,
-    IUiComponentValidationResult,
-    IUiComponentValidationResultApiResponse,
-    IUiComponentValidationSuggestionDto,
-    IUserDetailDto,
-    IUserDetailDtoApiResponse,
-    IUserDto,
-    IUserDtoApiResponse,
-    IUserListDto,
-    IUserListDtoPagedResponse,
-    IUserListDtoPagedResponseApiResponse,
-    IUserLoginDto,
-    IUserPasswordChangeDto,
-    IUserPasswordResetDto,
-    IUserPasswordResetRequestDto,
-    IUserPermissionUpdateDto,
-    IUserProfileDto,
-    IUserProfileDtoApiResponse,
-    IUserRegisterDto,
-    IUserRoleUpdateDto,
-    IUserSearchDto,
-    IUserUpdateDto,
-    IVersionActivityDto,
-    IVersionActivityDtoListApiResponse,
-    IVersionChangeDto,
-    IVersionChangeDtoListApiResponse,
-    IVersionCommitDto,
-    IVersionCommitValidationDto,
-    IVersionCreateDto,
-    IVersionDeploymentDto,
-    IVersionDeploymentDtoApiResponse,
-    IVersionDeploymentInfoDto,
-    IVersionDeploymentRequestDto,
-    IVersionDetailDto,
-    IVersionDetailDtoApiResponse,
-    IVersionDiffDto,
-    IVersionDiffDtoApiResponse,
-    IVersionDiffStatsDto,
-    IVersionDto,
-    IVersionDtoApiResponse,
-    IVersionExecutionRequestDto,
-    IVersionFileChangeDto,
-    IVersionFileChangeSummaryDto,
-    IVersionFileCreateDto,
-    IVersionFileDetailDto,
-    IVersionFileDetailDtoApiResponse,
-    IVersionFileDto,
-    IVersionFileDtoListApiResponse,
-    IVersionFileUpdateDto,
-    IVersionListDto,
-    IVersionListDtoPagedResponse,
-    IVersionListDtoPagedResponseApiResponse,
-    IVersionReviewDto,
-    IVersionReviewDtoApiResponse,
-    IVersionReviewSubmissionDto,
-    IVersionSearchDto,
-    IVersionStatsDto,
-    IVersionStatsDtoApiResponse,
-    IVersionStatusUpdateDto,
-    IVersionUpdateDto,
-    IWebAppDeploymentRequestDto,
-    IWebAppStatusDto,
-    IWebAppStatusDtoApiResponse,
-    INoiseMeasurementsForBuildings
-} from './typeInterfaces'
-import {
-    AppDeploymentType,
-    BuildingType,
-    ClientType,
-    Level,
-    Operation,
-    PerimeterWallType, 
-    TBDY2018SoilClass,
-    TDY2007SoilClass,
-    TMState,
-    TMType,
-    WallCondition
-} from './enums';
+// --- START OF FILE types.ts ---
 
-//----------------------
-// <auto-generated>
-//     Generated using the NSwag toolchain v14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0)) (http://NSwag.org)
-// </auto-generated>
-//----------------------
-/* tslint:disable */
-/* eslint-disable */
-// ReSharper disable InconsistentNaming
-export class ActiveDeploymentDto implements IActiveDeploymentDto {
+import * as interfaces from './typeInterfaces';
+import * as enums from './enums';
+import { formatDate } from './utils';
+
+export class ActiveDeploymentDto implements interfaces.IActiveDeploymentDto {
     programId?: string | undefined;
     programName?: string | undefined;
     version?: string | undefined;
@@ -420,7 +13,8 @@ export class ActiveDeploymentDto implements IActiveDeploymentDto {
     deployedAt?: Date;
     url?: string | undefined;
     healthStatus?: string | undefined;
-    constructor(data?: IActiveDeploymentDto) {
+
+    constructor(data?: interfaces.IActiveDeploymentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -428,6 +22,7 @@ export class ActiveDeploymentDto implements IActiveDeploymentDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -440,12 +35,14 @@ export class ActiveDeploymentDto implements IActiveDeploymentDto {
             this.healthStatus = _data["healthStatus"];
         }
     }
+
     static fromJS(data: any): ActiveDeploymentDto {
         data = typeof data === 'object' ? data : {};
         let result = new ActiveDeploymentDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -460,13 +57,14 @@ export class ActiveDeploymentDto implements IActiveDeploymentDto {
     }
 }
 
-export class ActiveDeploymentDtoListApiResponse implements IActiveDeploymentDtoListApiResponse {
+export class ActiveDeploymentDtoListApiResponse implements interfaces.IActiveDeploymentDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ActiveDeploymentDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IActiveDeploymentDtoListApiResponse) {
+
+    constructor(data?: interfaces.IActiveDeploymentDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -474,6 +72,7 @@ export class ActiveDeploymentDtoListApiResponse implements IActiveDeploymentDtoL
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -491,12 +90,14 @@ export class ActiveDeploymentDtoListApiResponse implements IActiveDeploymentDtoL
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ActiveDeploymentDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ActiveDeploymentDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -516,12 +117,13 @@ export class ActiveDeploymentDtoListApiResponse implements IActiveDeploymentDtoL
     }
 }
 
-export class AddressDto implements IAddressDto {
+export class AddressDto implements interfaces.IAddressDto {
     city?: string | undefined;
     county?: string | undefined;
     district?: string | undefined;
     street?: string | undefined;
-    constructor(data?: IAddressDto) {
+
+    constructor(data?: interfaces.IAddressDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -529,6 +131,7 @@ export class AddressDto implements IAddressDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.city = _data["city"];
@@ -537,12 +140,14 @@ export class AddressDto implements IAddressDto {
             this.street = _data["street"];
         }
     }
+
     static fromJS(data: any): AddressDto {
         data = typeof data === 'object' ? data : {};
         let result = new AddressDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["city"] = this.city;
@@ -553,12 +158,13 @@ export class AddressDto implements IAddressDto {
     }
 }
 
-export class AddressResponseDto implements IAddressResponseDto {
+export class AddressResponseDto implements interfaces.IAddressResponseDto {
     city?: string | undefined;
     county?: string | undefined;
     district?: string | undefined;
     street?: string | undefined;
-    constructor(data?: IAddressResponseDto) {
+
+    constructor(data?: interfaces.IAddressResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -566,6 +172,7 @@ export class AddressResponseDto implements IAddressResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.city = _data["city"];
@@ -574,12 +181,14 @@ export class AddressResponseDto implements IAddressResponseDto {
             this.street = _data["street"];
         }
     }
+
     static fromJS(data: any): AddressResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AddressResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["city"] = this.city;
@@ -590,14 +199,15 @@ export class AddressResponseDto implements IAddressResponseDto {
     }
 }
 
-export class AlternativeTMComparisonResponseDto implements IAlternativeTMComparisonResponseDto {
+export class AlternativeTMComparisonResponseDto implements interfaces.IAlternativeTMComparisonResponseDto {
     id?: string | undefined;
     location?: LocationRequestDto;
     address?: AddressDto;
     hazardSummary?: HazardSummaryResponseDto;
     distanceFromOriginal?: number;
     comparisonScore?: ComparisonScoreDto;
-    constructor(data?: IAlternativeTMComparisonResponseDto) {
+
+    constructor(data?: interfaces.IAlternativeTMComparisonResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -605,6 +215,7 @@ export class AlternativeTMComparisonResponseDto implements IAlternativeTMCompari
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -615,12 +226,14 @@ export class AlternativeTMComparisonResponseDto implements IAlternativeTMCompari
             this.comparisonScore = _data["comparisonScore"] ? ComparisonScoreDto.fromJS(_data["comparisonScore"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMComparisonResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMComparisonResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -633,13 +246,14 @@ export class AlternativeTMComparisonResponseDto implements IAlternativeTMCompari
     }
 }
 
-export class AlternativeTMComparisonResponseDtoListApiResponse implements IAlternativeTMComparisonResponseDtoListApiResponse {
+export class AlternativeTMComparisonResponseDtoListApiResponse implements interfaces.IAlternativeTMComparisonResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: AlternativeTMComparisonResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IAlternativeTMComparisonResponseDtoListApiResponse) {
+
+    constructor(data?: interfaces.IAlternativeTMComparisonResponseDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -647,6 +261,7 @@ export class AlternativeTMComparisonResponseDtoListApiResponse implements IAlter
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -664,12 +279,14 @@ export class AlternativeTMComparisonResponseDtoListApiResponse implements IAlter
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMComparisonResponseDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMComparisonResponseDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -689,7 +306,7 @@ export class AlternativeTMComparisonResponseDtoListApiResponse implements IAlter
     }
 }
 
-export class AlternativeTMCreateDto implements IAlternativeTMCreateDto {
+export class AlternativeTMCreateDto implements interfaces.IAlternativeTMCreateDto {
     tmId!: string;
     location!: LocationRequestDto;
     address?: AddressDto;
@@ -707,7 +324,8 @@ export class AlternativeTMCreateDto implements IAlternativeTMCreateDto {
     floodHazard!: FloodHazardDto;
     tsunamiHazard!: TsunamiHazardDto;
     soil!: SoilDto;
-    constructor(data?: IAlternativeTMCreateDto) {
+
+    constructor(data?: interfaces.IAlternativeTMCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -731,6 +349,7 @@ export class AlternativeTMCreateDto implements IAlternativeTMCreateDto {
             this.soil = new SoilDto();
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.tmId = _data["tmId"];
@@ -752,12 +371,14 @@ export class AlternativeTMCreateDto implements IAlternativeTMCreateDto {
             this.soil = _data["soil"] ? SoilDto.fromJS(_data["soil"]) : new SoilDto();
         }
     }
+
     static fromJS(data: any): AlternativeTMCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tmId"] = this.tmId;
@@ -781,7 +402,7 @@ export class AlternativeTMCreateDto implements IAlternativeTMCreateDto {
     }
 }
 
-export class AlternativeTMDetailResponseDto implements IAlternativeTMDetailResponseDto {
+export class AlternativeTMDetailResponseDto implements interfaces.IAlternativeTMDetailResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
     location?: LocationResponseDto;
@@ -802,7 +423,8 @@ export class AlternativeTMDetailResponseDto implements IAlternativeTMDetailRespo
     tsunamiHazard?: TsunamiHazardResponseDto;
     soil?: SoilResponseDto;
     hazardSummary?: HazardSummaryResponseDto;
-    constructor(data?: IAlternativeTMDetailResponseDto) {
+
+    constructor(data?: interfaces.IAlternativeTMDetailResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -810,6 +432,7 @@ export class AlternativeTMDetailResponseDto implements IAlternativeTMDetailRespo
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -834,12 +457,14 @@ export class AlternativeTMDetailResponseDto implements IAlternativeTMDetailRespo
             this.hazardSummary = _data["hazardSummary"] ? HazardSummaryResponseDto.fromJS(_data["hazardSummary"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMDetailResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMDetailResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -866,13 +491,14 @@ export class AlternativeTMDetailResponseDto implements IAlternativeTMDetailRespo
     }
 }
 
-export class AlternativeTMDetailResponseDtoApiResponse implements IAlternativeTMDetailResponseDtoApiResponse {
+export class AlternativeTMDetailResponseDtoApiResponse implements interfaces.IAlternativeTMDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: AlternativeTMDetailResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IAlternativeTMDetailResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IAlternativeTMDetailResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -880,6 +506,7 @@ export class AlternativeTMDetailResponseDtoApiResponse implements IAlternativeTM
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -893,12 +520,14 @@ export class AlternativeTMDetailResponseDtoApiResponse implements IAlternativeTM
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMDetailResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMDetailResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -914,7 +543,7 @@ export class AlternativeTMDetailResponseDtoApiResponse implements IAlternativeTM
     }
 }
 
-export class AlternativeTMResponseDto implements IAlternativeTMResponseDto {
+export class AlternativeTMResponseDto implements interfaces.IAlternativeTMResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
     location?: LocationResponseDto;
@@ -923,7 +552,8 @@ export class AlternativeTMResponseDto implements IAlternativeTMResponseDto {
     dD2?: EarthquakeLevelResponseDto;
     dD3?: EarthquakeLevelResponseDto;
     earthquakeScenario?: EarthquakeLevelResponseDto;
-    constructor(data?: IAlternativeTMResponseDto) {
+
+    constructor(data?: interfaces.IAlternativeTMResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -931,6 +561,7 @@ export class AlternativeTMResponseDto implements IAlternativeTMResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -943,12 +574,14 @@ export class AlternativeTMResponseDto implements IAlternativeTMResponseDto {
             this.earthquakeScenario = _data["earthquakeScenario"] ? EarthquakeLevelResponseDto.fromJS(_data["earthquakeScenario"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -963,13 +596,14 @@ export class AlternativeTMResponseDto implements IAlternativeTMResponseDto {
     }
 }
 
-export class AlternativeTMResponseDtoApiResponse implements IAlternativeTMResponseDtoApiResponse {
+export class AlternativeTMResponseDtoApiResponse implements interfaces.IAlternativeTMResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: AlternativeTMResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IAlternativeTMResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IAlternativeTMResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -977,6 +611,7 @@ export class AlternativeTMResponseDtoApiResponse implements IAlternativeTMRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -990,12 +625,14 @@ export class AlternativeTMResponseDtoApiResponse implements IAlternativeTMRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -1011,12 +648,13 @@ export class AlternativeTMResponseDtoApiResponse implements IAlternativeTMRespon
     }
 }
 
-export class AlternativeTMSummaryResponseDto implements IAlternativeTMSummaryResponseDto {
+export class AlternativeTMSummaryResponseDto implements interfaces.IAlternativeTMSummaryResponseDto {
     id?: string | undefined;
     location?: LocationResponseDto;
     city?: string | undefined;
     overallRiskScore?: number;
-    constructor(data?: IAlternativeTMSummaryResponseDto) {
+
+    constructor(data?: interfaces.IAlternativeTMSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1024,6 +662,7 @@ export class AlternativeTMSummaryResponseDto implements IAlternativeTMSummaryRes
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -1032,12 +671,14 @@ export class AlternativeTMSummaryResponseDto implements IAlternativeTMSummaryRes
             this.overallRiskScore = _data["overallRiskScore"];
         }
     }
+
     static fromJS(data: any): AlternativeTMSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -1048,7 +689,7 @@ export class AlternativeTMSummaryResponseDto implements IAlternativeTMSummaryRes
     }
 }
 
-export class AlternativeTMSummaryResponseDtoPagedResponse implements IAlternativeTMSummaryResponseDtoPagedResponse {
+export class AlternativeTMSummaryResponseDtoPagedResponse implements interfaces.IAlternativeTMSummaryResponseDtoPagedResponse {
     items?: AlternativeTMSummaryResponseDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -1056,7 +697,8 @@ export class AlternativeTMSummaryResponseDtoPagedResponse implements IAlternativ
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IAlternativeTMSummaryResponseDtoPagedResponse) {
+
+    constructor(data?: interfaces.IAlternativeTMSummaryResponseDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1064,6 +706,7 @@ export class AlternativeTMSummaryResponseDtoPagedResponse implements IAlternativ
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -1079,12 +722,14 @@ export class AlternativeTMSummaryResponseDtoPagedResponse implements IAlternativ
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): AlternativeTMSummaryResponseDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMSummaryResponseDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -1102,13 +747,14 @@ export class AlternativeTMSummaryResponseDtoPagedResponse implements IAlternativ
     }
 }
 
-export class AlternativeTMSummaryResponseDtoPagedResponseApiResponse implements IAlternativeTMSummaryResponseDtoPagedResponseApiResponse {
+export class AlternativeTMSummaryResponseDtoPagedResponseApiResponse implements interfaces.IAlternativeTMSummaryResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: AlternativeTMSummaryResponseDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IAlternativeTMSummaryResponseDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IAlternativeTMSummaryResponseDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1116,6 +762,7 @@ export class AlternativeTMSummaryResponseDtoPagedResponseApiResponse implements 
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -1129,12 +776,14 @@ export class AlternativeTMSummaryResponseDtoPagedResponseApiResponse implements 
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMSummaryResponseDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMSummaryResponseDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -1150,7 +799,7 @@ export class AlternativeTMSummaryResponseDtoPagedResponseApiResponse implements 
     }
 }
 
-export class AlternativeTMUpdateDto implements IAlternativeTMUpdateDto {
+export class AlternativeTMUpdateDto implements interfaces.IAlternativeTMUpdateDto {
     tmId?: string | undefined;
     location?: LocationRequestDto;
     address?: AddressDto;
@@ -1168,7 +817,8 @@ export class AlternativeTMUpdateDto implements IAlternativeTMUpdateDto {
     floodHazard?: FloodHazardDto;
     tsunamiHazard?: TsunamiHazardDto;
     soil?: SoilDto;
-    constructor(data?: IAlternativeTMUpdateDto) {
+
+    constructor(data?: interfaces.IAlternativeTMUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1176,6 +826,7 @@ export class AlternativeTMUpdateDto implements IAlternativeTMUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.tmId = _data["tmId"];
@@ -1197,12 +848,14 @@ export class AlternativeTMUpdateDto implements IAlternativeTMUpdateDto {
             this.soil = _data["soil"] ? SoilDto.fromJS(_data["soil"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AlternativeTMUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new AlternativeTMUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tmId"] = this.tmId;
@@ -1226,13 +879,14 @@ export class AlternativeTMUpdateDto implements IAlternativeTMUpdateDto {
     }
 }
 
-export class AppDeploymentConfigUpdateDto implements IAppDeploymentConfigUpdateDto {
+export class AppDeploymentConfigUpdateDto implements interfaces.IAppDeploymentConfigUpdateDto {
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
     domainName?: string | undefined;
     port?: number | undefined;
-    constructor(data?: IAppDeploymentConfigUpdateDto) {
+
+    constructor(data?: interfaces.IAppDeploymentConfigUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1240,6 +894,7 @@ export class AppDeploymentConfigUpdateDto implements IAppDeploymentConfigUpdateD
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (_data["configuration"]) {
@@ -1265,12 +920,14 @@ export class AppDeploymentConfigUpdateDto implements IAppDeploymentConfigUpdateD
             this.port = _data["port"];
         }
     }
+
     static fromJS(data: any): AppDeploymentConfigUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new AppDeploymentConfigUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (this.configuration) {
@@ -1298,13 +955,14 @@ export class AppDeploymentConfigUpdateDto implements IAppDeploymentConfigUpdateD
     }
 }
 
-export class AppDeploymentInfo implements IAppDeploymentInfo {
-    deploymentType?: AppDeploymentType;
+export class AppDeploymentInfo implements interfaces.IAppDeploymentInfo {
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     lastDeployed?: Date | undefined;
     status?: string | undefined;
     supportedFeatures?: string[] | undefined;
-    constructor(data?: IAppDeploymentInfo) {
+
+    constructor(data?: interfaces.IAppDeploymentInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1312,6 +970,7 @@ export class AppDeploymentInfo implements IAppDeploymentInfo {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.deploymentType = _data["deploymentType"];
@@ -1331,12 +990,14 @@ export class AppDeploymentInfo implements IAppDeploymentInfo {
             }
         }
     }
+
     static fromJS(data: any): AppDeploymentInfo {
         data = typeof data === 'object' ? data : {};
         let result = new AppDeploymentInfo();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["deploymentType"] = this.deploymentType;
@@ -1358,8 +1019,8 @@ export class AppDeploymentInfo implements IAppDeploymentInfo {
     }
 }
 
-export class AppDeploymentRequestDto implements IAppDeploymentRequestDto {
-    deploymentType?: AppDeploymentType;
+export class AppDeploymentRequestDto implements interfaces.IAppDeploymentRequestDto {
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
@@ -1370,7 +1031,8 @@ export class AppDeploymentRequestDto implements IAppDeploymentRequestDto {
     spaRouting?: boolean;
     apiIntegration?: boolean;
     authenticationMode?: string | undefined;
-    constructor(data?: IAppDeploymentRequestDto) {
+
+    constructor(data?: interfaces.IAppDeploymentRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1378,6 +1040,7 @@ export class AppDeploymentRequestDto implements IAppDeploymentRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.deploymentType = _data["deploymentType"];
@@ -1409,12 +1072,14 @@ export class AppDeploymentRequestDto implements IAppDeploymentRequestDto {
             this.authenticationMode = _data["authenticationMode"];
         }
     }
+
     static fromJS(data: any): AppDeploymentRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new AppDeploymentRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["deploymentType"] = this.deploymentType;
@@ -1448,14 +1113,15 @@ export class AppDeploymentRequestDto implements IAppDeploymentRequestDto {
     }
 }
 
-export class ApplicationHealthDto implements IApplicationHealthDto {
+export class ApplicationHealthDto implements interfaces.IApplicationHealthDto {
     status?: string | undefined;
     lastCheck?: Date;
     responseTimeMs?: number;
     errorMessage?: string | undefined;
     details?: { [key: string]: any; } | undefined;
     checks?: HealthCheckResultDto[] | undefined;
-    constructor(data?: IApplicationHealthDto) {
+
+    constructor(data?: interfaces.IApplicationHealthDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1463,6 +1129,7 @@ export class ApplicationHealthDto implements IApplicationHealthDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.status = _data["status"];
@@ -1483,12 +1150,14 @@ export class ApplicationHealthDto implements IApplicationHealthDto {
             }
         }
     }
+
     static fromJS(data: any): ApplicationHealthDto {
         data = typeof data === 'object' ? data : {};
         let result = new ApplicationHealthDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
@@ -1511,13 +1180,14 @@ export class ApplicationHealthDto implements IApplicationHealthDto {
     }
 }
 
-export class ApplicationHealthDtoApiResponse implements IApplicationHealthDtoApiResponse {
+export class ApplicationHealthDtoApiResponse implements interfaces.IApplicationHealthDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ApplicationHealthDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IApplicationHealthDtoApiResponse) {
+
+    constructor(data?: interfaces.IApplicationHealthDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1525,6 +1195,7 @@ export class ApplicationHealthDtoApiResponse implements IApplicationHealthDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -1538,12 +1209,14 @@ export class ApplicationHealthDtoApiResponse implements IApplicationHealthDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ApplicationHealthDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ApplicationHealthDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -1559,7 +1232,7 @@ export class ApplicationHealthDtoApiResponse implements IApplicationHealthDtoApi
     }
 }
 
-export class ApplicationMetricsDto implements IApplicationMetricsDto {
+export class ApplicationMetricsDto implements interfaces.IApplicationMetricsDto {
     programId?: string | undefined;
     collectedAt?: Date;
     cpuUsagePercent?: number;
@@ -1570,7 +1243,8 @@ export class ApplicationMetricsDto implements IApplicationMetricsDto {
     averageResponseTimeMs?: number;
     activeInstances?: number;
     customMetrics?: { [key: string]: any; } | undefined;
-    constructor(data?: IApplicationMetricsDto) {
+
+    constructor(data?: interfaces.IApplicationMetricsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1578,6 +1252,7 @@ export class ApplicationMetricsDto implements IApplicationMetricsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -1598,12 +1273,14 @@ export class ApplicationMetricsDto implements IApplicationMetricsDto {
             }
         }
     }
+
     static fromJS(data: any): ApplicationMetricsDto {
         data = typeof data === 'object' ? data : {};
         let result = new ApplicationMetricsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -1626,13 +1303,14 @@ export class ApplicationMetricsDto implements IApplicationMetricsDto {
     }
 }
 
-export class ApplicationMetricsDtoApiResponse implements IApplicationMetricsDtoApiResponse {
+export class ApplicationMetricsDtoApiResponse implements interfaces.IApplicationMetricsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ApplicationMetricsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IApplicationMetricsDtoApiResponse) {
+
+    constructor(data?: interfaces.IApplicationMetricsDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1640,6 +1318,7 @@ export class ApplicationMetricsDtoApiResponse implements IApplicationMetricsDtoA
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -1653,12 +1332,14 @@ export class ApplicationMetricsDtoApiResponse implements IApplicationMetricsDtoA
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ApplicationMetricsDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ApplicationMetricsDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -1674,12 +1355,13 @@ export class ApplicationMetricsDtoApiResponse implements IApplicationMetricsDtoA
     }
 }
 
-export class AuditInfoResponseDto implements IAuditInfoResponseDto {
+export class AuditInfoResponseDto implements interfaces.IAuditInfoResponseDto {
     createdAt?: Date;
     updatedAt?: Date | undefined;
     createdBy?: string | undefined;
     updatedBy?: string | undefined;
-    constructor(data?: IAuditInfoResponseDto) {
+
+    constructor(data?: interfaces.IAuditInfoResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1687,6 +1369,7 @@ export class AuditInfoResponseDto implements IAuditInfoResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
@@ -1695,12 +1378,14 @@ export class AuditInfoResponseDto implements IAuditInfoResponseDto {
             this.updatedBy = _data["updatedBy"];
         }
     }
+
     static fromJS(data: any): AuditInfoResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AuditInfoResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
@@ -1711,13 +1396,14 @@ export class AuditInfoResponseDto implements IAuditInfoResponseDto {
     }
 }
 
-export class AuthenticationResponseDto implements IAuthenticationResponseDto {
+export class AuthenticationResponseDto implements interfaces.IAuthenticationResponseDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
     expiresAt?: Date;
     tokenType?: string | undefined;
     user?: UserDto;
-    constructor(data?: IAuthenticationResponseDto) {
+
+    constructor(data?: interfaces.IAuthenticationResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1725,6 +1411,7 @@ export class AuthenticationResponseDto implements IAuthenticationResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.accessToken = _data["accessToken"];
@@ -1734,12 +1421,14 @@ export class AuthenticationResponseDto implements IAuthenticationResponseDto {
             this.user = _data["user"] ? UserDto.fromJS(_data["user"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AuthenticationResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AuthenticationResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["accessToken"] = this.accessToken;
@@ -1751,13 +1440,14 @@ export class AuthenticationResponseDto implements IAuthenticationResponseDto {
     }
 }
 
-export class AuthenticationResponseDtoApiResponse implements IAuthenticationResponseDtoApiResponse {
+export class AuthenticationResponseDtoApiResponse implements interfaces.IAuthenticationResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: AuthenticationResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IAuthenticationResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IAuthenticationResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1765,6 +1455,7 @@ export class AuthenticationResponseDtoApiResponse implements IAuthenticationResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -1778,12 +1469,14 @@ export class AuthenticationResponseDtoApiResponse implements IAuthenticationResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): AuthenticationResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AuthenticationResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -1799,9 +1492,9 @@ export class AuthenticationResponseDtoApiResponse implements IAuthenticationResp
     }
 }
 
-export class AvalancheHazardDto implements IAvalancheHazardDto {
+export class AvalancheHazardDto implements interfaces.IAvalancheHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
@@ -1811,7 +1504,8 @@ export class AvalancheHazardDto implements IAvalancheHazardDto {
     snowDepth?: number;
     firstHillLocation?: LocationRequestDto;
     elevationDifference?: number;
-    constructor(data?: IAvalancheHazardDto) {
+
+    constructor(data?: interfaces.IAvalancheHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1819,6 +1513,7 @@ export class AvalancheHazardDto implements IAvalancheHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -1840,12 +1535,14 @@ export class AvalancheHazardDto implements IAvalancheHazardDto {
             this.elevationDifference = _data["elevationDifference"];
         }
     }
+
     static fromJS(data: any): AvalancheHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new AvalancheHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -1869,7 +1566,7 @@ export class AvalancheHazardDto implements IAvalancheHazardDto {
     }
 }
 
-export class AvalancheHazardResponseDto implements IAvalancheHazardResponseDto {
+export class AvalancheHazardResponseDto implements interfaces.IAvalancheHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
@@ -1881,7 +1578,8 @@ export class AvalancheHazardResponseDto implements IAvalancheHazardResponseDto {
     snowDepth?: number;
     firstHillLocation?: LocationResponseDto;
     elevationDifference?: number;
-    constructor(data?: IAvalancheHazardResponseDto) {
+
+    constructor(data?: interfaces.IAvalancheHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1889,6 +1587,7 @@ export class AvalancheHazardResponseDto implements IAvalancheHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -1910,12 +1609,14 @@ export class AvalancheHazardResponseDto implements IAvalancheHazardResponseDto {
             this.elevationDifference = _data["elevationDifference"];
         }
     }
+
     static fromJS(data: any): AvalancheHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new AvalancheHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -1939,7 +1640,7 @@ export class AvalancheHazardResponseDto implements IAvalancheHazardResponseDto {
     }
 }
 
-export class BlockResponseDto implements IBlockResponseDto {
+export class BlockResponseDto implements interfaces.IBlockResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     modelingType?: string | undefined;
@@ -1949,7 +1650,8 @@ export class BlockResponseDto implements IBlockResponseDto {
     longLength?: number;
     shortLength?: number;
     totalHeight?: number;
-    constructor(data?: IBlockResponseDto) {
+
+    constructor(data?: interfaces.IBlockResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1957,6 +1659,7 @@ export class BlockResponseDto implements IBlockResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -1976,12 +1679,14 @@ export class BlockResponseDto implements IBlockResponseDto {
             this.totalHeight = _data["totalHeight"];
         }
     }
+
     static fromJS(data: any): BlockResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BlockResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -2003,13 +1708,14 @@ export class BlockResponseDto implements IBlockResponseDto {
     }
 }
 
-export class BlockResponseDtoApiResponse implements IBlockResponseDtoApiResponse {
+export class BlockResponseDtoApiResponse implements interfaces.IBlockResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BlockResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBlockResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IBlockResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2017,6 +1723,7 @@ export class BlockResponseDtoApiResponse implements IBlockResponseDtoApiResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2030,12 +1737,14 @@ export class BlockResponseDtoApiResponse implements IBlockResponseDtoApiResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BlockResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BlockResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2051,13 +1760,14 @@ export class BlockResponseDtoApiResponse implements IBlockResponseDtoApiResponse
     }
 }
 
-export class BlockResponseDtoListApiResponse implements IBlockResponseDtoListApiResponse {
+export class BlockResponseDtoListApiResponse implements interfaces.IBlockResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BlockResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBlockResponseDtoListApiResponse) {
+
+    constructor(data?: interfaces.IBlockResponseDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2065,6 +1775,7 @@ export class BlockResponseDtoListApiResponse implements IBlockResponseDtoListApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2082,12 +1793,14 @@ export class BlockResponseDtoListApiResponse implements IBlockResponseDtoListApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BlockResponseDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BlockResponseDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2107,7 +1820,7 @@ export class BlockResponseDtoListApiResponse implements IBlockResponseDtoListApi
     }
 }
 
-export class BlockStatisticsResponseDto implements IBlockStatisticsResponseDto {
+export class BlockStatisticsResponseDto implements interfaces.IBlockStatisticsResponseDto {
     blockId?: string | undefined;
     modelingType?: string | undefined;
     area?: number;
@@ -2115,7 +1828,8 @@ export class BlockStatisticsResponseDto implements IBlockStatisticsResponseDto {
     storeyCount?: number;
     aspectRatio?: number;
     volumeEstimate?: number;
-    constructor(data?: IBlockStatisticsResponseDto) {
+
+    constructor(data?: interfaces.IBlockStatisticsResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2123,6 +1837,7 @@ export class BlockStatisticsResponseDto implements IBlockStatisticsResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.blockId = _data["blockId"];
@@ -2134,12 +1849,14 @@ export class BlockStatisticsResponseDto implements IBlockStatisticsResponseDto {
             this.volumeEstimate = _data["volumeEstimate"];
         }
     }
+
     static fromJS(data: any): BlockStatisticsResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BlockStatisticsResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["blockId"] = this.blockId;
@@ -2153,13 +1870,14 @@ export class BlockStatisticsResponseDto implements IBlockStatisticsResponseDto {
     }
 }
 
-export class BlockStatisticsResponseDtoApiResponse implements IBlockStatisticsResponseDtoApiResponse {
+export class BlockStatisticsResponseDtoApiResponse implements interfaces.IBlockStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BlockStatisticsResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBlockStatisticsResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IBlockStatisticsResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2167,6 +1885,7 @@ export class BlockStatisticsResponseDtoApiResponse implements IBlockStatisticsRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2180,12 +1899,14 @@ export class BlockStatisticsResponseDtoApiResponse implements IBlockStatisticsRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BlockStatisticsResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BlockStatisticsResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2201,13 +1922,14 @@ export class BlockStatisticsResponseDtoApiResponse implements IBlockStatisticsRe
     }
 }
 
-export class BlockSummaryResponseDto implements IBlockSummaryResponseDto {
+export class BlockSummaryResponseDto implements interfaces.IBlockSummaryResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     modelingType?: string | undefined;
     totalHeight?: number;
     storeyCount?: number;
-    constructor(data?: IBlockSummaryResponseDto) {
+
+    constructor(data?: interfaces.IBlockSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2215,6 +1937,7 @@ export class BlockSummaryResponseDto implements IBlockSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -2224,12 +1947,14 @@ export class BlockSummaryResponseDto implements IBlockSummaryResponseDto {
             this.storeyCount = _data["storeyCount"];
         }
     }
+
     static fromJS(data: any): BlockSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BlockSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -2241,13 +1966,14 @@ export class BlockSummaryResponseDto implements IBlockSummaryResponseDto {
     }
 }
 
-export class BlockSummaryResponseDtoApiResponse implements IBlockSummaryResponseDtoApiResponse {
+export class BlockSummaryResponseDtoApiResponse implements interfaces.IBlockSummaryResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BlockSummaryResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBlockSummaryResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IBlockSummaryResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2255,6 +1981,7 @@ export class BlockSummaryResponseDtoApiResponse implements IBlockSummaryResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2268,12 +1995,14 @@ export class BlockSummaryResponseDtoApiResponse implements IBlockSummaryResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BlockSummaryResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BlockSummaryResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2289,13 +2018,14 @@ export class BlockSummaryResponseDtoApiResponse implements IBlockSummaryResponse
     }
 }
 
-export class BooleanApiResponse implements IBooleanApiResponse {
+export class BooleanApiResponse implements interfaces.IBooleanApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: boolean;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBooleanApiResponse) {
+
+    constructor(data?: interfaces.IBooleanApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2303,6 +2033,7 @@ export class BooleanApiResponse implements IBooleanApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2316,12 +2047,14 @@ export class BooleanApiResponse implements IBooleanApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BooleanApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BooleanApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2337,9 +2070,10 @@ export class BooleanApiResponse implements IBooleanApiResponse {
     }
 }
 
-export class BuildingBlockAddDto implements IBuildingBlockAddDto {
+export class BuildingBlockAddDto implements interfaces.IBuildingBlockAddDto {
     blockId!: string;
-    constructor(data?: IBuildingBlockAddDto) {
+
+    constructor(data?: interfaces.IBuildingBlockAddDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2347,17 +2081,20 @@ export class BuildingBlockAddDto implements IBuildingBlockAddDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.blockId = _data["blockId"];
         }
     }
+
     static fromJS(data: any): BuildingBlockAddDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingBlockAddDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["blockId"] = this.blockId;
@@ -2365,14 +2102,15 @@ export class BuildingBlockAddDto implements IBuildingBlockAddDto {
     }
 }
 
-export class BuildingCreateDto implements IBuildingCreateDto {
+export class BuildingCreateDto implements interfaces.IBuildingCreateDto {
     tmId!: string;
     buildingTMID!: number;
     name?: string | undefined;
-    type!: BuildingType;
+    type!: enums.BuildingType;
     inScopeOfMETU?: boolean;
     reportName?: string | undefined;
-    constructor(data?: IBuildingCreateDto) {
+
+    constructor(data?: interfaces.IBuildingCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2380,6 +2118,7 @@ export class BuildingCreateDto implements IBuildingCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.tmId = _data["tmId"];
@@ -2390,12 +2129,14 @@ export class BuildingCreateDto implements IBuildingCreateDto {
             this.reportName = _data["reportName"];
         }
     }
+
     static fromJS(data: any): BuildingCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tmId"] = this.tmId;
@@ -2408,7 +2149,7 @@ export class BuildingCreateDto implements IBuildingCreateDto {
     }
 }
 
-export class BuildingDetailResponseDto implements IBuildingDetailResponseDto {
+export class BuildingDetailResponseDto implements interfaces.IBuildingDetailResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
     buildingTMID?: number;
@@ -2422,7 +2163,8 @@ export class BuildingDetailResponseDto implements IBuildingDetailResponseDto {
     blocks?: BlockResponseDto[] | undefined;
     blockCount?: number;
     auditInfo?: AuditInfoResponseDto;
-    constructor(data?: IBuildingDetailResponseDto) {
+
+    constructor(data?: interfaces.IBuildingDetailResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2430,6 +2172,7 @@ export class BuildingDetailResponseDto implements IBuildingDetailResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -2451,12 +2194,14 @@ export class BuildingDetailResponseDto implements IBuildingDetailResponseDto {
             this.auditInfo = _data["auditInfo"] ? AuditInfoResponseDto.fromJS(_data["auditInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BuildingDetailResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingDetailResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -2480,13 +2225,14 @@ export class BuildingDetailResponseDto implements IBuildingDetailResponseDto {
     }
 }
 
-export class BuildingDetailResponseDtoApiResponse implements IBuildingDetailResponseDtoApiResponse {
+export class BuildingDetailResponseDtoApiResponse implements interfaces.IBuildingDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BuildingDetailResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBuildingDetailResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IBuildingDetailResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2494,6 +2240,7 @@ export class BuildingDetailResponseDtoApiResponse implements IBuildingDetailResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2507,12 +2254,14 @@ export class BuildingDetailResponseDtoApiResponse implements IBuildingDetailResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BuildingDetailResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingDetailResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2528,7 +2277,7 @@ export class BuildingDetailResponseDtoApiResponse implements IBuildingDetailResp
     }
 }
 
-export class BuildingListResponseDto implements IBuildingListResponseDto {
+export class BuildingListResponseDto implements interfaces.IBuildingListResponseDto {
     id?: string | undefined;
     tmName?: string | undefined;
     buildingTMID?: number;
@@ -2537,7 +2286,8 @@ export class BuildingListResponseDto implements IBuildingListResponseDto {
     inScopeOfMETU?: boolean;
     blockCount?: number;
     reportName?: string | undefined;
-    constructor(data?: IBuildingListResponseDto) {
+
+    constructor(data?: interfaces.IBuildingListResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2545,6 +2295,7 @@ export class BuildingListResponseDto implements IBuildingListResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -2557,12 +2308,14 @@ export class BuildingListResponseDto implements IBuildingListResponseDto {
             this.reportName = _data["reportName"];
         }
     }
+
     static fromJS(data: any): BuildingListResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingListResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -2577,7 +2330,7 @@ export class BuildingListResponseDto implements IBuildingListResponseDto {
     }
 }
 
-export class BuildingListResponseDtoPagedResponse implements IBuildingListResponseDtoPagedResponse {
+export class BuildingListResponseDtoPagedResponse implements interfaces.IBuildingListResponseDtoPagedResponse {
     items?: BuildingListResponseDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -2585,7 +2338,8 @@ export class BuildingListResponseDtoPagedResponse implements IBuildingListRespon
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IBuildingListResponseDtoPagedResponse) {
+
+    constructor(data?: interfaces.IBuildingListResponseDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2593,6 +2347,7 @@ export class BuildingListResponseDtoPagedResponse implements IBuildingListRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -2608,12 +2363,14 @@ export class BuildingListResponseDtoPagedResponse implements IBuildingListRespon
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): BuildingListResponseDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingListResponseDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -2631,13 +2388,14 @@ export class BuildingListResponseDtoPagedResponse implements IBuildingListRespon
     }
 }
 
-export class BuildingListResponseDtoPagedResponseApiResponse implements IBuildingListResponseDtoPagedResponseApiResponse {
+export class BuildingListResponseDtoPagedResponseApiResponse implements interfaces.IBuildingListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BuildingListResponseDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBuildingListResponseDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IBuildingListResponseDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2645,6 +2403,7 @@ export class BuildingListResponseDtoPagedResponseApiResponse implements IBuildin
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2658,12 +2417,14 @@ export class BuildingListResponseDtoPagedResponseApiResponse implements IBuildin
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BuildingListResponseDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingListResponseDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2679,7 +2440,7 @@ export class BuildingListResponseDtoPagedResponseApiResponse implements IBuildin
     }
 }
 
-export class BuildingResponseDto implements IBuildingResponseDto {
+export class BuildingResponseDto implements interfaces.IBuildingResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
     buildingTMID?: number;
@@ -2689,7 +2450,8 @@ export class BuildingResponseDto implements IBuildingResponseDto {
     reportName?: string | undefined;
     code?: number;
     bks?: number;
-    constructor(data?: IBuildingResponseDto) {
+
+    constructor(data?: interfaces.IBuildingResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2697,6 +2459,7 @@ export class BuildingResponseDto implements IBuildingResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -2710,12 +2473,14 @@ export class BuildingResponseDto implements IBuildingResponseDto {
             this.bks = _data["bks"];
         }
     }
+
     static fromJS(data: any): BuildingResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -2731,13 +2496,14 @@ export class BuildingResponseDto implements IBuildingResponseDto {
     }
 }
 
-export class BuildingResponseDtoApiResponse implements IBuildingResponseDtoApiResponse {
+export class BuildingResponseDtoApiResponse implements interfaces.IBuildingResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BuildingResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBuildingResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IBuildingResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2745,6 +2511,7 @@ export class BuildingResponseDtoApiResponse implements IBuildingResponseDtoApiRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2758,12 +2525,14 @@ export class BuildingResponseDtoApiResponse implements IBuildingResponseDtoApiRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BuildingResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2779,13 +2548,14 @@ export class BuildingResponseDtoApiResponse implements IBuildingResponseDtoApiRe
     }
 }
 
-export class BuildingSearchDto implements IBuildingSearchDto {
+export class BuildingSearchDto implements interfaces.IBuildingSearchDto {
     name?: string | undefined;
     tmId?: string | undefined;
-    type?: BuildingType;
+    type?: enums.BuildingType;
     inScopeOfMETU?: boolean | undefined;
     reportName?: string | undefined;
-    constructor(data?: IBuildingSearchDto) {
+
+    constructor(data?: interfaces.IBuildingSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2793,6 +2563,7 @@ export class BuildingSearchDto implements IBuildingSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -2802,12 +2573,14 @@ export class BuildingSearchDto implements IBuildingSearchDto {
             this.reportName = _data["reportName"];
         }
     }
+
     static fromJS(data: any): BuildingSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -2819,7 +2592,7 @@ export class BuildingSearchDto implements IBuildingSearchDto {
     }
 }
 
-export class BuildingStatisticsResponseDto implements IBuildingStatisticsResponseDto {
+export class BuildingStatisticsResponseDto implements interfaces.IBuildingStatisticsResponseDto {
     buildingId?: string | undefined;
     blockCount?: number;
     concreteBlockCount?: number;
@@ -2828,7 +2601,8 @@ export class BuildingStatisticsResponseDto implements IBuildingStatisticsRespons
     maxHeight?: number;
     code?: number;
     bks?: number;
-    constructor(data?: IBuildingStatisticsResponseDto) {
+
+    constructor(data?: interfaces.IBuildingStatisticsResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2836,6 +2610,7 @@ export class BuildingStatisticsResponseDto implements IBuildingStatisticsRespons
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.buildingId = _data["buildingId"];
@@ -2848,12 +2623,14 @@ export class BuildingStatisticsResponseDto implements IBuildingStatisticsRespons
             this.bks = _data["bks"];
         }
     }
+
     static fromJS(data: any): BuildingStatisticsResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingStatisticsResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["buildingId"] = this.buildingId;
@@ -2868,13 +2645,14 @@ export class BuildingStatisticsResponseDto implements IBuildingStatisticsRespons
     }
 }
 
-export class BuildingStatisticsResponseDtoApiResponse implements IBuildingStatisticsResponseDtoApiResponse {
+export class BuildingStatisticsResponseDtoApiResponse implements interfaces.IBuildingStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BuildingStatisticsResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBuildingStatisticsResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IBuildingStatisticsResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2882,6 +2660,7 @@ export class BuildingStatisticsResponseDtoApiResponse implements IBuildingStatis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -2895,12 +2674,14 @@ export class BuildingStatisticsResponseDtoApiResponse implements IBuildingStatis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BuildingStatisticsResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingStatisticsResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -2916,13 +2697,14 @@ export class BuildingStatisticsResponseDtoApiResponse implements IBuildingStatis
     }
 }
 
-export class BuildingSummaryResponseDto implements IBuildingSummaryResponseDto {
+export class BuildingSummaryResponseDto implements interfaces.IBuildingSummaryResponseDto {
     id?: string | undefined;
     buildingTMID?: number;
     name?: string | undefined;
     type?: string | undefined;
     blockCount?: number;
-    constructor(data?: IBuildingSummaryResponseDto) {
+
+    constructor(data?: interfaces.IBuildingSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2930,6 +2712,7 @@ export class BuildingSummaryResponseDto implements IBuildingSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -2939,12 +2722,14 @@ export class BuildingSummaryResponseDto implements IBuildingSummaryResponseDto {
             this.blockCount = _data["blockCount"];
         }
     }
+
     static fromJS(data: any): BuildingSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -2956,14 +2741,15 @@ export class BuildingSummaryResponseDto implements IBuildingSummaryResponseDto {
     }
 }
 
-export class BuildingUpdateDto implements IBuildingUpdateDto {
+export class BuildingUpdateDto implements interfaces.IBuildingUpdateDto {
     tmId?: string | undefined;
     buildingTMID?: number | undefined;
     name?: string | undefined;
-    type?: BuildingType;
+    type?: enums.BuildingType;
     inScopeOfMETU?: boolean | undefined;
     reportName?: string | undefined;
-    constructor(data?: IBuildingUpdateDto) {
+
+    constructor(data?: interfaces.IBuildingUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2971,6 +2757,7 @@ export class BuildingUpdateDto implements IBuildingUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.tmId = _data["tmId"];
@@ -2981,12 +2768,14 @@ export class BuildingUpdateDto implements IBuildingUpdateDto {
             this.reportName = _data["reportName"];
         }
     }
+
     static fromJS(data: any): BuildingUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new BuildingUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tmId"] = this.tmId;
@@ -2999,12 +2788,12 @@ export class BuildingUpdateDto implements IBuildingUpdateDto {
     }
 }
 
-export class BulkOperationResult implements IBulkOperationResult {
-    successCount?: number;
-    failureCount?: number;
-    totalProcessed?: number;
-    errors?: string[] | undefined;
-    constructor(data?: IBulkOperationResult) {
+export class BulkDownloadRequest implements interfaces.IBulkDownloadRequest {
+    filePaths?: string[] | undefined;
+    includeMetadata?: boolean;
+    compressionLevel?: string | undefined;
+
+    constructor(data?: interfaces.IBulkDownloadRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3012,6 +2801,54 @@ export class BulkOperationResult implements IBulkOperationResult {
             }
         }
     }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["filePaths"])) {
+                this.filePaths = [] as any;
+                for (let item of _data["filePaths"])
+                    this.filePaths!.push(item);
+            }
+            this.includeMetadata = _data["includeMetadata"];
+            this.compressionLevel = _data["compressionLevel"];
+        }
+    }
+
+    static fromJS(data: any): BulkDownloadRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new BulkDownloadRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.filePaths)) {
+            data["filePaths"] = [];
+            for (let item of this.filePaths)
+                data["filePaths"].push(item);
+        }
+        data["includeMetadata"] = this.includeMetadata;
+        data["compressionLevel"] = this.compressionLevel;
+        return data;
+    }
+}
+
+export class BulkOperationResult implements interfaces.IBulkOperationResult {
+    successCount?: number;
+    failureCount?: number;
+    totalProcessed?: number;
+    errors?: string[] | undefined;
+
+    constructor(data?: interfaces.IBulkOperationResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
     init(_data?: any) {
         if (_data) {
             this.successCount = _data["successCount"];
@@ -3024,12 +2861,14 @@ export class BulkOperationResult implements IBulkOperationResult {
             }
         }
     }
+
     static fromJS(data: any): BulkOperationResult {
         data = typeof data === 'object' ? data : {};
         let result = new BulkOperationResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["successCount"] = this.successCount;
@@ -3044,13 +2883,14 @@ export class BulkOperationResult implements IBulkOperationResult {
     }
 }
 
-export class BulkOperationResultApiResponse implements IBulkOperationResultApiResponse {
+export class BulkOperationResultApiResponse implements interfaces.IBulkOperationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: BulkOperationResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IBulkOperationResultApiResponse) {
+
+    constructor(data?: interfaces.IBulkOperationResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3058,6 +2898,7 @@ export class BulkOperationResultApiResponse implements IBulkOperationResultApiRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3071,12 +2912,14 @@ export class BulkOperationResultApiResponse implements IBulkOperationResultApiRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): BulkOperationResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new BulkOperationResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3092,11 +2935,12 @@ export class BulkOperationResultApiResponse implements IBulkOperationResultApiRe
     }
 }
 
-export class BulkRequestStatusUpdateDto implements IBulkRequestStatusUpdateDto {
+export class BulkRequestStatusUpdateDto implements interfaces.IBulkRequestStatusUpdateDto {
     requestIds!: string[];
     status!: string;
     reason?: string | undefined;
-    constructor(data?: IBulkRequestStatusUpdateDto) {
+
+    constructor(data?: interfaces.IBulkRequestStatusUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3107,6 +2951,7 @@ export class BulkRequestStatusUpdateDto implements IBulkRequestStatusUpdateDto {
             this.requestIds = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["requestIds"])) {
@@ -3118,12 +2963,14 @@ export class BulkRequestStatusUpdateDto implements IBulkRequestStatusUpdateDto {
             this.reason = _data["reason"];
         }
     }
+
     static fromJS(data: any): BulkRequestStatusUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new BulkRequestStatusUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.requestIds)) {
@@ -3137,10 +2984,11 @@ export class BulkRequestStatusUpdateDto implements IBulkRequestStatusUpdateDto {
     }
 }
 
-export class ClientCreateDto implements IClientCreateDto {
+export class ClientCreateDto implements interfaces.IClientCreateDto {
     name!: string;
-    type!: ClientType;
-    constructor(data?: IClientCreateDto) {
+    type!: enums.ClientType;
+
+    constructor(data?: interfaces.IClientCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3148,18 +2996,21 @@ export class ClientCreateDto implements IClientCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
             this.type = _data["type"];
         }
     }
+
     static fromJS(data: any): ClientCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -3168,14 +3019,15 @@ export class ClientCreateDto implements IClientCreateDto {
     }
 }
 
-export class ClientDetailResponseDto implements IClientDetailResponseDto {
+export class ClientDetailResponseDto implements interfaces.IClientDetailResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     type?: string | undefined;
     regionCount?: number;
     regions?: RegionSummaryResponseDto[] | undefined;
     auditInfo?: AuditInfoResponseDto;
-    constructor(data?: IClientDetailResponseDto) {
+
+    constructor(data?: interfaces.IClientDetailResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3183,6 +3035,7 @@ export class ClientDetailResponseDto implements IClientDetailResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -3197,12 +3050,14 @@ export class ClientDetailResponseDto implements IClientDetailResponseDto {
             this.auditInfo = _data["auditInfo"] ? AuditInfoResponseDto.fromJS(_data["auditInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ClientDetailResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientDetailResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -3219,13 +3074,14 @@ export class ClientDetailResponseDto implements IClientDetailResponseDto {
     }
 }
 
-export class ClientDetailResponseDtoApiResponse implements IClientDetailResponseDtoApiResponse {
+export class ClientDetailResponseDtoApiResponse implements interfaces.IClientDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ClientDetailResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IClientDetailResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IClientDetailResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3233,6 +3089,7 @@ export class ClientDetailResponseDtoApiResponse implements IClientDetailResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3246,12 +3103,14 @@ export class ClientDetailResponseDtoApiResponse implements IClientDetailResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ClientDetailResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ClientDetailResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3267,13 +3126,14 @@ export class ClientDetailResponseDtoApiResponse implements IClientDetailResponse
     }
 }
 
-export class ClientListResponseDto implements IClientListResponseDto {
+export class ClientListResponseDto implements interfaces.IClientListResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     type?: string | undefined;
     regionCount?: number;
     totalTMCount?: number;
-    constructor(data?: IClientListResponseDto) {
+
+    constructor(data?: interfaces.IClientListResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3281,6 +3141,7 @@ export class ClientListResponseDto implements IClientListResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -3290,12 +3151,14 @@ export class ClientListResponseDto implements IClientListResponseDto {
             this.totalTMCount = _data["totalTMCount"];
         }
     }
+
     static fromJS(data: any): ClientListResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientListResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -3307,7 +3170,7 @@ export class ClientListResponseDto implements IClientListResponseDto {
     }
 }
 
-export class ClientListResponseDtoPagedResponse implements IClientListResponseDtoPagedResponse {
+export class ClientListResponseDtoPagedResponse implements interfaces.IClientListResponseDtoPagedResponse {
     items?: ClientListResponseDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -3315,7 +3178,8 @@ export class ClientListResponseDtoPagedResponse implements IClientListResponseDt
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IClientListResponseDtoPagedResponse) {
+
+    constructor(data?: interfaces.IClientListResponseDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3323,6 +3187,7 @@ export class ClientListResponseDtoPagedResponse implements IClientListResponseDt
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -3338,12 +3203,14 @@ export class ClientListResponseDtoPagedResponse implements IClientListResponseDt
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): ClientListResponseDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ClientListResponseDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -3361,13 +3228,14 @@ export class ClientListResponseDtoPagedResponse implements IClientListResponseDt
     }
 }
 
-export class ClientListResponseDtoPagedResponseApiResponse implements IClientListResponseDtoPagedResponseApiResponse {
+export class ClientListResponseDtoPagedResponseApiResponse implements interfaces.IClientListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ClientListResponseDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IClientListResponseDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IClientListResponseDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3375,6 +3243,7 @@ export class ClientListResponseDtoPagedResponseApiResponse implements IClientLis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3388,12 +3257,14 @@ export class ClientListResponseDtoPagedResponseApiResponse implements IClientLis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ClientListResponseDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ClientListResponseDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3409,11 +3280,12 @@ export class ClientListResponseDtoPagedResponseApiResponse implements IClientLis
     }
 }
 
-export class ClientResponseDto implements IClientResponseDto {
+export class ClientResponseDto implements interfaces.IClientResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     type?: string | undefined;
-    constructor(data?: IClientResponseDto) {
+
+    constructor(data?: interfaces.IClientResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3421,6 +3293,7 @@ export class ClientResponseDto implements IClientResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -3428,12 +3301,14 @@ export class ClientResponseDto implements IClientResponseDto {
             this.type = _data["type"];
         }
     }
+
     static fromJS(data: any): ClientResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -3443,13 +3318,14 @@ export class ClientResponseDto implements IClientResponseDto {
     }
 }
 
-export class ClientResponseDtoApiResponse implements IClientResponseDtoApiResponse {
+export class ClientResponseDtoApiResponse implements interfaces.IClientResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ClientResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IClientResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IClientResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3457,6 +3333,7 @@ export class ClientResponseDtoApiResponse implements IClientResponseDtoApiRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3470,12 +3347,14 @@ export class ClientResponseDtoApiResponse implements IClientResponseDtoApiRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ClientResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ClientResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3491,13 +3370,14 @@ export class ClientResponseDtoApiResponse implements IClientResponseDtoApiRespon
     }
 }
 
-export class ClientStatisticsResponseDto implements IClientStatisticsResponseDto {
+export class ClientStatisticsResponseDto implements interfaces.IClientStatisticsResponseDto {
     clientId?: string | undefined;
     regionCount?: number;
     totalTMs?: number;
     totalBuildings?: number;
     activeTMs?: number;
-    constructor(data?: IClientStatisticsResponseDto) {
+
+    constructor(data?: interfaces.IClientStatisticsResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3505,6 +3385,7 @@ export class ClientStatisticsResponseDto implements IClientStatisticsResponseDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
@@ -3514,12 +3395,14 @@ export class ClientStatisticsResponseDto implements IClientStatisticsResponseDto
             this.activeTMs = _data["activeTMs"];
         }
     }
+
     static fromJS(data: any): ClientStatisticsResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientStatisticsResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
@@ -3531,13 +3414,14 @@ export class ClientStatisticsResponseDto implements IClientStatisticsResponseDto
     }
 }
 
-export class ClientStatisticsResponseDtoApiResponse implements IClientStatisticsResponseDtoApiResponse {
+export class ClientStatisticsResponseDtoApiResponse implements interfaces.IClientStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ClientStatisticsResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IClientStatisticsResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IClientStatisticsResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3545,6 +3429,7 @@ export class ClientStatisticsResponseDtoApiResponse implements IClientStatistics
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3558,12 +3443,14 @@ export class ClientStatisticsResponseDtoApiResponse implements IClientStatistics
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ClientStatisticsResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ClientStatisticsResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3579,10 +3466,11 @@ export class ClientStatisticsResponseDtoApiResponse implements IClientStatistics
     }
 }
 
-export class ClientSummaryResponseDto implements IClientSummaryResponseDto {
+export class ClientSummaryResponseDto implements interfaces.IClientSummaryResponseDto {
     id?: string | undefined;
     name?: string | undefined;
-    constructor(data?: IClientSummaryResponseDto) {
+
+    constructor(data?: interfaces.IClientSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3590,18 +3478,21 @@ export class ClientSummaryResponseDto implements IClientSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
         }
     }
+
     static fromJS(data: any): ClientSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -3610,10 +3501,11 @@ export class ClientSummaryResponseDto implements IClientSummaryResponseDto {
     }
 }
 
-export class ClientUpdateDto implements IClientUpdateDto {
+export class ClientUpdateDto implements interfaces.IClientUpdateDto {
     name?: string | undefined;
-    type?: ClientType;
-    constructor(data?: IClientUpdateDto) {
+    type?: enums.ClientType;
+
+    constructor(data?: interfaces.IClientUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3621,18 +3513,21 @@ export class ClientUpdateDto implements IClientUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
             this.type = _data["type"];
         }
     }
+
     static fromJS(data: any): ClientUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ClientUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -3641,13 +3536,14 @@ export class ClientUpdateDto implements IClientUpdateDto {
     }
 }
 
-export class ComparisonScoreDto implements IComparisonScoreDto {
+export class ComparisonScoreDto implements interfaces.IComparisonScoreDto {
     earthquakeImprovement?: number;
     hazardImprovement?: number;
     overallImprovement?: number;
     advantages?: string[] | undefined;
     disadvantages?: string[] | undefined;
-    constructor(data?: IComparisonScoreDto) {
+
+    constructor(data?: interfaces.IComparisonScoreDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3655,6 +3551,7 @@ export class ComparisonScoreDto implements IComparisonScoreDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.earthquakeImprovement = _data["earthquakeImprovement"];
@@ -3672,12 +3569,14 @@ export class ComparisonScoreDto implements IComparisonScoreDto {
             }
         }
     }
+
     static fromJS(data: any): ComparisonScoreDto {
         data = typeof data === 'object' ? data : {};
         let result = new ComparisonScoreDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["earthquakeImprovement"] = this.earthquakeImprovement;
@@ -3697,7 +3596,7 @@ export class ComparisonScoreDto implements IComparisonScoreDto {
     }
 }
 
-export class ConcreteBlockResponseDto implements IConcreteBlockResponseDto {
+export class ConcreteBlockResponseDto implements interfaces.IConcreteBlockResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     modelingType?: string | undefined;
@@ -3713,7 +3612,8 @@ export class ConcreteBlockResponseDto implements IConcreteBlockResponseDto {
     reinforcementRatio?: number;
     hookExists?: boolean;
     isStrengthened?: boolean;
-    constructor(data?: IConcreteBlockResponseDto) {
+
+    constructor(data?: interfaces.IConcreteBlockResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3721,6 +3621,7 @@ export class ConcreteBlockResponseDto implements IConcreteBlockResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -3746,12 +3647,14 @@ export class ConcreteBlockResponseDto implements IConcreteBlockResponseDto {
             this.isStrengthened = _data["isStrengthened"];
         }
     }
+
     static fromJS(data: any): ConcreteBlockResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new ConcreteBlockResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -3779,13 +3682,14 @@ export class ConcreteBlockResponseDto implements IConcreteBlockResponseDto {
     }
 }
 
-export class ConcreteBlockResponseDtoApiResponse implements IConcreteBlockResponseDtoApiResponse {
+export class ConcreteBlockResponseDtoApiResponse implements interfaces.IConcreteBlockResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ConcreteBlockResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IConcreteBlockResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IConcreteBlockResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3793,6 +3697,7 @@ export class ConcreteBlockResponseDtoApiResponse implements IConcreteBlockRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3806,12 +3711,14 @@ export class ConcreteBlockResponseDtoApiResponse implements IConcreteBlockRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ConcreteBlockResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ConcreteBlockResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3827,13 +3734,14 @@ export class ConcreteBlockResponseDtoApiResponse implements IConcreteBlockRespon
     }
 }
 
-export class ConcreteBlockResponseDtoListApiResponse implements IConcreteBlockResponseDtoListApiResponse {
+export class ConcreteBlockResponseDtoListApiResponse implements interfaces.IConcreteBlockResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ConcreteBlockResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IConcreteBlockResponseDtoListApiResponse) {
+
+    constructor(data?: interfaces.IConcreteBlockResponseDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3841,6 +3749,7 @@ export class ConcreteBlockResponseDtoListApiResponse implements IConcreteBlockRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -3858,12 +3767,14 @@ export class ConcreteBlockResponseDtoListApiResponse implements IConcreteBlockRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ConcreteBlockResponseDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ConcreteBlockResponseDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -3883,7 +3794,7 @@ export class ConcreteBlockResponseDtoListApiResponse implements IConcreteBlockRe
     }
 }
 
-export class ConcreteCreateDto implements IConcreteCreateDto {
+export class ConcreteCreateDto implements interfaces.IConcreteCreateDto {
     id!: string;
     name!: string;
     xAxisLength!: number;
@@ -3895,7 +3806,8 @@ export class ConcreteCreateDto implements IConcreteCreateDto {
     reinforcementRatio!: number;
     hookExists?: boolean;
     isStrengthened?: boolean;
-    constructor(data?: IConcreteCreateDto) {
+
+    constructor(data?: interfaces.IConcreteCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3906,6 +3818,7 @@ export class ConcreteCreateDto implements IConcreteCreateDto {
             this.storeyHeight = {};
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -3927,12 +3840,14 @@ export class ConcreteCreateDto implements IConcreteCreateDto {
             this.isStrengthened = _data["isStrengthened"];
         }
     }
+
     static fromJS(data: any): ConcreteCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ConcreteCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -3956,7 +3871,7 @@ export class ConcreteCreateDto implements IConcreteCreateDto {
     }
 }
 
-export class ConcreteUpdateDto implements IConcreteUpdateDto {
+export class ConcreteUpdateDto implements interfaces.IConcreteUpdateDto {
     id?: string | undefined;
     name?: string | undefined;
     xAxisLength?: number | undefined;
@@ -3968,7 +3883,8 @@ export class ConcreteUpdateDto implements IConcreteUpdateDto {
     reinforcementRatio?: number | undefined;
     hookExists?: boolean | undefined;
     isStrengthened?: boolean | undefined;
-    constructor(data?: IConcreteUpdateDto) {
+
+    constructor(data?: interfaces.IConcreteUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3976,6 +3892,7 @@ export class ConcreteUpdateDto implements IConcreteUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -3997,12 +3914,14 @@ export class ConcreteUpdateDto implements IConcreteUpdateDto {
             this.isStrengthened = _data["isStrengthened"];
         }
     }
+
     static fromJS(data: any): ConcreteUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ConcreteUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -4026,13 +3945,14 @@ export class ConcreteUpdateDto implements IConcreteUpdateDto {
     }
 }
 
-export class ConnectionTestResult implements IConnectionTestResult {
+export class ConnectionTestResult implements interfaces.IConnectionTestResult {
     isConnected?: boolean;
     responseTimeMs?: number;
     statusCode?: number;
     message?: string | undefined;
     testedAt?: Date;
-    constructor(data?: IConnectionTestResult) {
+
+    constructor(data?: interfaces.IConnectionTestResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4040,6 +3960,7 @@ export class ConnectionTestResult implements IConnectionTestResult {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isConnected = _data["isConnected"];
@@ -4049,12 +3970,14 @@ export class ConnectionTestResult implements IConnectionTestResult {
             this.testedAt = _data["testedAt"] ? new Date(_data["testedAt"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ConnectionTestResult {
         data = typeof data === 'object' ? data : {};
         let result = new ConnectionTestResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isConnected"] = this.isConnected;
@@ -4066,13 +3989,14 @@ export class ConnectionTestResult implements IConnectionTestResult {
     }
 }
 
-export class ConnectionTestResultApiResponse implements IConnectionTestResultApiResponse {
+export class ConnectionTestResultApiResponse implements interfaces.IConnectionTestResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ConnectionTestResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IConnectionTestResultApiResponse) {
+
+    constructor(data?: interfaces.IConnectionTestResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4080,6 +4004,7 @@ export class ConnectionTestResultApiResponse implements IConnectionTestResultApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -4093,12 +4018,14 @@ export class ConnectionTestResultApiResponse implements IConnectionTestResultApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ConnectionTestResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ConnectionTestResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -4114,8 +4041,8 @@ export class ConnectionTestResultApiResponse implements IConnectionTestResultApi
     }
 }
 
-export class ContainerDeploymentRequestDto implements IContainerDeploymentRequestDto {
-    deploymentType?: AppDeploymentType;
+export class ContainerDeploymentRequestDto implements interfaces.IContainerDeploymentRequestDto {
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
@@ -4135,7 +4062,8 @@ export class ContainerDeploymentRequestDto implements IContainerDeploymentReques
     resourceLimits?: ContainerResourceLimitsDto;
     replicas?: number;
     healthCheck?: ContainerHealthCheckDto;
-    constructor(data?: IContainerDeploymentRequestDto) {
+
+    constructor(data?: interfaces.IContainerDeploymentRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4143,6 +4071,7 @@ export class ContainerDeploymentRequestDto implements IContainerDeploymentReques
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.deploymentType = _data["deploymentType"];
@@ -4197,12 +4126,14 @@ export class ContainerDeploymentRequestDto implements IContainerDeploymentReques
             this.healthCheck = _data["healthCheck"] ? ContainerHealthCheckDto.fromJS(_data["healthCheck"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ContainerDeploymentRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new ContainerDeploymentRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["deploymentType"] = this.deploymentType;
@@ -4259,13 +4190,14 @@ export class ContainerDeploymentRequestDto implements IContainerDeploymentReques
     }
 }
 
-export class ContainerHealthCheckDto implements IContainerHealthCheckDto {
+export class ContainerHealthCheckDto implements interfaces.IContainerHealthCheckDto {
     command?: string | undefined;
     intervalSeconds?: number;
     timeoutSeconds?: number;
     retries?: number;
     startPeriodSeconds?: number;
-    constructor(data?: IContainerHealthCheckDto) {
+
+    constructor(data?: interfaces.IContainerHealthCheckDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4273,6 +4205,7 @@ export class ContainerHealthCheckDto implements IContainerHealthCheckDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.command = _data["command"];
@@ -4282,12 +4215,14 @@ export class ContainerHealthCheckDto implements IContainerHealthCheckDto {
             this.startPeriodSeconds = _data["startPeriodSeconds"];
         }
     }
+
     static fromJS(data: any): ContainerHealthCheckDto {
         data = typeof data === 'object' ? data : {};
         let result = new ContainerHealthCheckDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["command"] = this.command;
@@ -4299,11 +4234,12 @@ export class ContainerHealthCheckDto implements IContainerHealthCheckDto {
     }
 }
 
-export class ContainerPortMappingDto implements IContainerPortMappingDto {
+export class ContainerPortMappingDto implements interfaces.IContainerPortMappingDto {
     containerPort?: number;
     hostPort?: number | undefined;
     protocol?: string | undefined;
-    constructor(data?: IContainerPortMappingDto) {
+
+    constructor(data?: interfaces.IContainerPortMappingDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4311,6 +4247,7 @@ export class ContainerPortMappingDto implements IContainerPortMappingDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.containerPort = _data["containerPort"];
@@ -4318,12 +4255,14 @@ export class ContainerPortMappingDto implements IContainerPortMappingDto {
             this.protocol = _data["protocol"];
         }
     }
+
     static fromJS(data: any): ContainerPortMappingDto {
         data = typeof data === 'object' ? data : {};
         let result = new ContainerPortMappingDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["containerPort"] = this.containerPort;
@@ -4333,12 +4272,13 @@ export class ContainerPortMappingDto implements IContainerPortMappingDto {
     }
 }
 
-export class ContainerResourceLimitsDto implements IContainerResourceLimitsDto {
+export class ContainerResourceLimitsDto implements interfaces.IContainerResourceLimitsDto {
     cpuLimit?: string | undefined;
     memoryLimit?: string | undefined;
     cpuRequest?: string | undefined;
     memoryRequest?: string | undefined;
-    constructor(data?: IContainerResourceLimitsDto) {
+
+    constructor(data?: interfaces.IContainerResourceLimitsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4346,6 +4286,7 @@ export class ContainerResourceLimitsDto implements IContainerResourceLimitsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.cpuLimit = _data["cpuLimit"];
@@ -4354,12 +4295,14 @@ export class ContainerResourceLimitsDto implements IContainerResourceLimitsDto {
             this.memoryRequest = _data["memoryRequest"];
         }
     }
+
     static fromJS(data: any): ContainerResourceLimitsDto {
         data = typeof data === 'object' ? data : {};
         let result = new ContainerResourceLimitsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cpuLimit"] = this.cpuLimit;
@@ -4370,12 +4313,13 @@ export class ContainerResourceLimitsDto implements IContainerResourceLimitsDto {
     }
 }
 
-export class ContainerVolumeMountDto implements IContainerVolumeMountDto {
+export class ContainerVolumeMountDto implements interfaces.IContainerVolumeMountDto {
     containerPath?: string | undefined;
     hostPath?: string | undefined;
     type?: string | undefined;
     readOnly?: boolean;
-    constructor(data?: IContainerVolumeMountDto) {
+
+    constructor(data?: interfaces.IContainerVolumeMountDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4383,6 +4327,7 @@ export class ContainerVolumeMountDto implements IContainerVolumeMountDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.containerPath = _data["containerPath"];
@@ -4391,12 +4336,14 @@ export class ContainerVolumeMountDto implements IContainerVolumeMountDto {
             this.readOnly = _data["readOnly"];
         }
     }
+
     static fromJS(data: any): ContainerVolumeMountDto {
         data = typeof data === 'object' ? data : {};
         let result = new ContainerVolumeMountDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["containerPath"] = this.containerPath;
@@ -4407,10 +4354,11 @@ export class ContainerVolumeMountDto implements IContainerVolumeMountDto {
     }
 }
 
-export class CopyBlockDto implements ICopyBlockDto {
+export class CopyBlockDto implements interfaces.ICopyBlockDto {
     newBlockId!: string | undefined;
     newName?: string | undefined;
-    constructor(data?: ICopyBlockDto) {
+
+    constructor(data?: interfaces.ICopyBlockDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4418,18 +4366,21 @@ export class CopyBlockDto implements ICopyBlockDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.newBlockId = _data["newBlockId"];
             this.newName = _data["newName"];
         }
     }
+
     static fromJS(data: any): CopyBlockDto {
         data = typeof data === 'object' ? data : {};
         let result = new CopyBlockDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["newBlockId"] = this.newBlockId;
@@ -4438,12 +4389,13 @@ export class CopyBlockDto implements ICopyBlockDto {
     }
 }
 
-export class CreateFromTMDto implements ICreateFromTMDto {
+export class CreateFromTMDto implements interfaces.ICreateFromTMDto {
     location!: LocationRequestDto;
     address?: AddressDto;
     copyHazardData?: boolean;
     copyEarthquakeData?: boolean;
-    constructor(data?: ICreateFromTMDto) {
+
+    constructor(data?: interfaces.ICreateFromTMDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4454,6 +4406,7 @@ export class CreateFromTMDto implements ICreateFromTMDto {
             this.location = new LocationRequestDto();
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.location = _data["location"] ? LocationRequestDto.fromJS(_data["location"]) : new LocationRequestDto();
@@ -4462,12 +4415,14 @@ export class CreateFromTMDto implements ICreateFromTMDto {
             this.copyEarthquakeData = _data["copyEarthquakeData"];
         }
     }
+
     static fromJS(data: any): CreateFromTMDto {
         data = typeof data === 'object' ? data : {};
         let result = new CreateFromTMDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["location"] = this.location ? this.location.toJSON() : <any>undefined;
@@ -4478,7 +4433,7 @@ export class CreateFromTMDto implements ICreateFromTMDto {
     }
 }
 
-export class DeploymentHistoryDto implements IDeploymentHistoryDto {
+export class DeploymentHistoryDto implements interfaces.IDeploymentHistoryDto {
     id?: string | undefined;
     programId?: string | undefined;
     version?: string | undefined;
@@ -4488,7 +4443,8 @@ export class DeploymentHistoryDto implements IDeploymentHistoryDto {
     deployedBy?: string | undefined;
     duration?: string;
     errorMessage?: string | undefined;
-    constructor(data?: IDeploymentHistoryDto) {
+
+    constructor(data?: interfaces.IDeploymentHistoryDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4496,6 +4452,7 @@ export class DeploymentHistoryDto implements IDeploymentHistoryDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -4509,12 +4466,14 @@ export class DeploymentHistoryDto implements IDeploymentHistoryDto {
             this.errorMessage = _data["errorMessage"];
         }
     }
+
     static fromJS(data: any): DeploymentHistoryDto {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentHistoryDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -4530,13 +4489,14 @@ export class DeploymentHistoryDto implements IDeploymentHistoryDto {
     }
 }
 
-export class DeploymentHistoryDtoListApiResponse implements IDeploymentHistoryDtoListApiResponse {
+export class DeploymentHistoryDtoListApiResponse implements interfaces.IDeploymentHistoryDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: DeploymentHistoryDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IDeploymentHistoryDtoListApiResponse) {
+
+    constructor(data?: interfaces.IDeploymentHistoryDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4544,6 +4504,7 @@ export class DeploymentHistoryDtoListApiResponse implements IDeploymentHistoryDt
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -4561,12 +4522,14 @@ export class DeploymentHistoryDtoListApiResponse implements IDeploymentHistoryDt
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): DeploymentHistoryDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentHistoryDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -4586,7 +4549,7 @@ export class DeploymentHistoryDtoListApiResponse implements IDeploymentHistoryDt
     }
 }
 
-export class DeploymentResourceUsageDto implements IDeploymentResourceUsageDto {
+export class DeploymentResourceUsageDto implements interfaces.IDeploymentResourceUsageDto {
     programId?: string | undefined;
     cpuUsagePercent?: number;
     memoryUsageMB?: number;
@@ -4594,7 +4557,8 @@ export class DeploymentResourceUsageDto implements IDeploymentResourceUsageDto {
     networkInMB?: number;
     networkOutMB?: number;
     lastUpdated?: Date;
-    constructor(data?: IDeploymentResourceUsageDto) {
+
+    constructor(data?: interfaces.IDeploymentResourceUsageDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4602,6 +4566,7 @@ export class DeploymentResourceUsageDto implements IDeploymentResourceUsageDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -4613,12 +4578,14 @@ export class DeploymentResourceUsageDto implements IDeploymentResourceUsageDto {
             this.lastUpdated = _data["lastUpdated"] ? new Date(_data["lastUpdated"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): DeploymentResourceUsageDto {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentResourceUsageDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -4632,13 +4599,14 @@ export class DeploymentResourceUsageDto implements IDeploymentResourceUsageDto {
     }
 }
 
-export class DeploymentResourceUsageDtoApiResponse implements IDeploymentResourceUsageDtoApiResponse {
+export class DeploymentResourceUsageDtoApiResponse implements interfaces.IDeploymentResourceUsageDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: DeploymentResourceUsageDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IDeploymentResourceUsageDtoApiResponse) {
+
+    constructor(data?: interfaces.IDeploymentResourceUsageDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4646,6 +4614,7 @@ export class DeploymentResourceUsageDtoApiResponse implements IDeploymentResourc
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -4659,12 +4628,14 @@ export class DeploymentResourceUsageDtoApiResponse implements IDeploymentResourc
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): DeploymentResourceUsageDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentResourceUsageDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -4680,7 +4651,7 @@ export class DeploymentResourceUsageDtoApiResponse implements IDeploymentResourc
     }
 }
 
-export class DeploymentStatisticsDto implements IDeploymentStatisticsDto {
+export class DeploymentStatisticsDto implements interfaces.IDeploymentStatisticsDto {
     totalDeployments?: number;
     successfulDeployments?: number;
     failedDeployments?: number;
@@ -4689,7 +4660,8 @@ export class DeploymentStatisticsDto implements IDeploymentStatisticsDto {
     averageDeploymentTime?: string;
     fromDate?: Date;
     toDate?: Date;
-    constructor(data?: IDeploymentStatisticsDto) {
+
+    constructor(data?: interfaces.IDeploymentStatisticsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4697,6 +4669,7 @@ export class DeploymentStatisticsDto implements IDeploymentStatisticsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalDeployments = _data["totalDeployments"];
@@ -4715,12 +4688,14 @@ export class DeploymentStatisticsDto implements IDeploymentStatisticsDto {
             this.toDate = _data["toDate"] ? new Date(_data["toDate"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): DeploymentStatisticsDto {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentStatisticsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalDeployments"] = this.totalDeployments;
@@ -4741,13 +4716,14 @@ export class DeploymentStatisticsDto implements IDeploymentStatisticsDto {
     }
 }
 
-export class DeploymentStatisticsDtoApiResponse implements IDeploymentStatisticsDtoApiResponse {
+export class DeploymentStatisticsDtoApiResponse implements interfaces.IDeploymentStatisticsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: DeploymentStatisticsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IDeploymentStatisticsDtoApiResponse) {
+
+    constructor(data?: interfaces.IDeploymentStatisticsDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4755,6 +4731,7 @@ export class DeploymentStatisticsDtoApiResponse implements IDeploymentStatistics
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -4768,12 +4745,14 @@ export class DeploymentStatisticsDtoApiResponse implements IDeploymentStatistics
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): DeploymentStatisticsDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentStatisticsDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -4789,13 +4768,14 @@ export class DeploymentStatisticsDtoApiResponse implements IDeploymentStatistics
     }
 }
 
-export class DeploymentValidationResult implements IDeploymentValidationResult {
+export class DeploymentValidationResult implements interfaces.IDeploymentValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     recommendations?: string[] | undefined;
     validatedConfiguration?: { [key: string]: any; } | undefined;
-    constructor(data?: IDeploymentValidationResult) {
+
+    constructor(data?: interfaces.IDeploymentValidationResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4803,6 +4783,7 @@ export class DeploymentValidationResult implements IDeploymentValidationResult {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isValid = _data["isValid"];
@@ -4830,12 +4811,14 @@ export class DeploymentValidationResult implements IDeploymentValidationResult {
             }
         }
     }
+
     static fromJS(data: any): DeploymentValidationResult {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentValidationResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isValid"] = this.isValid;
@@ -4865,13 +4848,14 @@ export class DeploymentValidationResult implements IDeploymentValidationResult {
     }
 }
 
-export class DeploymentValidationResultApiResponse implements IDeploymentValidationResultApiResponse {
+export class DeploymentValidationResultApiResponse implements interfaces.IDeploymentValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: DeploymentValidationResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IDeploymentValidationResultApiResponse) {
+
+    constructor(data?: interfaces.IDeploymentValidationResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4879,6 +4863,7 @@ export class DeploymentValidationResultApiResponse implements IDeploymentValidat
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -4892,12 +4877,14 @@ export class DeploymentValidationResultApiResponse implements IDeploymentValidat
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): DeploymentValidationResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new DeploymentValidationResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -4913,42 +4900,15 @@ export class DeploymentValidationResultApiResponse implements IDeploymentValidat
     }
 }
 
-export class DownloadRequest implements IDownloadRequest {
-    downloadPath?: string | undefined;
-    constructor(data?: IDownloadRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.downloadPath = _data["downloadPath"];
-        }
-    }
-    static fromJS(data: any): DownloadRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new DownloadRequest();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["downloadPath"] = this.downloadPath;
-        return data;
-    }
-}
-
-export class EarthquakeLevelDto implements IEarthquakeLevelDto {
+export class EarthquakeLevelDto implements interfaces.IEarthquakeLevelDto {
     pga?: number;
     pgv?: number;
     ss?: number;
     s1?: number;
     sds?: number;
     sd1?: number;
-    constructor(data?: IEarthquakeLevelDto) {
+
+    constructor(data?: interfaces.IEarthquakeLevelDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4956,6 +4916,7 @@ export class EarthquakeLevelDto implements IEarthquakeLevelDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.pga = _data["pga"];
@@ -4966,12 +4927,14 @@ export class EarthquakeLevelDto implements IEarthquakeLevelDto {
             this.sd1 = _data["sd1"];
         }
     }
+
     static fromJS(data: any): EarthquakeLevelDto {
         data = typeof data === 'object' ? data : {};
         let result = new EarthquakeLevelDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["pga"] = this.pga;
@@ -4984,14 +4947,15 @@ export class EarthquakeLevelDto implements IEarthquakeLevelDto {
     }
 }
 
-export class EarthquakeLevelResponseDto implements IEarthquakeLevelResponseDto {
+export class EarthquakeLevelResponseDto implements interfaces.IEarthquakeLevelResponseDto {
     pga?: number;
     pgv?: number;
     ss?: number;
     s1?: number;
     sds?: number;
     sd1?: number;
-    constructor(data?: IEarthquakeLevelResponseDto) {
+
+    constructor(data?: interfaces.IEarthquakeLevelResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4999,6 +4963,7 @@ export class EarthquakeLevelResponseDto implements IEarthquakeLevelResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.pga = _data["pga"];
@@ -5009,12 +4974,14 @@ export class EarthquakeLevelResponseDto implements IEarthquakeLevelResponseDto {
             this.sd1 = _data["sd1"];
         }
     }
+
     static fromJS(data: any): EarthquakeLevelResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new EarthquakeLevelResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["pga"] = this.pga;
@@ -5027,13 +4994,14 @@ export class EarthquakeLevelResponseDto implements IEarthquakeLevelResponseDto {
     }
 }
 
-export class ExecutionCleanupReportDto implements IExecutionCleanupReportDto {
+export class ExecutionCleanupReportDto implements interfaces.IExecutionCleanupReportDto {
     cleanupDate?: Date;
     executionsRemoved?: number;
     spaceFreed?: number;
     daysRetained?: number;
     removedByStatus?: { [key: string]: number; } | undefined;
-    constructor(data?: IExecutionCleanupReportDto) {
+
+    constructor(data?: interfaces.IExecutionCleanupReportDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5041,6 +5009,7 @@ export class ExecutionCleanupReportDto implements IExecutionCleanupReportDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.cleanupDate = _data["cleanupDate"] ? new Date(_data["cleanupDate"].toString()) : <any>undefined;
@@ -5056,12 +5025,14 @@ export class ExecutionCleanupReportDto implements IExecutionCleanupReportDto {
             }
         }
     }
+
     static fromJS(data: any): ExecutionCleanupReportDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionCleanupReportDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cleanupDate"] = this.cleanupDate ? this.cleanupDate.toISOString() : <any>undefined;
@@ -5079,13 +5050,14 @@ export class ExecutionCleanupReportDto implements IExecutionCleanupReportDto {
     }
 }
 
-export class ExecutionCleanupReportDtoListApiResponse implements IExecutionCleanupReportDtoListApiResponse {
+export class ExecutionCleanupReportDtoListApiResponse implements interfaces.IExecutionCleanupReportDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionCleanupReportDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionCleanupReportDtoListApiResponse) {
+
+    constructor(data?: interfaces.IExecutionCleanupReportDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5093,6 +5065,7 @@ export class ExecutionCleanupReportDtoListApiResponse implements IExecutionClean
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -5110,12 +5083,14 @@ export class ExecutionCleanupReportDtoListApiResponse implements IExecutionClean
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionCleanupReportDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionCleanupReportDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -5135,7 +5110,7 @@ export class ExecutionCleanupReportDtoListApiResponse implements IExecutionClean
     }
 }
 
-export class ExecutionDetailDto implements IExecutionDetailDto {
+export class ExecutionDetailDto implements interfaces.IExecutionDetailDto {
     id?: string | undefined;
     programId?: string | undefined;
     versionId?: string | undefined;
@@ -5150,12 +5125,12 @@ export class ExecutionDetailDto implements IExecutionDetailDto {
     programName?: string | undefined;
     userName?: string | undefined;
     versionNumber?: number | undefined;
-    outputFiles?: ExecutionOutputFileDto[] | undefined;
     recentLogs?: string[] | undefined;
     environment?: ExecutionEnvironmentDto;
     webAppUrl?: string | undefined;
     webAppStatus?: WebAppStatusDto;
-    constructor(data?: IExecutionDetailDto) {
+
+    constructor(data?: interfaces.IExecutionDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5163,6 +5138,7 @@ export class ExecutionDetailDto implements IExecutionDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -5179,11 +5155,6 @@ export class ExecutionDetailDto implements IExecutionDetailDto {
             this.programName = _data["programName"];
             this.userName = _data["userName"];
             this.versionNumber = _data["versionNumber"];
-            if (Array.isArray(_data["outputFiles"])) {
-                this.outputFiles = [] as any;
-                for (let item of _data["outputFiles"])
-                    this.outputFiles!.push(ExecutionOutputFileDto.fromJS(item));
-            }
             if (Array.isArray(_data["recentLogs"])) {
                 this.recentLogs = [] as any;
                 for (let item of _data["recentLogs"])
@@ -5194,12 +5165,14 @@ export class ExecutionDetailDto implements IExecutionDetailDto {
             this.webAppStatus = _data["webAppStatus"] ? WebAppStatusDto.fromJS(_data["webAppStatus"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -5216,11 +5189,6 @@ export class ExecutionDetailDto implements IExecutionDetailDto {
         data["programName"] = this.programName;
         data["userName"] = this.userName;
         data["versionNumber"] = this.versionNumber;
-        if (Array.isArray(this.outputFiles)) {
-            data["outputFiles"] = [];
-            for (let item of this.outputFiles)
-                data["outputFiles"].push(item ? item.toJSON() : <any>undefined);
-        }
         if (Array.isArray(this.recentLogs)) {
             data["recentLogs"] = [];
             for (let item of this.recentLogs)
@@ -5233,13 +5201,14 @@ export class ExecutionDetailDto implements IExecutionDetailDto {
     }
 }
 
-export class ExecutionDetailDtoApiResponse implements IExecutionDetailDtoApiResponse {
+export class ExecutionDetailDtoApiResponse implements interfaces.IExecutionDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5247,6 +5216,7 @@ export class ExecutionDetailDtoApiResponse implements IExecutionDetailDtoApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -5260,12 +5230,14 @@ export class ExecutionDetailDtoApiResponse implements IExecutionDetailDtoApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -5281,7 +5253,7 @@ export class ExecutionDetailDtoApiResponse implements IExecutionDetailDtoApiResp
     }
 }
 
-export class ExecutionDto implements IExecutionDto {
+export class ExecutionDto implements interfaces.IExecutionDto {
     id?: string | undefined;
     programId?: string | undefined;
     versionId?: string | undefined;
@@ -5293,7 +5265,8 @@ export class ExecutionDto implements IExecutionDto {
     parameters?: any | undefined;
     results?: ExecutionResultDto;
     resourceUsage?: ExecutionResourceUsageDto;
-    constructor(data?: IExecutionDto) {
+
+    constructor(data?: interfaces.IExecutionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5301,6 +5274,7 @@ export class ExecutionDto implements IExecutionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -5316,12 +5290,14 @@ export class ExecutionDto implements IExecutionDto {
             this.resourceUsage = _data["resourceUsage"] ? ExecutionResourceUsageDto.fromJS(_data["resourceUsage"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -5339,13 +5315,14 @@ export class ExecutionDto implements IExecutionDto {
     }
 }
 
-export class ExecutionDtoApiResponse implements IExecutionDtoApiResponse {
+export class ExecutionDtoApiResponse implements interfaces.IExecutionDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5353,6 +5330,7 @@ export class ExecutionDtoApiResponse implements IExecutionDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -5366,12 +5344,14 @@ export class ExecutionDtoApiResponse implements IExecutionDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -5387,13 +5367,14 @@ export class ExecutionDtoApiResponse implements IExecutionDtoApiResponse {
     }
 }
 
-export class ExecutionEnvironmentDto implements IExecutionEnvironmentDto {
+export class ExecutionEnvironmentDto implements interfaces.IExecutionEnvironmentDto {
     programId?: string | undefined;
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     configuration?: { [key: string]: any; } | undefined;
     lastUpdated?: Date;
-    constructor(data?: IExecutionEnvironmentDto) {
+
+    constructor(data?: interfaces.IExecutionEnvironmentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5401,6 +5382,7 @@ export class ExecutionEnvironmentDto implements IExecutionEnvironmentDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -5422,12 +5404,14 @@ export class ExecutionEnvironmentDto implements IExecutionEnvironmentDto {
             this.lastUpdated = _data["lastUpdated"] ? new Date(_data["lastUpdated"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionEnvironmentDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionEnvironmentDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -5451,13 +5435,14 @@ export class ExecutionEnvironmentDto implements IExecutionEnvironmentDto {
     }
 }
 
-export class ExecutionEnvironmentDtoApiResponse implements IExecutionEnvironmentDtoApiResponse {
+export class ExecutionEnvironmentDtoApiResponse implements interfaces.IExecutionEnvironmentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionEnvironmentDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionEnvironmentDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionEnvironmentDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5465,6 +5450,7 @@ export class ExecutionEnvironmentDtoApiResponse implements IExecutionEnvironment
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -5478,12 +5464,14 @@ export class ExecutionEnvironmentDtoApiResponse implements IExecutionEnvironment
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionEnvironmentDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionEnvironmentDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -5499,11 +5487,12 @@ export class ExecutionEnvironmentDtoApiResponse implements IExecutionEnvironment
     }
 }
 
-export class ExecutionEnvironmentUpdateDto implements IExecutionEnvironmentUpdateDto {
+export class ExecutionEnvironmentUpdateDto implements interfaces.IExecutionEnvironmentUpdateDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     configuration?: { [key: string]: any; } | undefined;
-    constructor(data?: IExecutionEnvironmentUpdateDto) {
+
+    constructor(data?: interfaces.IExecutionEnvironmentUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5511,6 +5500,7 @@ export class ExecutionEnvironmentUpdateDto implements IExecutionEnvironmentUpdat
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (_data["environment"]) {
@@ -5530,12 +5520,14 @@ export class ExecutionEnvironmentUpdateDto implements IExecutionEnvironmentUpdat
             }
         }
     }
+
     static fromJS(data: any): ExecutionEnvironmentUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionEnvironmentUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (this.environment) {
@@ -5557,7 +5549,7 @@ export class ExecutionEnvironmentUpdateDto implements IExecutionEnvironmentUpdat
     }
 }
 
-export class ExecutionListDto implements IExecutionListDto {
+export class ExecutionListDto implements interfaces.IExecutionListDto {
     id?: string | undefined;
     programId?: string | undefined;
     programName?: string | undefined;
@@ -5573,7 +5565,8 @@ export class ExecutionListDto implements IExecutionListDto {
     hasError?: boolean;
     duration?: number | undefined;
     resourceUsage?: ExecutionResourceUsageDto;
-    constructor(data?: IExecutionListDto) {
+
+    constructor(data?: interfaces.IExecutionListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5581,6 +5574,7 @@ export class ExecutionListDto implements IExecutionListDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -5600,12 +5594,14 @@ export class ExecutionListDto implements IExecutionListDto {
             this.resourceUsage = _data["resourceUsage"] ? ExecutionResourceUsageDto.fromJS(_data["resourceUsage"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionListDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionListDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -5627,13 +5623,14 @@ export class ExecutionListDto implements IExecutionListDto {
     }
 }
 
-export class ExecutionListDtoListApiResponse implements IExecutionListDtoListApiResponse {
+export class ExecutionListDtoListApiResponse implements interfaces.IExecutionListDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionListDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionListDtoListApiResponse) {
+
+    constructor(data?: interfaces.IExecutionListDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5641,6 +5638,7 @@ export class ExecutionListDtoListApiResponse implements IExecutionListDtoListApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -5658,12 +5656,14 @@ export class ExecutionListDtoListApiResponse implements IExecutionListDtoListApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionListDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionListDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -5683,7 +5683,7 @@ export class ExecutionListDtoListApiResponse implements IExecutionListDtoListApi
     }
 }
 
-export class ExecutionListDtoPagedResponse implements IExecutionListDtoPagedResponse {
+export class ExecutionListDtoPagedResponse implements interfaces.IExecutionListDtoPagedResponse {
     items?: ExecutionListDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -5691,7 +5691,8 @@ export class ExecutionListDtoPagedResponse implements IExecutionListDtoPagedResp
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IExecutionListDtoPagedResponse) {
+
+    constructor(data?: interfaces.IExecutionListDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5699,6 +5700,7 @@ export class ExecutionListDtoPagedResponse implements IExecutionListDtoPagedResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -5714,12 +5716,14 @@ export class ExecutionListDtoPagedResponse implements IExecutionListDtoPagedResp
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): ExecutionListDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionListDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -5737,13 +5741,14 @@ export class ExecutionListDtoPagedResponse implements IExecutionListDtoPagedResp
     }
 }
 
-export class ExecutionListDtoPagedResponseApiResponse implements IExecutionListDtoPagedResponseApiResponse {
+export class ExecutionListDtoPagedResponseApiResponse implements interfaces.IExecutionListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionListDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionListDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IExecutionListDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5751,6 +5756,7 @@ export class ExecutionListDtoPagedResponseApiResponse implements IExecutionListD
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -5764,12 +5770,14 @@ export class ExecutionListDtoPagedResponseApiResponse implements IExecutionListD
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionListDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionListDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -5785,194 +5793,7 @@ export class ExecutionListDtoPagedResponseApiResponse implements IExecutionListD
     }
 }
 
-export class ExecutionOutputFileContentDto implements IExecutionOutputFileContentDto {
-    fileName?: string | undefined;
-    contentType?: string | undefined;
-    content?: string | undefined;
-    size?: number;
-    createdAt?: Date;
-    constructor(data?: IExecutionOutputFileContentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.fileName = _data["fileName"];
-            this.contentType = _data["contentType"];
-            this.content = _data["content"];
-            this.size = _data["size"];
-            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
-        }
-    }
-    static fromJS(data: any): ExecutionOutputFileContentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ExecutionOutputFileContentDto();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["fileName"] = this.fileName;
-        data["contentType"] = this.contentType;
-        data["content"] = this.content;
-        data["size"] = this.size;
-        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export class ExecutionOutputFileContentDtoApiResponse implements IExecutionOutputFileContentDtoApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: ExecutionOutputFileContentDto;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-    constructor(data?: IExecutionOutputFileContentDtoApiResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.success = _data["success"];
-            this.message = _data["message"];
-            this.data = _data["data"] ? ExecutionOutputFileContentDto.fromJS(_data["data"]) : <any>undefined;
-            if (Array.isArray(_data["errors"])) {
-                this.errors = [] as any;
-                for (let item of _data["errors"])
-                    this.errors!.push(item);
-            }
-            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
-        }
-    }
-    static fromJS(data: any): ExecutionOutputFileContentDtoApiResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ExecutionOutputFileContentDtoApiResponse();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        data["message"] = this.message;
-        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
-        if (Array.isArray(this.errors)) {
-            data["errors"] = [];
-            for (let item of this.errors)
-                data["errors"].push(item);
-        }
-        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export class ExecutionOutputFileDto implements IExecutionOutputFileDto {
-    fileName?: string | undefined;
-    path?: string | undefined;
-    size?: number;
-    contentType?: string | undefined;
-    createdAt?: Date;
-    downloadUrl?: string | undefined;
-    constructor(data?: IExecutionOutputFileDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.fileName = _data["fileName"];
-            this.path = _data["path"];
-            this.size = _data["size"];
-            this.contentType = _data["contentType"];
-            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
-            this.downloadUrl = _data["downloadUrl"];
-        }
-    }
-    static fromJS(data: any): ExecutionOutputFileDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ExecutionOutputFileDto();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["fileName"] = this.fileName;
-        data["path"] = this.path;
-        data["size"] = this.size;
-        data["contentType"] = this.contentType;
-        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
-        data["downloadUrl"] = this.downloadUrl;
-        return data;
-    }
-}
-
-export class ExecutionOutputFileDtoListApiResponse implements IExecutionOutputFileDtoListApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: ExecutionOutputFileDto[] | undefined;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-    constructor(data?: IExecutionOutputFileDtoListApiResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.success = _data["success"];
-            this.message = _data["message"];
-            if (Array.isArray(_data["data"])) {
-                this.data = [] as any;
-                for (let item of _data["data"])
-                    this.data!.push(ExecutionOutputFileDto.fromJS(item));
-            }
-            if (Array.isArray(_data["errors"])) {
-                this.errors = [] as any;
-                for (let item of _data["errors"])
-                    this.errors!.push(item);
-            }
-            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
-        }
-    }
-    static fromJS(data: any): ExecutionOutputFileDtoListApiResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ExecutionOutputFileDtoListApiResponse();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        data["message"] = this.message;
-        if (Array.isArray(this.data)) {
-            data["data"] = [];
-            for (let item of this.data)
-                data["data"].push(item ? item.toJSON() : <any>undefined);
-        }
-        if (Array.isArray(this.errors)) {
-            data["errors"] = [];
-            for (let item of this.errors)
-                data["errors"].push(item);
-        }
-        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export class ExecutionParametersDto implements IExecutionParametersDto {
+export class ExecutionParametersDto implements interfaces.IExecutionParametersDto {
     programId!: string;
     versionId?: string | undefined;
     parameters?: any | undefined;
@@ -5981,7 +5802,8 @@ export class ExecutionParametersDto implements IExecutionParametersDto {
     saveResults?: boolean;
     timeoutMinutes?: number;
     executionName?: string | undefined;
-    constructor(data?: IExecutionParametersDto) {
+
+    constructor(data?: interfaces.IExecutionParametersDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -5989,6 +5811,7 @@ export class ExecutionParametersDto implements IExecutionParametersDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -6007,12 +5830,14 @@ export class ExecutionParametersDto implements IExecutionParametersDto {
             this.executionName = _data["executionName"];
         }
     }
+
     static fromJS(data: any): ExecutionParametersDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionParametersDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -6033,7 +5858,7 @@ export class ExecutionParametersDto implements IExecutionParametersDto {
     }
 }
 
-export class ExecutionPerformanceDto implements IExecutionPerformanceDto {
+export class ExecutionPerformanceDto implements interfaces.IExecutionPerformanceDto {
     programId?: string | undefined;
     programName?: string | undefined;
     executionCount?: number;
@@ -6041,7 +5866,8 @@ export class ExecutionPerformanceDto implements IExecutionPerformanceDto {
     averageExecutionTime?: number;
     averageResourceUsage?: number;
     lastExecution?: Date;
-    constructor(data?: IExecutionPerformanceDto) {
+
+    constructor(data?: interfaces.IExecutionPerformanceDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6049,6 +5875,7 @@ export class ExecutionPerformanceDto implements IExecutionPerformanceDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -6060,12 +5887,14 @@ export class ExecutionPerformanceDto implements IExecutionPerformanceDto {
             this.lastExecution = _data["lastExecution"] ? new Date(_data["lastExecution"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionPerformanceDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionPerformanceDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -6079,13 +5908,14 @@ export class ExecutionPerformanceDto implements IExecutionPerformanceDto {
     }
 }
 
-export class ExecutionPerformanceDtoListApiResponse implements IExecutionPerformanceDtoListApiResponse {
+export class ExecutionPerformanceDtoListApiResponse implements interfaces.IExecutionPerformanceDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionPerformanceDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionPerformanceDtoListApiResponse) {
+
+    constructor(data?: interfaces.IExecutionPerformanceDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6093,6 +5923,7 @@ export class ExecutionPerformanceDtoListApiResponse implements IExecutionPerform
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6110,12 +5941,14 @@ export class ExecutionPerformanceDtoListApiResponse implements IExecutionPerform
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionPerformanceDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionPerformanceDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6135,13 +5968,14 @@ export class ExecutionPerformanceDtoListApiResponse implements IExecutionPerform
     }
 }
 
-export class ExecutionQueueStatusDto implements IExecutionQueueStatusDto {
+export class ExecutionQueueStatusDto implements interfaces.IExecutionQueueStatusDto {
     queueLength?: number;
     runningExecutions?: number;
     maxConcurrentExecutions?: number;
     averageWaitTime?: number;
     queuedExecutions?: ExecutionListDto[] | undefined;
-    constructor(data?: IExecutionQueueStatusDto) {
+
+    constructor(data?: interfaces.IExecutionQueueStatusDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6149,6 +5983,7 @@ export class ExecutionQueueStatusDto implements IExecutionQueueStatusDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.queueLength = _data["queueLength"];
@@ -6162,12 +5997,14 @@ export class ExecutionQueueStatusDto implements IExecutionQueueStatusDto {
             }
         }
     }
+
     static fromJS(data: any): ExecutionQueueStatusDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionQueueStatusDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["queueLength"] = this.queueLength;
@@ -6183,13 +6020,14 @@ export class ExecutionQueueStatusDto implements IExecutionQueueStatusDto {
     }
 }
 
-export class ExecutionQueueStatusDtoApiResponse implements IExecutionQueueStatusDtoApiResponse {
+export class ExecutionQueueStatusDtoApiResponse implements interfaces.IExecutionQueueStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionQueueStatusDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionQueueStatusDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionQueueStatusDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6197,6 +6035,7 @@ export class ExecutionQueueStatusDtoApiResponse implements IExecutionQueueStatus
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6210,12 +6049,14 @@ export class ExecutionQueueStatusDtoApiResponse implements IExecutionQueueStatus
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionQueueStatusDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionQueueStatusDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6231,13 +6072,14 @@ export class ExecutionQueueStatusDtoApiResponse implements IExecutionQueueStatus
     }
 }
 
-export class ExecutionResourceLimitsDto implements IExecutionResourceLimitsDto {
+export class ExecutionResourceLimitsDto implements interfaces.IExecutionResourceLimitsDto {
     maxCpuPercentage?: number;
     maxMemoryMb?: number;
     maxDiskMb?: number;
     maxExecutionTimeMinutes?: number;
     maxConcurrentExecutions?: number;
-    constructor(data?: IExecutionResourceLimitsDto) {
+
+    constructor(data?: interfaces.IExecutionResourceLimitsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6245,6 +6087,7 @@ export class ExecutionResourceLimitsDto implements IExecutionResourceLimitsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.maxCpuPercentage = _data["maxCpuPercentage"];
@@ -6254,12 +6097,14 @@ export class ExecutionResourceLimitsDto implements IExecutionResourceLimitsDto {
             this.maxConcurrentExecutions = _data["maxConcurrentExecutions"];
         }
     }
+
     static fromJS(data: any): ExecutionResourceLimitsDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceLimitsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["maxCpuPercentage"] = this.maxCpuPercentage;
@@ -6271,13 +6116,14 @@ export class ExecutionResourceLimitsDto implements IExecutionResourceLimitsDto {
     }
 }
 
-export class ExecutionResourceLimitsDtoApiResponse implements IExecutionResourceLimitsDtoApiResponse {
+export class ExecutionResourceLimitsDtoApiResponse implements interfaces.IExecutionResourceLimitsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionResourceLimitsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionResourceLimitsDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionResourceLimitsDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6285,6 +6131,7 @@ export class ExecutionResourceLimitsDtoApiResponse implements IExecutionResource
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6298,12 +6145,14 @@ export class ExecutionResourceLimitsDtoApiResponse implements IExecutionResource
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionResourceLimitsDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceLimitsDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6319,13 +6168,14 @@ export class ExecutionResourceLimitsDtoApiResponse implements IExecutionResource
     }
 }
 
-export class ExecutionResourceLimitsUpdateDto implements IExecutionResourceLimitsUpdateDto {
+export class ExecutionResourceLimitsUpdateDto implements interfaces.IExecutionResourceLimitsUpdateDto {
     maxCpuPercentage?: number | undefined;
     maxMemoryMb?: number | undefined;
     maxDiskMb?: number | undefined;
     maxExecutionTimeMinutes?: number | undefined;
     maxConcurrentExecutions?: number | undefined;
-    constructor(data?: IExecutionResourceLimitsUpdateDto) {
+
+    constructor(data?: interfaces.IExecutionResourceLimitsUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6333,6 +6183,7 @@ export class ExecutionResourceLimitsUpdateDto implements IExecutionResourceLimit
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.maxCpuPercentage = _data["maxCpuPercentage"];
@@ -6342,12 +6193,14 @@ export class ExecutionResourceLimitsUpdateDto implements IExecutionResourceLimit
             this.maxConcurrentExecutions = _data["maxConcurrentExecutions"];
         }
     }
+
     static fromJS(data: any): ExecutionResourceLimitsUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceLimitsUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["maxCpuPercentage"] = this.maxCpuPercentage;
@@ -6359,13 +6212,14 @@ export class ExecutionResourceLimitsUpdateDto implements IExecutionResourceLimit
     }
 }
 
-export class ExecutionResourceTrendDto implements IExecutionResourceTrendDto {
+export class ExecutionResourceTrendDto implements interfaces.IExecutionResourceTrendDto {
     timestamp?: Date;
     cpuUsage?: number;
     memoryUsage?: number;
     diskUsage?: number;
     activeExecutions?: number;
-    constructor(data?: IExecutionResourceTrendDto) {
+
+    constructor(data?: interfaces.IExecutionResourceTrendDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6373,6 +6227,7 @@ export class ExecutionResourceTrendDto implements IExecutionResourceTrendDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
@@ -6382,12 +6237,14 @@ export class ExecutionResourceTrendDto implements IExecutionResourceTrendDto {
             this.activeExecutions = _data["activeExecutions"];
         }
     }
+
     static fromJS(data: any): ExecutionResourceTrendDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceTrendDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
@@ -6399,13 +6256,14 @@ export class ExecutionResourceTrendDto implements IExecutionResourceTrendDto {
     }
 }
 
-export class ExecutionResourceTrendDtoListApiResponse implements IExecutionResourceTrendDtoListApiResponse {
+export class ExecutionResourceTrendDtoListApiResponse implements interfaces.IExecutionResourceTrendDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionResourceTrendDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionResourceTrendDtoListApiResponse) {
+
+    constructor(data?: interfaces.IExecutionResourceTrendDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6413,6 +6271,7 @@ export class ExecutionResourceTrendDtoListApiResponse implements IExecutionResou
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6430,12 +6289,14 @@ export class ExecutionResourceTrendDtoListApiResponse implements IExecutionResou
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionResourceTrendDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceTrendDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6455,12 +6316,13 @@ export class ExecutionResourceTrendDtoListApiResponse implements IExecutionResou
     }
 }
 
-export class ExecutionResourceUpdateDto implements IExecutionResourceUpdateDto {
+export class ExecutionResourceUpdateDto implements interfaces.IExecutionResourceUpdateDto {
     cpuTime?: number;
     memoryUsed?: number;
     diskUsed?: number;
     additionalMetrics?: { [key: string]: any; } | undefined;
-    constructor(data?: IExecutionResourceUpdateDto) {
+
+    constructor(data?: interfaces.IExecutionResourceUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6468,6 +6330,7 @@ export class ExecutionResourceUpdateDto implements IExecutionResourceUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.cpuTime = _data["cpuTime"];
@@ -6482,12 +6345,14 @@ export class ExecutionResourceUpdateDto implements IExecutionResourceUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): ExecutionResourceUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cpuTime"] = this.cpuTime;
@@ -6504,7 +6369,7 @@ export class ExecutionResourceUpdateDto implements IExecutionResourceUpdateDto {
     }
 }
 
-export class ExecutionResourceUsageDto implements IExecutionResourceUsageDto {
+export class ExecutionResourceUsageDto implements interfaces.IExecutionResourceUsageDto {
     cpuTime?: number;
     memoryUsed?: number;
     diskUsed?: number;
@@ -6512,7 +6377,8 @@ export class ExecutionResourceUsageDto implements IExecutionResourceUsageDto {
     memoryPercentage?: number;
     diskPercentage?: number;
     lastUpdated?: Date;
-    constructor(data?: IExecutionResourceUsageDto) {
+
+    constructor(data?: interfaces.IExecutionResourceUsageDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6520,6 +6386,7 @@ export class ExecutionResourceUsageDto implements IExecutionResourceUsageDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.cpuTime = _data["cpuTime"];
@@ -6531,12 +6398,14 @@ export class ExecutionResourceUsageDto implements IExecutionResourceUsageDto {
             this.lastUpdated = _data["lastUpdated"] ? new Date(_data["lastUpdated"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionResourceUsageDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceUsageDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cpuTime"] = this.cpuTime;
@@ -6550,13 +6419,14 @@ export class ExecutionResourceUsageDto implements IExecutionResourceUsageDto {
     }
 }
 
-export class ExecutionResourceUsageDtoApiResponse implements IExecutionResourceUsageDtoApiResponse {
+export class ExecutionResourceUsageDtoApiResponse implements interfaces.IExecutionResourceUsageDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionResourceUsageDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionResourceUsageDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionResourceUsageDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6564,6 +6434,7 @@ export class ExecutionResourceUsageDtoApiResponse implements IExecutionResourceU
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6577,12 +6448,14 @@ export class ExecutionResourceUsageDtoApiResponse implements IExecutionResourceU
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionResourceUsageDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceUsageDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6598,14 +6471,15 @@ export class ExecutionResourceUsageDtoApiResponse implements IExecutionResourceU
     }
 }
 
-export class ExecutionResultDto implements IExecutionResultDto {
+export class ExecutionResultDto implements interfaces.IExecutionResultDto {
     exitCode?: number;
     output?: string | undefined;
     outputFiles?: string[] | undefined;
     error?: string | undefined;
     webAppUrl?: string | undefined;
     completedAt?: Date | undefined;
-    constructor(data?: IExecutionResultDto) {
+
+    constructor(data?: interfaces.IExecutionResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6613,6 +6487,7 @@ export class ExecutionResultDto implements IExecutionResultDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.exitCode = _data["exitCode"];
@@ -6627,12 +6502,14 @@ export class ExecutionResultDto implements IExecutionResultDto {
             this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionResultDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResultDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["exitCode"] = this.exitCode;
@@ -6649,13 +6526,14 @@ export class ExecutionResultDto implements IExecutionResultDto {
     }
 }
 
-export class ExecutionResultDtoApiResponse implements IExecutionResultDtoApiResponse {
+export class ExecutionResultDtoApiResponse implements interfaces.IExecutionResultDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionResultDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionResultDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionResultDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6663,6 +6541,7 @@ export class ExecutionResultDtoApiResponse implements IExecutionResultDtoApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6676,12 +6555,14 @@ export class ExecutionResultDtoApiResponse implements IExecutionResultDtoApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionResultDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResultDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6697,14 +6578,15 @@ export class ExecutionResultDtoApiResponse implements IExecutionResultDtoApiResp
     }
 }
 
-export class ExecutionScheduleRequestDto implements IExecutionScheduleRequestDto {
+export class ExecutionScheduleRequestDto implements interfaces.IExecutionScheduleRequestDto {
     scheduledTime?: Date;
     parameters?: any | undefined;
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
     description?: string | undefined;
-    constructor(data?: IExecutionScheduleRequestDto) {
+
+    constructor(data?: interfaces.IExecutionScheduleRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6712,6 +6594,7 @@ export class ExecutionScheduleRequestDto implements IExecutionScheduleRequestDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.scheduledTime = _data["scheduledTime"] ? new Date(_data["scheduledTime"].toString()) : <any>undefined;
@@ -6728,12 +6611,14 @@ export class ExecutionScheduleRequestDto implements IExecutionScheduleRequestDto
             this.description = _data["description"];
         }
     }
+
     static fromJS(data: any): ExecutionScheduleRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionScheduleRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["scheduledTime"] = this.scheduledTime ? this.scheduledTime.toISOString() : <any>undefined;
@@ -6752,7 +6637,7 @@ export class ExecutionScheduleRequestDto implements IExecutionScheduleRequestDto
     }
 }
 
-export class ExecutionSearchDto implements IExecutionSearchDto {
+export class ExecutionSearchDto implements interfaces.IExecutionSearchDto {
     programId?: string | undefined;
     versionId?: string | undefined;
     userId?: string | undefined;
@@ -6765,7 +6650,8 @@ export class ExecutionSearchDto implements IExecutionSearchDto {
     exitCodeFrom?: number | undefined;
     exitCodeTo?: number | undefined;
     hasErrors?: boolean | undefined;
-    constructor(data?: IExecutionSearchDto) {
+
+    constructor(data?: interfaces.IExecutionSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6773,6 +6659,7 @@ export class ExecutionSearchDto implements IExecutionSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -6789,12 +6676,14 @@ export class ExecutionSearchDto implements IExecutionSearchDto {
             this.hasErrors = _data["hasErrors"];
         }
     }
+
     static fromJS(data: any): ExecutionSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -6813,13 +6702,14 @@ export class ExecutionSearchDto implements IExecutionSearchDto {
     }
 }
 
-export class ExecutionSecurityScanResult implements IExecutionSecurityScanResult {
+export class ExecutionSecurityScanResult implements interfaces.IExecutionSecurityScanResult {
     isSecure?: boolean;
     securityIssues?: string[] | undefined;
     securityWarnings?: string[] | undefined;
     riskLevel?: number;
     scanDate?: Date;
-    constructor(data?: IExecutionSecurityScanResult) {
+
+    constructor(data?: interfaces.IExecutionSecurityScanResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6827,6 +6717,7 @@ export class ExecutionSecurityScanResult implements IExecutionSecurityScanResult
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isSecure = _data["isSecure"];
@@ -6844,12 +6735,14 @@ export class ExecutionSecurityScanResult implements IExecutionSecurityScanResult
             this.scanDate = _data["scanDate"] ? new Date(_data["scanDate"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionSecurityScanResult {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionSecurityScanResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isSecure"] = this.isSecure;
@@ -6869,13 +6762,14 @@ export class ExecutionSecurityScanResult implements IExecutionSecurityScanResult
     }
 }
 
-export class ExecutionSecurityScanResultApiResponse implements IExecutionSecurityScanResultApiResponse {
+export class ExecutionSecurityScanResultApiResponse implements interfaces.IExecutionSecurityScanResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionSecurityScanResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionSecurityScanResultApiResponse) {
+
+    constructor(data?: interfaces.IExecutionSecurityScanResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6883,6 +6777,7 @@ export class ExecutionSecurityScanResultApiResponse implements IExecutionSecurit
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -6896,12 +6791,14 @@ export class ExecutionSecurityScanResultApiResponse implements IExecutionSecurit
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionSecurityScanResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionSecurityScanResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -6917,7 +6814,7 @@ export class ExecutionSecurityScanResultApiResponse implements IExecutionSecurit
     }
 }
 
-export class ExecutionStatsDto implements IExecutionStatsDto {
+export class ExecutionStatsDto implements interfaces.IExecutionStatsDto {
     totalExecutions?: number;
     successfulExecutions?: number;
     failedExecutions?: number;
@@ -6928,7 +6825,8 @@ export class ExecutionStatsDto implements IExecutionStatsDto {
     totalMemoryUsed?: number;
     executionsByStatus?: { [key: string]: number; } | undefined;
     executionsByType?: { [key: string]: number; } | undefined;
-    constructor(data?: IExecutionStatsDto) {
+
+    constructor(data?: interfaces.IExecutionStatsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -6936,6 +6834,7 @@ export class ExecutionStatsDto implements IExecutionStatsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalExecutions = _data["totalExecutions"];
@@ -6962,12 +6861,14 @@ export class ExecutionStatsDto implements IExecutionStatsDto {
             }
         }
     }
+
     static fromJS(data: any): ExecutionStatsDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionStatsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalExecutions"] = this.totalExecutions;
@@ -6996,13 +6897,14 @@ export class ExecutionStatsDto implements IExecutionStatsDto {
     }
 }
 
-export class ExecutionStatsDtoApiResponse implements IExecutionStatsDtoApiResponse {
+export class ExecutionStatsDtoApiResponse implements interfaces.IExecutionStatsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionStatsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionStatsDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionStatsDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7010,6 +6912,7 @@ export class ExecutionStatsDtoApiResponse implements IExecutionStatsDtoApiRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7023,12 +6926,14 @@ export class ExecutionStatsDtoApiResponse implements IExecutionStatsDtoApiRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionStatsDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionStatsDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7044,7 +6949,7 @@ export class ExecutionStatsDtoApiResponse implements IExecutionStatsDtoApiRespon
     }
 }
 
-export class ExecutionStatusDto implements IExecutionStatusDto {
+export class ExecutionStatusDto implements interfaces.IExecutionStatusDto {
     id?: string | undefined;
     status?: string | undefined;
     startedAt?: Date;
@@ -7053,7 +6958,8 @@ export class ExecutionStatusDto implements IExecutionStatusDto {
     currentStep?: string | undefined;
     resourceUsage?: ExecutionResourceUsageDto;
     statusMessage?: string | undefined;
-    constructor(data?: IExecutionStatusDto) {
+
+    constructor(data?: interfaces.IExecutionStatusDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7061,6 +6967,7 @@ export class ExecutionStatusDto implements IExecutionStatusDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -7073,12 +6980,14 @@ export class ExecutionStatusDto implements IExecutionStatusDto {
             this.statusMessage = _data["statusMessage"];
         }
     }
+
     static fromJS(data: any): ExecutionStatusDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionStatusDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -7093,13 +7002,14 @@ export class ExecutionStatusDto implements IExecutionStatusDto {
     }
 }
 
-export class ExecutionStatusDtoApiResponse implements IExecutionStatusDtoApiResponse {
+export class ExecutionStatusDtoApiResponse implements interfaces.IExecutionStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionStatusDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionStatusDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionStatusDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7107,6 +7017,7 @@ export class ExecutionStatusDtoApiResponse implements IExecutionStatusDtoApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7120,12 +7031,14 @@ export class ExecutionStatusDtoApiResponse implements IExecutionStatusDtoApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionStatusDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionStatusDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7141,7 +7054,7 @@ export class ExecutionStatusDtoApiResponse implements IExecutionStatusDtoApiResp
     }
 }
 
-export class ExecutionSummaryDto implements IExecutionSummaryDto {
+export class ExecutionSummaryDto implements interfaces.IExecutionSummaryDto {
     userId?: string | undefined;
     totalExecutions?: number;
     successfulExecutions?: number;
@@ -7150,7 +7063,8 @@ export class ExecutionSummaryDto implements IExecutionSummaryDto {
     totalMemoryUsed?: number;
     lastExecution?: Date | undefined;
     programPerformance?: ExecutionPerformanceDto[] | undefined;
-    constructor(data?: IExecutionSummaryDto) {
+
+    constructor(data?: interfaces.IExecutionSummaryDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7158,6 +7072,7 @@ export class ExecutionSummaryDto implements IExecutionSummaryDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.userId = _data["userId"];
@@ -7174,12 +7089,14 @@ export class ExecutionSummaryDto implements IExecutionSummaryDto {
             }
         }
     }
+
     static fromJS(data: any): ExecutionSummaryDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionSummaryDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
@@ -7198,13 +7115,14 @@ export class ExecutionSummaryDto implements IExecutionSummaryDto {
     }
 }
 
-export class ExecutionSummaryDtoApiResponse implements IExecutionSummaryDtoApiResponse {
+export class ExecutionSummaryDtoApiResponse implements interfaces.IExecutionSummaryDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionSummaryDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionSummaryDtoApiResponse) {
+
+    constructor(data?: interfaces.IExecutionSummaryDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7212,6 +7130,7 @@ export class ExecutionSummaryDtoApiResponse implements IExecutionSummaryDtoApiRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7225,12 +7144,14 @@ export class ExecutionSummaryDtoApiResponse implements IExecutionSummaryDtoApiRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionSummaryDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionSummaryDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7246,7 +7167,7 @@ export class ExecutionSummaryDtoApiResponse implements IExecutionSummaryDtoApiRe
     }
 }
 
-export class ExecutionTemplateDto implements IExecutionTemplateDto {
+export class ExecutionTemplateDto implements interfaces.IExecutionTemplateDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -7254,7 +7175,8 @@ export class ExecutionTemplateDto implements IExecutionTemplateDto {
     parameterSchema?: any | undefined;
     defaultEnvironment?: { [key: string]: string; } | undefined;
     defaultResourceLimits?: ExecutionResourceLimitsDto;
-    constructor(data?: IExecutionTemplateDto) {
+
+    constructor(data?: interfaces.IExecutionTemplateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7262,6 +7184,7 @@ export class ExecutionTemplateDto implements IExecutionTemplateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -7279,12 +7202,14 @@ export class ExecutionTemplateDto implements IExecutionTemplateDto {
             this.defaultResourceLimits = _data["defaultResourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["defaultResourceLimits"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionTemplateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionTemplateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -7304,13 +7229,14 @@ export class ExecutionTemplateDto implements IExecutionTemplateDto {
     }
 }
 
-export class ExecutionTemplateDtoListApiResponse implements IExecutionTemplateDtoListApiResponse {
+export class ExecutionTemplateDtoListApiResponse implements interfaces.IExecutionTemplateDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionTemplateDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionTemplateDtoListApiResponse) {
+
+    constructor(data?: interfaces.IExecutionTemplateDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7318,6 +7244,7 @@ export class ExecutionTemplateDtoListApiResponse implements IExecutionTemplateDt
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7335,12 +7262,14 @@ export class ExecutionTemplateDtoListApiResponse implements IExecutionTemplateDt
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionTemplateDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionTemplateDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7360,14 +7289,15 @@ export class ExecutionTemplateDtoListApiResponse implements IExecutionTemplateDt
     }
 }
 
-export class ExecutionTrendDto implements IExecutionTrendDto {
+export class ExecutionTrendDto implements interfaces.IExecutionTrendDto {
     date?: Date;
     executionCount?: number;
     successfulCount?: number;
     failedCount?: number;
     averageExecutionTime?: number;
     totalResourceUsage?: number;
-    constructor(data?: IExecutionTrendDto) {
+
+    constructor(data?: interfaces.IExecutionTrendDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7375,6 +7305,7 @@ export class ExecutionTrendDto implements IExecutionTrendDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
@@ -7385,12 +7316,14 @@ export class ExecutionTrendDto implements IExecutionTrendDto {
             this.totalResourceUsage = _data["totalResourceUsage"];
         }
     }
+
     static fromJS(data: any): ExecutionTrendDto {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionTrendDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -7403,13 +7336,14 @@ export class ExecutionTrendDto implements IExecutionTrendDto {
     }
 }
 
-export class ExecutionTrendDtoListApiResponse implements IExecutionTrendDtoListApiResponse {
+export class ExecutionTrendDtoListApiResponse implements interfaces.IExecutionTrendDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionTrendDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionTrendDtoListApiResponse) {
+
+    constructor(data?: interfaces.IExecutionTrendDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7417,6 +7351,7 @@ export class ExecutionTrendDtoListApiResponse implements IExecutionTrendDtoListA
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7434,12 +7369,14 @@ export class ExecutionTrendDtoListApiResponse implements IExecutionTrendDtoListA
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionTrendDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionTrendDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7459,12 +7396,13 @@ export class ExecutionTrendDtoListApiResponse implements IExecutionTrendDtoListA
     }
 }
 
-export class ExecutionValidationResult implements IExecutionValidationResult {
+export class ExecutionValidationResult implements interfaces.IExecutionValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     recommendedLimits?: ExecutionResourceLimitsDto;
-    constructor(data?: IExecutionValidationResult) {
+
+    constructor(data?: interfaces.IExecutionValidationResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7472,6 +7410,7 @@ export class ExecutionValidationResult implements IExecutionValidationResult {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isValid = _data["isValid"];
@@ -7488,12 +7427,14 @@ export class ExecutionValidationResult implements IExecutionValidationResult {
             this.recommendedLimits = _data["recommendedLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["recommendedLimits"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionValidationResult {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionValidationResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isValid"] = this.isValid;
@@ -7512,13 +7453,14 @@ export class ExecutionValidationResult implements IExecutionValidationResult {
     }
 }
 
-export class ExecutionValidationResultApiResponse implements IExecutionValidationResultApiResponse {
+export class ExecutionValidationResultApiResponse implements interfaces.IExecutionValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ExecutionValidationResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IExecutionValidationResultApiResponse) {
+
+    constructor(data?: interfaces.IExecutionValidationResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7526,6 +7468,7 @@ export class ExecutionValidationResultApiResponse implements IExecutionValidatio
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7539,12 +7482,14 @@ export class ExecutionValidationResultApiResponse implements IExecutionValidatio
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ExecutionValidationResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionValidationResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7560,7 +7505,7 @@ export class ExecutionValidationResultApiResponse implements IExecutionValidatio
     }
 }
 
-export class FileStorageResult implements IFileStorageResult {
+export class FileStorageResult implements interfaces.IFileStorageResult {
     filePath?: string | undefined;
     storageKey?: string | undefined;
     hash?: string | undefined;
@@ -7568,7 +7513,8 @@ export class FileStorageResult implements IFileStorageResult {
     contentType?: string | undefined;
     success?: boolean;
     errorMessage?: string | undefined;
-    constructor(data?: IFileStorageResult) {
+
+    constructor(data?: interfaces.IFileStorageResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7576,6 +7522,7 @@ export class FileStorageResult implements IFileStorageResult {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.filePath = _data["filePath"];
@@ -7587,12 +7534,14 @@ export class FileStorageResult implements IFileStorageResult {
             this.errorMessage = _data["errorMessage"];
         }
     }
+
     static fromJS(data: any): FileStorageResult {
         data = typeof data === 'object' ? data : {};
         let result = new FileStorageResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["filePath"] = this.filePath;
@@ -7606,13 +7555,14 @@ export class FileStorageResult implements IFileStorageResult {
     }
 }
 
-export class FileStorageResultListApiResponse implements IFileStorageResultListApiResponse {
+export class FileStorageResultListApiResponse implements interfaces.IFileStorageResultListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: FileStorageResult[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IFileStorageResultListApiResponse) {
+
+    constructor(data?: interfaces.IFileStorageResultListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7620,6 +7570,7 @@ export class FileStorageResultListApiResponse implements IFileStorageResultListA
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7637,12 +7588,14 @@ export class FileStorageResultListApiResponse implements IFileStorageResultListA
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): FileStorageResultListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new FileStorageResultListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7662,11 +7615,12 @@ export class FileStorageResultListApiResponse implements IFileStorageResultListA
     }
 }
 
-export class FileValidationRequest implements IFileValidationRequest {
+export class FileValidationRequest implements interfaces.IFileValidationRequest {
     fileName!: string;
     content!: string;
     contentType!: string;
-    constructor(data?: IFileValidationRequest) {
+
+    constructor(data?: interfaces.IFileValidationRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7674,6 +7628,7 @@ export class FileValidationRequest implements IFileValidationRequest {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.fileName = _data["fileName"];
@@ -7681,12 +7636,14 @@ export class FileValidationRequest implements IFileValidationRequest {
             this.contentType = _data["contentType"];
         }
     }
+
     static fromJS(data: any): FileValidationRequest {
         data = typeof data === 'object' ? data : {};
         let result = new FileValidationRequest();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["fileName"] = this.fileName;
@@ -7696,12 +7653,13 @@ export class FileValidationRequest implements IFileValidationRequest {
     }
 }
 
-export class FileValidationResult implements IFileValidationResult {
+export class FileValidationResult implements interfaces.IFileValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestedContentType?: string | undefined;
-    constructor(data?: IFileValidationResult) {
+
+    constructor(data?: interfaces.IFileValidationResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7709,6 +7667,7 @@ export class FileValidationResult implements IFileValidationResult {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isValid = _data["isValid"];
@@ -7725,12 +7684,14 @@ export class FileValidationResult implements IFileValidationResult {
             this.suggestedContentType = _data["suggestedContentType"];
         }
     }
+
     static fromJS(data: any): FileValidationResult {
         data = typeof data === 'object' ? data : {};
         let result = new FileValidationResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isValid"] = this.isValid;
@@ -7749,13 +7710,14 @@ export class FileValidationResult implements IFileValidationResult {
     }
 }
 
-export class FileValidationResultApiResponse implements IFileValidationResultApiResponse {
+export class FileValidationResultApiResponse implements interfaces.IFileValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: FileValidationResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IFileValidationResultApiResponse) {
+
+    constructor(data?: interfaces.IFileValidationResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7763,6 +7725,7 @@ export class FileValidationResultApiResponse implements IFileValidationResultApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -7776,12 +7739,14 @@ export class FileValidationResultApiResponse implements IFileValidationResultApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): FileValidationResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new FileValidationResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -7797,9 +7762,9 @@ export class FileValidationResultApiResponse implements IFileValidationResultApi
     }
 }
 
-export class FireHazardDto implements IFireHazardDto {
+export class FireHazardDto implements interfaces.IFireHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
@@ -7817,7 +7782,8 @@ export class FireHazardDto implements IFireHazardDto {
     forestFireDanger?: boolean;
     distanceToClosestForest?: number;
     vegetationType?: string | undefined;
-    constructor(data?: IFireHazardDto) {
+
+    constructor(data?: interfaces.IFireHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7825,6 +7791,7 @@ export class FireHazardDto implements IFireHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -7854,12 +7821,14 @@ export class FireHazardDto implements IFireHazardDto {
             this.vegetationType = _data["vegetationType"];
         }
     }
+
     static fromJS(data: any): FireHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new FireHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -7891,7 +7860,7 @@ export class FireHazardDto implements IFireHazardDto {
     }
 }
 
-export class FireHazardResponseDto implements IFireHazardResponseDto {
+export class FireHazardResponseDto implements interfaces.IFireHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
@@ -7911,7 +7880,8 @@ export class FireHazardResponseDto implements IFireHazardResponseDto {
     forestFireDanger?: boolean;
     distanceToClosestForest?: number;
     vegetationType?: string | undefined;
-    constructor(data?: IFireHazardResponseDto) {
+
+    constructor(data?: interfaces.IFireHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -7919,6 +7889,7 @@ export class FireHazardResponseDto implements IFireHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -7948,12 +7919,14 @@ export class FireHazardResponseDto implements IFireHazardResponseDto {
             this.vegetationType = _data["vegetationType"];
         }
     }
+
     static fromJS(data: any): FireHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new FireHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -7985,9 +7958,9 @@ export class FireHazardResponseDto implements IFireHazardResponseDto {
     }
 }
 
-export class FloodHazardDto implements IFloodHazardDto {
+export class FloodHazardDto implements interfaces.IFloodHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
@@ -7997,7 +7970,8 @@ export class FloodHazardDto implements IFloodHazardDto {
     drainageSystem?: string | undefined;
     basementFlooding?: string | undefined;
     extremeEventCondition?: string | undefined;
-    constructor(data?: IFloodHazardDto) {
+
+    constructor(data?: interfaces.IFloodHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8005,6 +7979,7 @@ export class FloodHazardDto implements IFloodHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8026,12 +8001,14 @@ export class FloodHazardDto implements IFloodHazardDto {
             this.extremeEventCondition = _data["extremeEventCondition"];
         }
     }
+
     static fromJS(data: any): FloodHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new FloodHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -8055,7 +8032,7 @@ export class FloodHazardDto implements IFloodHazardDto {
     }
 }
 
-export class FloodHazardResponseDto implements IFloodHazardResponseDto {
+export class FloodHazardResponseDto implements interfaces.IFloodHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
@@ -8067,7 +8044,8 @@ export class FloodHazardResponseDto implements IFloodHazardResponseDto {
     drainageSystem?: string | undefined;
     basementFlooding?: string | undefined;
     extremeEventCondition?: string | undefined;
-    constructor(data?: IFloodHazardResponseDto) {
+
+    constructor(data?: interfaces.IFloodHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8075,6 +8053,7 @@ export class FloodHazardResponseDto implements IFloodHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8096,12 +8075,14 @@ export class FloodHazardResponseDto implements IFloodHazardResponseDto {
             this.extremeEventCondition = _data["extremeEventCondition"];
         }
     }
+
     static fromJS(data: any): FloodHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new FloodHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -8125,12 +8106,13 @@ export class FloodHazardResponseDto implements IFloodHazardResponseDto {
     }
 }
 
-export class HazardResponseDto implements IHazardResponseDto {
+export class HazardResponseDto implements interfaces.IHazardResponseDto {
     score?: number;
     level?: string | undefined;
     description?: string | undefined;
     hasCCTV?: boolean | undefined;
-    constructor(data?: IHazardResponseDto) {
+
+    constructor(data?: interfaces.IHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8138,6 +8120,7 @@ export class HazardResponseDto implements IHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8146,12 +8129,14 @@ export class HazardResponseDto implements IHazardResponseDto {
             this.hasCCTV = _data["hasCCTV"];
         }
     }
+
     static fromJS(data: any): HazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new HazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -8162,7 +8147,7 @@ export class HazardResponseDto implements IHazardResponseDto {
     }
 }
 
-export class HazardSummaryResponseDto implements IHazardSummaryResponseDto {
+export class HazardSummaryResponseDto implements interfaces.IHazardSummaryResponseDto {
     fireHazardScore?: number;
     securityHazardScore?: number;
     noiseHazardScore?: number;
@@ -8173,7 +8158,8 @@ export class HazardSummaryResponseDto implements IHazardSummaryResponseDto {
     tsunamiHazardScore?: number;
     overallRiskScore?: number;
     highestRiskType?: string | undefined;
-    constructor(data?: IHazardSummaryResponseDto) {
+
+    constructor(data?: interfaces.IHazardSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8181,6 +8167,7 @@ export class HazardSummaryResponseDto implements IHazardSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.fireHazardScore = _data["fireHazardScore"];
@@ -8195,12 +8182,14 @@ export class HazardSummaryResponseDto implements IHazardSummaryResponseDto {
             this.highestRiskType = _data["highestRiskType"];
         }
     }
+
     static fromJS(data: any): HazardSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new HazardSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["fireHazardScore"] = this.fireHazardScore;
@@ -8217,13 +8206,14 @@ export class HazardSummaryResponseDto implements IHazardSummaryResponseDto {
     }
 }
 
-export class HealthCheckResultDto implements IHealthCheckResultDto {
+export class HealthCheckResultDto implements interfaces.IHealthCheckResultDto {
     name?: string | undefined;
     status?: string | undefined;
     checkedAt?: Date;
     durationMs?: number;
     message?: string | undefined;
-    constructor(data?: IHealthCheckResultDto) {
+
+    constructor(data?: interfaces.IHealthCheckResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8231,6 +8221,7 @@ export class HealthCheckResultDto implements IHealthCheckResultDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -8240,12 +8231,14 @@ export class HealthCheckResultDto implements IHealthCheckResultDto {
             this.message = _data["message"];
         }
     }
+
     static fromJS(data: any): HealthCheckResultDto {
         data = typeof data === 'object' ? data : {};
         let result = new HealthCheckResultDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -8257,13 +8250,14 @@ export class HealthCheckResultDto implements IHealthCheckResultDto {
     }
 }
 
-export class Int32ApiResponse implements IInt32ApiResponse {
+export class Int32ApiResponse implements interfaces.IInt32ApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: number;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IInt32ApiResponse) {
+
+    constructor(data?: interfaces.IInt32ApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8271,6 +8265,7 @@ export class Int32ApiResponse implements IInt32ApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -8284,12 +8279,14 @@ export class Int32ApiResponse implements IInt32ApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): Int32ApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new Int32ApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -8305,14 +8302,15 @@ export class Int32ApiResponse implements IInt32ApiResponse {
     }
 }
 
-export class LandslideHazardDto implements ILandslideHazardDto {
+export class LandslideHazardDto implements interfaces.ILandslideHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory!: number;
-    constructor(data?: ILandslideHazardDto) {
+
+    constructor(data?: interfaces.ILandslideHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8320,6 +8318,7 @@ export class LandslideHazardDto implements ILandslideHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8336,12 +8335,14 @@ export class LandslideHazardDto implements ILandslideHazardDto {
             this.distanceToInventory = _data["distanceToInventory"];
         }
     }
+
     static fromJS(data: any): LandslideHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new LandslideHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -8360,14 +8361,15 @@ export class LandslideHazardDto implements ILandslideHazardDto {
     }
 }
 
-export class LandslideHazardResponseDto implements ILandslideHazardResponseDto {
+export class LandslideHazardResponseDto implements interfaces.ILandslideHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred?: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory?: number;
-    constructor(data?: ILandslideHazardResponseDto) {
+
+    constructor(data?: interfaces.ILandslideHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8375,6 +8377,7 @@ export class LandslideHazardResponseDto implements ILandslideHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8391,12 +8394,14 @@ export class LandslideHazardResponseDto implements ILandslideHazardResponseDto {
             this.distanceToInventory = _data["distanceToInventory"];
         }
     }
+
     static fromJS(data: any): LandslideHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new LandslideHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -8415,10 +8420,11 @@ export class LandslideHazardResponseDto implements ILandslideHazardResponseDto {
     }
 }
 
-export class LocationRequestDto implements ILocationRequestDto {
+export class LocationRequestDto implements interfaces.ILocationRequestDto {
     latitude!: number;
     longitude!: number;
-    constructor(data?: ILocationRequestDto) {
+
+    constructor(data?: interfaces.ILocationRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8426,18 +8432,21 @@ export class LocationRequestDto implements ILocationRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
         }
     }
+
     static fromJS(data: any): LocationRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new LocationRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["latitude"] = this.latitude;
@@ -8446,10 +8455,11 @@ export class LocationRequestDto implements ILocationRequestDto {
     }
 }
 
-export class LocationResponseDto implements ILocationResponseDto {
+export class LocationResponseDto implements interfaces.ILocationResponseDto {
     latitude?: number;
     longitude?: number;
-    constructor(data?: ILocationResponseDto) {
+
+    constructor(data?: interfaces.ILocationResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8457,18 +8467,21 @@ export class LocationResponseDto implements ILocationResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
         }
     }
+
     static fromJS(data: any): LocationResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new LocationResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["latitude"] = this.latitude;
@@ -8477,7 +8490,7 @@ export class LocationResponseDto implements ILocationResponseDto {
     }
 }
 
-export class MasonryBlockResponseDto implements IMasonryBlockResponseDto {
+export class MasonryBlockResponseDto implements interfaces.IMasonryBlockResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     modelingType?: string | undefined;
@@ -8488,7 +8501,8 @@ export class MasonryBlockResponseDto implements IMasonryBlockResponseDto {
     shortLength?: number;
     totalHeight?: number;
     unitTypeList?: MasonryUnitTypeResponseDto[] | undefined;
-    constructor(data?: IMasonryBlockResponseDto) {
+
+    constructor(data?: interfaces.IMasonryBlockResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8496,6 +8510,7 @@ export class MasonryBlockResponseDto implements IMasonryBlockResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -8520,12 +8535,14 @@ export class MasonryBlockResponseDto implements IMasonryBlockResponseDto {
             }
         }
     }
+
     static fromJS(data: any): MasonryBlockResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryBlockResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -8552,13 +8569,14 @@ export class MasonryBlockResponseDto implements IMasonryBlockResponseDto {
     }
 }
 
-export class MasonryBlockResponseDtoApiResponse implements IMasonryBlockResponseDtoApiResponse {
+export class MasonryBlockResponseDtoApiResponse implements interfaces.IMasonryBlockResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: MasonryBlockResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IMasonryBlockResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IMasonryBlockResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8566,6 +8584,7 @@ export class MasonryBlockResponseDtoApiResponse implements IMasonryBlockResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -8579,12 +8598,14 @@ export class MasonryBlockResponseDtoApiResponse implements IMasonryBlockResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): MasonryBlockResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryBlockResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -8600,13 +8621,14 @@ export class MasonryBlockResponseDtoApiResponse implements IMasonryBlockResponse
     }
 }
 
-export class MasonryBlockResponseDtoListApiResponse implements IMasonryBlockResponseDtoListApiResponse {
+export class MasonryBlockResponseDtoListApiResponse implements interfaces.IMasonryBlockResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: MasonryBlockResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IMasonryBlockResponseDtoListApiResponse) {
+
+    constructor(data?: interfaces.IMasonryBlockResponseDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8614,6 +8636,7 @@ export class MasonryBlockResponseDtoListApiResponse implements IMasonryBlockResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -8631,12 +8654,14 @@ export class MasonryBlockResponseDtoListApiResponse implements IMasonryBlockResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): MasonryBlockResponseDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryBlockResponseDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -8656,14 +8681,15 @@ export class MasonryBlockResponseDtoListApiResponse implements IMasonryBlockResp
     }
 }
 
-export class MasonryCreateDto implements IMasonryCreateDto {
+export class MasonryCreateDto implements interfaces.IMasonryCreateDto {
     id!: string;
     name!: string;
     xAxisLength!: number;
     yAxisLength!: number;
     storeyHeight!: { [key: string]: number; };
     unitTypeList?: MasonryUnitType[] | undefined;
-    constructor(data?: IMasonryCreateDto) {
+
+    constructor(data?: interfaces.IMasonryCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8674,6 +8700,7 @@ export class MasonryCreateDto implements IMasonryCreateDto {
             this.storeyHeight = {};
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -8694,12 +8721,14 @@ export class MasonryCreateDto implements IMasonryCreateDto {
             }
         }
     }
+
     static fromJS(data: any): MasonryCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -8722,8 +8751,9 @@ export class MasonryCreateDto implements IMasonryCreateDto {
     }
 }
 
-export class MasonryUnitType implements IMasonryUnitType {
-    constructor(data?: IMasonryUnitType) {
+export class MasonryUnitType implements interfaces.IMasonryUnitType {
+
+    constructor(data?: interfaces.IMasonryUnitType) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8731,22 +8761,26 @@ export class MasonryUnitType implements IMasonryUnitType {
             }
         }
     }
+
     init(_data?: any) {
     }
+
     static fromJS(data: any): MasonryUnitType {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryUnitType();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         return data;
     }
 }
 
-export class MasonryUnitTypeResponseDto implements IMasonryUnitTypeResponseDto {
-    constructor(data?: IMasonryUnitTypeResponseDto) {
+export class MasonryUnitTypeResponseDto implements interfaces.IMasonryUnitTypeResponseDto {
+
+    constructor(data?: interfaces.IMasonryUnitTypeResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8754,28 +8788,32 @@ export class MasonryUnitTypeResponseDto implements IMasonryUnitTypeResponseDto {
             }
         }
     }
+
     init(_data?: any) {
     }
+
     static fromJS(data: any): MasonryUnitTypeResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryUnitTypeResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         return data;
     }
 }
 
-export class MasonryUpdateDto implements IMasonryUpdateDto {
+export class MasonryUpdateDto implements interfaces.IMasonryUpdateDto {
     id?: string | undefined;
     name?: string | undefined;
     xAxisLength?: number | undefined;
     yAxisLength?: number | undefined;
     storeyHeight?: { [key: string]: number; } | undefined;
     unitTypeList?: MasonryUnitType[] | undefined;
-    constructor(data?: IMasonryUpdateDto) {
+
+    constructor(data?: interfaces.IMasonryUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8783,6 +8821,7 @@ export class MasonryUpdateDto implements IMasonryUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -8803,12 +8842,14 @@ export class MasonryUpdateDto implements IMasonryUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): MasonryUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new MasonryUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -8831,9 +8872,9 @@ export class MasonryUpdateDto implements IMasonryUpdateDto {
     }
 }
 
-export class NoiseHazardDto implements INoiseHazardDto {
+export class NoiseHazardDto implements interfaces.INoiseHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
@@ -8844,7 +8885,8 @@ export class NoiseHazardDto implements INoiseHazardDto {
     exists?: boolean;
     extremeNoise?: boolean;
     extremeNoiseDescription?: string | undefined;
-    constructor(data?: INoiseHazardDto) {
+
+    constructor(data?: interfaces.INoiseHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8852,6 +8894,7 @@ export class NoiseHazardDto implements INoiseHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8880,12 +8923,14 @@ export class NoiseHazardDto implements INoiseHazardDto {
             this.extremeNoiseDescription = _data["extremeNoiseDescription"];
         }
     }
+
     static fromJS(data: any): NoiseHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new NoiseHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -8916,7 +8961,7 @@ export class NoiseHazardDto implements INoiseHazardDto {
     }
 }
 
-export class NoiseHazardResponseDto implements INoiseHazardResponseDto {
+export class NoiseHazardResponseDto implements interfaces.INoiseHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
@@ -8929,7 +8974,8 @@ export class NoiseHazardResponseDto implements INoiseHazardResponseDto {
     exists?: boolean;
     extremeNoise?: boolean;
     extremeNoiseDescription?: string | undefined;
-    constructor(data?: INoiseHazardResponseDto) {
+
+    constructor(data?: interfaces.INoiseHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -8937,6 +8983,7 @@ export class NoiseHazardResponseDto implements INoiseHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -8971,12 +9018,14 @@ export class NoiseHazardResponseDto implements INoiseHazardResponseDto {
             this.extremeNoiseDescription = _data["extremeNoiseDescription"];
         }
     }
+
     static fromJS(data: any): NoiseHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new NoiseHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -9013,10 +9062,12 @@ export class NoiseHazardResponseDto implements INoiseHazardResponseDto {
     }
 }
 
-export class PasswordResetResponseDto implements IPasswordResetResponseDto {
-    success?: boolean;
-    message?: string | undefined;
-    constructor(data?: IPasswordResetResponseDto) {
+export class NoiseMeasurementsForBuildings implements interfaces.INoiseMeasurementsForBuildings {
+    control?: number;
+    security?: number;
+    switchyard?: number;
+
+    constructor(data?: interfaces.INoiseMeasurementsForBuildings) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9024,18 +9075,58 @@ export class PasswordResetResponseDto implements IPasswordResetResponseDto {
             }
         }
     }
+
+    init(_data?: any) {
+        if (_data) {
+            this.control = _data["Control"];
+            this.security = _data["Security"];
+            this.switchyard = _data["Switchyard"];
+        }
+    }
+
+    static fromJS(data: any): NoiseMeasurementsForBuildings {
+        data = typeof data === 'object' ? data : {};
+        let result = new NoiseMeasurementsForBuildings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Control"] = this.control;
+        data["Security"] = this.security;
+        data["Switchyard"] = this.switchyard;
+        return data;
+    }
+}
+
+export class PasswordResetResponseDto implements interfaces.IPasswordResetResponseDto {
+    success?: boolean;
+    message?: string | undefined;
+
+    constructor(data?: interfaces.IPasswordResetResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
             this.message = _data["message"];
         }
     }
+
     static fromJS(data: any): PasswordResetResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new PasswordResetResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9044,13 +9135,14 @@ export class PasswordResetResponseDto implements IPasswordResetResponseDto {
     }
 }
 
-export class PasswordResetResponseDtoApiResponse implements IPasswordResetResponseDtoApiResponse {
+export class PasswordResetResponseDtoApiResponse implements interfaces.IPasswordResetResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: PasswordResetResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IPasswordResetResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IPasswordResetResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9058,6 +9150,7 @@ export class PasswordResetResponseDtoApiResponse implements IPasswordResetRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -9071,12 +9164,14 @@ export class PasswordResetResponseDtoApiResponse implements IPasswordResetRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): PasswordResetResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new PasswordResetResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9092,13 +9187,14 @@ export class PasswordResetResponseDtoApiResponse implements IPasswordResetRespon
     }
 }
 
-export class PollutionDto implements IPollutionDto {
+export class PollutionDto implements interfaces.IPollutionDto {
     pollutantLocation!: LocationRequestDto;
     pollutantNo!: number;
     pollutantSource?: string | undefined;
     pollutantDistance?: number;
-    pollutantLevel?: Level;
-    constructor(data?: IPollutionDto) {
+    pollutantLevel?: enums.Level;
+
+    constructor(data?: interfaces.IPollutionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9109,6 +9205,7 @@ export class PollutionDto implements IPollutionDto {
             this.pollutantLocation = new LocationRequestDto();
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.pollutantLocation = _data["pollutantLocation"] ? LocationRequestDto.fromJS(_data["pollutantLocation"]) : new LocationRequestDto();
@@ -9118,12 +9215,14 @@ export class PollutionDto implements IPollutionDto {
             this.pollutantLevel = _data["pollutantLevel"];
         }
     }
+
     static fromJS(data: any): PollutionDto {
         data = typeof data === 'object' ? data : {};
         let result = new PollutionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["pollutantLocation"] = this.pollutantLocation ? this.pollutantLocation.toJSON() : <any>undefined;
@@ -9135,13 +9234,14 @@ export class PollutionDto implements IPollutionDto {
     }
 }
 
-export class PollutionResponseDto implements IPollutionResponseDto {
+export class PollutionResponseDto implements interfaces.IPollutionResponseDto {
     pollutantLocation?: LocationResponseDto;
     pollutantNo?: number;
     pollutantSource?: string | undefined;
     pollutantDistance?: number;
     pollutantLevel?: string | undefined;
-    constructor(data?: IPollutionResponseDto) {
+
+    constructor(data?: interfaces.IPollutionResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9149,6 +9249,7 @@ export class PollutionResponseDto implements IPollutionResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.pollutantLocation = _data["pollutantLocation"] ? LocationResponseDto.fromJS(_data["pollutantLocation"]) : <any>undefined;
@@ -9158,12 +9259,14 @@ export class PollutionResponseDto implements IPollutionResponseDto {
             this.pollutantLevel = _data["pollutantLevel"];
         }
     }
+
     static fromJS(data: any): PollutionResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new PollutionResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["pollutantLocation"] = this.pollutantLocation ? this.pollutantLocation.toJSON() : <any>undefined;
@@ -9175,7 +9278,7 @@ export class PollutionResponseDto implements IPollutionResponseDto {
     }
 }
 
-export class ProgramComponentMappingDto implements IProgramComponentMappingDto {
+export class ProgramComponentMappingDto implements interfaces.IProgramComponentMappingDto {
     id?: string | undefined;
     programId?: string | undefined;
     versionId?: string | undefined;
@@ -9186,7 +9289,8 @@ export class ProgramComponentMappingDto implements IProgramComponentMappingDto {
     displayOrder?: number;
     isActive?: boolean;
     createdAt?: Date;
-    constructor(data?: IProgramComponentMappingDto) {
+
+    constructor(data?: interfaces.IProgramComponentMappingDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9194,6 +9298,7 @@ export class ProgramComponentMappingDto implements IProgramComponentMappingDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -9208,12 +9313,14 @@ export class ProgramComponentMappingDto implements IProgramComponentMappingDto {
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramComponentMappingDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramComponentMappingDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -9230,13 +9337,14 @@ export class ProgramComponentMappingDto implements IProgramComponentMappingDto {
     }
 }
 
-export class ProgramComponentMappingDtoListApiResponse implements IProgramComponentMappingDtoListApiResponse {
+export class ProgramComponentMappingDtoListApiResponse implements interfaces.IProgramComponentMappingDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramComponentMappingDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramComponentMappingDtoListApiResponse) {
+
+    constructor(data?: interfaces.IProgramComponentMappingDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9244,6 +9352,7 @@ export class ProgramComponentMappingDtoListApiResponse implements IProgramCompon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -9261,12 +9370,14 @@ export class ProgramComponentMappingDtoListApiResponse implements IProgramCompon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramComponentMappingDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramComponentMappingDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9286,7 +9397,7 @@ export class ProgramComponentMappingDtoListApiResponse implements IProgramCompon
     }
 }
 
-export class ProgramCreateDto implements IProgramCreateDto {
+export class ProgramCreateDto implements interfaces.IProgramCreateDto {
     name!: string;
     description?: string | undefined;
     type!: string;
@@ -9296,7 +9407,8 @@ export class ProgramCreateDto implements IProgramCreateDto {
     uiConfiguration?: any | undefined;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
-    constructor(data?: IProgramCreateDto) {
+
+    constructor(data?: interfaces.IProgramCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9304,6 +9416,7 @@ export class ProgramCreateDto implements IProgramCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -9317,12 +9430,14 @@ export class ProgramCreateDto implements IProgramCreateDto {
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -9338,16 +9453,17 @@ export class ProgramCreateDto implements IProgramCreateDto {
     }
 }
 
-export class ProgramDeploymentDto implements IProgramDeploymentDto {
+export class ProgramDeploymentDto implements interfaces.IProgramDeploymentDto {
     id?: string | undefined;
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     status?: string | undefined;
     lastDeployed?: Date | undefined;
     configuration?: { [key: string]: any; } | undefined;
     supportedFeatures?: string[] | undefined;
     applicationUrl?: string | undefined;
     logs?: string[] | undefined;
-    constructor(data?: IProgramDeploymentDto) {
+
+    constructor(data?: interfaces.IProgramDeploymentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9355,6 +9471,7 @@ export class ProgramDeploymentDto implements IProgramDeploymentDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -9381,12 +9498,14 @@ export class ProgramDeploymentDto implements IProgramDeploymentDto {
             }
         }
     }
+
     static fromJS(data: any): ProgramDeploymentDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDeploymentDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -9415,13 +9534,14 @@ export class ProgramDeploymentDto implements IProgramDeploymentDto {
     }
 }
 
-export class ProgramDeploymentDtoApiResponse implements IProgramDeploymentDtoApiResponse {
+export class ProgramDeploymentDtoApiResponse implements interfaces.IProgramDeploymentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramDeploymentDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramDeploymentDtoApiResponse) {
+
+    constructor(data?: interfaces.IProgramDeploymentDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9429,6 +9549,7 @@ export class ProgramDeploymentDtoApiResponse implements IProgramDeploymentDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -9442,12 +9563,14 @@ export class ProgramDeploymentDtoApiResponse implements IProgramDeploymentDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramDeploymentDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDeploymentDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9463,15 +9586,16 @@ export class ProgramDeploymentDtoApiResponse implements IProgramDeploymentDtoApi
     }
 }
 
-export class ProgramDeploymentStatusDto implements IProgramDeploymentStatusDto {
-    deploymentType?: AppDeploymentType;
+export class ProgramDeploymentStatusDto implements interfaces.IProgramDeploymentStatusDto {
+    deploymentType?: enums.AppDeploymentType;
     status?: string | undefined;
     lastDeployed?: Date | undefined;
     applicationUrl?: string | undefined;
     isHealthy?: boolean;
     lastHealthCheck?: Date;
     recentLogs?: string[] | undefined;
-    constructor(data?: IProgramDeploymentStatusDto) {
+
+    constructor(data?: interfaces.IProgramDeploymentStatusDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9479,6 +9603,7 @@ export class ProgramDeploymentStatusDto implements IProgramDeploymentStatusDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.deploymentType = _data["deploymentType"];
@@ -9494,12 +9619,14 @@ export class ProgramDeploymentStatusDto implements IProgramDeploymentStatusDto {
             }
         }
     }
+
     static fromJS(data: any): ProgramDeploymentStatusDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDeploymentStatusDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["deploymentType"] = this.deploymentType;
@@ -9517,13 +9644,14 @@ export class ProgramDeploymentStatusDto implements IProgramDeploymentStatusDto {
     }
 }
 
-export class ProgramDeploymentStatusDtoApiResponse implements IProgramDeploymentStatusDtoApiResponse {
+export class ProgramDeploymentStatusDtoApiResponse implements interfaces.IProgramDeploymentStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramDeploymentStatusDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramDeploymentStatusDtoApiResponse) {
+
+    constructor(data?: interfaces.IProgramDeploymentStatusDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9531,6 +9659,7 @@ export class ProgramDeploymentStatusDtoApiResponse implements IProgramDeployment
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -9544,12 +9673,14 @@ export class ProgramDeploymentStatusDtoApiResponse implements IProgramDeployment
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramDeploymentStatusDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDeploymentStatusDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9565,7 +9696,7 @@ export class ProgramDeploymentStatusDtoApiResponse implements IProgramDeployment
     }
 }
 
-export class ProgramDetailDto implements IProgramDetailDto {
+export class ProgramDetailDto implements interfaces.IProgramDetailDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -9584,7 +9715,8 @@ export class ProgramDetailDto implements IProgramDetailDto {
     files?: ProgramFileDto[] | undefined;
     deploymentStatus?: ProgramDeploymentStatusDto;
     stats?: ProgramStatsDto;
-    constructor(data?: IProgramDetailDto) {
+
+    constructor(data?: interfaces.IProgramDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9592,6 +9724,7 @@ export class ProgramDetailDto implements IProgramDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -9622,12 +9755,14 @@ export class ProgramDetailDto implements IProgramDetailDto {
             this.stats = _data["stats"] ? ProgramStatsDto.fromJS(_data["stats"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -9660,13 +9795,14 @@ export class ProgramDetailDto implements IProgramDetailDto {
     }
 }
 
-export class ProgramDetailDtoApiResponse implements IProgramDetailDtoApiResponse {
+export class ProgramDetailDtoApiResponse implements interfaces.IProgramDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IProgramDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9674,6 +9810,7 @@ export class ProgramDetailDtoApiResponse implements IProgramDetailDtoApiResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -9687,12 +9824,14 @@ export class ProgramDetailDtoApiResponse implements IProgramDetailDtoApiResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9708,7 +9847,7 @@ export class ProgramDetailDtoApiResponse implements IProgramDetailDtoApiResponse
     }
 }
 
-export class ProgramDto implements IProgramDto {
+export class ProgramDto implements interfaces.IProgramDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -9723,7 +9862,8 @@ export class ProgramDto implements IProgramDto {
     currentVersion?: string | undefined;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
-    constructor(data?: IProgramDto) {
+
+    constructor(data?: interfaces.IProgramDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9731,6 +9871,7 @@ export class ProgramDto implements IProgramDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -9749,12 +9890,14 @@ export class ProgramDto implements IProgramDto {
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -9775,13 +9918,14 @@ export class ProgramDto implements IProgramDto {
     }
 }
 
-export class ProgramDtoApiResponse implements IProgramDtoApiResponse {
+export class ProgramDtoApiResponse implements interfaces.IProgramDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramDtoApiResponse) {
+
+    constructor(data?: interfaces.IProgramDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9789,6 +9933,7 @@ export class ProgramDtoApiResponse implements IProgramDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -9802,12 +9947,14 @@ export class ProgramDtoApiResponse implements IProgramDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -9823,13 +9970,14 @@ export class ProgramDtoApiResponse implements IProgramDtoApiResponse {
     }
 }
 
-export class ProgramExecutionRequestDto implements IProgramExecutionRequestDto {
+export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionRequestDto {
     parameters?: any | undefined;
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
     timeoutMinutes?: number;
-    constructor(data?: IProgramExecutionRequestDto) {
+
+    constructor(data?: interfaces.IProgramExecutionRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9837,6 +9985,7 @@ export class ProgramExecutionRequestDto implements IProgramExecutionRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.parameters = _data["parameters"];
@@ -9852,12 +10001,14 @@ export class ProgramExecutionRequestDto implements IProgramExecutionRequestDto {
             this.timeoutMinutes = _data["timeoutMinutes"];
         }
     }
+
     static fromJS(data: any): ProgramExecutionRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramExecutionRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["parameters"] = this.parameters;
@@ -9875,14 +10026,15 @@ export class ProgramExecutionRequestDto implements IProgramExecutionRequestDto {
     }
 }
 
-export class ProgramFileDto implements IProgramFileDto {
+export class ProgramFileDto implements interfaces.IProgramFileDto {
     path?: string | undefined;
     contentType?: string | undefined;
     size?: number;
     lastModified?: Date;
     description?: string | undefined;
     hash?: string | undefined;
-    constructor(data?: IProgramFileDto) {
+
+    constructor(data?: interfaces.IProgramFileDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9890,6 +10042,7 @@ export class ProgramFileDto implements IProgramFileDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -9900,12 +10053,14 @@ export class ProgramFileDto implements IProgramFileDto {
             this.hash = _data["hash"];
         }
     }
+
     static fromJS(data: any): ProgramFileDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramFileDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -9918,10 +10073,11 @@ export class ProgramFileDto implements IProgramFileDto {
     }
 }
 
-export class ProgramGroupPermissionDto implements IProgramGroupPermissionDto {
+export class ProgramGroupPermissionDto implements interfaces.IProgramGroupPermissionDto {
     groupId!: string;
     accessLevel!: string;
-    constructor(data?: IProgramGroupPermissionDto) {
+
+    constructor(data?: interfaces.IProgramGroupPermissionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9929,18 +10085,21 @@ export class ProgramGroupPermissionDto implements IProgramGroupPermissionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.groupId = _data["groupId"];
             this.accessLevel = _data["accessLevel"];
         }
     }
+
     static fromJS(data: any): ProgramGroupPermissionDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramGroupPermissionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["groupId"] = this.groupId;
@@ -9949,7 +10108,7 @@ export class ProgramGroupPermissionDto implements IProgramGroupPermissionDto {
     }
 }
 
-export class ProgramListDto implements IProgramListDto {
+export class ProgramListDto implements interfaces.IProgramListDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -9960,9 +10119,10 @@ export class ProgramListDto implements IProgramListDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     deploymentStatus?: string | undefined;
-    constructor(data?: IProgramListDto) {
+
+    constructor(data?: interfaces.IProgramListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -9970,6 +10130,7 @@ export class ProgramListDto implements IProgramListDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -9986,12 +10147,14 @@ export class ProgramListDto implements IProgramListDto {
             this.deploymentStatus = _data["deploymentStatus"];
         }
     }
+
     static fromJS(data: any): ProgramListDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramListDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -10010,7 +10173,7 @@ export class ProgramListDto implements IProgramListDto {
     }
 }
 
-export class ProgramListDtoPagedResponse implements IProgramListDtoPagedResponse {
+export class ProgramListDtoPagedResponse implements interfaces.IProgramListDtoPagedResponse {
     items?: ProgramListDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -10018,7 +10181,8 @@ export class ProgramListDtoPagedResponse implements IProgramListDtoPagedResponse
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IProgramListDtoPagedResponse) {
+
+    constructor(data?: interfaces.IProgramListDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10026,6 +10190,7 @@ export class ProgramListDtoPagedResponse implements IProgramListDtoPagedResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -10041,12 +10206,14 @@ export class ProgramListDtoPagedResponse implements IProgramListDtoPagedResponse
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): ProgramListDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramListDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -10064,13 +10231,14 @@ export class ProgramListDtoPagedResponse implements IProgramListDtoPagedResponse
     }
 }
 
-export class ProgramListDtoPagedResponseApiResponse implements IProgramListDtoPagedResponseApiResponse {
+export class ProgramListDtoPagedResponseApiResponse implements interfaces.IProgramListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramListDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramListDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IProgramListDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10078,6 +10246,7 @@ export class ProgramListDtoPagedResponseApiResponse implements IProgramListDtoPa
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -10091,12 +10260,14 @@ export class ProgramListDtoPagedResponseApiResponse implements IProgramListDtoPa
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramListDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramListDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -10112,12 +10283,13 @@ export class ProgramListDtoPagedResponseApiResponse implements IProgramListDtoPa
     }
 }
 
-export class ProgramPermissionDto implements IProgramPermissionDto {
+export class ProgramPermissionDto implements interfaces.IProgramPermissionDto {
     type?: string | undefined;
     id?: string | undefined;
     name?: string | undefined;
     accessLevel?: string | undefined;
-    constructor(data?: IProgramPermissionDto) {
+
+    constructor(data?: interfaces.IProgramPermissionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10125,6 +10297,7 @@ export class ProgramPermissionDto implements IProgramPermissionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"];
@@ -10133,12 +10306,14 @@ export class ProgramPermissionDto implements IProgramPermissionDto {
             this.accessLevel = _data["accessLevel"];
         }
     }
+
     static fromJS(data: any): ProgramPermissionDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramPermissionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type;
@@ -10149,13 +10324,14 @@ export class ProgramPermissionDto implements IProgramPermissionDto {
     }
 }
 
-export class ProgramPermissionDtoListApiResponse implements IProgramPermissionDtoListApiResponse {
+export class ProgramPermissionDtoListApiResponse implements interfaces.IProgramPermissionDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProgramPermissionDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProgramPermissionDtoListApiResponse) {
+
+    constructor(data?: interfaces.IProgramPermissionDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10163,6 +10339,7 @@ export class ProgramPermissionDtoListApiResponse implements IProgramPermissionDt
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -10180,12 +10357,14 @@ export class ProgramPermissionDtoListApiResponse implements IProgramPermissionDt
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramPermissionDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramPermissionDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -10205,7 +10384,7 @@ export class ProgramPermissionDtoListApiResponse implements IProgramPermissionDt
     }
 }
 
-export class ProgramSearchDto implements IProgramSearchDto {
+export class ProgramSearchDto implements interfaces.IProgramSearchDto {
     name?: string | undefined;
     description?: string | undefined;
     type?: string | undefined;
@@ -10216,8 +10395,9 @@ export class ProgramSearchDto implements IProgramSearchDto {
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
     tags?: string[] | undefined;
-    deploymentType?: AppDeploymentType;
-    constructor(data?: IProgramSearchDto) {
+    deploymentType?: enums.AppDeploymentType;
+
+    constructor(data?: interfaces.IProgramSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10225,6 +10405,7 @@ export class ProgramSearchDto implements IProgramSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -10244,12 +10425,14 @@ export class ProgramSearchDto implements IProgramSearchDto {
             this.deploymentType = _data["deploymentType"];
         }
     }
+
     static fromJS(data: any): ProgramSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -10271,7 +10454,7 @@ export class ProgramSearchDto implements IProgramSearchDto {
     }
 }
 
-export class ProgramStatsDto implements IProgramStatsDto {
+export class ProgramStatsDto implements interfaces.IProgramStatsDto {
     totalExecutions?: number;
     successfulExecutions?: number;
     failedExecutions?: number;
@@ -10279,7 +10462,8 @@ export class ProgramStatsDto implements IProgramStatsDto {
     averageExecutionTime?: number;
     totalVersions?: number;
     lastUpdate?: Date | undefined;
-    constructor(data?: IProgramStatsDto) {
+
+    constructor(data?: interfaces.IProgramStatsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10287,6 +10471,7 @@ export class ProgramStatsDto implements IProgramStatsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalExecutions = _data["totalExecutions"];
@@ -10298,12 +10483,14 @@ export class ProgramStatsDto implements IProgramStatsDto {
             this.lastUpdate = _data["lastUpdate"] ? new Date(_data["lastUpdate"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramStatsDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramStatsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalExecutions"] = this.totalExecutions;
@@ -10317,7 +10504,7 @@ export class ProgramStatsDto implements IProgramStatsDto {
     }
 }
 
-export class ProgramUpdateDto implements IProgramUpdateDto {
+export class ProgramUpdateDto implements interfaces.IProgramUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     type?: string | undefined;
@@ -10327,7 +10514,8 @@ export class ProgramUpdateDto implements IProgramUpdateDto {
     uiConfiguration?: any | undefined;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
-    constructor(data?: IProgramUpdateDto) {
+
+    constructor(data?: interfaces.IProgramUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10335,6 +10523,7 @@ export class ProgramUpdateDto implements IProgramUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -10348,12 +10537,14 @@ export class ProgramUpdateDto implements IProgramUpdateDto {
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProgramUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -10369,10 +10560,11 @@ export class ProgramUpdateDto implements IProgramUpdateDto {
     }
 }
 
-export class ProgramUserPermissionDto implements IProgramUserPermissionDto {
+export class ProgramUserPermissionDto implements interfaces.IProgramUserPermissionDto {
     userId!: string;
     accessLevel!: string;
-    constructor(data?: IProgramUserPermissionDto) {
+
+    constructor(data?: interfaces.IProgramUserPermissionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10380,18 +10572,21 @@ export class ProgramUserPermissionDto implements IProgramUserPermissionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.userId = _data["userId"];
             this.accessLevel = _data["accessLevel"];
         }
     }
+
     static fromJS(data: any): ProgramUserPermissionDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProgramUserPermissionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
@@ -10400,13 +10595,14 @@ export class ProgramUserPermissionDto implements IProgramUserPermissionDto {
     }
 }
 
-export class ProjectComplexityDto implements IProjectComplexityDto {
+export class ProjectComplexityDto implements interfaces.IProjectComplexityDto {
     totalFiles?: number;
     totalLines?: number;
     dependencies?: number;
     complexityLevel?: string | undefined;
     complexityScore?: number;
-    constructor(data?: IProjectComplexityDto) {
+
+    constructor(data?: interfaces.IProjectComplexityDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10414,6 +10610,7 @@ export class ProjectComplexityDto implements IProjectComplexityDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalFiles = _data["totalFiles"];
@@ -10423,12 +10620,14 @@ export class ProjectComplexityDto implements IProjectComplexityDto {
             this.complexityScore = _data["complexityScore"];
         }
     }
+
     static fromJS(data: any): ProjectComplexityDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectComplexityDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalFiles"] = this.totalFiles;
@@ -10440,14 +10639,15 @@ export class ProjectComplexityDto implements IProjectComplexityDto {
     }
 }
 
-export class ProjectFileDto implements IProjectFileDto {
+export class ProjectFileDto implements interfaces.IProjectFileDto {
     path?: string | undefined;
     type?: string | undefined;
     size?: number;
     extension?: string | undefined;
     isEntryPoint?: boolean;
     lineCount?: number;
-    constructor(data?: IProjectFileDto) {
+
+    constructor(data?: interfaces.IProjectFileDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10455,6 +10655,7 @@ export class ProjectFileDto implements IProjectFileDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -10465,12 +10666,14 @@ export class ProjectFileDto implements IProjectFileDto {
             this.lineCount = _data["lineCount"];
         }
     }
+
     static fromJS(data: any): ProjectFileDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectFileDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -10483,11 +10686,12 @@ export class ProjectFileDto implements IProjectFileDto {
     }
 }
 
-export class ProjectSecurityScanDto implements IProjectSecurityScanDto {
+export class ProjectSecurityScanDto implements interfaces.IProjectSecurityScanDto {
     hasSecurityIssues?: boolean;
     issues?: SecurityIssueDto[] | undefined;
     riskLevel?: number;
-    constructor(data?: IProjectSecurityScanDto) {
+
+    constructor(data?: interfaces.IProjectSecurityScanDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10495,6 +10699,7 @@ export class ProjectSecurityScanDto implements IProjectSecurityScanDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.hasSecurityIssues = _data["hasSecurityIssues"];
@@ -10506,12 +10711,14 @@ export class ProjectSecurityScanDto implements IProjectSecurityScanDto {
             this.riskLevel = _data["riskLevel"];
         }
     }
+
     static fromJS(data: any): ProjectSecurityScanDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectSecurityScanDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["hasSecurityIssues"] = this.hasSecurityIssues;
@@ -10525,7 +10732,7 @@ export class ProjectSecurityScanDto implements IProjectSecurityScanDto {
     }
 }
 
-export class ProjectStructureAnalysisDto implements IProjectStructureAnalysisDto {
+export class ProjectStructureAnalysisDto implements interfaces.IProjectStructureAnalysisDto {
     language?: string | undefined;
     projectType?: string | undefined;
     entryPoints?: string[] | undefined;
@@ -10537,7 +10744,8 @@ export class ProjectStructureAnalysisDto implements IProjectStructureAnalysisDto
     files?: ProjectFileDto[] | undefined;
     complexity?: ProjectComplexityDto;
     metadata?: { [key: string]: any; } | undefined;
-    constructor(data?: IProjectStructureAnalysisDto) {
+
+    constructor(data?: interfaces.IProjectStructureAnalysisDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10545,6 +10753,7 @@ export class ProjectStructureAnalysisDto implements IProjectStructureAnalysisDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.language = _data["language"];
@@ -10586,12 +10795,14 @@ export class ProjectStructureAnalysisDto implements IProjectStructureAnalysisDto
             }
         }
     }
+
     static fromJS(data: any): ProjectStructureAnalysisDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectStructureAnalysisDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["language"] = this.language;
@@ -10635,13 +10846,14 @@ export class ProjectStructureAnalysisDto implements IProjectStructureAnalysisDto
     }
 }
 
-export class ProjectStructureAnalysisDtoApiResponse implements IProjectStructureAnalysisDtoApiResponse {
+export class ProjectStructureAnalysisDtoApiResponse implements interfaces.IProjectStructureAnalysisDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProjectStructureAnalysisDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProjectStructureAnalysisDtoApiResponse) {
+
+    constructor(data?: interfaces.IProjectStructureAnalysisDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10649,6 +10861,7 @@ export class ProjectStructureAnalysisDtoApiResponse implements IProjectStructure
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -10662,12 +10875,14 @@ export class ProjectStructureAnalysisDtoApiResponse implements IProjectStructure
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProjectStructureAnalysisDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectStructureAnalysisDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -10683,14 +10898,15 @@ export class ProjectStructureAnalysisDtoApiResponse implements IProjectStructure
     }
 }
 
-export class ProjectValidationResultDto implements IProjectValidationResultDto {
+export class ProjectValidationResultDto implements interfaces.IProjectValidationResultDto {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestions?: string[] | undefined;
     securityScan?: ProjectSecurityScanDto;
     complexity?: ProjectComplexityDto;
-    constructor(data?: IProjectValidationResultDto) {
+
+    constructor(data?: interfaces.IProjectValidationResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10698,6 +10914,7 @@ export class ProjectValidationResultDto implements IProjectValidationResultDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isValid = _data["isValid"];
@@ -10720,12 +10937,14 @@ export class ProjectValidationResultDto implements IProjectValidationResultDto {
             this.complexity = _data["complexity"] ? ProjectComplexityDto.fromJS(_data["complexity"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProjectValidationResultDto {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectValidationResultDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isValid"] = this.isValid;
@@ -10750,13 +10969,14 @@ export class ProjectValidationResultDto implements IProjectValidationResultDto {
     }
 }
 
-export class ProjectValidationResultDtoApiResponse implements IProjectValidationResultDtoApiResponse {
+export class ProjectValidationResultDtoApiResponse implements interfaces.IProjectValidationResultDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: ProjectValidationResultDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IProjectValidationResultDtoApiResponse) {
+
+    constructor(data?: interfaces.IProjectValidationResultDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10764,6 +10984,7 @@ export class ProjectValidationResultDtoApiResponse implements IProjectValidation
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -10777,12 +10998,14 @@ export class ProjectValidationResultDtoApiResponse implements IProjectValidation
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): ProjectValidationResultDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectValidationResultDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -10798,10 +11021,11 @@ export class ProjectValidationResultDtoApiResponse implements IProjectValidation
     }
 }
 
-export class RefreshTokenDto implements IRefreshTokenDto {
+export class RefreshTokenDto implements interfaces.IRefreshTokenDto {
     accessToken!: string;
     refreshToken!: string;
-    constructor(data?: IRefreshTokenDto) {
+
+    constructor(data?: interfaces.IRefreshTokenDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10809,18 +11033,21 @@ export class RefreshTokenDto implements IRefreshTokenDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.accessToken = _data["accessToken"];
             this.refreshToken = _data["refreshToken"];
         }
     }
+
     static fromJS(data: any): RefreshTokenDto {
         data = typeof data === 'object' ? data : {};
         let result = new RefreshTokenDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["accessToken"] = this.accessToken;
@@ -10829,10 +11056,11 @@ export class RefreshTokenDto implements IRefreshTokenDto {
     }
 }
 
-export class RegionCityUpdateDto implements IRegionCityUpdateDto {
-    action!: Operation;
+export class RegionCityUpdateDto implements interfaces.IRegionCityUpdateDto {
+    action!: enums.Operation;
     cities!: string[];
-    constructor(data?: IRegionCityUpdateDto) {
+
+    constructor(data?: interfaces.IRegionCityUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10843,6 +11071,7 @@ export class RegionCityUpdateDto implements IRegionCityUpdateDto {
             this.cities = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.action = _data["action"];
@@ -10853,12 +11082,14 @@ export class RegionCityUpdateDto implements IRegionCityUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): RegionCityUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionCityUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["action"] = this.action;
@@ -10871,12 +11102,13 @@ export class RegionCityUpdateDto implements IRegionCityUpdateDto {
     }
 }
 
-export class RegionCreateDto implements IRegionCreateDto {
+export class RegionCreateDto implements interfaces.IRegionCreateDto {
     clientId!: string;
     regionId!: number;
     cities!: string[];
     headquarters!: string;
-    constructor(data?: IRegionCreateDto) {
+
+    constructor(data?: interfaces.IRegionCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10887,6 +11119,7 @@ export class RegionCreateDto implements IRegionCreateDto {
             this.cities = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
@@ -10899,12 +11132,14 @@ export class RegionCreateDto implements IRegionCreateDto {
             this.headquarters = _data["headquarters"];
         }
     }
+
     static fromJS(data: any): RegionCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
@@ -10919,7 +11154,7 @@ export class RegionCreateDto implements IRegionCreateDto {
     }
 }
 
-export class RegionDetailResponseDto implements IRegionDetailResponseDto {
+export class RegionDetailResponseDto implements interfaces.IRegionDetailResponseDto {
     id?: string | undefined;
     clientId?: string | undefined;
     regionId?: number;
@@ -10930,7 +11165,8 @@ export class RegionDetailResponseDto implements IRegionDetailResponseDto {
     activeTMCount?: number;
     tMs?: TMSummaryResponseDto[] | undefined;
     auditInfo?: AuditInfoResponseDto;
-    constructor(data?: IRegionDetailResponseDto) {
+
+    constructor(data?: interfaces.IRegionDetailResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -10938,6 +11174,7 @@ export class RegionDetailResponseDto implements IRegionDetailResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -10960,12 +11197,14 @@ export class RegionDetailResponseDto implements IRegionDetailResponseDto {
             this.auditInfo = _data["auditInfo"] ? AuditInfoResponseDto.fromJS(_data["auditInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RegionDetailResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionDetailResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -10990,13 +11229,14 @@ export class RegionDetailResponseDto implements IRegionDetailResponseDto {
     }
 }
 
-export class RegionDetailResponseDtoApiResponse implements IRegionDetailResponseDtoApiResponse {
+export class RegionDetailResponseDtoApiResponse implements interfaces.IRegionDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RegionDetailResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRegionDetailResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IRegionDetailResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11004,6 +11244,7 @@ export class RegionDetailResponseDtoApiResponse implements IRegionDetailResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11017,12 +11258,14 @@ export class RegionDetailResponseDtoApiResponse implements IRegionDetailResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RegionDetailResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RegionDetailResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11038,7 +11281,7 @@ export class RegionDetailResponseDtoApiResponse implements IRegionDetailResponse
     }
 }
 
-export class RegionListResponseDto implements IRegionListResponseDto {
+export class RegionListResponseDto implements interfaces.IRegionListResponseDto {
     id?: string | undefined;
     regionId?: number;
     clientName?: string | undefined;
@@ -11046,7 +11289,8 @@ export class RegionListResponseDto implements IRegionListResponseDto {
     cities?: string[] | undefined;
     tmCount?: number;
     activeTMCount?: number;
-    constructor(data?: IRegionListResponseDto) {
+
+    constructor(data?: interfaces.IRegionListResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11054,6 +11298,7 @@ export class RegionListResponseDto implements IRegionListResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -11069,12 +11314,14 @@ export class RegionListResponseDto implements IRegionListResponseDto {
             this.activeTMCount = _data["activeTMCount"];
         }
     }
+
     static fromJS(data: any): RegionListResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionListResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -11092,7 +11339,7 @@ export class RegionListResponseDto implements IRegionListResponseDto {
     }
 }
 
-export class RegionListResponseDtoPagedResponse implements IRegionListResponseDtoPagedResponse {
+export class RegionListResponseDtoPagedResponse implements interfaces.IRegionListResponseDtoPagedResponse {
     items?: RegionListResponseDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -11100,7 +11347,8 @@ export class RegionListResponseDtoPagedResponse implements IRegionListResponseDt
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IRegionListResponseDtoPagedResponse) {
+
+    constructor(data?: interfaces.IRegionListResponseDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11108,6 +11356,7 @@ export class RegionListResponseDtoPagedResponse implements IRegionListResponseDt
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -11123,12 +11372,14 @@ export class RegionListResponseDtoPagedResponse implements IRegionListResponseDt
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): RegionListResponseDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RegionListResponseDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -11146,13 +11397,14 @@ export class RegionListResponseDtoPagedResponse implements IRegionListResponseDt
     }
 }
 
-export class RegionListResponseDtoPagedResponseApiResponse implements IRegionListResponseDtoPagedResponseApiResponse {
+export class RegionListResponseDtoPagedResponseApiResponse implements interfaces.IRegionListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RegionListResponseDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRegionListResponseDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IRegionListResponseDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11160,6 +11412,7 @@ export class RegionListResponseDtoPagedResponseApiResponse implements IRegionLis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11173,12 +11426,14 @@ export class RegionListResponseDtoPagedResponseApiResponse implements IRegionLis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RegionListResponseDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RegionListResponseDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11194,13 +11449,14 @@ export class RegionListResponseDtoPagedResponseApiResponse implements IRegionLis
     }
 }
 
-export class RegionResponseDto implements IRegionResponseDto {
+export class RegionResponseDto implements interfaces.IRegionResponseDto {
     id?: string | undefined;
     clientId?: string | undefined;
     regionId?: number;
     cities?: string[] | undefined;
     headquarters?: string | undefined;
-    constructor(data?: IRegionResponseDto) {
+
+    constructor(data?: interfaces.IRegionResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11208,6 +11464,7 @@ export class RegionResponseDto implements IRegionResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -11221,12 +11478,14 @@ export class RegionResponseDto implements IRegionResponseDto {
             this.headquarters = _data["headquarters"];
         }
     }
+
     static fromJS(data: any): RegionResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -11242,13 +11501,14 @@ export class RegionResponseDto implements IRegionResponseDto {
     }
 }
 
-export class RegionResponseDtoApiResponse implements IRegionResponseDtoApiResponse {
+export class RegionResponseDtoApiResponse implements interfaces.IRegionResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RegionResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRegionResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IRegionResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11256,6 +11516,7 @@ export class RegionResponseDtoApiResponse implements IRegionResponseDtoApiRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11269,12 +11530,14 @@ export class RegionResponseDtoApiResponse implements IRegionResponseDtoApiRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RegionResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RegionResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11290,14 +11553,15 @@ export class RegionResponseDtoApiResponse implements IRegionResponseDtoApiRespon
     }
 }
 
-export class RegionStatisticsResponseDto implements IRegionStatisticsResponseDto {
+export class RegionStatisticsResponseDto implements interfaces.IRegionStatisticsResponseDto {
     regionId?: string | undefined;
     cityCount?: number;
     tmCount?: number;
     activeTMCount?: number;
     buildingCount?: number;
     tMsPerCity?: { [key: string]: number; } | undefined;
-    constructor(data?: IRegionStatisticsResponseDto) {
+
+    constructor(data?: interfaces.IRegionStatisticsResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11305,6 +11569,7 @@ export class RegionStatisticsResponseDto implements IRegionStatisticsResponseDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.regionId = _data["regionId"];
@@ -11321,12 +11586,14 @@ export class RegionStatisticsResponseDto implements IRegionStatisticsResponseDto
             }
         }
     }
+
     static fromJS(data: any): RegionStatisticsResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionStatisticsResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["regionId"] = this.regionId;
@@ -11345,13 +11612,14 @@ export class RegionStatisticsResponseDto implements IRegionStatisticsResponseDto
     }
 }
 
-export class RegionStatisticsResponseDtoApiResponse implements IRegionStatisticsResponseDtoApiResponse {
+export class RegionStatisticsResponseDtoApiResponse implements interfaces.IRegionStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RegionStatisticsResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRegionStatisticsResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IRegionStatisticsResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11359,6 +11627,7 @@ export class RegionStatisticsResponseDtoApiResponse implements IRegionStatistics
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11372,12 +11641,14 @@ export class RegionStatisticsResponseDtoApiResponse implements IRegionStatistics
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RegionStatisticsResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RegionStatisticsResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11393,12 +11664,13 @@ export class RegionStatisticsResponseDtoApiResponse implements IRegionStatistics
     }
 }
 
-export class RegionSummaryResponseDto implements IRegionSummaryResponseDto {
+export class RegionSummaryResponseDto implements interfaces.IRegionSummaryResponseDto {
     id?: string | undefined;
     regionId?: number;
     headquarters?: string | undefined;
     cityCount?: number;
-    constructor(data?: IRegionSummaryResponseDto) {
+
+    constructor(data?: interfaces.IRegionSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11406,6 +11678,7 @@ export class RegionSummaryResponseDto implements IRegionSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -11414,12 +11687,14 @@ export class RegionSummaryResponseDto implements IRegionSummaryResponseDto {
             this.cityCount = _data["cityCount"];
         }
     }
+
     static fromJS(data: any): RegionSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -11430,13 +11705,14 @@ export class RegionSummaryResponseDto implements IRegionSummaryResponseDto {
     }
 }
 
-export class RegionSummaryResponseDtoListApiResponse implements IRegionSummaryResponseDtoListApiResponse {
+export class RegionSummaryResponseDtoListApiResponse implements interfaces.IRegionSummaryResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RegionSummaryResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRegionSummaryResponseDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRegionSummaryResponseDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11444,6 +11720,7 @@ export class RegionSummaryResponseDtoListApiResponse implements IRegionSummaryRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11461,12 +11738,14 @@ export class RegionSummaryResponseDtoListApiResponse implements IRegionSummaryRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RegionSummaryResponseDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RegionSummaryResponseDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11486,12 +11765,13 @@ export class RegionSummaryResponseDtoListApiResponse implements IRegionSummaryRe
     }
 }
 
-export class RegionUpdateDto implements IRegionUpdateDto {
+export class RegionUpdateDto implements interfaces.IRegionUpdateDto {
     clientId?: string | undefined;
     id?: number | undefined;
     cities?: string[] | undefined;
     headquarters?: string | undefined;
-    constructor(data?: IRegionUpdateDto) {
+
+    constructor(data?: interfaces.IRegionUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11499,6 +11779,7 @@ export class RegionUpdateDto implements IRegionUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
@@ -11511,12 +11792,14 @@ export class RegionUpdateDto implements IRegionUpdateDto {
             this.headquarters = _data["headquarters"];
         }
     }
+
     static fromJS(data: any): RegionUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RegionUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
@@ -11531,10 +11814,11 @@ export class RegionUpdateDto implements IRegionUpdateDto {
     }
 }
 
-export class RequestAssignmentDto implements IRequestAssignmentDto {
+export class RequestAssignmentDto implements interfaces.IRequestAssignmentDto {
     assignedTo!: string;
     assignmentNotes?: string | undefined;
-    constructor(data?: IRequestAssignmentDto) {
+
+    constructor(data?: interfaces.IRequestAssignmentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11542,18 +11826,21 @@ export class RequestAssignmentDto implements IRequestAssignmentDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.assignedTo = _data["assignedTo"];
             this.assignmentNotes = _data["assignmentNotes"];
         }
     }
+
     static fromJS(data: any): RequestAssignmentDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestAssignmentDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["assignedTo"] = this.assignedTo;
@@ -11562,11 +11849,12 @@ export class RequestAssignmentDto implements IRequestAssignmentDto {
     }
 }
 
-export class RequestCompletionDto implements IRequestCompletionDto {
+export class RequestCompletionDto implements interfaces.IRequestCompletionDto {
     completionNotes!: string;
     deliverableLinks?: string[] | undefined;
     completionData?: any | undefined;
-    constructor(data?: IRequestCompletionDto) {
+
+    constructor(data?: interfaces.IRequestCompletionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11574,6 +11862,7 @@ export class RequestCompletionDto implements IRequestCompletionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.completionNotes = _data["completionNotes"];
@@ -11585,12 +11874,14 @@ export class RequestCompletionDto implements IRequestCompletionDto {
             this.completionData = _data["completionData"];
         }
     }
+
     static fromJS(data: any): RequestCompletionDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestCompletionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["completionNotes"] = this.completionNotes;
@@ -11604,7 +11895,7 @@ export class RequestCompletionDto implements IRequestCompletionDto {
     }
 }
 
-export class RequestCreateDto implements IRequestCreateDto {
+export class RequestCreateDto implements interfaces.IRequestCreateDto {
     type!: string;
     title!: string;
     description!: string;
@@ -11614,7 +11905,8 @@ export class RequestCreateDto implements IRequestCreateDto {
     relatedEntityType?: string | undefined;
     priority?: string | undefined;
     metadata?: any | undefined;
-    constructor(data?: IRequestCreateDto) {
+
+    constructor(data?: interfaces.IRequestCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11622,6 +11914,7 @@ export class RequestCreateDto implements IRequestCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"];
@@ -11635,12 +11928,14 @@ export class RequestCreateDto implements IRequestCreateDto {
             this.metadata = _data["metadata"];
         }
     }
+
     static fromJS(data: any): RequestCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type;
@@ -11656,7 +11951,7 @@ export class RequestCreateDto implements IRequestCreateDto {
     }
 }
 
-export class RequestDetailDto implements IRequestDetailDto {
+export class RequestDetailDto implements interfaces.IRequestDetailDto {
     id?: string | undefined;
     type?: string | undefined;
     title?: string | undefined;
@@ -11677,7 +11972,8 @@ export class RequestDetailDto implements IRequestDetailDto {
     relatedEntity?: RequestRelatedEntityDto;
     timeline?: RequestTimelineDto;
     subscribers?: string[] | undefined;
-    constructor(data?: IRequestDetailDto) {
+
+    constructor(data?: interfaces.IRequestDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11685,6 +11981,7 @@ export class RequestDetailDto implements IRequestDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -11717,12 +12014,14 @@ export class RequestDetailDto implements IRequestDetailDto {
             }
         }
     }
+
     static fromJS(data: any): RequestDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -11757,13 +12056,14 @@ export class RequestDetailDto implements IRequestDetailDto {
     }
 }
 
-export class RequestDetailDtoApiResponse implements IRequestDetailDtoApiResponse {
+export class RequestDetailDtoApiResponse implements interfaces.IRequestDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IRequestDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11771,6 +12071,7 @@ export class RequestDetailDtoApiResponse implements IRequestDetailDtoApiResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11784,12 +12085,14 @@ export class RequestDetailDtoApiResponse implements IRequestDetailDtoApiResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11805,7 +12108,7 @@ export class RequestDetailDtoApiResponse implements IRequestDetailDtoApiResponse
     }
 }
 
-export class RequestDto implements IRequestDto {
+export class RequestDto implements interfaces.IRequestDto {
     id?: string | undefined;
     type?: string | undefined;
     title?: string | undefined;
@@ -11819,7 +12122,8 @@ export class RequestDto implements IRequestDto {
     status?: string | undefined;
     priority?: string | undefined;
     metadata?: any | undefined;
-    constructor(data?: IRequestDto) {
+
+    constructor(data?: interfaces.IRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11827,6 +12131,7 @@ export class RequestDto implements IRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -11844,12 +12149,14 @@ export class RequestDto implements IRequestDto {
             this.metadata = _data["metadata"];
         }
     }
+
     static fromJS(data: any): RequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -11869,13 +12176,14 @@ export class RequestDto implements IRequestDto {
     }
 }
 
-export class RequestDtoApiResponse implements IRequestDtoApiResponse {
+export class RequestDtoApiResponse implements interfaces.IRequestDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestDtoApiResponse) {
+
+    constructor(data?: interfaces.IRequestDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11883,6 +12191,7 @@ export class RequestDtoApiResponse implements IRequestDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -11896,12 +12205,14 @@ export class RequestDtoApiResponse implements IRequestDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -11917,12 +12228,13 @@ export class RequestDtoApiResponse implements IRequestDtoApiResponse {
     }
 }
 
-export class RequestFromTemplateDto implements IRequestFromTemplateDto {
+export class RequestFromTemplateDto implements interfaces.IRequestFromTemplateDto {
     fieldValues!: { [key: string]: any; };
     programId?: string | undefined;
     relatedEntityId?: string | undefined;
     relatedEntityType?: string | undefined;
-    constructor(data?: IRequestFromTemplateDto) {
+
+    constructor(data?: interfaces.IRequestFromTemplateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11933,6 +12245,7 @@ export class RequestFromTemplateDto implements IRequestFromTemplateDto {
             this.fieldValues = {};
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (_data["fieldValues"]) {
@@ -11947,12 +12260,14 @@ export class RequestFromTemplateDto implements IRequestFromTemplateDto {
             this.relatedEntityType = _data["relatedEntityType"];
         }
     }
+
     static fromJS(data: any): RequestFromTemplateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestFromTemplateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (this.fieldValues) {
@@ -11969,7 +12284,7 @@ export class RequestFromTemplateDto implements IRequestFromTemplateDto {
     }
 }
 
-export class RequestListDto implements IRequestListDto {
+export class RequestListDto implements interfaces.IRequestListDto {
     id?: string | undefined;
     type?: string | undefined;
     title?: string | undefined;
@@ -11986,7 +12301,8 @@ export class RequestListDto implements IRequestListDto {
     responseCount?: number;
     lastResponseAt?: Date | undefined;
     relatedEntityType?: string | undefined;
-    constructor(data?: IRequestListDto) {
+
+    constructor(data?: interfaces.IRequestListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -11994,6 +12310,7 @@ export class RequestListDto implements IRequestListDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -12014,12 +12331,14 @@ export class RequestListDto implements IRequestListDto {
             this.relatedEntityType = _data["relatedEntityType"];
         }
     }
+
     static fromJS(data: any): RequestListDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestListDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -12042,13 +12361,14 @@ export class RequestListDto implements IRequestListDto {
     }
 }
 
-export class RequestListDtoListApiResponse implements IRequestListDtoListApiResponse {
+export class RequestListDtoListApiResponse implements interfaces.IRequestListDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestListDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestListDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRequestListDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12056,6 +12376,7 @@ export class RequestListDtoListApiResponse implements IRequestListDtoListApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12073,12 +12394,14 @@ export class RequestListDtoListApiResponse implements IRequestListDtoListApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestListDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestListDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12098,7 +12421,7 @@ export class RequestListDtoListApiResponse implements IRequestListDtoListApiResp
     }
 }
 
-export class RequestListDtoPagedResponse implements IRequestListDtoPagedResponse {
+export class RequestListDtoPagedResponse implements interfaces.IRequestListDtoPagedResponse {
     items?: RequestListDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -12106,7 +12429,8 @@ export class RequestListDtoPagedResponse implements IRequestListDtoPagedResponse
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IRequestListDtoPagedResponse) {
+
+    constructor(data?: interfaces.IRequestListDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12114,6 +12438,7 @@ export class RequestListDtoPagedResponse implements IRequestListDtoPagedResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -12129,12 +12454,14 @@ export class RequestListDtoPagedResponse implements IRequestListDtoPagedResponse
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): RequestListDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestListDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -12152,13 +12479,14 @@ export class RequestListDtoPagedResponse implements IRequestListDtoPagedResponse
     }
 }
 
-export class RequestListDtoPagedResponseApiResponse implements IRequestListDtoPagedResponseApiResponse {
+export class RequestListDtoPagedResponseApiResponse implements interfaces.IRequestListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestListDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestListDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IRequestListDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12166,6 +12494,7 @@ export class RequestListDtoPagedResponseApiResponse implements IRequestListDtoPa
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12179,12 +12508,14 @@ export class RequestListDtoPagedResponseApiResponse implements IRequestListDtoPa
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestListDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestListDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12200,12 +12531,13 @@ export class RequestListDtoPagedResponseApiResponse implements IRequestListDtoPa
     }
 }
 
-export class RequestMetricDto implements IRequestMetricDto {
+export class RequestMetricDto implements interfaces.IRequestMetricDto {
     category?: string | undefined;
     label?: string | undefined;
     count?: number;
     percentage?: number;
-    constructor(data?: IRequestMetricDto) {
+
+    constructor(data?: interfaces.IRequestMetricDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12213,6 +12545,7 @@ export class RequestMetricDto implements IRequestMetricDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.category = _data["category"];
@@ -12221,12 +12554,14 @@ export class RequestMetricDto implements IRequestMetricDto {
             this.percentage = _data["percentage"];
         }
     }
+
     static fromJS(data: any): RequestMetricDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestMetricDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["category"] = this.category;
@@ -12237,13 +12572,14 @@ export class RequestMetricDto implements IRequestMetricDto {
     }
 }
 
-export class RequestMetricDtoListApiResponse implements IRequestMetricDtoListApiResponse {
+export class RequestMetricDtoListApiResponse implements interfaces.IRequestMetricDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestMetricDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestMetricDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRequestMetricDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12251,6 +12587,7 @@ export class RequestMetricDtoListApiResponse implements IRequestMetricDtoListApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12268,12 +12605,14 @@ export class RequestMetricDtoListApiResponse implements IRequestMetricDtoListApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestMetricDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestMetricDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12293,7 +12632,7 @@ export class RequestMetricDtoListApiResponse implements IRequestMetricDtoListApi
     }
 }
 
-export class RequestPerformanceDto implements IRequestPerformanceDto {
+export class RequestPerformanceDto implements interfaces.IRequestPerformanceDto {
     userId?: string | undefined;
     userName?: string | undefined;
     assignedCount?: number;
@@ -12301,7 +12640,8 @@ export class RequestPerformanceDto implements IRequestPerformanceDto {
     completionRate?: number;
     averageResolutionTime?: number;
     rating?: number;
-    constructor(data?: IRequestPerformanceDto) {
+
+    constructor(data?: interfaces.IRequestPerformanceDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12309,6 +12649,7 @@ export class RequestPerformanceDto implements IRequestPerformanceDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.userId = _data["userId"];
@@ -12320,12 +12661,14 @@ export class RequestPerformanceDto implements IRequestPerformanceDto {
             this.rating = _data["rating"];
         }
     }
+
     static fromJS(data: any): RequestPerformanceDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestPerformanceDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
@@ -12339,13 +12682,14 @@ export class RequestPerformanceDto implements IRequestPerformanceDto {
     }
 }
 
-export class RequestPerformanceDtoListApiResponse implements IRequestPerformanceDtoListApiResponse {
+export class RequestPerformanceDtoListApiResponse implements interfaces.IRequestPerformanceDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestPerformanceDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestPerformanceDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRequestPerformanceDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12353,6 +12697,7 @@ export class RequestPerformanceDtoListApiResponse implements IRequestPerformance
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12370,12 +12715,14 @@ export class RequestPerformanceDtoListApiResponse implements IRequestPerformance
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestPerformanceDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestPerformanceDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12395,10 +12742,11 @@ export class RequestPerformanceDtoListApiResponse implements IRequestPerformance
     }
 }
 
-export class RequestPriorityUpdateDto implements IRequestPriorityUpdateDto {
+export class RequestPriorityUpdateDto implements interfaces.IRequestPriorityUpdateDto {
     priority!: string;
     reason?: string | undefined;
-    constructor(data?: IRequestPriorityUpdateDto) {
+
+    constructor(data?: interfaces.IRequestPriorityUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12406,18 +12754,21 @@ export class RequestPriorityUpdateDto implements IRequestPriorityUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.priority = _data["priority"];
             this.reason = _data["reason"];
         }
     }
+
     static fromJS(data: any): RequestPriorityUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestPriorityUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["priority"] = this.priority;
@@ -12426,10 +12777,11 @@ export class RequestPriorityUpdateDto implements IRequestPriorityUpdateDto {
     }
 }
 
-export class RequestRejectionDto implements IRequestRejectionDto {
+export class RequestRejectionDto implements interfaces.IRequestRejectionDto {
     rejectionReason!: string;
     alternativeSuggestions?: string[] | undefined;
-    constructor(data?: IRequestRejectionDto) {
+
+    constructor(data?: interfaces.IRequestRejectionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12437,6 +12789,7 @@ export class RequestRejectionDto implements IRequestRejectionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.rejectionReason = _data["rejectionReason"];
@@ -12447,12 +12800,14 @@ export class RequestRejectionDto implements IRequestRejectionDto {
             }
         }
     }
+
     static fromJS(data: any): RequestRejectionDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestRejectionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["rejectionReason"] = this.rejectionReason;
@@ -12465,12 +12820,13 @@ export class RequestRejectionDto implements IRequestRejectionDto {
     }
 }
 
-export class RequestRelatedEntityDto implements IRequestRelatedEntityDto {
+export class RequestRelatedEntityDto implements interfaces.IRequestRelatedEntityDto {
     entityType?: string | undefined;
     entityId?: string | undefined;
     entityName?: string | undefined;
     linkDescription?: string | undefined;
-    constructor(data?: IRequestRelatedEntityDto) {
+
+    constructor(data?: interfaces.IRequestRelatedEntityDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12478,6 +12834,7 @@ export class RequestRelatedEntityDto implements IRequestRelatedEntityDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.entityType = _data["entityType"];
@@ -12486,12 +12843,14 @@ export class RequestRelatedEntityDto implements IRequestRelatedEntityDto {
             this.linkDescription = _data["linkDescription"];
         }
     }
+
     static fromJS(data: any): RequestRelatedEntityDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestRelatedEntityDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["entityType"] = this.entityType;
@@ -12502,11 +12861,12 @@ export class RequestRelatedEntityDto implements IRequestRelatedEntityDto {
     }
 }
 
-export class RequestResponseCreateDto implements IRequestResponseCreateDto {
+export class RequestResponseCreateDto implements interfaces.IRequestResponseCreateDto {
     message!: string;
     isInternal?: boolean;
     attachments?: string[] | undefined;
-    constructor(data?: IRequestResponseCreateDto) {
+
+    constructor(data?: interfaces.IRequestResponseCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12514,6 +12874,7 @@ export class RequestResponseCreateDto implements IRequestResponseCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.message = _data["message"];
@@ -12525,12 +12886,14 @@ export class RequestResponseCreateDto implements IRequestResponseCreateDto {
             }
         }
     }
+
     static fromJS(data: any): RequestResponseCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestResponseCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["message"] = this.message;
@@ -12544,7 +12907,7 @@ export class RequestResponseCreateDto implements IRequestResponseCreateDto {
     }
 }
 
-export class RequestResponseDto implements IRequestResponseDto {
+export class RequestResponseDto implements interfaces.IRequestResponseDto {
     id?: string | undefined;
     requestId?: string | undefined;
     respondedBy?: string | undefined;
@@ -12553,7 +12916,8 @@ export class RequestResponseDto implements IRequestResponseDto {
     message?: string | undefined;
     isInternal?: boolean;
     attachments?: string[] | undefined;
-    constructor(data?: IRequestResponseDto) {
+
+    constructor(data?: interfaces.IRequestResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12561,6 +12925,7 @@ export class RequestResponseDto implements IRequestResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -12577,12 +12942,14 @@ export class RequestResponseDto implements IRequestResponseDto {
             }
         }
     }
+
     static fromJS(data: any): RequestResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -12601,13 +12968,14 @@ export class RequestResponseDto implements IRequestResponseDto {
     }
 }
 
-export class RequestResponseDtoApiResponse implements IRequestResponseDtoApiResponse {
+export class RequestResponseDtoApiResponse implements interfaces.IRequestResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.IRequestResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12615,6 +12983,7 @@ export class RequestResponseDtoApiResponse implements IRequestResponseDtoApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12628,12 +12997,14 @@ export class RequestResponseDtoApiResponse implements IRequestResponseDtoApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12649,13 +13020,14 @@ export class RequestResponseDtoApiResponse implements IRequestResponseDtoApiResp
     }
 }
 
-export class RequestResponseDtoListApiResponse implements IRequestResponseDtoListApiResponse {
+export class RequestResponseDtoListApiResponse implements interfaces.IRequestResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestResponseDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRequestResponseDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12663,6 +13035,7 @@ export class RequestResponseDtoListApiResponse implements IRequestResponseDtoLis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12680,12 +13053,14 @@ export class RequestResponseDtoListApiResponse implements IRequestResponseDtoLis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestResponseDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestResponseDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12705,11 +13080,12 @@ export class RequestResponseDtoListApiResponse implements IRequestResponseDtoLis
     }
 }
 
-export class RequestResponseUpdateDto implements IRequestResponseUpdateDto {
+export class RequestResponseUpdateDto implements interfaces.IRequestResponseUpdateDto {
     message!: string;
     isInternal?: boolean | undefined;
     attachments?: string[] | undefined;
-    constructor(data?: IRequestResponseUpdateDto) {
+
+    constructor(data?: interfaces.IRequestResponseUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12717,6 +13093,7 @@ export class RequestResponseUpdateDto implements IRequestResponseUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.message = _data["message"];
@@ -12728,12 +13105,14 @@ export class RequestResponseUpdateDto implements IRequestResponseUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): RequestResponseUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestResponseUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["message"] = this.message;
@@ -12747,7 +13126,7 @@ export class RequestResponseUpdateDto implements IRequestResponseUpdateDto {
     }
 }
 
-export class RequestSearchDto implements IRequestSearchDto {
+export class RequestSearchDto implements interfaces.IRequestSearchDto {
     type?: string | undefined;
     title?: string | undefined;
     description?: string | undefined;
@@ -12761,7 +13140,8 @@ export class RequestSearchDto implements IRequestSearchDto {
     requestedFrom?: Date | undefined;
     requestedTo?: Date | undefined;
     tags?: string[] | undefined;
-    constructor(data?: IRequestSearchDto) {
+
+    constructor(data?: interfaces.IRequestSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12769,6 +13149,7 @@ export class RequestSearchDto implements IRequestSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"];
@@ -12790,12 +13171,14 @@ export class RequestSearchDto implements IRequestSearchDto {
             }
         }
     }
+
     static fromJS(data: any): RequestSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type;
@@ -12819,7 +13202,7 @@ export class RequestSearchDto implements IRequestSearchDto {
     }
 }
 
-export class RequestStatsDto implements IRequestStatsDto {
+export class RequestStatsDto implements interfaces.IRequestStatsDto {
     totalRequests?: number;
     openRequests?: number;
     inProgressRequests?: number;
@@ -12829,7 +13212,8 @@ export class RequestStatsDto implements IRequestStatsDto {
     averageResolutionTime?: number;
     requestsByType?: { [key: string]: number; } | undefined;
     requestsByPriority?: { [key: string]: number; } | undefined;
-    constructor(data?: IRequestStatsDto) {
+
+    constructor(data?: interfaces.IRequestStatsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12837,6 +13221,7 @@ export class RequestStatsDto implements IRequestStatsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalRequests = _data["totalRequests"];
@@ -12862,12 +13247,14 @@ export class RequestStatsDto implements IRequestStatsDto {
             }
         }
     }
+
     static fromJS(data: any): RequestStatsDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestStatsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalRequests"] = this.totalRequests;
@@ -12895,13 +13282,14 @@ export class RequestStatsDto implements IRequestStatsDto {
     }
 }
 
-export class RequestStatsDtoApiResponse implements IRequestStatsDtoApiResponse {
+export class RequestStatsDtoApiResponse implements interfaces.IRequestStatsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestStatsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestStatsDtoApiResponse) {
+
+    constructor(data?: interfaces.IRequestStatsDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12909,6 +13297,7 @@ export class RequestStatsDtoApiResponse implements IRequestStatsDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -12922,12 +13311,14 @@ export class RequestStatsDtoApiResponse implements IRequestStatsDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestStatsDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestStatsDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -12943,10 +13334,11 @@ export class RequestStatsDtoApiResponse implements IRequestStatsDtoApiResponse {
     }
 }
 
-export class RequestStatusUpdateDto implements IRequestStatusUpdateDto {
+export class RequestStatusUpdateDto implements interfaces.IRequestStatusUpdateDto {
     status!: string;
     reason?: string | undefined;
-    constructor(data?: IRequestStatusUpdateDto) {
+
+    constructor(data?: interfaces.IRequestStatusUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12954,18 +13346,21 @@ export class RequestStatusUpdateDto implements IRequestStatusUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.status = _data["status"];
             this.reason = _data["reason"];
         }
     }
+
     static fromJS(data: any): RequestStatusUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestStatusUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
@@ -12974,7 +13369,7 @@ export class RequestStatusUpdateDto implements IRequestStatusUpdateDto {
     }
 }
 
-export class RequestTemplateCreateDto implements IRequestTemplateCreateDto {
+export class RequestTemplateCreateDto implements interfaces.IRequestTemplateCreateDto {
     name!: string;
     description?: string | undefined;
     type!: string;
@@ -12983,7 +13378,8 @@ export class RequestTemplateCreateDto implements IRequestTemplateCreateDto {
     fieldDefinitions?: any | undefined;
     priority?: string | undefined;
     isActive?: boolean;
-    constructor(data?: IRequestTemplateCreateDto) {
+
+    constructor(data?: interfaces.IRequestTemplateCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12991,6 +13387,7 @@ export class RequestTemplateCreateDto implements IRequestTemplateCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -13003,12 +13400,14 @@ export class RequestTemplateCreateDto implements IRequestTemplateCreateDto {
             this.isActive = _data["isActive"];
         }
     }
+
     static fromJS(data: any): RequestTemplateCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTemplateCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -13023,7 +13422,7 @@ export class RequestTemplateCreateDto implements IRequestTemplateCreateDto {
     }
 }
 
-export class RequestTemplateDto implements IRequestTemplateDto {
+export class RequestTemplateDto implements interfaces.IRequestTemplateDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -13036,7 +13435,8 @@ export class RequestTemplateDto implements IRequestTemplateDto {
     createdBy?: string | undefined;
     createdAt?: Date;
     usageCount?: number;
-    constructor(data?: IRequestTemplateDto) {
+
+    constructor(data?: interfaces.IRequestTemplateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13044,6 +13444,7 @@ export class RequestTemplateDto implements IRequestTemplateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -13060,12 +13461,14 @@ export class RequestTemplateDto implements IRequestTemplateDto {
             this.usageCount = _data["usageCount"];
         }
     }
+
     static fromJS(data: any): RequestTemplateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTemplateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -13084,13 +13487,14 @@ export class RequestTemplateDto implements IRequestTemplateDto {
     }
 }
 
-export class RequestTemplateDtoApiResponse implements IRequestTemplateDtoApiResponse {
+export class RequestTemplateDtoApiResponse implements interfaces.IRequestTemplateDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestTemplateDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestTemplateDtoApiResponse) {
+
+    constructor(data?: interfaces.IRequestTemplateDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13098,6 +13502,7 @@ export class RequestTemplateDtoApiResponse implements IRequestTemplateDtoApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -13111,12 +13516,14 @@ export class RequestTemplateDtoApiResponse implements IRequestTemplateDtoApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestTemplateDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTemplateDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -13132,13 +13539,14 @@ export class RequestTemplateDtoApiResponse implements IRequestTemplateDtoApiResp
     }
 }
 
-export class RequestTemplateDtoListApiResponse implements IRequestTemplateDtoListApiResponse {
+export class RequestTemplateDtoListApiResponse implements interfaces.IRequestTemplateDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestTemplateDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestTemplateDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRequestTemplateDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13146,6 +13554,7 @@ export class RequestTemplateDtoListApiResponse implements IRequestTemplateDtoLis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -13163,12 +13572,14 @@ export class RequestTemplateDtoListApiResponse implements IRequestTemplateDtoLis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestTemplateDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTemplateDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -13188,14 +13599,15 @@ export class RequestTemplateDtoListApiResponse implements IRequestTemplateDtoLis
     }
 }
 
-export class RequestTimelineDto implements IRequestTimelineDto {
+export class RequestTimelineDto implements interfaces.IRequestTimelineDto {
     createdAt?: Date;
     assignedAt?: Date | undefined;
     firstResponseAt?: Date | undefined;
     completedAt?: Date | undefined;
     resolutionTime?: string | undefined;
     events?: RequestTimelineEventDto[] | undefined;
-    constructor(data?: IRequestTimelineDto) {
+
+    constructor(data?: interfaces.IRequestTimelineDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13203,6 +13615,7 @@ export class RequestTimelineDto implements IRequestTimelineDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
@@ -13217,12 +13630,14 @@ export class RequestTimelineDto implements IRequestTimelineDto {
             }
         }
     }
+
     static fromJS(data: any): RequestTimelineDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTimelineDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
@@ -13239,13 +13654,14 @@ export class RequestTimelineDto implements IRequestTimelineDto {
     }
 }
 
-export class RequestTimelineEventDto implements IRequestTimelineEventDto {
+export class RequestTimelineEventDto implements interfaces.IRequestTimelineEventDto {
     timestamp?: Date;
     eventType?: string | undefined;
     description?: string | undefined;
     userId?: string | undefined;
     userName?: string | undefined;
-    constructor(data?: IRequestTimelineEventDto) {
+
+    constructor(data?: interfaces.IRequestTimelineEventDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13253,6 +13669,7 @@ export class RequestTimelineEventDto implements IRequestTimelineEventDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
@@ -13262,12 +13679,14 @@ export class RequestTimelineEventDto implements IRequestTimelineEventDto {
             this.userName = _data["userName"];
         }
     }
+
     static fromJS(data: any): RequestTimelineEventDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTimelineEventDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
@@ -13279,12 +13698,13 @@ export class RequestTimelineEventDto implements IRequestTimelineEventDto {
     }
 }
 
-export class RequestTrendDto implements IRequestTrendDto {
+export class RequestTrendDto implements interfaces.IRequestTrendDto {
     date?: Date;
     createdCount?: number;
     completedCount?: number;
     totalOpen?: number;
-    constructor(data?: IRequestTrendDto) {
+
+    constructor(data?: interfaces.IRequestTrendDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13292,6 +13712,7 @@ export class RequestTrendDto implements IRequestTrendDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
@@ -13300,12 +13721,14 @@ export class RequestTrendDto implements IRequestTrendDto {
             this.totalOpen = _data["totalOpen"];
         }
     }
+
     static fromJS(data: any): RequestTrendDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTrendDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -13316,13 +13739,14 @@ export class RequestTrendDto implements IRequestTrendDto {
     }
 }
 
-export class RequestTrendDtoListApiResponse implements IRequestTrendDtoListApiResponse {
+export class RequestTrendDtoListApiResponse implements interfaces.IRequestTrendDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestTrendDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestTrendDtoListApiResponse) {
+
+    constructor(data?: interfaces.IRequestTrendDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13330,6 +13754,7 @@ export class RequestTrendDtoListApiResponse implements IRequestTrendDtoListApiRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -13347,12 +13772,14 @@ export class RequestTrendDtoListApiResponse implements IRequestTrendDtoListApiRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestTrendDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestTrendDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -13372,13 +13799,14 @@ export class RequestTrendDtoListApiResponse implements IRequestTrendDtoListApiRe
     }
 }
 
-export class RequestUpdateDto implements IRequestUpdateDto {
+export class RequestUpdateDto implements interfaces.IRequestUpdateDto {
     programId?: string | undefined;
     title?: string | undefined;
     description?: string | undefined;
     priority?: string | undefined;
     metadata?: any | undefined;
-    constructor(data?: IRequestUpdateDto) {
+
+    constructor(data?: interfaces.IRequestUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13386,6 +13814,7 @@ export class RequestUpdateDto implements IRequestUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -13395,12 +13824,14 @@ export class RequestUpdateDto implements IRequestUpdateDto {
             this.metadata = _data["metadata"];
         }
     }
+
     static fromJS(data: any): RequestUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -13412,12 +13843,13 @@ export class RequestUpdateDto implements IRequestUpdateDto {
     }
 }
 
-export class RequestValidationResult implements IRequestValidationResult {
+export class RequestValidationResult implements interfaces.IRequestValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestions?: RequestValidationSuggestionDto[] | undefined;
-    constructor(data?: IRequestValidationResult) {
+
+    constructor(data?: interfaces.IRequestValidationResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13425,6 +13857,7 @@ export class RequestValidationResult implements IRequestValidationResult {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isValid = _data["isValid"];
@@ -13445,12 +13878,14 @@ export class RequestValidationResult implements IRequestValidationResult {
             }
         }
     }
+
     static fromJS(data: any): RequestValidationResult {
         data = typeof data === 'object' ? data : {};
         let result = new RequestValidationResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isValid"] = this.isValid;
@@ -13473,13 +13908,14 @@ export class RequestValidationResult implements IRequestValidationResult {
     }
 }
 
-export class RequestValidationResultApiResponse implements IRequestValidationResultApiResponse {
+export class RequestValidationResultApiResponse implements interfaces.IRequestValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: RequestValidationResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IRequestValidationResultApiResponse) {
+
+    constructor(data?: interfaces.IRequestValidationResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13487,6 +13923,7 @@ export class RequestValidationResultApiResponse implements IRequestValidationRes
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -13500,12 +13937,14 @@ export class RequestValidationResultApiResponse implements IRequestValidationRes
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): RequestValidationResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RequestValidationResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -13521,11 +13960,12 @@ export class RequestValidationResultApiResponse implements IRequestValidationRes
     }
 }
 
-export class RequestValidationSuggestionDto implements IRequestValidationSuggestionDto {
+export class RequestValidationSuggestionDto implements interfaces.IRequestValidationSuggestionDto {
     field?: string | undefined;
     message?: string | undefined;
     suggestedValue?: string | undefined;
-    constructor(data?: IRequestValidationSuggestionDto) {
+
+    constructor(data?: interfaces.IRequestValidationSuggestionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13533,6 +13973,7 @@ export class RequestValidationSuggestionDto implements IRequestValidationSuggest
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.field = _data["field"];
@@ -13540,12 +13981,14 @@ export class RequestValidationSuggestionDto implements IRequestValidationSuggest
             this.suggestedValue = _data["suggestedValue"];
         }
     }
+
     static fromJS(data: any): RequestValidationSuggestionDto {
         data = typeof data === 'object' ? data : {};
         let result = new RequestValidationSuggestionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["field"] = this.field;
@@ -13555,9 +13998,10 @@ export class RequestValidationSuggestionDto implements IRequestValidationSuggest
     }
 }
 
-export class RevokeTokenDto implements IRevokeTokenDto {
+export class RevokeTokenDto implements interfaces.IRevokeTokenDto {
     token!: string | undefined;
-    constructor(data?: IRevokeTokenDto) {
+
+    constructor(data?: interfaces.IRevokeTokenDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13565,17 +14009,20 @@ export class RevokeTokenDto implements IRevokeTokenDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.token = _data["token"];
         }
     }
+
     static fromJS(data: any): RevokeTokenDto {
         data = typeof data === 'object' ? data : {};
         let result = new RevokeTokenDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["token"] = this.token;
@@ -13583,14 +14030,15 @@ export class RevokeTokenDto implements IRevokeTokenDto {
     }
 }
 
-export class RockFallHazardDto implements IRockFallHazardDto {
+export class RockFallHazardDto implements interfaces.IRockFallHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory!: number;
-    constructor(data?: IRockFallHazardDto) {
+
+    constructor(data?: interfaces.IRockFallHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13598,6 +14046,7 @@ export class RockFallHazardDto implements IRockFallHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -13614,12 +14063,14 @@ export class RockFallHazardDto implements IRockFallHazardDto {
             this.distanceToInventory = _data["distanceToInventory"];
         }
     }
+
     static fromJS(data: any): RockFallHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new RockFallHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -13638,14 +14089,15 @@ export class RockFallHazardDto implements IRockFallHazardDto {
     }
 }
 
-export class RockFallHazardResponseDto implements IRockFallHazardResponseDto {
+export class RockFallHazardResponseDto implements interfaces.IRockFallHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred?: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory?: number;
-    constructor(data?: IRockFallHazardResponseDto) {
+
+    constructor(data?: interfaces.IRockFallHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13653,6 +14105,7 @@ export class RockFallHazardResponseDto implements IRockFallHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -13669,12 +14122,14 @@ export class RockFallHazardResponseDto implements IRockFallHazardResponseDto {
             this.distanceToInventory = _data["distanceToInventory"];
         }
     }
+
     static fromJS(data: any): RockFallHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new RockFallHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -13693,11 +14148,12 @@ export class RockFallHazardResponseDto implements IRockFallHazardResponseDto {
     }
 }
 
-export class RollbackRequestDto implements IRollbackRequestDto {
+export class RollbackRequestDto implements interfaces.IRollbackRequestDto {
     targetVersion!: string;
     reason?: string | undefined;
     forceRollback?: boolean;
-    constructor(data?: IRollbackRequestDto) {
+
+    constructor(data?: interfaces.IRollbackRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13705,6 +14161,7 @@ export class RollbackRequestDto implements IRollbackRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.targetVersion = _data["targetVersion"];
@@ -13712,12 +14169,14 @@ export class RollbackRequestDto implements IRollbackRequestDto {
             this.forceRollback = _data["forceRollback"];
         }
     }
+
     static fromJS(data: any): RollbackRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new RollbackRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["targetVersion"] = this.targetVersion;
@@ -13727,9 +14186,9 @@ export class RollbackRequestDto implements IRollbackRequestDto {
     }
 }
 
-export class SecurityHazardDto implements ISecurityHazardDto {
+export class SecurityHazardDto implements interfaces.ISecurityHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
@@ -13738,15 +14197,16 @@ export class SecurityHazardDto implements ISecurityHazardDto {
     securitySystemScore?: number;
     egmRiskLevel?: number;
     egmRiskLevelScore?: number;
-    perimeterFenceType?: PerimeterWallType;
+    perimeterFenceType?: enums.PerimeterWallType;
     perimeterWallTypeScore?: number;
-    wallCondition?: WallCondition;
+    wallCondition?: enums.WallCondition;
     wallConditionScore?: number;
     hasCCTV?: boolean;
     cctvConditionScore?: number;
     iemDistance?: number;
     iemDistanceScore?: number;
-    constructor(data?: ISecurityHazardDto) {
+
+    constructor(data?: interfaces.ISecurityHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13754,6 +14214,7 @@ export class SecurityHazardDto implements ISecurityHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -13782,12 +14243,14 @@ export class SecurityHazardDto implements ISecurityHazardDto {
             this.iemDistanceScore = _data["iemDistanceScore"];
         }
     }
+
     static fromJS(data: any): SecurityHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new SecurityHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -13818,7 +14281,7 @@ export class SecurityHazardDto implements ISecurityHazardDto {
     }
 }
 
-export class SecurityHazardResponseDto implements ISecurityHazardResponseDto {
+export class SecurityHazardResponseDto implements interfaces.ISecurityHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
@@ -13837,7 +14300,8 @@ export class SecurityHazardResponseDto implements ISecurityHazardResponseDto {
     cctvConditionScore?: number;
     iemDistance?: number;
     iemDistanceScore?: number;
-    constructor(data?: ISecurityHazardResponseDto) {
+
+    constructor(data?: interfaces.ISecurityHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13845,6 +14309,7 @@ export class SecurityHazardResponseDto implements ISecurityHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -13873,12 +14338,14 @@ export class SecurityHazardResponseDto implements ISecurityHazardResponseDto {
             this.iemDistanceScore = _data["iemDistanceScore"];
         }
     }
+
     static fromJS(data: any): SecurityHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new SecurityHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -13909,13 +14376,14 @@ export class SecurityHazardResponseDto implements ISecurityHazardResponseDto {
     }
 }
 
-export class SecurityIssueDto implements ISecurityIssueDto {
+export class SecurityIssueDto implements interfaces.ISecurityIssueDto {
     type?: string | undefined;
     description?: string | undefined;
     file?: string | undefined;
     line?: number;
     severity?: string | undefined;
-    constructor(data?: ISecurityIssueDto) {
+
+    constructor(data?: interfaces.ISecurityIssueDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13923,6 +14391,7 @@ export class SecurityIssueDto implements ISecurityIssueDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"];
@@ -13932,12 +14401,14 @@ export class SecurityIssueDto implements ISecurityIssueDto {
             this.severity = _data["severity"];
         }
     }
+
     static fromJS(data: any): SecurityIssueDto {
         data = typeof data === 'object' ? data : {};
         let result = new SecurityIssueDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type;
@@ -13949,28 +14420,29 @@ export class SecurityIssueDto implements ISecurityIssueDto {
     }
 }
 
-export class SoilDto implements ISoilDto {
+export class SoilDto implements interfaces.ISoilDto {
     hasSoilStudyReport?: boolean;
     soilStudyReportDate?: Date | undefined;
     soilClassDataSource?: string | undefined;
     geotechnicalReport?: string | undefined;
     results?: string | undefined;
     drillHoleCount?: number;
-    soilClassTDY2007?: TDY2007SoilClass;
-    soilClassTBDY2018?: TBDY2018SoilClass;
-    finalDecisionOnOldData?: TBDY2018SoilClass;
+    soilClassTDY2007?: enums.TDY2007SoilClass;
+    soilClassTBDY2018?: enums.TBDY2018SoilClass;
+    finalDecisionOnOldData?: enums.TBDY2018SoilClass;
     notes?: string | undefined;
     newSoilClassDataReport?: string | undefined;
     newLiquefactionRiskDataReport?: string | undefined;
     geotechnicalReportMTV?: string | undefined;
     liquefactionRiskGeotechnicalReport?: string | undefined;
     distanceToActiveFaultKm?: number;
-    finalSoilClassification?: TBDY2018SoilClass;
+    finalSoilClassification?: enums.TBDY2018SoilClass;
     soilVS30?: number;
     structureType?: string | undefined;
     vass?: string | undefined;
     liquefactionRisk?: boolean;
-    constructor(data?: ISoilDto) {
+
+    constructor(data?: interfaces.ISoilDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -13978,6 +14450,7 @@ export class SoilDto implements ISoilDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.hasSoilStudyReport = _data["hasSoilStudyReport"];
@@ -14002,12 +14475,14 @@ export class SoilDto implements ISoilDto {
             this.liquefactionRisk = _data["liquefactionRisk"];
         }
     }
+
     static fromJS(data: any): SoilDto {
         data = typeof data === 'object' ? data : {};
         let result = new SoilDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["hasSoilStudyReport"] = this.hasSoilStudyReport;
@@ -14034,7 +14509,7 @@ export class SoilDto implements ISoilDto {
     }
 }
 
-export class SoilResponseDto implements ISoilResponseDto {
+export class SoilResponseDto implements interfaces.ISoilResponseDto {
     hasSoilStudyReport?: boolean;
     soilStudyReportDate?: Date | undefined;
     soilClassDataSource?: string | undefined;
@@ -14055,7 +14530,8 @@ export class SoilResponseDto implements ISoilResponseDto {
     structureType?: string | undefined;
     vass?: string | undefined;
     liquefactionRisk?: boolean;
-    constructor(data?: ISoilResponseDto) {
+
+    constructor(data?: interfaces.ISoilResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14063,6 +14539,7 @@ export class SoilResponseDto implements ISoilResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.hasSoilStudyReport = _data["hasSoilStudyReport"];
@@ -14087,12 +14564,14 @@ export class SoilResponseDto implements ISoilResponseDto {
             this.liquefactionRisk = _data["liquefactionRisk"];
         }
     }
+
     static fromJS(data: any): SoilResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new SoilResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["hasSoilStudyReport"] = this.hasSoilStudyReport;
@@ -14119,8 +14598,8 @@ export class SoilResponseDto implements ISoilResponseDto {
     }
 }
 
-export class StaticSiteDeploymentRequestDto implements IStaticSiteDeploymentRequestDto {
-    deploymentType?: AppDeploymentType;
+export class StaticSiteDeploymentRequestDto implements interfaces.IStaticSiteDeploymentRequestDto {
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
@@ -14135,7 +14614,8 @@ export class StaticSiteDeploymentRequestDto implements IStaticSiteDeploymentRequ
     cachingStrategy?: string | undefined;
     cdnEnabled?: boolean;
     headers?: { [key: string]: string; } | undefined;
-    constructor(data?: IStaticSiteDeploymentRequestDto) {
+
+    constructor(data?: interfaces.IStaticSiteDeploymentRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14143,6 +14623,7 @@ export class StaticSiteDeploymentRequestDto implements IStaticSiteDeploymentRequ
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.deploymentType = _data["deploymentType"];
@@ -14184,12 +14665,14 @@ export class StaticSiteDeploymentRequestDto implements IStaticSiteDeploymentRequ
             }
         }
     }
+
     static fromJS(data: any): StaticSiteDeploymentRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new StaticSiteDeploymentRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["deploymentType"] = this.deploymentType;
@@ -14233,7 +14716,7 @@ export class StaticSiteDeploymentRequestDto implements IStaticSiteDeploymentRequ
     }
 }
 
-export class StorageStatistics implements IStorageStatistics {
+export class StorageStatistics implements interfaces.IStorageStatistics {
     programId?: string | undefined;
     totalFiles?: number;
     totalSize?: number;
@@ -14241,7 +14724,8 @@ export class StorageStatistics implements IStorageStatistics {
     lastModified?: Date;
     fileTypeCount?: { [key: string]: number; } | undefined;
     fileTypeSizes?: { [key: string]: number; } | undefined;
-    constructor(data?: IStorageStatistics) {
+
+    constructor(data?: interfaces.IStorageStatistics) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14249,6 +14733,7 @@ export class StorageStatistics implements IStorageStatistics {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -14272,12 +14757,14 @@ export class StorageStatistics implements IStorageStatistics {
             }
         }
     }
+
     static fromJS(data: any): StorageStatistics {
         data = typeof data === 'object' ? data : {};
         let result = new StorageStatistics();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -14303,13 +14790,14 @@ export class StorageStatistics implements IStorageStatistics {
     }
 }
 
-export class StorageStatisticsApiResponse implements IStorageStatisticsApiResponse {
+export class StorageStatisticsApiResponse implements interfaces.IStorageStatisticsApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: StorageStatistics;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IStorageStatisticsApiResponse) {
+
+    constructor(data?: interfaces.IStorageStatisticsApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14317,6 +14805,7 @@ export class StorageStatisticsApiResponse implements IStorageStatisticsApiRespon
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14330,12 +14819,14 @@ export class StorageStatisticsApiResponse implements IStorageStatisticsApiRespon
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): StorageStatisticsApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new StorageStatisticsApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14351,13 +14842,14 @@ export class StorageStatisticsApiResponse implements IStorageStatisticsApiRespon
     }
 }
 
-export class StringApiResponse implements IStringApiResponse {
+export class StringApiResponse implements interfaces.IStringApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: string | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IStringApiResponse) {
+
+    constructor(data?: interfaces.IStringApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14365,6 +14857,7 @@ export class StringApiResponse implements IStringApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14378,12 +14871,14 @@ export class StringApiResponse implements IStringApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): StringApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new StringApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14399,13 +14894,14 @@ export class StringApiResponse implements IStringApiResponse {
     }
 }
 
-export class StringListApiResponse implements IStringListApiResponse {
+export class StringListApiResponse implements interfaces.IStringListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: string[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IStringListApiResponse) {
+
+    constructor(data?: interfaces.IStringListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14413,6 +14909,7 @@ export class StringListApiResponse implements IStringListApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14430,12 +14927,14 @@ export class StringListApiResponse implements IStringListApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): StringListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new StringListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14455,13 +14954,14 @@ export class StringListApiResponse implements IStringListApiResponse {
     }
 }
 
-export class StringStringDictionaryApiResponse implements IStringStringDictionaryApiResponse {
+export class StringStringDictionaryApiResponse implements interfaces.IStringStringDictionaryApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: { [key: string]: string; } | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IStringStringDictionaryApiResponse) {
+
+    constructor(data?: interfaces.IStringStringDictionaryApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14469,6 +14969,7 @@ export class StringStringDictionaryApiResponse implements IStringStringDictionar
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14488,12 +14989,14 @@ export class StringStringDictionaryApiResponse implements IStringStringDictionar
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): StringStringDictionaryApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new StringStringDictionaryApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14515,13 +15018,14 @@ export class StringStringDictionaryApiResponse implements IStringStringDictionar
     }
 }
 
-export class StringStringListDictionaryApiResponse implements IStringStringListDictionaryApiResponse {
+export class StringStringListDictionaryApiResponse implements interfaces.IStringStringListDictionaryApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: { [key: string]: string[]; } | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IStringStringListDictionaryApiResponse) {
+
+    constructor(data?: interfaces.IStringStringListDictionaryApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14529,6 +15033,7 @@ export class StringStringListDictionaryApiResponse implements IStringStringListD
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14548,12 +15053,14 @@ export class StringStringListDictionaryApiResponse implements IStringStringListD
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): StringStringListDictionaryApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new StringStringListDictionaryApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14575,15 +15082,16 @@ export class StringStringListDictionaryApiResponse implements IStringStringListD
     }
 }
 
-export class SupportedDeploymentOptionDto implements ISupportedDeploymentOptionDto {
-    deploymentType?: AppDeploymentType;
+export class SupportedDeploymentOptionDto implements interfaces.ISupportedDeploymentOptionDto {
+    deploymentType?: enums.AppDeploymentType;
     name?: string | undefined;
     description?: string | undefined;
     isRecommended?: boolean;
     requiredFeatures?: string[] | undefined;
     supportedFeatures?: string[] | undefined;
     defaultConfiguration?: { [key: string]: any; } | undefined;
-    constructor(data?: ISupportedDeploymentOptionDto) {
+
+    constructor(data?: interfaces.ISupportedDeploymentOptionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14591,6 +15099,7 @@ export class SupportedDeploymentOptionDto implements ISupportedDeploymentOptionD
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.deploymentType = _data["deploymentType"];
@@ -14616,12 +15125,14 @@ export class SupportedDeploymentOptionDto implements ISupportedDeploymentOptionD
             }
         }
     }
+
     static fromJS(data: any): SupportedDeploymentOptionDto {
         data = typeof data === 'object' ? data : {};
         let result = new SupportedDeploymentOptionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["deploymentType"] = this.deploymentType;
@@ -14649,13 +15160,14 @@ export class SupportedDeploymentOptionDto implements ISupportedDeploymentOptionD
     }
 }
 
-export class SupportedDeploymentOptionDtoListApiResponse implements ISupportedDeploymentOptionDtoListApiResponse {
+export class SupportedDeploymentOptionDtoListApiResponse implements interfaces.ISupportedDeploymentOptionDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: SupportedDeploymentOptionDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ISupportedDeploymentOptionDtoListApiResponse) {
+
+    constructor(data?: interfaces.ISupportedDeploymentOptionDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14663,6 +15175,7 @@ export class SupportedDeploymentOptionDtoListApiResponse implements ISupportedDe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14680,12 +15193,14 @@ export class SupportedDeploymentOptionDtoListApiResponse implements ISupportedDe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): SupportedDeploymentOptionDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new SupportedDeploymentOptionDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14705,17 +15220,18 @@ export class SupportedDeploymentOptionDtoListApiResponse implements ISupportedDe
     }
 }
 
-export class TMCreateDto implements ITMCreateDto {
+export class TMCreateDto implements interfaces.ITMCreateDto {
     regionId!: string;
     tmId!: number;
     name!: string;
-    type?: TMType;
-    state?: TMState;
+    type?: enums.TMType;
+    state?: enums.TMState;
     voltages!: number[];
     provisionalAcceptanceDate?: Date | undefined;
     location!: LocationRequestDto;
     address?: AddressDto;
-    constructor(data?: ITMCreateDto) {
+
+    constructor(data?: interfaces.ITMCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14727,6 +15243,7 @@ export class TMCreateDto implements ITMCreateDto {
             this.location = new LocationRequestDto();
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.regionId = _data["regionId"];
@@ -14744,12 +15261,14 @@ export class TMCreateDto implements ITMCreateDto {
             this.address = _data["address"] ? AddressDto.fromJS(_data["address"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["regionId"] = this.regionId;
@@ -14769,7 +15288,7 @@ export class TMCreateDto implements ITMCreateDto {
     }
 }
 
-export class TMDetailResponseDto implements ITMDetailResponseDto {
+export class TMDetailResponseDto implements interfaces.ITMDetailResponseDto {
     id?: string | undefined;
     regionId?: string | undefined;
     tmId?: number;
@@ -14799,7 +15318,8 @@ export class TMDetailResponseDto implements ITMDetailResponseDto {
     buildingCount?: number;
     buildings?: BuildingSummaryResponseDto[] | undefined;
     alternativeTMs?: AlternativeTMSummaryResponseDto[] | undefined;
-    constructor(data?: ITMDetailResponseDto) {
+
+    constructor(data?: interfaces.ITMDetailResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14807,6 +15327,7 @@ export class TMDetailResponseDto implements ITMDetailResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -14852,12 +15373,14 @@ export class TMDetailResponseDto implements ITMDetailResponseDto {
             }
         }
     }
+
     static fromJS(data: any): TMDetailResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMDetailResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -14905,13 +15428,14 @@ export class TMDetailResponseDto implements ITMDetailResponseDto {
     }
 }
 
-export class TMDetailResponseDtoApiResponse implements ITMDetailResponseDtoApiResponse {
+export class TMDetailResponseDtoApiResponse implements interfaces.ITMDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: TMDetailResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ITMDetailResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.ITMDetailResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14919,6 +15443,7 @@ export class TMDetailResponseDtoApiResponse implements ITMDetailResponseDtoApiRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -14932,12 +15457,14 @@ export class TMDetailResponseDtoApiResponse implements ITMDetailResponseDtoApiRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMDetailResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TMDetailResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -14953,13 +15480,14 @@ export class TMDetailResponseDtoApiResponse implements ITMDetailResponseDtoApiRe
     }
 }
 
-export class TMHazardSummaryResponseDto implements ITMHazardSummaryResponseDto {
+export class TMHazardSummaryResponseDto implements interfaces.ITMHazardSummaryResponseDto {
     tmId?: string | undefined;
     fireHazard?: HazardResponseDto;
     securityHazard?: HazardResponseDto;
     floodHazard?: HazardResponseDto;
     overallRiskScore?: number;
-    constructor(data?: ITMHazardSummaryResponseDto) {
+
+    constructor(data?: interfaces.ITMHazardSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14967,6 +15495,7 @@ export class TMHazardSummaryResponseDto implements ITMHazardSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.tmId = _data["tmId"];
@@ -14976,12 +15505,14 @@ export class TMHazardSummaryResponseDto implements ITMHazardSummaryResponseDto {
             this.overallRiskScore = _data["overallRiskScore"];
         }
     }
+
     static fromJS(data: any): TMHazardSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMHazardSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tmId"] = this.tmId;
@@ -14993,13 +15524,14 @@ export class TMHazardSummaryResponseDto implements ITMHazardSummaryResponseDto {
     }
 }
 
-export class TMHazardSummaryResponseDtoApiResponse implements ITMHazardSummaryResponseDtoApiResponse {
+export class TMHazardSummaryResponseDtoApiResponse implements interfaces.ITMHazardSummaryResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: TMHazardSummaryResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ITMHazardSummaryResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.ITMHazardSummaryResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15007,6 +15539,7 @@ export class TMHazardSummaryResponseDtoApiResponse implements ITMHazardSummaryRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -15020,12 +15553,14 @@ export class TMHazardSummaryResponseDtoApiResponse implements ITMHazardSummaryRe
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMHazardSummaryResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TMHazardSummaryResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -15041,7 +15576,7 @@ export class TMHazardSummaryResponseDtoApiResponse implements ITMHazardSummaryRe
     }
 }
 
-export class TMListResponseDto implements ITMListResponseDto {
+export class TMListResponseDto implements interfaces.ITMListResponseDto {
     id?: string | undefined;
     tmId?: number;
     name?: string | undefined;
@@ -15051,7 +15586,8 @@ export class TMListResponseDto implements ITMListResponseDto {
     voltages?: number[] | undefined;
     city?: string | undefined;
     buildingCount?: number;
-    constructor(data?: ITMListResponseDto) {
+
+    constructor(data?: interfaces.ITMListResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15059,6 +15595,7 @@ export class TMListResponseDto implements ITMListResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -15076,12 +15613,14 @@ export class TMListResponseDto implements ITMListResponseDto {
             this.buildingCount = _data["buildingCount"];
         }
     }
+
     static fromJS(data: any): TMListResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMListResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -15101,7 +15640,7 @@ export class TMListResponseDto implements ITMListResponseDto {
     }
 }
 
-export class TMListResponseDtoPagedResponse implements ITMListResponseDtoPagedResponse {
+export class TMListResponseDtoPagedResponse implements interfaces.ITMListResponseDtoPagedResponse {
     items?: TMListResponseDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -15109,7 +15648,8 @@ export class TMListResponseDtoPagedResponse implements ITMListResponseDtoPagedRe
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: ITMListResponseDtoPagedResponse) {
+
+    constructor(data?: interfaces.ITMListResponseDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15117,6 +15657,7 @@ export class TMListResponseDtoPagedResponse implements ITMListResponseDtoPagedRe
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -15132,12 +15673,14 @@ export class TMListResponseDtoPagedResponse implements ITMListResponseDtoPagedRe
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): TMListResponseDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TMListResponseDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -15155,13 +15698,14 @@ export class TMListResponseDtoPagedResponse implements ITMListResponseDtoPagedRe
     }
 }
 
-export class TMListResponseDtoPagedResponseApiResponse implements ITMListResponseDtoPagedResponseApiResponse {
+export class TMListResponseDtoPagedResponseApiResponse implements interfaces.ITMListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: TMListResponseDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ITMListResponseDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.ITMListResponseDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15169,6 +15713,7 @@ export class TMListResponseDtoPagedResponseApiResponse implements ITMListRespons
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -15182,12 +15727,14 @@ export class TMListResponseDtoPagedResponseApiResponse implements ITMListRespons
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMListResponseDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TMListResponseDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -15203,7 +15750,7 @@ export class TMListResponseDtoPagedResponseApiResponse implements ITMListRespons
     }
 }
 
-export class TMResponseDto implements ITMResponseDto {
+export class TMResponseDto implements interfaces.ITMResponseDto {
     id?: string | undefined;
     regionId?: string | undefined;
     tmId?: number;
@@ -15215,7 +15762,8 @@ export class TMResponseDto implements ITMResponseDto {
     provisionalAcceptanceDate?: Date;
     location?: LocationResponseDto;
     address?: AddressResponseDto;
-    constructor(data?: ITMResponseDto) {
+
+    constructor(data?: interfaces.ITMResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15223,6 +15771,7 @@ export class TMResponseDto implements ITMResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -15242,12 +15791,14 @@ export class TMResponseDto implements ITMResponseDto {
             this.address = _data["address"] ? AddressResponseDto.fromJS(_data["address"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -15269,13 +15820,14 @@ export class TMResponseDto implements ITMResponseDto {
     }
 }
 
-export class TMResponseDtoApiResponse implements ITMResponseDtoApiResponse {
+export class TMResponseDtoApiResponse implements interfaces.ITMResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: TMResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ITMResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.ITMResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15283,6 +15835,7 @@ export class TMResponseDtoApiResponse implements ITMResponseDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -15296,12 +15849,14 @@ export class TMResponseDtoApiResponse implements ITMResponseDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TMResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -15317,18 +15872,19 @@ export class TMResponseDtoApiResponse implements ITMResponseDtoApiResponse {
     }
 }
 
-export class TMSearchDto implements ITMSearchDto {
+export class TMSearchDto implements interfaces.ITMSearchDto {
     name?: string | undefined;
     regionId?: string | undefined;
-    type?: TMType;
-    state?: TMState;
+    type?: enums.TMType;
+    state?: enums.TMState;
     voltages?: number[] | undefined;
     city?: string | undefined;
     county?: string | undefined;
     maxVoltage?: number | undefined;
     provisionalAcceptanceDateFrom?: Date | undefined;
     provisionalAcceptanceDateTo?: Date | undefined;
-    constructor(data?: ITMSearchDto) {
+
+    constructor(data?: interfaces.ITMSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15336,6 +15892,7 @@ export class TMSearchDto implements ITMSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -15354,12 +15911,14 @@ export class TMSearchDto implements ITMSearchDto {
             this.provisionalAcceptanceDateTo = _data["provisionalAcceptanceDateTo"] ? new Date(_data["provisionalAcceptanceDateTo"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -15380,9 +15939,10 @@ export class TMSearchDto implements ITMSearchDto {
     }
 }
 
-export class TMStateUpdateDto implements ITMStateUpdateDto {
-    state!: TMState;
-    constructor(data?: ITMStateUpdateDto) {
+export class TMStateUpdateDto implements interfaces.ITMStateUpdateDto {
+    state!: enums.TMState;
+
+    constructor(data?: interfaces.ITMStateUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15390,17 +15950,20 @@ export class TMStateUpdateDto implements ITMStateUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.state = _data["state"];
         }
     }
+
     static fromJS(data: any): TMStateUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMStateUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["state"] = this.state;
@@ -15408,14 +15971,15 @@ export class TMStateUpdateDto implements ITMStateUpdateDto {
     }
 }
 
-export class TMStatisticsResponseDto implements ITMStatisticsResponseDto {
+export class TMStatisticsResponseDto implements interfaces.ITMStatisticsResponseDto {
     tmId?: string | undefined;
     buildingCount?: number;
     maxVoltage?: number;
     alternativeTMCount?: number;
     overallRiskScore?: number;
     daysSinceAcceptance?: number;
-    constructor(data?: ITMStatisticsResponseDto) {
+
+    constructor(data?: interfaces.ITMStatisticsResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15423,6 +15987,7 @@ export class TMStatisticsResponseDto implements ITMStatisticsResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.tmId = _data["tmId"];
@@ -15433,12 +15998,14 @@ export class TMStatisticsResponseDto implements ITMStatisticsResponseDto {
             this.daysSinceAcceptance = _data["daysSinceAcceptance"];
         }
     }
+
     static fromJS(data: any): TMStatisticsResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMStatisticsResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tmId"] = this.tmId;
@@ -15451,13 +16018,14 @@ export class TMStatisticsResponseDto implements ITMStatisticsResponseDto {
     }
 }
 
-export class TMStatisticsResponseDtoApiResponse implements ITMStatisticsResponseDtoApiResponse {
+export class TMStatisticsResponseDtoApiResponse implements interfaces.ITMStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: TMStatisticsResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ITMStatisticsResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.ITMStatisticsResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15465,6 +16033,7 @@ export class TMStatisticsResponseDtoApiResponse implements ITMStatisticsResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -15478,12 +16047,14 @@ export class TMStatisticsResponseDtoApiResponse implements ITMStatisticsResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMStatisticsResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TMStatisticsResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -15499,13 +16070,14 @@ export class TMStatisticsResponseDtoApiResponse implements ITMStatisticsResponse
     }
 }
 
-export class TMSummaryResponseDto implements ITMSummaryResponseDto {
+export class TMSummaryResponseDto implements interfaces.ITMSummaryResponseDto {
     id?: string | undefined;
     tmId?: number;
     name?: string | undefined;
     state?: string | undefined;
     maxVoltage?: number;
-    constructor(data?: ITMSummaryResponseDto) {
+
+    constructor(data?: interfaces.ITMSummaryResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15513,6 +16085,7 @@ export class TMSummaryResponseDto implements ITMSummaryResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -15522,12 +16095,14 @@ export class TMSummaryResponseDto implements ITMSummaryResponseDto {
             this.maxVoltage = _data["maxVoltage"];
         }
     }
+
     static fromJS(data: any): TMSummaryResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMSummaryResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -15539,12 +16114,12 @@ export class TMSummaryResponseDto implements ITMSummaryResponseDto {
     }
 }
 
-export class TMUpdateDto implements ITMUpdateDto {
+export class TMUpdateDto implements interfaces.ITMUpdateDto {
     regionId?: string | undefined;
     id?: number | undefined;
     name?: string | undefined;
-    type?: TMType;
-    state?: TMState;
+    type?: enums.TMType;
+    state?: enums.TMState;
     voltages?: number[] | undefined;
     provisionalAcceptanceDate?: Date | undefined;
     location?: LocationRequestDto;
@@ -15563,7 +16138,8 @@ export class TMUpdateDto implements ITMUpdateDto {
     floodHazard?: FloodHazardDto;
     tsunamiHazard?: TsunamiHazardDto;
     soil?: SoilDto;
-    constructor(data?: ITMUpdateDto) {
+
+    constructor(data?: interfaces.ITMUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15571,6 +16147,7 @@ export class TMUpdateDto implements ITMUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.regionId = _data["regionId"];
@@ -15602,12 +16179,14 @@ export class TMUpdateDto implements ITMUpdateDto {
             this.soil = _data["soil"] ? SoilDto.fromJS(_data["soil"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TMUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["regionId"] = this.regionId;
@@ -15641,9 +16220,10 @@ export class TMUpdateDto implements ITMUpdateDto {
     }
 }
 
-export class TMVoltageUpdateDto implements ITMVoltageUpdateDto {
+export class TMVoltageUpdateDto implements interfaces.ITMVoltageUpdateDto {
     voltages!: number[];
-    constructor(data?: ITMVoltageUpdateDto) {
+
+    constructor(data?: interfaces.ITMVoltageUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15654,6 +16234,7 @@ export class TMVoltageUpdateDto implements ITMVoltageUpdateDto {
             this.voltages = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["voltages"])) {
@@ -15663,12 +16244,14 @@ export class TMVoltageUpdateDto implements ITMVoltageUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): TMVoltageUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new TMVoltageUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.voltages)) {
@@ -15680,12 +16263,13 @@ export class TMVoltageUpdateDto implements ITMVoltageUpdateDto {
     }
 }
 
-export class TokenResponseDto implements ITokenResponseDto {
+export class TokenResponseDto implements interfaces.ITokenResponseDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
     expiresAt?: Date;
     tokenType?: string | undefined;
-    constructor(data?: ITokenResponseDto) {
+
+    constructor(data?: interfaces.ITokenResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15693,6 +16277,7 @@ export class TokenResponseDto implements ITokenResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.accessToken = _data["accessToken"];
@@ -15701,12 +16286,14 @@ export class TokenResponseDto implements ITokenResponseDto {
             this.tokenType = _data["tokenType"];
         }
     }
+
     static fromJS(data: any): TokenResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TokenResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["accessToken"] = this.accessToken;
@@ -15717,13 +16304,14 @@ export class TokenResponseDto implements ITokenResponseDto {
     }
 }
 
-export class TokenResponseDtoApiResponse implements ITokenResponseDtoApiResponse {
+export class TokenResponseDtoApiResponse implements interfaces.ITokenResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: TokenResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: ITokenResponseDtoApiResponse) {
+
+    constructor(data?: interfaces.ITokenResponseDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15731,6 +16319,7 @@ export class TokenResponseDtoApiResponse implements ITokenResponseDtoApiResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -15744,12 +16333,14 @@ export class TokenResponseDtoApiResponse implements ITokenResponseDtoApiResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): TokenResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new TokenResponseDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -15765,14 +16356,15 @@ export class TokenResponseDtoApiResponse implements ITokenResponseDtoApiResponse
     }
 }
 
-export class TsunamiHazardDto implements ITsunamiHazardDto {
+export class TsunamiHazardDto implements interfaces.ITsunamiHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred!: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory!: number;
-    constructor(data?: ITsunamiHazardDto) {
+
+    constructor(data?: interfaces.ITsunamiHazardDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15780,6 +16372,7 @@ export class TsunamiHazardDto implements ITsunamiHazardDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -15796,12 +16389,14 @@ export class TsunamiHazardDto implements ITsunamiHazardDto {
             this.distanceToInventory = _data["distanceToInventory"];
         }
     }
+
     static fromJS(data: any): TsunamiHazardDto {
         data = typeof data === 'object' ? data : {};
         let result = new TsunamiHazardDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -15820,14 +16415,15 @@ export class TsunamiHazardDto implements ITsunamiHazardDto {
     }
 }
 
-export class TsunamiHazardResponseDto implements ITsunamiHazardResponseDto {
+export class TsunamiHazardResponseDto implements interfaces.ITsunamiHazardResponseDto {
     score?: number;
     level?: string | undefined;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred?: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory?: number;
-    constructor(data?: ITsunamiHazardResponseDto) {
+
+    constructor(data?: interfaces.ITsunamiHazardResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15835,6 +16431,7 @@ export class TsunamiHazardResponseDto implements ITsunamiHazardResponseDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.score = _data["score"];
@@ -15851,12 +16448,14 @@ export class TsunamiHazardResponseDto implements ITsunamiHazardResponseDto {
             this.distanceToInventory = _data["distanceToInventory"];
         }
     }
+
     static fromJS(data: any): TsunamiHazardResponseDto {
         data = typeof data === 'object' ? data : {};
         let result = new TsunamiHazardResponseDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
@@ -15875,14 +16474,15 @@ export class TsunamiHazardResponseDto implements ITsunamiHazardResponseDto {
     }
 }
 
-export class UiComponentAssetDto implements IUiComponentAssetDto {
+export class UiComponentAssetDto implements interfaces.IUiComponentAssetDto {
     path?: string | undefined;
     contentType?: string | undefined;
     assetType?: string | undefined;
     size?: number;
     lastModified?: Date;
     url?: string | undefined;
-    constructor(data?: IUiComponentAssetDto) {
+
+    constructor(data?: interfaces.IUiComponentAssetDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15890,6 +16490,7 @@ export class UiComponentAssetDto implements IUiComponentAssetDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -15900,12 +16501,14 @@ export class UiComponentAssetDto implements IUiComponentAssetDto {
             this.url = _data["url"];
         }
     }
+
     static fromJS(data: any): UiComponentAssetDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentAssetDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -15918,13 +16521,14 @@ export class UiComponentAssetDto implements IUiComponentAssetDto {
     }
 }
 
-export class UiComponentAssetDtoListApiResponse implements IUiComponentAssetDtoListApiResponse {
+export class UiComponentAssetDtoListApiResponse implements interfaces.IUiComponentAssetDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentAssetDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentAssetDtoListApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentAssetDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15932,6 +16536,7 @@ export class UiComponentAssetDtoListApiResponse implements IUiComponentAssetDtoL
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -15949,12 +16554,14 @@ export class UiComponentAssetDtoListApiResponse implements IUiComponentAssetDtoL
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentAssetDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentAssetDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -15974,12 +16581,13 @@ export class UiComponentAssetDtoListApiResponse implements IUiComponentAssetDtoL
     }
 }
 
-export class UiComponentAssetUploadDto implements IUiComponentAssetUploadDto {
+export class UiComponentAssetUploadDto implements interfaces.IUiComponentAssetUploadDto {
     path!: string;
     content!: string;
     contentType!: string;
     assetType?: string | undefined;
-    constructor(data?: IUiComponentAssetUploadDto) {
+
+    constructor(data?: interfaces.IUiComponentAssetUploadDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15987,6 +16595,7 @@ export class UiComponentAssetUploadDto implements IUiComponentAssetUploadDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -15995,12 +16604,14 @@ export class UiComponentAssetUploadDto implements IUiComponentAssetUploadDto {
             this.assetType = _data["assetType"];
         }
     }
+
     static fromJS(data: any): UiComponentAssetUploadDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentAssetUploadDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -16011,7 +16622,7 @@ export class UiComponentAssetUploadDto implements IUiComponentAssetUploadDto {
     }
 }
 
-export class UiComponentBundleDto implements IUiComponentBundleDto {
+export class UiComponentBundleDto implements interfaces.IUiComponentBundleDto {
     id?: string | undefined;
     componentId?: string | undefined;
     bundleType?: string | undefined;
@@ -16019,7 +16630,8 @@ export class UiComponentBundleDto implements IUiComponentBundleDto {
     dependencies?: { [key: string]: string; } | undefined;
     createdAt?: Date;
     totalSize?: number;
-    constructor(data?: IUiComponentBundleDto) {
+
+    constructor(data?: interfaces.IUiComponentBundleDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16027,6 +16639,7 @@ export class UiComponentBundleDto implements IUiComponentBundleDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -16048,12 +16661,14 @@ export class UiComponentBundleDto implements IUiComponentBundleDto {
             this.totalSize = _data["totalSize"];
         }
     }
+
     static fromJS(data: any): UiComponentBundleDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentBundleDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -16077,13 +16692,14 @@ export class UiComponentBundleDto implements IUiComponentBundleDto {
     }
 }
 
-export class UiComponentBundleDtoApiResponse implements IUiComponentBundleDtoApiResponse {
+export class UiComponentBundleDtoApiResponse implements interfaces.IUiComponentBundleDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentBundleDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentBundleDtoApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentBundleDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16091,6 +16707,7 @@ export class UiComponentBundleDtoApiResponse implements IUiComponentBundleDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -16104,12 +16721,14 @@ export class UiComponentBundleDtoApiResponse implements IUiComponentBundleDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentBundleDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentBundleDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -16125,13 +16744,14 @@ export class UiComponentBundleDtoApiResponse implements IUiComponentBundleDtoApi
     }
 }
 
-export class UiComponentBundleInfoDto implements IUiComponentBundleInfoDto {
+export class UiComponentBundleInfoDto implements interfaces.IUiComponentBundleInfoDto {
     bundleType?: string | undefined;
     assetUrls?: string[] | undefined;
     dependencies?: { [key: string]: string; } | undefined;
     lastUpdated?: Date;
     totalSize?: number;
-    constructor(data?: IUiComponentBundleInfoDto) {
+
+    constructor(data?: interfaces.IUiComponentBundleInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16139,6 +16759,7 @@ export class UiComponentBundleInfoDto implements IUiComponentBundleInfoDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.bundleType = _data["bundleType"];
@@ -16158,12 +16779,14 @@ export class UiComponentBundleInfoDto implements IUiComponentBundleInfoDto {
             this.totalSize = _data["totalSize"];
         }
     }
+
     static fromJS(data: any): UiComponentBundleInfoDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentBundleInfoDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["bundleType"] = this.bundleType;
@@ -16185,11 +16808,12 @@ export class UiComponentBundleInfoDto implements IUiComponentBundleInfoDto {
     }
 }
 
-export class UiComponentBundleUploadDto implements IUiComponentBundleUploadDto {
+export class UiComponentBundleUploadDto implements interfaces.IUiComponentBundleUploadDto {
     assets!: UiComponentAssetUploadDto[];
     dependencies?: { [key: string]: string; } | undefined;
     bundleType?: string | undefined;
-    constructor(data?: IUiComponentBundleUploadDto) {
+
+    constructor(data?: interfaces.IUiComponentBundleUploadDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16200,6 +16824,7 @@ export class UiComponentBundleUploadDto implements IUiComponentBundleUploadDto {
             this.assets = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["assets"])) {
@@ -16217,12 +16842,14 @@ export class UiComponentBundleUploadDto implements IUiComponentBundleUploadDto {
             this.bundleType = _data["bundleType"];
         }
     }
+
     static fromJS(data: any): UiComponentBundleUploadDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentBundleUploadDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.assets)) {
@@ -16242,12 +16869,13 @@ export class UiComponentBundleUploadDto implements IUiComponentBundleUploadDto {
     }
 }
 
-export class UiComponentCategoryDto implements IUiComponentCategoryDto {
+export class UiComponentCategoryDto implements interfaces.IUiComponentCategoryDto {
     name?: string | undefined;
     description?: string | undefined;
     componentCount?: number;
     subCategories?: string[] | undefined;
-    constructor(data?: IUiComponentCategoryDto) {
+
+    constructor(data?: interfaces.IUiComponentCategoryDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16255,6 +16883,7 @@ export class UiComponentCategoryDto implements IUiComponentCategoryDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -16267,12 +16896,14 @@ export class UiComponentCategoryDto implements IUiComponentCategoryDto {
             }
         }
     }
+
     static fromJS(data: any): UiComponentCategoryDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentCategoryDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -16287,13 +16918,14 @@ export class UiComponentCategoryDto implements IUiComponentCategoryDto {
     }
 }
 
-export class UiComponentCategoryDtoListApiResponse implements IUiComponentCategoryDtoListApiResponse {
+export class UiComponentCategoryDtoListApiResponse implements interfaces.IUiComponentCategoryDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentCategoryDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentCategoryDtoListApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentCategoryDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16301,6 +16933,7 @@ export class UiComponentCategoryDtoListApiResponse implements IUiComponentCatego
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -16318,12 +16951,14 @@ export class UiComponentCategoryDtoListApiResponse implements IUiComponentCatego
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentCategoryDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentCategoryDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -16343,12 +16978,13 @@ export class UiComponentCategoryDtoListApiResponse implements IUiComponentCatego
     }
 }
 
-export class UiComponentCompatibilitySearchDto implements IUiComponentCompatibilitySearchDto {
+export class UiComponentCompatibilitySearchDto implements interfaces.IUiComponentCompatibilitySearchDto {
     programType!: string;
     programLanguage?: string | undefined;
     requiredFeatures?: string[] | undefined;
     compatibleTypes?: string[] | undefined;
-    constructor(data?: IUiComponentCompatibilitySearchDto) {
+
+    constructor(data?: interfaces.IUiComponentCompatibilitySearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16356,6 +16992,7 @@ export class UiComponentCompatibilitySearchDto implements IUiComponentCompatibil
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programType = _data["programType"];
@@ -16372,12 +17009,14 @@ export class UiComponentCompatibilitySearchDto implements IUiComponentCompatibil
             }
         }
     }
+
     static fromJS(data: any): UiComponentCompatibilitySearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentCompatibilitySearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programType"] = this.programType;
@@ -16396,12 +17035,13 @@ export class UiComponentCompatibilitySearchDto implements IUiComponentCompatibil
     }
 }
 
-export class UiComponentConfigDto implements IUiComponentConfigDto {
+export class UiComponentConfigDto implements interfaces.IUiComponentConfigDto {
     componentId?: string | undefined;
     configuration?: any | undefined;
     lastUpdated?: Date;
     updatedBy?: string | undefined;
-    constructor(data?: IUiComponentConfigDto) {
+
+    constructor(data?: interfaces.IUiComponentConfigDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16409,6 +17049,7 @@ export class UiComponentConfigDto implements IUiComponentConfigDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.componentId = _data["componentId"];
@@ -16417,12 +17058,14 @@ export class UiComponentConfigDto implements IUiComponentConfigDto {
             this.updatedBy = _data["updatedBy"];
         }
     }
+
     static fromJS(data: any): UiComponentConfigDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentConfigDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["componentId"] = this.componentId;
@@ -16433,13 +17076,14 @@ export class UiComponentConfigDto implements IUiComponentConfigDto {
     }
 }
 
-export class UiComponentConfigDtoApiResponse implements IUiComponentConfigDtoApiResponse {
+export class UiComponentConfigDtoApiResponse implements interfaces.IUiComponentConfigDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentConfigDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentConfigDtoApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentConfigDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16447,6 +17091,7 @@ export class UiComponentConfigDtoApiResponse implements IUiComponentConfigDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -16460,12 +17105,14 @@ export class UiComponentConfigDtoApiResponse implements IUiComponentConfigDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentConfigDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentConfigDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -16481,9 +17128,10 @@ export class UiComponentConfigDtoApiResponse implements IUiComponentConfigDtoApi
     }
 }
 
-export class UiComponentConfigUpdateDto implements IUiComponentConfigUpdateDto {
+export class UiComponentConfigUpdateDto implements interfaces.IUiComponentConfigUpdateDto {
     configuration!: any;
-    constructor(data?: IUiComponentConfigUpdateDto) {
+
+    constructor(data?: interfaces.IUiComponentConfigUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16491,17 +17139,20 @@ export class UiComponentConfigUpdateDto implements IUiComponentConfigUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.configuration = _data["configuration"];
         }
     }
+
     static fromJS(data: any): UiComponentConfigUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentConfigUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["configuration"] = this.configuration;
@@ -16509,14 +17160,15 @@ export class UiComponentConfigUpdateDto implements IUiComponentConfigUpdateDto {
     }
 }
 
-export class UiComponentCreateDto implements IUiComponentCreateDto {
+export class UiComponentCreateDto implements interfaces.IUiComponentCreateDto {
     name!: string;
     description?: string | undefined;
     type!: string;
     configuration?: any | undefined;
     schema?: any | undefined;
     tags?: string[] | undefined;
-    constructor(data?: IUiComponentCreateDto) {
+
+    constructor(data?: interfaces.IUiComponentCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16524,6 +17176,7 @@ export class UiComponentCreateDto implements IUiComponentCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -16538,12 +17191,14 @@ export class UiComponentCreateDto implements IUiComponentCreateDto {
             }
         }
     }
+
     static fromJS(data: any): UiComponentCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -16560,7 +17215,7 @@ export class UiComponentCreateDto implements IUiComponentCreateDto {
     }
 }
 
-export class UiComponentDetailDto implements IUiComponentDetailDto {
+export class UiComponentDetailDto implements interfaces.IUiComponentDetailDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -16580,7 +17235,8 @@ export class UiComponentDetailDto implements IUiComponentDetailDto {
     bundleInfo?: UiComponentBundleInfoDto;
     stats?: UiComponentStatsDto;
     usage?: UiComponentUsageDto[] | undefined;
-    constructor(data?: IUiComponentDetailDto) {
+
+    constructor(data?: interfaces.IUiComponentDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16588,6 +17244,7 @@ export class UiComponentDetailDto implements IUiComponentDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -16623,12 +17280,14 @@ export class UiComponentDetailDto implements IUiComponentDetailDto {
             }
         }
     }
+
     static fromJS(data: any): UiComponentDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -16666,13 +17325,14 @@ export class UiComponentDetailDto implements IUiComponentDetailDto {
     }
 }
 
-export class UiComponentDetailDtoApiResponse implements IUiComponentDetailDtoApiResponse {
+export class UiComponentDetailDtoApiResponse implements interfaces.IUiComponentDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16680,6 +17340,7 @@ export class UiComponentDetailDtoApiResponse implements IUiComponentDetailDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -16693,12 +17354,14 @@ export class UiComponentDetailDtoApiResponse implements IUiComponentDetailDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -16714,7 +17377,7 @@ export class UiComponentDetailDtoApiResponse implements IUiComponentDetailDtoApi
     }
 }
 
-export class UiComponentDto implements IUiComponentDto {
+export class UiComponentDto implements interfaces.IUiComponentDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -16727,7 +17390,8 @@ export class UiComponentDto implements IUiComponentDto {
     schema?: any | undefined;
     status?: string | undefined;
     tags?: string[] | undefined;
-    constructor(data?: IUiComponentDto) {
+
+    constructor(data?: interfaces.IUiComponentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16735,6 +17399,7 @@ export class UiComponentDto implements IUiComponentDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -16755,12 +17420,14 @@ export class UiComponentDto implements IUiComponentDto {
             }
         }
     }
+
     static fromJS(data: any): UiComponentDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -16783,13 +17450,14 @@ export class UiComponentDto implements IUiComponentDto {
     }
 }
 
-export class UiComponentDtoApiResponse implements IUiComponentDtoApiResponse {
+export class UiComponentDtoApiResponse implements interfaces.IUiComponentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentDtoApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16797,6 +17465,7 @@ export class UiComponentDtoApiResponse implements IUiComponentDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -16810,12 +17479,14 @@ export class UiComponentDtoApiResponse implements IUiComponentDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -16831,7 +17502,7 @@ export class UiComponentDtoApiResponse implements IUiComponentDtoApiResponse {
     }
 }
 
-export class UiComponentListDto implements IUiComponentListDto {
+export class UiComponentListDto implements interfaces.IUiComponentListDto {
     id?: string | undefined;
     name?: string | undefined;
     description?: string | undefined;
@@ -16846,7 +17517,8 @@ export class UiComponentListDto implements IUiComponentListDto {
     status?: string | undefined;
     usageCount?: number;
     tags?: string[] | undefined;
-    constructor(data?: IUiComponentListDto) {
+
+    constructor(data?: interfaces.IUiComponentListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16854,6 +17526,7 @@ export class UiComponentListDto implements IUiComponentListDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -16876,12 +17549,14 @@ export class UiComponentListDto implements IUiComponentListDto {
             }
         }
     }
+
     static fromJS(data: any): UiComponentListDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentListDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -16906,13 +17581,14 @@ export class UiComponentListDto implements IUiComponentListDto {
     }
 }
 
-export class UiComponentListDtoListApiResponse implements IUiComponentListDtoListApiResponse {
+export class UiComponentListDtoListApiResponse implements interfaces.IUiComponentListDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentListDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentListDtoListApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentListDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16920,6 +17596,7 @@ export class UiComponentListDtoListApiResponse implements IUiComponentListDtoLis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -16937,12 +17614,14 @@ export class UiComponentListDtoListApiResponse implements IUiComponentListDtoLis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentListDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentListDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -16962,7 +17641,7 @@ export class UiComponentListDtoListApiResponse implements IUiComponentListDtoLis
     }
 }
 
-export class UiComponentListDtoPagedResponse implements IUiComponentListDtoPagedResponse {
+export class UiComponentListDtoPagedResponse implements interfaces.IUiComponentListDtoPagedResponse {
     items?: UiComponentListDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -16970,7 +17649,8 @@ export class UiComponentListDtoPagedResponse implements IUiComponentListDtoPaged
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IUiComponentListDtoPagedResponse) {
+
+    constructor(data?: interfaces.IUiComponentListDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16978,6 +17658,7 @@ export class UiComponentListDtoPagedResponse implements IUiComponentListDtoPaged
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -16993,12 +17674,14 @@ export class UiComponentListDtoPagedResponse implements IUiComponentListDtoPaged
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): UiComponentListDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentListDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -17016,13 +17699,14 @@ export class UiComponentListDtoPagedResponse implements IUiComponentListDtoPaged
     }
 }
 
-export class UiComponentListDtoPagedResponseApiResponse implements IUiComponentListDtoPagedResponseApiResponse {
+export class UiComponentListDtoPagedResponseApiResponse implements interfaces.IUiComponentListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentListDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentListDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentListDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17030,6 +17714,7 @@ export class UiComponentListDtoPagedResponseApiResponse implements IUiComponentL
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17043,12 +17728,14 @@ export class UiComponentListDtoPagedResponseApiResponse implements IUiComponentL
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentListDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentListDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17064,13 +17751,14 @@ export class UiComponentListDtoPagedResponseApiResponse implements IUiComponentL
     }
 }
 
-export class UiComponentMappingDto implements IUiComponentMappingDto {
+export class UiComponentMappingDto implements interfaces.IUiComponentMappingDto {
     componentId!: string;
     mappingName!: string;
     mappingConfiguration?: any | undefined;
     displayOrder?: number;
     isActive?: boolean;
-    constructor(data?: IUiComponentMappingDto) {
+
+    constructor(data?: interfaces.IUiComponentMappingDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17078,6 +17766,7 @@ export class UiComponentMappingDto implements IUiComponentMappingDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.componentId = _data["componentId"];
@@ -17087,12 +17776,14 @@ export class UiComponentMappingDto implements IUiComponentMappingDto {
             this.isActive = _data["isActive"];
         }
     }
+
     static fromJS(data: any): UiComponentMappingDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentMappingDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["componentId"] = this.componentId;
@@ -17104,7 +17795,7 @@ export class UiComponentMappingDto implements IUiComponentMappingDto {
     }
 }
 
-export class UiComponentRecommendationDto implements IUiComponentRecommendationDto {
+export class UiComponentRecommendationDto implements interfaces.IUiComponentRecommendationDto {
     componentId?: string | undefined;
     componentName?: string | undefined;
     componentType?: string | undefined;
@@ -17114,7 +17805,8 @@ export class UiComponentRecommendationDto implements IUiComponentRecommendationD
     compatibilityScore?: number;
     usageCount?: number;
     rating?: number;
-    constructor(data?: IUiComponentRecommendationDto) {
+
+    constructor(data?: interfaces.IUiComponentRecommendationDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17122,6 +17814,7 @@ export class UiComponentRecommendationDto implements IUiComponentRecommendationD
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.componentId = _data["componentId"];
@@ -17135,12 +17828,14 @@ export class UiComponentRecommendationDto implements IUiComponentRecommendationD
             this.rating = _data["rating"];
         }
     }
+
     static fromJS(data: any): UiComponentRecommendationDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentRecommendationDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["componentId"] = this.componentId;
@@ -17156,13 +17851,14 @@ export class UiComponentRecommendationDto implements IUiComponentRecommendationD
     }
 }
 
-export class UiComponentRecommendationDtoListApiResponse implements IUiComponentRecommendationDtoListApiResponse {
+export class UiComponentRecommendationDtoListApiResponse implements interfaces.IUiComponentRecommendationDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentRecommendationDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentRecommendationDtoListApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentRecommendationDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17170,6 +17866,7 @@ export class UiComponentRecommendationDtoListApiResponse implements IUiComponent
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17187,12 +17884,14 @@ export class UiComponentRecommendationDtoListApiResponse implements IUiComponent
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentRecommendationDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentRecommendationDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17212,13 +17911,14 @@ export class UiComponentRecommendationDtoListApiResponse implements IUiComponent
     }
 }
 
-export class UiComponentSchemaDto implements IUiComponentSchemaDto {
+export class UiComponentSchemaDto implements interfaces.IUiComponentSchemaDto {
     componentId?: string | undefined;
     schema?: any | undefined;
     lastUpdated?: Date;
     updatedBy?: string | undefined;
     isValid?: boolean;
-    constructor(data?: IUiComponentSchemaDto) {
+
+    constructor(data?: interfaces.IUiComponentSchemaDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17226,6 +17926,7 @@ export class UiComponentSchemaDto implements IUiComponentSchemaDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.componentId = _data["componentId"];
@@ -17235,12 +17936,14 @@ export class UiComponentSchemaDto implements IUiComponentSchemaDto {
             this.isValid = _data["isValid"];
         }
     }
+
     static fromJS(data: any): UiComponentSchemaDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentSchemaDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["componentId"] = this.componentId;
@@ -17252,13 +17955,14 @@ export class UiComponentSchemaDto implements IUiComponentSchemaDto {
     }
 }
 
-export class UiComponentSchemaDtoApiResponse implements IUiComponentSchemaDtoApiResponse {
+export class UiComponentSchemaDtoApiResponse implements interfaces.IUiComponentSchemaDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentSchemaDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentSchemaDtoApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentSchemaDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17266,6 +17970,7 @@ export class UiComponentSchemaDtoApiResponse implements IUiComponentSchemaDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17279,12 +17984,14 @@ export class UiComponentSchemaDtoApiResponse implements IUiComponentSchemaDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentSchemaDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentSchemaDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17300,9 +18007,10 @@ export class UiComponentSchemaDtoApiResponse implements IUiComponentSchemaDtoApi
     }
 }
 
-export class UiComponentSchemaUpdateDto implements IUiComponentSchemaUpdateDto {
+export class UiComponentSchemaUpdateDto implements interfaces.IUiComponentSchemaUpdateDto {
     schema!: any;
-    constructor(data?: IUiComponentSchemaUpdateDto) {
+
+    constructor(data?: interfaces.IUiComponentSchemaUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17310,17 +18018,20 @@ export class UiComponentSchemaUpdateDto implements IUiComponentSchemaUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.schema = _data["schema"];
         }
     }
+
     static fromJS(data: any): UiComponentSchemaUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentSchemaUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["schema"] = this.schema;
@@ -17328,7 +18039,7 @@ export class UiComponentSchemaUpdateDto implements IUiComponentSchemaUpdateDto {
     }
 }
 
-export class UiComponentSearchDto implements IUiComponentSearchDto {
+export class UiComponentSearchDto implements interfaces.IUiComponentSearchDto {
     name?: string | undefined;
     description?: string | undefined;
     type?: string | undefined;
@@ -17339,7 +18050,8 @@ export class UiComponentSearchDto implements IUiComponentSearchDto {
     tags?: string[] | undefined;
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
-    constructor(data?: IUiComponentSearchDto) {
+
+    constructor(data?: interfaces.IUiComponentSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17347,6 +18059,7 @@ export class UiComponentSearchDto implements IUiComponentSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -17365,12 +18078,14 @@ export class UiComponentSearchDto implements IUiComponentSearchDto {
             this.createdTo = _data["createdTo"] ? new Date(_data["createdTo"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -17391,14 +18106,15 @@ export class UiComponentSearchDto implements IUiComponentSearchDto {
     }
 }
 
-export class UiComponentStatsDto implements IUiComponentStatsDto {
+export class UiComponentStatsDto implements interfaces.IUiComponentStatsDto {
     totalUsage?: number;
     activeUsage?: number;
     lastUsed?: Date | undefined;
     averageRating?: number;
     ratingCount?: number;
     totalDownloads?: number;
-    constructor(data?: IUiComponentStatsDto) {
+
+    constructor(data?: interfaces.IUiComponentStatsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17406,6 +18122,7 @@ export class UiComponentStatsDto implements IUiComponentStatsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalUsage = _data["totalUsage"];
@@ -17416,12 +18133,14 @@ export class UiComponentStatsDto implements IUiComponentStatsDto {
             this.totalDownloads = _data["totalDownloads"];
         }
     }
+
     static fromJS(data: any): UiComponentStatsDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentStatsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalUsage"] = this.totalUsage;
@@ -17434,14 +18153,15 @@ export class UiComponentStatsDto implements IUiComponentStatsDto {
     }
 }
 
-export class UiComponentUpdateDto implements IUiComponentUpdateDto {
+export class UiComponentUpdateDto implements interfaces.IUiComponentUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     type?: string | undefined;
     configuration?: any | undefined;
     schema?: any | undefined;
     tags?: string[] | undefined;
-    constructor(data?: IUiComponentUpdateDto) {
+
+    constructor(data?: interfaces.IUiComponentUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17449,6 +18169,7 @@ export class UiComponentUpdateDto implements IUiComponentUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -17463,12 +18184,14 @@ export class UiComponentUpdateDto implements IUiComponentUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): UiComponentUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
@@ -17485,7 +18208,7 @@ export class UiComponentUpdateDto implements IUiComponentUpdateDto {
     }
 }
 
-export class UiComponentUsageDto implements IUiComponentUsageDto {
+export class UiComponentUsageDto implements interfaces.IUiComponentUsageDto {
     programId?: string | undefined;
     programName?: string | undefined;
     versionId?: string | undefined;
@@ -17494,7 +18217,8 @@ export class UiComponentUsageDto implements IUiComponentUsageDto {
     usedSince?: Date;
     isActive?: boolean;
     displayOrder?: number;
-    constructor(data?: IUiComponentUsageDto) {
+
+    constructor(data?: interfaces.IUiComponentUsageDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17502,6 +18226,7 @@ export class UiComponentUsageDto implements IUiComponentUsageDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -17514,12 +18239,14 @@ export class UiComponentUsageDto implements IUiComponentUsageDto {
             this.displayOrder = _data["displayOrder"];
         }
     }
+
     static fromJS(data: any): UiComponentUsageDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentUsageDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -17534,13 +18261,14 @@ export class UiComponentUsageDto implements IUiComponentUsageDto {
     }
 }
 
-export class UiComponentUsageDtoListApiResponse implements IUiComponentUsageDtoListApiResponse {
+export class UiComponentUsageDtoListApiResponse implements interfaces.IUiComponentUsageDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentUsageDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentUsageDtoListApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentUsageDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17548,6 +18276,7 @@ export class UiComponentUsageDtoListApiResponse implements IUiComponentUsageDtoL
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17565,12 +18294,14 @@ export class UiComponentUsageDtoListApiResponse implements IUiComponentUsageDtoL
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentUsageDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentUsageDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17590,12 +18321,13 @@ export class UiComponentUsageDtoListApiResponse implements IUiComponentUsageDtoL
     }
 }
 
-export class UiComponentValidationResult implements IUiComponentValidationResult {
+export class UiComponentValidationResult implements interfaces.IUiComponentValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestions?: UiComponentValidationSuggestionDto[] | undefined;
-    constructor(data?: IUiComponentValidationResult) {
+
+    constructor(data?: interfaces.IUiComponentValidationResult) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17603,6 +18335,7 @@ export class UiComponentValidationResult implements IUiComponentValidationResult
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isValid = _data["isValid"];
@@ -17623,12 +18356,14 @@ export class UiComponentValidationResult implements IUiComponentValidationResult
             }
         }
     }
+
     static fromJS(data: any): UiComponentValidationResult {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentValidationResult();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isValid"] = this.isValid;
@@ -17651,13 +18386,14 @@ export class UiComponentValidationResult implements IUiComponentValidationResult
     }
 }
 
-export class UiComponentValidationResultApiResponse implements IUiComponentValidationResultApiResponse {
+export class UiComponentValidationResultApiResponse implements interfaces.IUiComponentValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UiComponentValidationResult;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUiComponentValidationResultApiResponse) {
+
+    constructor(data?: interfaces.IUiComponentValidationResultApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17665,6 +18401,7 @@ export class UiComponentValidationResultApiResponse implements IUiComponentValid
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17678,12 +18415,14 @@ export class UiComponentValidationResultApiResponse implements IUiComponentValid
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UiComponentValidationResultApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentValidationResultApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17699,11 +18438,12 @@ export class UiComponentValidationResultApiResponse implements IUiComponentValid
     }
 }
 
-export class UiComponentValidationSuggestionDto implements IUiComponentValidationSuggestionDto {
+export class UiComponentValidationSuggestionDto implements interfaces.IUiComponentValidationSuggestionDto {
     type?: string | undefined;
     message?: string | undefined;
     suggestedValue?: string | undefined;
-    constructor(data?: IUiComponentValidationSuggestionDto) {
+
+    constructor(data?: interfaces.IUiComponentValidationSuggestionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17711,6 +18451,7 @@ export class UiComponentValidationSuggestionDto implements IUiComponentValidatio
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.type = _data["type"];
@@ -17718,12 +18459,14 @@ export class UiComponentValidationSuggestionDto implements IUiComponentValidatio
             this.suggestedValue = _data["suggestedValue"];
         }
     }
+
     static fromJS(data: any): UiComponentValidationSuggestionDto {
         data = typeof data === 'object' ? data : {};
         let result = new UiComponentValidationSuggestionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["type"] = this.type;
@@ -17733,7 +18476,7 @@ export class UiComponentValidationSuggestionDto implements IUiComponentValidatio
     }
 }
 
-export class UserDetailDto implements IUserDetailDto {
+export class UserDetailDto implements interfaces.IUserDetailDto {
     id?: string | undefined;
     email?: string | undefined;
     username?: string | undefined;
@@ -17748,7 +18491,8 @@ export class UserDetailDto implements IUserDetailDto {
     assignedClientIds?: string[] | undefined;
     modifiedDate?: Date | undefined;
     assignedClients?: ClientSummaryResponseDto[] | undefined;
-    constructor(data?: IUserDetailDto) {
+
+    constructor(data?: interfaces.IUserDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17756,6 +18500,7 @@ export class UserDetailDto implements IUserDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -17790,12 +18535,14 @@ export class UserDetailDto implements IUserDetailDto {
             }
         }
     }
+
     static fromJS(data: any): UserDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -17832,13 +18579,14 @@ export class UserDetailDto implements IUserDetailDto {
     }
 }
 
-export class UserDetailDtoApiResponse implements IUserDetailDtoApiResponse {
+export class UserDetailDtoApiResponse implements interfaces.IUserDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UserDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUserDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IUserDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17846,6 +18594,7 @@ export class UserDetailDtoApiResponse implements IUserDetailDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17859,12 +18608,14 @@ export class UserDetailDtoApiResponse implements IUserDetailDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UserDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17880,7 +18631,7 @@ export class UserDetailDtoApiResponse implements IUserDetailDtoApiResponse {
     }
 }
 
-export class UserDto implements IUserDto {
+export class UserDto implements interfaces.IUserDto {
     id?: string | undefined;
     email?: string | undefined;
     username?: string | undefined;
@@ -17891,7 +18642,8 @@ export class UserDto implements IUserDto {
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
     createdDate?: Date;
-    constructor(data?: IUserDto) {
+
+    constructor(data?: interfaces.IUserDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17899,6 +18651,7 @@ export class UserDto implements IUserDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -17917,12 +18670,14 @@ export class UserDto implements IUserDto {
             this.createdDate = _data["createdDate"] ? new Date(_data["createdDate"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -17943,13 +18698,14 @@ export class UserDto implements IUserDto {
     }
 }
 
-export class UserDtoApiResponse implements IUserDtoApiResponse {
+export class UserDtoApiResponse implements interfaces.IUserDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UserDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUserDtoApiResponse) {
+
+    constructor(data?: interfaces.IUserDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17957,6 +18713,7 @@ export class UserDtoApiResponse implements IUserDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -17970,12 +18727,14 @@ export class UserDtoApiResponse implements IUserDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UserDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -17991,7 +18750,7 @@ export class UserDtoApiResponse implements IUserDtoApiResponse {
     }
 }
 
-export class UserListDto implements IUserListDto {
+export class UserListDto implements interfaces.IUserListDto {
     id?: string | undefined;
     email?: string | undefined;
     username?: string | undefined;
@@ -17999,7 +18758,8 @@ export class UserListDto implements IUserListDto {
     roles?: string[] | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
-    constructor(data?: IUserListDto) {
+
+    constructor(data?: interfaces.IUserListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18007,6 +18767,7 @@ export class UserListDto implements IUserListDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -18022,12 +18783,14 @@ export class UserListDto implements IUserListDto {
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserListDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserListDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -18045,7 +18808,7 @@ export class UserListDto implements IUserListDto {
     }
 }
 
-export class UserListDtoPagedResponse implements IUserListDtoPagedResponse {
+export class UserListDtoPagedResponse implements interfaces.IUserListDtoPagedResponse {
     items?: UserListDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -18053,7 +18816,8 @@ export class UserListDtoPagedResponse implements IUserListDtoPagedResponse {
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IUserListDtoPagedResponse) {
+
+    constructor(data?: interfaces.IUserListDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18061,6 +18825,7 @@ export class UserListDtoPagedResponse implements IUserListDtoPagedResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -18076,12 +18841,14 @@ export class UserListDtoPagedResponse implements IUserListDtoPagedResponse {
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): UserListDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UserListDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -18099,13 +18866,14 @@ export class UserListDtoPagedResponse implements IUserListDtoPagedResponse {
     }
 }
 
-export class UserListDtoPagedResponseApiResponse implements IUserListDtoPagedResponseApiResponse {
+export class UserListDtoPagedResponseApiResponse implements interfaces.IUserListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UserListDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUserListDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IUserListDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18113,6 +18881,7 @@ export class UserListDtoPagedResponseApiResponse implements IUserListDtoPagedRes
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -18126,12 +18895,14 @@ export class UserListDtoPagedResponseApiResponse implements IUserListDtoPagedRes
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserListDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UserListDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -18147,11 +18918,12 @@ export class UserListDtoPagedResponseApiResponse implements IUserListDtoPagedRes
     }
 }
 
-export class UserLoginDto implements IUserLoginDto {
+export class UserLoginDto implements interfaces.IUserLoginDto {
     usernameOrEmail!: string;
     password!: string;
     rememberMe?: boolean;
-    constructor(data?: IUserLoginDto) {
+
+    constructor(data?: interfaces.IUserLoginDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18159,6 +18931,7 @@ export class UserLoginDto implements IUserLoginDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.usernameOrEmail = _data["usernameOrEmail"];
@@ -18166,12 +18939,14 @@ export class UserLoginDto implements IUserLoginDto {
             this.rememberMe = _data["rememberMe"];
         }
     }
+
     static fromJS(data: any): UserLoginDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserLoginDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["usernameOrEmail"] = this.usernameOrEmail;
@@ -18181,11 +18956,12 @@ export class UserLoginDto implements IUserLoginDto {
     }
 }
 
-export class UserPasswordChangeDto implements IUserPasswordChangeDto {
+export class UserPasswordChangeDto implements interfaces.IUserPasswordChangeDto {
     currentPassword!: string;
     newPassword!: string;
     confirmNewPassword!: string;
-    constructor(data?: IUserPasswordChangeDto) {
+
+    constructor(data?: interfaces.IUserPasswordChangeDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18193,6 +18969,7 @@ export class UserPasswordChangeDto implements IUserPasswordChangeDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.currentPassword = _data["currentPassword"];
@@ -18200,12 +18977,14 @@ export class UserPasswordChangeDto implements IUserPasswordChangeDto {
             this.confirmNewPassword = _data["confirmNewPassword"];
         }
     }
+
     static fromJS(data: any): UserPasswordChangeDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserPasswordChangeDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["currentPassword"] = this.currentPassword;
@@ -18215,11 +18994,12 @@ export class UserPasswordChangeDto implements IUserPasswordChangeDto {
     }
 }
 
-export class UserPasswordResetDto implements IUserPasswordResetDto {
+export class UserPasswordResetDto implements interfaces.IUserPasswordResetDto {
     resetToken!: string;
     newPassword!: string;
     confirmNewPassword!: string;
-    constructor(data?: IUserPasswordResetDto) {
+
+    constructor(data?: interfaces.IUserPasswordResetDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18227,6 +19007,7 @@ export class UserPasswordResetDto implements IUserPasswordResetDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.resetToken = _data["resetToken"];
@@ -18234,12 +19015,14 @@ export class UserPasswordResetDto implements IUserPasswordResetDto {
             this.confirmNewPassword = _data["confirmNewPassword"];
         }
     }
+
     static fromJS(data: any): UserPasswordResetDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserPasswordResetDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["resetToken"] = this.resetToken;
@@ -18249,9 +19032,10 @@ export class UserPasswordResetDto implements IUserPasswordResetDto {
     }
 }
 
-export class UserPasswordResetRequestDto implements IUserPasswordResetRequestDto {
+export class UserPasswordResetRequestDto implements interfaces.IUserPasswordResetRequestDto {
     email!: string;
-    constructor(data?: IUserPasswordResetRequestDto) {
+
+    constructor(data?: interfaces.IUserPasswordResetRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18259,17 +19043,20 @@ export class UserPasswordResetRequestDto implements IUserPasswordResetRequestDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.email = _data["email"];
         }
     }
+
     static fromJS(data: any): UserPasswordResetRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserPasswordResetRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["email"] = this.email;
@@ -18277,10 +19064,11 @@ export class UserPasswordResetRequestDto implements IUserPasswordResetRequestDto
     }
 }
 
-export class UserPermissionUpdateDto implements IUserPermissionUpdateDto {
+export class UserPermissionUpdateDto implements interfaces.IUserPermissionUpdateDto {
     userId!: string;
     permissions!: string[];
-    constructor(data?: IUserPermissionUpdateDto) {
+
+    constructor(data?: interfaces.IUserPermissionUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18291,6 +19079,7 @@ export class UserPermissionUpdateDto implements IUserPermissionUpdateDto {
             this.permissions = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.userId = _data["userId"];
@@ -18301,12 +19090,14 @@ export class UserPermissionUpdateDto implements IUserPermissionUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): UserPermissionUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserPermissionUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
@@ -18319,14 +19110,15 @@ export class UserPermissionUpdateDto implements IUserPermissionUpdateDto {
     }
 }
 
-export class UserProfileDto implements IUserProfileDto {
+export class UserProfileDto implements interfaces.IUserProfileDto {
     id?: string | undefined;
     username?: string | undefined;
     fullName?: string | undefined;
     roles?: string[] | undefined;
     createdDate?: Date;
     lastLoginDate?: Date | undefined;
-    constructor(data?: IUserProfileDto) {
+
+    constructor(data?: interfaces.IUserProfileDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18334,6 +19126,7 @@ export class UserProfileDto implements IUserProfileDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -18348,12 +19141,14 @@ export class UserProfileDto implements IUserProfileDto {
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserProfileDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserProfileDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -18370,13 +19165,14 @@ export class UserProfileDto implements IUserProfileDto {
     }
 }
 
-export class UserProfileDtoApiResponse implements IUserProfileDtoApiResponse {
+export class UserProfileDtoApiResponse implements interfaces.IUserProfileDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: UserProfileDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IUserProfileDtoApiResponse) {
+
+    constructor(data?: interfaces.IUserProfileDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18384,6 +19180,7 @@ export class UserProfileDtoApiResponse implements IUserProfileDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -18397,12 +19194,14 @@ export class UserProfileDtoApiResponse implements IUserProfileDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserProfileDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new UserProfileDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -18418,14 +19217,15 @@ export class UserProfileDtoApiResponse implements IUserProfileDtoApiResponse {
     }
 }
 
-export class UserRegisterDto implements IUserRegisterDto {
+export class UserRegisterDto implements interfaces.IUserRegisterDto {
     email!: string;
     username!: string;
     password!: string;
     confirmPassword!: string;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    constructor(data?: IUserRegisterDto) {
+
+    constructor(data?: interfaces.IUserRegisterDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18433,6 +19233,7 @@ export class UserRegisterDto implements IUserRegisterDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.email = _data["email"];
@@ -18443,12 +19244,14 @@ export class UserRegisterDto implements IUserRegisterDto {
             this.lastName = _data["lastName"];
         }
     }
+
     static fromJS(data: any): UserRegisterDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserRegisterDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["email"] = this.email;
@@ -18461,9 +19264,10 @@ export class UserRegisterDto implements IUserRegisterDto {
     }
 }
 
-export class UserRoleUpdateDto implements IUserRoleUpdateDto {
+export class UserRoleUpdateDto implements interfaces.IUserRoleUpdateDto {
     roles!: string[];
-    constructor(data?: IUserRoleUpdateDto) {
+
+    constructor(data?: interfaces.IUserRoleUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18474,6 +19278,7 @@ export class UserRoleUpdateDto implements IUserRoleUpdateDto {
             this.roles = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["roles"])) {
@@ -18483,12 +19288,14 @@ export class UserRoleUpdateDto implements IUserRoleUpdateDto {
             }
         }
     }
+
     static fromJS(data: any): UserRoleUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserRoleUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.roles)) {
@@ -18500,7 +19307,7 @@ export class UserRoleUpdateDto implements IUserRoleUpdateDto {
     }
 }
 
-export class UserSearchDto implements IUserSearchDto {
+export class UserSearchDto implements interfaces.IUserSearchDto {
     email?: string | undefined;
     username?: string | undefined;
     firstName?: string | undefined;
@@ -18511,7 +19318,8 @@ export class UserSearchDto implements IUserSearchDto {
     createdTo?: Date | undefined;
     lastLoginFrom?: Date | undefined;
     lastLoginTo?: Date | undefined;
-    constructor(data?: IUserSearchDto) {
+
+    constructor(data?: interfaces.IUserSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18519,6 +19327,7 @@ export class UserSearchDto implements IUserSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.email = _data["email"];
@@ -18537,12 +19346,14 @@ export class UserSearchDto implements IUserSearchDto {
             this.lastLoginTo = _data["lastLoginTo"] ? new Date(_data["lastLoginTo"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): UserSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["email"] = this.email;
@@ -18563,11 +19374,12 @@ export class UserSearchDto implements IUserSearchDto {
     }
 }
 
-export class UserUpdateDto implements IUserUpdateDto {
+export class UserUpdateDto implements interfaces.IUserUpdateDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     email?: string | undefined;
-    constructor(data?: IUserUpdateDto) {
+
+    constructor(data?: interfaces.IUserUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18575,6 +19387,7 @@ export class UserUpdateDto implements IUserUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.firstName = _data["firstName"];
@@ -18582,12 +19395,14 @@ export class UserUpdateDto implements IUserUpdateDto {
             this.email = _data["email"];
         }
     }
+
     static fromJS(data: any): UserUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new UserUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["firstName"] = this.firstName;
@@ -18597,13 +19412,14 @@ export class UserUpdateDto implements IUserUpdateDto {
     }
 }
 
-export class VersionActivityDto implements IVersionActivityDto {
+export class VersionActivityDto implements interfaces.IVersionActivityDto {
     date?: Date;
     activity?: string | undefined;
     userId?: string | undefined;
     userName?: string | undefined;
     description?: string | undefined;
-    constructor(data?: IVersionActivityDto) {
+
+    constructor(data?: interfaces.IVersionActivityDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18611,6 +19427,7 @@ export class VersionActivityDto implements IVersionActivityDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
@@ -18620,12 +19437,14 @@ export class VersionActivityDto implements IVersionActivityDto {
             this.description = _data["description"];
         }
     }
+
     static fromJS(data: any): VersionActivityDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionActivityDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -18637,13 +19456,14 @@ export class VersionActivityDto implements IVersionActivityDto {
     }
 }
 
-export class VersionActivityDtoListApiResponse implements IVersionActivityDtoListApiResponse {
+export class VersionActivityDtoListApiResponse implements interfaces.IVersionActivityDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionActivityDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionActivityDtoListApiResponse) {
+
+    constructor(data?: interfaces.IVersionActivityDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18651,6 +19471,7 @@ export class VersionActivityDtoListApiResponse implements IVersionActivityDtoLis
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -18668,12 +19489,14 @@ export class VersionActivityDtoListApiResponse implements IVersionActivityDtoLis
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionActivityDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionActivityDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -18693,12 +19516,13 @@ export class VersionActivityDtoListApiResponse implements IVersionActivityDtoLis
     }
 }
 
-export class VersionChangeDto implements IVersionChangeDto {
+export class VersionChangeDto implements interfaces.IVersionChangeDto {
     path?: string | undefined;
     action?: string | undefined;
     description?: string | undefined;
     impactLevel?: number;
-    constructor(data?: IVersionChangeDto) {
+
+    constructor(data?: interfaces.IVersionChangeDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18706,6 +19530,7 @@ export class VersionChangeDto implements IVersionChangeDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -18714,12 +19539,14 @@ export class VersionChangeDto implements IVersionChangeDto {
             this.impactLevel = _data["impactLevel"];
         }
     }
+
     static fromJS(data: any): VersionChangeDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionChangeDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -18730,13 +19557,14 @@ export class VersionChangeDto implements IVersionChangeDto {
     }
 }
 
-export class VersionChangeDtoListApiResponse implements IVersionChangeDtoListApiResponse {
+export class VersionChangeDtoListApiResponse implements interfaces.IVersionChangeDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionChangeDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionChangeDtoListApiResponse) {
+
+    constructor(data?: interfaces.IVersionChangeDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18744,6 +19572,7 @@ export class VersionChangeDtoListApiResponse implements IVersionChangeDtoListApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -18761,12 +19590,14 @@ export class VersionChangeDtoListApiResponse implements IVersionChangeDtoListApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionChangeDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionChangeDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -18786,10 +19617,11 @@ export class VersionChangeDtoListApiResponse implements IVersionChangeDtoListApi
     }
 }
 
-export class VersionCommitDto implements IVersionCommitDto {
+export class VersionCommitDto implements interfaces.IVersionCommitDto {
     commitMessage!: string;
     changes!: VersionFileChangeDto[];
-    constructor(data?: IVersionCommitDto) {
+
+    constructor(data?: interfaces.IVersionCommitDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18800,6 +19632,7 @@ export class VersionCommitDto implements IVersionCommitDto {
             this.changes = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.commitMessage = _data["commitMessage"];
@@ -18810,12 +19643,14 @@ export class VersionCommitDto implements IVersionCommitDto {
             }
         }
     }
+
     static fromJS(data: any): VersionCommitDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionCommitDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["commitMessage"] = this.commitMessage;
@@ -18828,9 +19663,10 @@ export class VersionCommitDto implements IVersionCommitDto {
     }
 }
 
-export class VersionCommitValidationDto implements IVersionCommitValidationDto {
+export class VersionCommitValidationDto implements interfaces.IVersionCommitValidationDto {
     changes!: VersionFileChangeDto[];
-    constructor(data?: IVersionCommitValidationDto) {
+
+    constructor(data?: interfaces.IVersionCommitValidationDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18841,6 +19677,7 @@ export class VersionCommitValidationDto implements IVersionCommitValidationDto {
             this.changes = [];
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["changes"])) {
@@ -18850,12 +19687,14 @@ export class VersionCommitValidationDto implements IVersionCommitValidationDto {
             }
         }
     }
+
     static fromJS(data: any): VersionCommitValidationDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionCommitValidationDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.changes)) {
@@ -18867,11 +19706,12 @@ export class VersionCommitValidationDto implements IVersionCommitValidationDto {
     }
 }
 
-export class VersionCreateDto implements IVersionCreateDto {
+export class VersionCreateDto implements interfaces.IVersionCreateDto {
     programId!: string;
     commitMessage!: string;
     files?: VersionFileCreateDto[] | undefined;
-    constructor(data?: IVersionCreateDto) {
+
+    constructor(data?: interfaces.IVersionCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18879,6 +19719,7 @@ export class VersionCreateDto implements IVersionCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -18890,12 +19731,14 @@ export class VersionCreateDto implements IVersionCreateDto {
             }
         }
     }
+
     static fromJS(data: any): VersionCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -18909,7 +19752,7 @@ export class VersionCreateDto implements IVersionCreateDto {
     }
 }
 
-export class VersionDeploymentDto implements IVersionDeploymentDto {
+export class VersionDeploymentDto implements interfaces.IVersionDeploymentDto {
     id?: string | undefined;
     versionId?: string | undefined;
     status?: string | undefined;
@@ -18917,7 +19760,8 @@ export class VersionDeploymentDto implements IVersionDeploymentDto {
     deployedBy?: string | undefined;
     targetEnvironments?: string[] | undefined;
     configuration?: { [key: string]: any; } | undefined;
-    constructor(data?: IVersionDeploymentDto) {
+
+    constructor(data?: interfaces.IVersionDeploymentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18925,6 +19769,7 @@ export class VersionDeploymentDto implements IVersionDeploymentDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -18946,12 +19791,14 @@ export class VersionDeploymentDto implements IVersionDeploymentDto {
             }
         }
     }
+
     static fromJS(data: any): VersionDeploymentDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDeploymentDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -18975,13 +19822,14 @@ export class VersionDeploymentDto implements IVersionDeploymentDto {
     }
 }
 
-export class VersionDeploymentDtoApiResponse implements IVersionDeploymentDtoApiResponse {
+export class VersionDeploymentDtoApiResponse implements interfaces.IVersionDeploymentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionDeploymentDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionDeploymentDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionDeploymentDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18989,6 +19837,7 @@ export class VersionDeploymentDtoApiResponse implements IVersionDeploymentDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -19002,12 +19851,14 @@ export class VersionDeploymentDtoApiResponse implements IVersionDeploymentDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionDeploymentDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDeploymentDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -19023,12 +19874,13 @@ export class VersionDeploymentDtoApiResponse implements IVersionDeploymentDtoApi
     }
 }
 
-export class VersionDeploymentInfoDto implements IVersionDeploymentInfoDto {
+export class VersionDeploymentInfoDto implements interfaces.IVersionDeploymentInfoDto {
     isDeployed?: boolean;
     lastDeployment?: Date | undefined;
     deploymentStatus?: string | undefined;
     environments?: string[] | undefined;
-    constructor(data?: IVersionDeploymentInfoDto) {
+
+    constructor(data?: interfaces.IVersionDeploymentInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19036,6 +19888,7 @@ export class VersionDeploymentInfoDto implements IVersionDeploymentInfoDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.isDeployed = _data["isDeployed"];
@@ -19048,12 +19901,14 @@ export class VersionDeploymentInfoDto implements IVersionDeploymentInfoDto {
             }
         }
     }
+
     static fromJS(data: any): VersionDeploymentInfoDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDeploymentInfoDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isDeployed"] = this.isDeployed;
@@ -19068,11 +19923,12 @@ export class VersionDeploymentInfoDto implements IVersionDeploymentInfoDto {
     }
 }
 
-export class VersionDeploymentRequestDto implements IVersionDeploymentRequestDto {
+export class VersionDeploymentRequestDto implements interfaces.IVersionDeploymentRequestDto {
     deploymentConfiguration?: { [key: string]: any; } | undefined;
     targetEnvironments?: string[] | undefined;
     setAsCurrent?: boolean;
-    constructor(data?: IVersionDeploymentRequestDto) {
+
+    constructor(data?: interfaces.IVersionDeploymentRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19080,6 +19936,7 @@ export class VersionDeploymentRequestDto implements IVersionDeploymentRequestDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (_data["deploymentConfiguration"]) {
@@ -19097,12 +19954,14 @@ export class VersionDeploymentRequestDto implements IVersionDeploymentRequestDto
             this.setAsCurrent = _data["setAsCurrent"];
         }
     }
+
     static fromJS(data: any): VersionDeploymentRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDeploymentRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (this.deploymentConfiguration) {
@@ -19122,7 +19981,7 @@ export class VersionDeploymentRequestDto implements IVersionDeploymentRequestDto
     }
 }
 
-export class VersionDetailDto implements IVersionDetailDto {
+export class VersionDetailDto implements interfaces.IVersionDetailDto {
     id?: string | undefined;
     programId?: string | undefined;
     versionNumber?: number;
@@ -19139,7 +19998,8 @@ export class VersionDetailDto implements IVersionDetailDto {
     files?: VersionFileDto[] | undefined;
     stats?: VersionStatsDto;
     deploymentInfo?: VersionDeploymentInfoDto;
-    constructor(data?: IVersionDetailDto) {
+
+    constructor(data?: interfaces.IVersionDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19147,6 +20007,7 @@ export class VersionDetailDto implements IVersionDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -19171,12 +20032,14 @@ export class VersionDetailDto implements IVersionDetailDto {
             this.deploymentInfo = _data["deploymentInfo"] ? VersionDeploymentInfoDto.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -19203,13 +20066,14 @@ export class VersionDetailDto implements IVersionDetailDto {
     }
 }
 
-export class VersionDetailDtoApiResponse implements IVersionDetailDtoApiResponse {
+export class VersionDetailDtoApiResponse implements interfaces.IVersionDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19217,6 +20081,7 @@ export class VersionDetailDtoApiResponse implements IVersionDetailDtoApiResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -19230,12 +20095,14 @@ export class VersionDetailDtoApiResponse implements IVersionDetailDtoApiResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -19251,14 +20118,15 @@ export class VersionDetailDtoApiResponse implements IVersionDetailDtoApiResponse
     }
 }
 
-export class VersionDiffDto implements IVersionDiffDto {
+export class VersionDiffDto implements interfaces.IVersionDiffDto {
     fromVersionId?: string | undefined;
     toVersionId?: string | undefined;
     fromVersionNumber?: number;
     toVersionNumber?: number;
     changes?: VersionFileChangeSummaryDto[] | undefined;
     stats?: VersionDiffStatsDto;
-    constructor(data?: IVersionDiffDto) {
+
+    constructor(data?: interfaces.IVersionDiffDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19266,6 +20134,7 @@ export class VersionDiffDto implements IVersionDiffDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.fromVersionId = _data["fromVersionId"];
@@ -19280,12 +20149,14 @@ export class VersionDiffDto implements IVersionDiffDto {
             this.stats = _data["stats"] ? VersionDiffStatsDto.fromJS(_data["stats"]) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionDiffDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDiffDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["fromVersionId"] = this.fromVersionId;
@@ -19302,13 +20173,14 @@ export class VersionDiffDto implements IVersionDiffDto {
     }
 }
 
-export class VersionDiffDtoApiResponse implements IVersionDiffDtoApiResponse {
+export class VersionDiffDtoApiResponse implements interfaces.IVersionDiffDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionDiffDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionDiffDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionDiffDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19316,6 +20188,7 @@ export class VersionDiffDtoApiResponse implements IVersionDiffDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -19329,12 +20202,14 @@ export class VersionDiffDtoApiResponse implements IVersionDiffDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionDiffDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDiffDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -19350,13 +20225,14 @@ export class VersionDiffDtoApiResponse implements IVersionDiffDtoApiResponse {
     }
 }
 
-export class VersionDiffStatsDto implements IVersionDiffStatsDto {
+export class VersionDiffStatsDto implements interfaces.IVersionDiffStatsDto {
     filesChanged?: number;
     filesAdded?: number;
     filesDeleted?: number;
     totalLinesAdded?: number;
     totalLinesRemoved?: number;
-    constructor(data?: IVersionDiffStatsDto) {
+
+    constructor(data?: interfaces.IVersionDiffStatsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19364,6 +20240,7 @@ export class VersionDiffStatsDto implements IVersionDiffStatsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.filesChanged = _data["filesChanged"];
@@ -19373,12 +20250,14 @@ export class VersionDiffStatsDto implements IVersionDiffStatsDto {
             this.totalLinesRemoved = _data["totalLinesRemoved"];
         }
     }
+
     static fromJS(data: any): VersionDiffStatsDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDiffStatsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["filesChanged"] = this.filesChanged;
@@ -19390,7 +20269,7 @@ export class VersionDiffStatsDto implements IVersionDiffStatsDto {
     }
 }
 
-export class VersionDto implements IVersionDto {
+export class VersionDto implements interfaces.IVersionDto {
     id?: string | undefined;
     programId?: string | undefined;
     versionNumber?: number;
@@ -19401,7 +20280,8 @@ export class VersionDto implements IVersionDto {
     reviewer?: string | undefined;
     reviewedAt?: Date | undefined;
     reviewComments?: string | undefined;
-    constructor(data?: IVersionDto) {
+
+    constructor(data?: interfaces.IVersionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19409,6 +20289,7 @@ export class VersionDto implements IVersionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -19423,12 +20304,14 @@ export class VersionDto implements IVersionDto {
             this.reviewComments = _data["reviewComments"];
         }
     }
+
     static fromJS(data: any): VersionDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -19445,13 +20328,14 @@ export class VersionDto implements IVersionDto {
     }
 }
 
-export class VersionDtoApiResponse implements IVersionDtoApiResponse {
+export class VersionDtoApiResponse implements interfaces.IVersionDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19459,6 +20343,7 @@ export class VersionDtoApiResponse implements IVersionDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -19472,12 +20357,14 @@ export class VersionDtoApiResponse implements IVersionDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -19493,13 +20380,14 @@ export class VersionDtoApiResponse implements IVersionDtoApiResponse {
     }
 }
 
-export class VersionExecutionRequestDto implements IVersionExecutionRequestDto {
+export class VersionExecutionRequestDto implements interfaces.IVersionExecutionRequestDto {
     parameters?: any | undefined;
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
     timeoutMinutes?: number;
-    constructor(data?: IVersionExecutionRequestDto) {
+
+    constructor(data?: interfaces.IVersionExecutionRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19507,6 +20395,7 @@ export class VersionExecutionRequestDto implements IVersionExecutionRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.parameters = _data["parameters"];
@@ -19522,12 +20411,14 @@ export class VersionExecutionRequestDto implements IVersionExecutionRequestDto {
             this.timeoutMinutes = _data["timeoutMinutes"];
         }
     }
+
     static fromJS(data: any): VersionExecutionRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionExecutionRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["parameters"] = this.parameters;
@@ -19545,12 +20436,13 @@ export class VersionExecutionRequestDto implements IVersionExecutionRequestDto {
     }
 }
 
-export class VersionFileChangeDto implements IVersionFileChangeDto {
+export class VersionFileChangeDto implements interfaces.IVersionFileChangeDto {
     path!: string;
     action!: string;
     content?: string | undefined;
     contentType?: string | undefined;
-    constructor(data?: IVersionFileChangeDto) {
+
+    constructor(data?: interfaces.IVersionFileChangeDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19558,6 +20450,7 @@ export class VersionFileChangeDto implements IVersionFileChangeDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -19566,12 +20459,14 @@ export class VersionFileChangeDto implements IVersionFileChangeDto {
             this.contentType = _data["contentType"];
         }
     }
+
     static fromJS(data: any): VersionFileChangeDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileChangeDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -19582,14 +20477,15 @@ export class VersionFileChangeDto implements IVersionFileChangeDto {
     }
 }
 
-export class VersionFileChangeSummaryDto implements IVersionFileChangeSummaryDto {
+export class VersionFileChangeSummaryDto implements interfaces.IVersionFileChangeSummaryDto {
     path?: string | undefined;
     action?: string | undefined;
     linesAdded?: number;
     linesRemoved?: number;
     sizeBefore?: number;
     sizeAfter?: number;
-    constructor(data?: IVersionFileChangeSummaryDto) {
+
+    constructor(data?: interfaces.IVersionFileChangeSummaryDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19597,6 +20493,7 @@ export class VersionFileChangeSummaryDto implements IVersionFileChangeSummaryDto
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -19607,12 +20504,14 @@ export class VersionFileChangeSummaryDto implements IVersionFileChangeSummaryDto
             this.sizeAfter = _data["sizeAfter"];
         }
     }
+
     static fromJS(data: any): VersionFileChangeSummaryDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileChangeSummaryDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -19625,12 +20524,13 @@ export class VersionFileChangeSummaryDto implements IVersionFileChangeSummaryDto
     }
 }
 
-export class VersionFileCreateDto implements IVersionFileCreateDto {
+export class VersionFileCreateDto implements interfaces.IVersionFileCreateDto {
     path!: string;
     content!: string;
     contentType?: string | undefined;
     fileType?: string | undefined;
-    constructor(data?: IVersionFileCreateDto) {
+
+    constructor(data?: interfaces.IVersionFileCreateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19638,6 +20538,7 @@ export class VersionFileCreateDto implements IVersionFileCreateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -19646,12 +20547,14 @@ export class VersionFileCreateDto implements IVersionFileCreateDto {
             this.fileType = _data["fileType"];
         }
     }
+
     static fromJS(data: any): VersionFileCreateDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileCreateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -19662,7 +20565,7 @@ export class VersionFileCreateDto implements IVersionFileCreateDto {
     }
 }
 
-export class VersionFileDetailDto implements IVersionFileDetailDto {
+export class VersionFileDetailDto implements interfaces.IVersionFileDetailDto {
     path?: string | undefined;
     storageKey?: string | undefined;
     hash?: string | undefined;
@@ -19671,7 +20574,8 @@ export class VersionFileDetailDto implements IVersionFileDetailDto {
     contentType?: string | undefined;
     content?: string | undefined;
     lastModified?: Date;
-    constructor(data?: IVersionFileDetailDto) {
+
+    constructor(data?: interfaces.IVersionFileDetailDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19679,6 +20583,7 @@ export class VersionFileDetailDto implements IVersionFileDetailDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -19691,12 +20596,14 @@ export class VersionFileDetailDto implements IVersionFileDetailDto {
             this.lastModified = _data["lastModified"] ? new Date(_data["lastModified"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionFileDetailDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileDetailDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -19711,13 +20618,14 @@ export class VersionFileDetailDto implements IVersionFileDetailDto {
     }
 }
 
-export class VersionFileDetailDtoApiResponse implements IVersionFileDetailDtoApiResponse {
+export class VersionFileDetailDtoApiResponse implements interfaces.IVersionFileDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionFileDetailDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionFileDetailDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionFileDetailDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19725,6 +20633,7 @@ export class VersionFileDetailDtoApiResponse implements IVersionFileDetailDtoApi
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -19738,12 +20647,14 @@ export class VersionFileDetailDtoApiResponse implements IVersionFileDetailDtoApi
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionFileDetailDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileDetailDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -19759,14 +20670,15 @@ export class VersionFileDetailDtoApiResponse implements IVersionFileDetailDtoApi
     }
 }
 
-export class VersionFileDto implements IVersionFileDto {
+export class VersionFileDto implements interfaces.IVersionFileDto {
     path?: string | undefined;
     storageKey?: string | undefined;
     hash?: string | undefined;
     size?: number;
     fileType?: string | undefined;
     contentType?: string | undefined;
-    constructor(data?: IVersionFileDto) {
+
+    constructor(data?: interfaces.IVersionFileDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19774,6 +20686,7 @@ export class VersionFileDto implements IVersionFileDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.path = _data["path"];
@@ -19784,12 +20697,14 @@ export class VersionFileDto implements IVersionFileDto {
             this.contentType = _data["contentType"];
         }
     }
+
     static fromJS(data: any): VersionFileDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["path"] = this.path;
@@ -19802,13 +20717,14 @@ export class VersionFileDto implements IVersionFileDto {
     }
 }
 
-export class VersionFileDtoListApiResponse implements IVersionFileDtoListApiResponse {
+export class VersionFileDtoListApiResponse implements interfaces.IVersionFileDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionFileDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionFileDtoListApiResponse) {
+
+    constructor(data?: interfaces.IVersionFileDtoListApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19816,6 +20732,7 @@ export class VersionFileDtoListApiResponse implements IVersionFileDtoListApiResp
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -19833,12 +20750,14 @@ export class VersionFileDtoListApiResponse implements IVersionFileDtoListApiResp
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionFileDtoListApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileDtoListApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -19858,11 +20777,12 @@ export class VersionFileDtoListApiResponse implements IVersionFileDtoListApiResp
     }
 }
 
-export class VersionFileUpdateDto implements IVersionFileUpdateDto {
+export class VersionFileUpdateDto implements interfaces.IVersionFileUpdateDto {
     content!: string;
     contentType?: string | undefined;
     fileType?: string | undefined;
-    constructor(data?: IVersionFileUpdateDto) {
+
+    constructor(data?: interfaces.IVersionFileUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19870,6 +20790,7 @@ export class VersionFileUpdateDto implements IVersionFileUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.content = _data["content"];
@@ -19877,12 +20798,14 @@ export class VersionFileUpdateDto implements IVersionFileUpdateDto {
             this.fileType = _data["fileType"];
         }
     }
+
     static fromJS(data: any): VersionFileUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionFileUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["content"] = this.content;
@@ -19892,7 +20815,7 @@ export class VersionFileUpdateDto implements IVersionFileUpdateDto {
     }
 }
 
-export class VersionListDto implements IVersionListDto {
+export class VersionListDto implements interfaces.IVersionListDto {
     id?: string | undefined;
     programId?: string | undefined;
     programName?: string | undefined;
@@ -19907,7 +20830,8 @@ export class VersionListDto implements IVersionListDto {
     reviewedAt?: Date | undefined;
     fileCount?: number;
     isCurrent?: boolean;
-    constructor(data?: IVersionListDto) {
+
+    constructor(data?: interfaces.IVersionListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19915,6 +20839,7 @@ export class VersionListDto implements IVersionListDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -19933,12 +20858,14 @@ export class VersionListDto implements IVersionListDto {
             this.isCurrent = _data["isCurrent"];
         }
     }
+
     static fromJS(data: any): VersionListDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionListDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -19959,7 +20886,7 @@ export class VersionListDto implements IVersionListDto {
     }
 }
 
-export class VersionListDtoPagedResponse implements IVersionListDtoPagedResponse {
+export class VersionListDtoPagedResponse implements interfaces.IVersionListDtoPagedResponse {
     items?: VersionListDto[] | undefined;
     pageNumber?: number;
     pageSize?: number;
@@ -19967,7 +20894,8 @@ export class VersionListDtoPagedResponse implements IVersionListDtoPagedResponse
     totalCount?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
-    constructor(data?: IVersionListDtoPagedResponse) {
+
+    constructor(data?: interfaces.IVersionListDtoPagedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19975,6 +20903,7 @@ export class VersionListDtoPagedResponse implements IVersionListDtoPagedResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["items"])) {
@@ -19990,12 +20919,14 @@ export class VersionListDtoPagedResponse implements IVersionListDtoPagedResponse
             (<any>this).hasNextPage = _data["hasNextPage"];
         }
     }
+
     static fromJS(data: any): VersionListDtoPagedResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionListDtoPagedResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.items)) {
@@ -20013,13 +20944,14 @@ export class VersionListDtoPagedResponse implements IVersionListDtoPagedResponse
     }
 }
 
-export class VersionListDtoPagedResponseApiResponse implements IVersionListDtoPagedResponseApiResponse {
+export class VersionListDtoPagedResponseApiResponse implements interfaces.IVersionListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionListDtoPagedResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionListDtoPagedResponseApiResponse) {
+
+    constructor(data?: interfaces.IVersionListDtoPagedResponseApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20027,6 +20959,7 @@ export class VersionListDtoPagedResponseApiResponse implements IVersionListDtoPa
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -20040,12 +20973,14 @@ export class VersionListDtoPagedResponseApiResponse implements IVersionListDtoPa
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionListDtoPagedResponseApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionListDtoPagedResponseApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -20061,7 +20996,7 @@ export class VersionListDtoPagedResponseApiResponse implements IVersionListDtoPa
     }
 }
 
-export class VersionReviewDto implements IVersionReviewDto {
+export class VersionReviewDto implements interfaces.IVersionReviewDto {
     id?: string | undefined;
     versionId?: string | undefined;
     status?: string | undefined;
@@ -20069,7 +21004,8 @@ export class VersionReviewDto implements IVersionReviewDto {
     reviewedBy?: string | undefined;
     reviewedByName?: string | undefined;
     reviewedAt?: Date;
-    constructor(data?: IVersionReviewDto) {
+
+    constructor(data?: interfaces.IVersionReviewDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20077,6 +21013,7 @@ export class VersionReviewDto implements IVersionReviewDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -20088,12 +21025,14 @@ export class VersionReviewDto implements IVersionReviewDto {
             this.reviewedAt = _data["reviewedAt"] ? new Date(_data["reviewedAt"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionReviewDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionReviewDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
@@ -20107,13 +21046,14 @@ export class VersionReviewDto implements IVersionReviewDto {
     }
 }
 
-export class VersionReviewDtoApiResponse implements IVersionReviewDtoApiResponse {
+export class VersionReviewDtoApiResponse implements interfaces.IVersionReviewDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionReviewDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionReviewDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionReviewDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20121,6 +21061,7 @@ export class VersionReviewDtoApiResponse implements IVersionReviewDtoApiResponse
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -20134,12 +21075,14 @@ export class VersionReviewDtoApiResponse implements IVersionReviewDtoApiResponse
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionReviewDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionReviewDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -20155,10 +21098,11 @@ export class VersionReviewDtoApiResponse implements IVersionReviewDtoApiResponse
     }
 }
 
-export class VersionReviewSubmissionDto implements IVersionReviewSubmissionDto {
+export class VersionReviewSubmissionDto implements interfaces.IVersionReviewSubmissionDto {
     status!: string;
     comments!: string;
-    constructor(data?: IVersionReviewSubmissionDto) {
+
+    constructor(data?: interfaces.IVersionReviewSubmissionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20166,18 +21110,21 @@ export class VersionReviewSubmissionDto implements IVersionReviewSubmissionDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.status = _data["status"];
             this.comments = _data["comments"];
         }
     }
+
     static fromJS(data: any): VersionReviewSubmissionDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionReviewSubmissionDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
@@ -20186,7 +21133,7 @@ export class VersionReviewSubmissionDto implements IVersionReviewSubmissionDto {
     }
 }
 
-export class VersionSearchDto implements IVersionSearchDto {
+export class VersionSearchDto implements interfaces.IVersionSearchDto {
     programId?: string | undefined;
     createdBy?: string | undefined;
     reviewer?: string | undefined;
@@ -20197,7 +21144,8 @@ export class VersionSearchDto implements IVersionSearchDto {
     reviewedTo?: Date | undefined;
     versionNumberFrom?: number | undefined;
     versionNumberTo?: number | undefined;
-    constructor(data?: IVersionSearchDto) {
+
+    constructor(data?: interfaces.IVersionSearchDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20205,6 +21153,7 @@ export class VersionSearchDto implements IVersionSearchDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.programId = _data["programId"];
@@ -20219,12 +21168,14 @@ export class VersionSearchDto implements IVersionSearchDto {
             this.versionNumberTo = _data["versionNumberTo"];
         }
     }
+
     static fromJS(data: any): VersionSearchDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionSearchDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["programId"] = this.programId;
@@ -20241,13 +21192,14 @@ export class VersionSearchDto implements IVersionSearchDto {
     }
 }
 
-export class VersionStatsDto implements IVersionStatsDto {
+export class VersionStatsDto implements interfaces.IVersionStatsDto {
     totalFiles?: number;
     totalSize?: number;
     fileTypeCount?: { [key: string]: number; } | undefined;
     executionCount?: number;
     isCurrentVersion?: boolean;
-    constructor(data?: IVersionStatsDto) {
+
+    constructor(data?: interfaces.IVersionStatsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20255,6 +21207,7 @@ export class VersionStatsDto implements IVersionStatsDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.totalFiles = _data["totalFiles"];
@@ -20270,12 +21223,14 @@ export class VersionStatsDto implements IVersionStatsDto {
             this.isCurrentVersion = _data["isCurrentVersion"];
         }
     }
+
     static fromJS(data: any): VersionStatsDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionStatsDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["totalFiles"] = this.totalFiles;
@@ -20293,13 +21248,14 @@ export class VersionStatsDto implements IVersionStatsDto {
     }
 }
 
-export class VersionStatsDtoApiResponse implements IVersionStatsDtoApiResponse {
+export class VersionStatsDtoApiResponse implements interfaces.IVersionStatsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: VersionStatsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IVersionStatsDtoApiResponse) {
+
+    constructor(data?: interfaces.IVersionStatsDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20307,6 +21263,7 @@ export class VersionStatsDtoApiResponse implements IVersionStatsDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -20320,12 +21277,14 @@ export class VersionStatsDtoApiResponse implements IVersionStatsDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): VersionStatsDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new VersionStatsDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -20341,10 +21300,11 @@ export class VersionStatsDtoApiResponse implements IVersionStatsDtoApiResponse {
     }
 }
 
-export class VersionStatusUpdateDto implements IVersionStatusUpdateDto {
+export class VersionStatusUpdateDto implements interfaces.IVersionStatusUpdateDto {
     status!: string;
     comments?: string | undefined;
-    constructor(data?: IVersionStatusUpdateDto) {
+
+    constructor(data?: interfaces.IVersionStatusUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20352,18 +21312,21 @@ export class VersionStatusUpdateDto implements IVersionStatusUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.status = _data["status"];
             this.comments = _data["comments"];
         }
     }
+
     static fromJS(data: any): VersionStatusUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionStatusUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
@@ -20372,10 +21335,11 @@ export class VersionStatusUpdateDto implements IVersionStatusUpdateDto {
     }
 }
 
-export class VersionUpdateDto implements IVersionUpdateDto {
+export class VersionUpdateDto implements interfaces.IVersionUpdateDto {
     commitMessage?: string | undefined;
     reviewComments?: string | undefined;
-    constructor(data?: IVersionUpdateDto) {
+
+    constructor(data?: interfaces.IVersionUpdateDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20383,18 +21347,21 @@ export class VersionUpdateDto implements IVersionUpdateDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.commitMessage = _data["commitMessage"];
             this.reviewComments = _data["reviewComments"];
         }
     }
+
     static fromJS(data: any): VersionUpdateDto {
         data = typeof data === 'object' ? data : {};
         let result = new VersionUpdateDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["commitMessage"] = this.commitMessage;
@@ -20403,14 +21370,15 @@ export class VersionUpdateDto implements IVersionUpdateDto {
     }
 }
 
-export class WebAppDeploymentRequestDto implements IWebAppDeploymentRequestDto {
+export class WebAppDeploymentRequestDto implements interfaces.IWebAppDeploymentRequestDto {
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     features?: string[] | undefined;
     autoStart?: boolean;
     port?: number | undefined;
     domainName?: string | undefined;
-    constructor(data?: IWebAppDeploymentRequestDto) {
+
+    constructor(data?: interfaces.IWebAppDeploymentRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20418,6 +21386,7 @@ export class WebAppDeploymentRequestDto implements IWebAppDeploymentRequestDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             if (_data["configuration"]) {
@@ -20444,12 +21413,14 @@ export class WebAppDeploymentRequestDto implements IWebAppDeploymentRequestDto {
             this.domainName = _data["domainName"];
         }
     }
+
     static fromJS(data: any): WebAppDeploymentRequestDto {
         data = typeof data === 'object' ? data : {};
         let result = new WebAppDeploymentRequestDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (this.configuration) {
@@ -20478,7 +21449,7 @@ export class WebAppDeploymentRequestDto implements IWebAppDeploymentRequestDto {
     }
 }
 
-export class WebAppStatusDto implements IWebAppStatusDto {
+export class WebAppStatusDto implements interfaces.IWebAppStatusDto {
     status?: string | undefined;
     url?: string | undefined;
     isHealthy?: boolean;
@@ -20486,7 +21457,8 @@ export class WebAppStatusDto implements IWebAppStatusDto {
     responseTime?: number;
     errorMessage?: string | undefined;
     metrics?: { [key: string]: any; } | undefined;
-    constructor(data?: IWebAppStatusDto) {
+
+    constructor(data?: interfaces.IWebAppStatusDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20494,6 +21466,7 @@ export class WebAppStatusDto implements IWebAppStatusDto {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.status = _data["status"];
@@ -20511,12 +21484,14 @@ export class WebAppStatusDto implements IWebAppStatusDto {
             }
         }
     }
+
     static fromJS(data: any): WebAppStatusDto {
         data = typeof data === 'object' ? data : {};
         let result = new WebAppStatusDto();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
@@ -20536,13 +21511,14 @@ export class WebAppStatusDto implements IWebAppStatusDto {
     }
 }
 
-export class WebAppStatusDtoApiResponse implements IWebAppStatusDtoApiResponse {
+export class WebAppStatusDtoApiResponse implements interfaces.IWebAppStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: WebAppStatusDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-    constructor(data?: IWebAppStatusDtoApiResponse) {
+
+    constructor(data?: interfaces.IWebAppStatusDtoApiResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20550,6 +21526,7 @@ export class WebAppStatusDtoApiResponse implements IWebAppStatusDtoApiResponse {
             }
         }
     }
+
     init(_data?: any) {
         if (_data) {
             this.success = _data["success"];
@@ -20563,12 +21540,14 @@ export class WebAppStatusDtoApiResponse implements IWebAppStatusDtoApiResponse {
             this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
         }
     }
+
     static fromJS(data: any): WebAppStatusDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new WebAppStatusDtoApiResponse();
         result.init(data);
         return result;
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["success"] = this.success;
@@ -20584,36 +21563,4 @@ export class WebAppStatusDtoApiResponse implements IWebAppStatusDtoApiResponse {
     }
 }
 
-export class NoiseMeasurementsForBuildings implements INoiseMeasurementsForBuildings {
-    control?: number;
-    security?: number;
-    switchyard?: number;
-    constructor(data?: INoiseMeasurementsForBuildings) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.control = _data["Control"];
-            this.security = _data["Security"];
-            this.switchyard = _data["Switchyard"];
-        }
-    }
-    static fromJS(data: any): NoiseMeasurementsForBuildings {
-        data = typeof data === 'object' ? data : {};
-        let result = new NoiseMeasurementsForBuildings();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Control"] = this.control;
-        data["Security"] = this.security;
-        data["Switchyard"] = this.switchyard;
-        return data;
-    }
-}
+// --- END OF FILE types.ts ---

@@ -1,18 +1,67 @@
+// --- START OF FILE UsersClient.ts ---
+
 import * as types from './types';
 import * as interfaces from './interfaces';
+import * as typeInterfaces from './typeInterfaces';
+import * as enums from './enums';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
+
+export class UserClientAssignmentDto implements typeInterfaces.IUserClientAssignmentDto {
+    userId!: string;
+    clientIds!: string[];
+
+    constructor(data?: typeInterfaces.IUserClientAssignmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.clientIds = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            if (Array.isArray(_data["clientIds"])) {
+                this.clientIds = [] as any;
+                for (let item of _data["clientIds"])
+                    this.clientIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UserClientAssignmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserClientAssignmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        if (Array.isArray(this.clientIds)) {
+            data["clientIds"] = [];
+            for (let item of this.clientIds)
+                data["clientIds"].push(item);
+        }
+        return data;
+    }
+}
 
 export class UsersClient implements interfaces.IUsersClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all users with pagination
      * @param pageNumber (optional) 
@@ -20,7 +69,7 @@ export class UsersClient implements interfaces.IUsersClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    users_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
+    users_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Users?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -39,16 +88,19 @@ export class UsersClient implements interfaces.IUsersClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetAll(_response);
         });
     }
+
     protected processUsers_GetAll(response: Response): Promise<types.UserListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -66,6 +118,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new user (admin only)
      * @param body (optional) 
@@ -74,7 +127,9 @@ export class UsersClient implements interfaces.IUsersClient {
     users_Create(body: types.UserRegisterDto | undefined): Promise<types.UserDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Users";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -83,10 +138,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_Create(_response);
         });
     }
+
     protected processUsers_Create(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -104,6 +161,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Get user by ID
      * @return OK
@@ -114,16 +172,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetById(_response);
         });
     }
+
     protected processUsers_GetById(response: Response): Promise<types.UserDetailDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -141,6 +202,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDetailDtoApiResponse>(null as any);
     }
+
     /**
      * Update user details
      * @param body (optional) 
@@ -152,7 +214,9 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -161,10 +225,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_Update(_response);
         });
     }
+
     protected processUsers_Update(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -182,6 +248,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Delete user
      * @return OK
@@ -192,16 +259,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_Delete(_response);
         });
     }
+
     protected processUsers_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -219,6 +289,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get current user profile
      * @return OK
@@ -226,16 +297,19 @@ export class UsersClient implements interfaces.IUsersClient {
     users_GetCurrentUserProfile(): Promise<types.UserProfileDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Users/me";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetCurrentUserProfile(_response);
         });
     }
+
     protected processUsers_GetCurrentUserProfile(response: Response): Promise<types.UserProfileDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -253,6 +327,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserProfileDtoApiResponse>(null as any);
     }
+
     /**
      * Update current user profile
      * @param body (optional) 
@@ -261,7 +336,9 @@ export class UsersClient implements interfaces.IUsersClient {
     users_UpdateCurrentUserProfile(body: types.UserUpdateDto | undefined): Promise<types.UserDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Users/me";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -270,10 +347,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_UpdateCurrentUserProfile(_response);
         });
     }
+
     protected processUsers_UpdateCurrentUserProfile(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -291,6 +370,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Get current user permissions
      * @return OK
@@ -298,16 +378,19 @@ export class UsersClient implements interfaces.IUsersClient {
     users_GetCurrentUserPermissions(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/Users/me/permissions";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetCurrentUserPermissions(_response);
         });
     }
+
     protected processUsers_GetCurrentUserPermissions(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -325,6 +408,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Advanced user search
      * @param pageNumber (optional) 
@@ -333,7 +417,7 @@ export class UsersClient implements interfaces.IUsersClient {
      * @param body (optional) 
      * @return OK
      */
-    users_Search(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined, body: types.UserSearchDto | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
+    users_Search(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined, body: types.UserSearchDto | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Users/search?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -352,7 +436,9 @@ export class UsersClient implements interfaces.IUsersClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -361,10 +447,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_Search(_response);
         });
     }
+
     protected processUsers_Search(response: Response): Promise<types.UserListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -382,6 +470,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get users by role
      * @param pageNumber (optional) 
@@ -389,7 +478,7 @@ export class UsersClient implements interfaces.IUsersClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    users_GetByRole(role: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
+    users_GetByRole(role: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Users/by-role/{role}?";
         if (role === undefined || role === null)
             throw new Error("The parameter 'role' must be defined.");
@@ -411,16 +500,19 @@ export class UsersClient implements interfaces.IUsersClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetByRole(_response);
         });
     }
+
     protected processUsers_GetByRole(response: Response): Promise<types.UserListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -438,6 +530,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get active users only
      * @param pageNumber (optional) 
@@ -445,7 +538,7 @@ export class UsersClient implements interfaces.IUsersClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    users_GetActiveUsers(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
+    users_GetActiveUsers(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.UserListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Users/active?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -464,16 +557,19 @@ export class UsersClient implements interfaces.IUsersClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetActiveUsers(_response);
         });
     }
+
     protected processUsers_GetActiveUsers(response: Response): Promise<types.UserListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -491,6 +587,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Update user roles
      * @param body (optional) 
@@ -502,7 +599,9 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -511,10 +610,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_UpdateRoles(_response);
         });
     }
+
     protected processUsers_UpdateRoles(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -532,6 +633,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Update user permissions
      * @param body (optional) 
@@ -543,7 +645,9 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -552,10 +656,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_UpdatePermissions(_response);
         });
     }
+
     protected processUsers_UpdatePermissions(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -573,6 +679,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Get user's effective permissions (role + direct)
      * @return OK
@@ -583,16 +690,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetEffectivePermissions(_response);
         });
     }
+
     protected processUsers_GetEffectivePermissions(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -610,6 +720,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Assign clients to user
      * @param body (optional) 
@@ -621,7 +732,9 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -630,10 +743,12 @@ export class UsersClient implements interfaces.IUsersClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_AssignClients(_response);
         });
     }
+
     protected processUsers_AssignClients(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -651,6 +766,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Activate user account
      * @return OK
@@ -661,16 +777,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "PUT",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_Activate(_response);
         });
     }
+
     protected processUsers_Activate(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -688,6 +807,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Deactivate user account
      * @return OK
@@ -698,16 +818,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "PUT",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_Deactivate(_response);
         });
     }
+
     protected processUsers_Deactivate(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -725,6 +848,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Revoke all refresh tokens for user
      * @return OK
@@ -735,16 +859,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_RevokeAllTokens(_response);
         });
     }
+
     protected processUsers_RevokeAllTokens(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -762,6 +889,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get user by email
      * @return OK
@@ -772,16 +900,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'email' must be defined.");
         url_ = url_.replace("{email}", encodeURIComponent("" + email));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetByEmail(_response);
         });
     }
+
     protected processUsers_GetByEmail(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -799,6 +930,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Get user by username
      * @return OK
@@ -809,16 +941,19 @@ export class UsersClient implements interfaces.IUsersClient {
             throw new Error("The parameter 'username' must be defined.");
         url_ = url_.replace("{username}", encodeURIComponent("" + username));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetByUsername(_response);
         });
     }
+
     protected processUsers_GetByUsername(response: Response): Promise<types.UserDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -836,6 +971,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.UserDtoApiResponse>(null as any);
     }
+
     /**
      * Get available roles
      * @return OK
@@ -843,16 +979,19 @@ export class UsersClient implements interfaces.IUsersClient {
     users_GetAvailableRoles(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/Users/available-roles";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetAvailableRoles(_response);
         });
     }
+
     protected processUsers_GetAvailableRoles(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -870,6 +1009,7 @@ export class UsersClient implements interfaces.IUsersClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Get available permissions
      * @return OK
@@ -877,16 +1017,19 @@ export class UsersClient implements interfaces.IUsersClient {
     users_GetAvailablePermissions(): Promise<types.StringStringListDictionaryApiResponse> {
         let url_ = this.baseUrl + "/api/Users/available-permissions";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processUsers_GetAvailablePermissions(_response);
         });
     }
+
     protected processUsers_GetAvailablePermissions(response: Response): Promise<types.StringStringListDictionaryApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -905,45 +1048,4 @@ export class UsersClient implements interfaces.IUsersClient {
         return Promise.resolve<types.StringStringListDictionaryApiResponse>(null as any);
     }
 }
-
-export class UserClientAssignmentDto implements interfaces.IUserClientAssignmentDto {
-    userId!: string;
-    clientIds!: string[];
-    constructor(data?: interfaces.IUserClientAssignmentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.clientIds = [];
-        }
-    }
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            if (Array.isArray(_data["clientIds"])) {
-                this.clientIds = [] as any;
-                for (let item of _data["clientIds"])
-                    this.clientIds!.push(item);
-            }
-        }
-    }
-    static fromJS(data: any): UserClientAssignmentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserClientAssignmentDto();
-        result.init(data);
-        return result;
-    }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        if (Array.isArray(this.clientIds)) {
-            data["clientIds"] = [];
-            for (let item of this.clientIds)
-                data["clientIds"].push(item);
-        }
-        return data;
-    }
-}
+// --- END OF FILE UsersClient.ts ---

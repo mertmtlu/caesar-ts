@@ -1,18 +1,20 @@
+// --- START OF FILE ClientsClient.ts ---
+
 import * as types from './types';
 import * as interfaces from './interfaces';
+import * as enums from './enums';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
 
 export class ClientsClient implements interfaces.IClientsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all clients with pagination
      * @param pageNumber (optional) 
@@ -20,7 +22,7 @@ export class ClientsClient implements interfaces.IClientsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    clients_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.ClientListResponseDtoPagedResponseApiResponse> {
+    clients_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.ClientListResponseDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Clients?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -39,16 +41,19 @@ export class ClientsClient implements interfaces.IClientsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_GetAll(_response);
         });
     }
+
     protected processClients_GetAll(response: Response): Promise<types.ClientListResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -66,6 +71,7 @@ export class ClientsClient implements interfaces.IClientsClient {
         }
         return Promise.resolve<types.ClientListResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new client
      * @param body (optional) 
@@ -74,7 +80,9 @@ export class ClientsClient implements interfaces.IClientsClient {
     clients_Create(body: types.ClientCreateDto | undefined): Promise<types.ClientResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Clients";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -83,10 +91,12 @@ export class ClientsClient implements interfaces.IClientsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_Create(_response);
         });
     }
+
     protected processClients_Create(response: Response): Promise<types.ClientResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -104,6 +114,7 @@ export class ClientsClient implements interfaces.IClientsClient {
         }
         return Promise.resolve<types.ClientResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get client by ID
      * @return OK
@@ -114,16 +125,19 @@ export class ClientsClient implements interfaces.IClientsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_GetById(_response);
         });
     }
+
     protected processClients_GetById(response: Response): Promise<types.ClientDetailResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -141,6 +155,7 @@ export class ClientsClient implements interfaces.IClientsClient {
         }
         return Promise.resolve<types.ClientDetailResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Update client
      * @param body (optional) 
@@ -152,7 +167,9 @@ export class ClientsClient implements interfaces.IClientsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -161,10 +178,12 @@ export class ClientsClient implements interfaces.IClientsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_Update(_response);
         });
     }
+
     protected processClients_Update(response: Response): Promise<types.ClientResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -182,6 +201,7 @@ export class ClientsClient implements interfaces.IClientsClient {
         }
         return Promise.resolve<types.ClientResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Delete client
      * @return OK
@@ -192,16 +212,19 @@ export class ClientsClient implements interfaces.IClientsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_Delete(_response);
         });
     }
+
     protected processClients_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -219,6 +242,7 @@ export class ClientsClient implements interfaces.IClientsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get client by name
      * @return OK
@@ -229,16 +253,19 @@ export class ClientsClient implements interfaces.IClientsClient {
             throw new Error("The parameter 'name' must be defined.");
         url_ = url_.replace("{name}", encodeURIComponent("" + name));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_GetByName(_response);
         });
     }
+
     protected processClients_GetByName(response: Response): Promise<types.ClientResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -256,6 +283,7 @@ export class ClientsClient implements interfaces.IClientsClient {
         }
         return Promise.resolve<types.ClientResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get client summary statistics
      * @return OK
@@ -266,16 +294,19 @@ export class ClientsClient implements interfaces.IClientsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processClients_GetStatistics(_response);
         });
     }
+
     protected processClients_GetStatistics(response: Response): Promise<types.ClientStatisticsResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -294,3 +325,4 @@ export class ClientsClient implements interfaces.IClientsClient {
         return Promise.resolve<types.ClientStatisticsResponseDtoApiResponse>(null as any);
     }
 }
+// --- END OF FILE ClientsClient.ts ---

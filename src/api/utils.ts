@@ -1,8 +1,4 @@
-export function formatDate(d: Date) {
-    return d.getFullYear() + '-' + 
-        (d.getMonth() < 9 ? ('0' + (d.getMonth()+1)) : (d.getMonth()+1)) + '-' +
-        (d.getDate() < 10 ? ('0' + d.getDate()) : d.getDate());
-}
+// --- START OF FILE utils.ts ---
 
 export class SwaggerException extends Error {
     override message: string;
@@ -28,9 +24,17 @@ export class SwaggerException extends Error {
     }
 }
 
+export function formatDate(d: Date) {
+    return d.getFullYear() + '-' + 
+        (d.getMonth() < 9 ? ('0' + (d.getMonth()+1)) : (d.getMonth()+1)) + '-' +
+        (d.getDate() < 10 ? ('0' + d.getDate()) : d.getDate());
+}
+
 export function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
     if (result !== null && result !== undefined)
         throw result;
     else
         throw new SwaggerException(message, status, response, headers, null);
 }
+
+// --- END OF FILE utils.ts ---

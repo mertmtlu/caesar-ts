@@ -1,17 +1,6 @@
-import {
-    AppDeploymentType,
-    BuildingType,
-    ClientType,
-    Level,
-    Operation,
-    PerimeterWallType,
-    SortDirection,
-    TBDY2018SoilClass,
-    TDY2007SoilClass,
-    TMState,
-    TMType,
-    WallCondition
-} from './enums';
+// --- START OF FILE typeInterfaces.ts ---
+
+import * as enums from './enums';
 
 export interface IActiveDeploymentDto {
     programId?: string | undefined;
@@ -23,6 +12,7 @@ export interface IActiveDeploymentDto {
     url?: string | undefined;
     healthStatus?: string | undefined;
 }
+
 export interface IActiveDeploymentDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -30,26 +20,30 @@ export interface IActiveDeploymentDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAddressDto {
     city?: string | undefined;
     county?: string | undefined;
     district?: string | undefined;
     street?: string | undefined;
 }
+
 export interface IAddressResponseDto {
     city?: string | undefined;
     county?: string | undefined;
     district?: string | undefined;
     street?: string | undefined;
 }
+
 export interface IAlternativeTMComparisonResponseDto {
     id?: string | undefined;
     location?: ILocationRequestDto;
-    address?: IAddressDto;
+    Iaddress?: IAddressDto;
     hazardSummary?: IHazardSummaryResponseDto;
     distanceFromOriginal?: number;
     comparisonScore?: IComparisonScoreDto;
 }
+
 export interface IAlternativeTMComparisonResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -57,6 +51,7 @@ export interface IAlternativeTMComparisonResponseDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAlternativeTMCreateDto {
     tmId: string;
     location: ILocationRequestDto;
@@ -76,6 +71,7 @@ export interface IAlternativeTMCreateDto {
     tsunamiHazard: ITsunamiHazardDto;
     soil: ISoilDto;
 }
+
 export interface IAlternativeTMDetailResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
@@ -98,6 +94,7 @@ export interface IAlternativeTMDetailResponseDto {
     soil?: ISoilResponseDto;
     hazardSummary?: IHazardSummaryResponseDto;
 }
+
 export interface IAlternativeTMDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -105,6 +102,7 @@ export interface IAlternativeTMDetailResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAlternativeTMResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
@@ -115,6 +113,7 @@ export interface IAlternativeTMResponseDto {
     dD3?: IEarthquakeLevelResponseDto;
     earthquakeScenario?: IEarthquakeLevelResponseDto;
 }
+
 export interface IAlternativeTMResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -122,12 +121,14 @@ export interface IAlternativeTMResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAlternativeTMSummaryResponseDto {
     id?: string | undefined;
     location?: ILocationResponseDto;
     city?: string | undefined;
     overallRiskScore?: number;
 }
+
 export interface IAlternativeTMSummaryResponseDtoPagedResponse {
     items?: IAlternativeTMSummaryResponseDto[] | undefined;
     pageNumber?: number;
@@ -137,6 +138,7 @@ export interface IAlternativeTMSummaryResponseDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IAlternativeTMSummaryResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -144,6 +146,7 @@ export interface IAlternativeTMSummaryResponseDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAlternativeTMUpdateDto {
     tmId?: string | undefined;
     location?: ILocationRequestDto;
@@ -163,6 +166,7 @@ export interface IAlternativeTMUpdateDto {
     tsunamiHazard?: ITsunamiHazardDto;
     soil?: ISoilDto;
 }
+
 export interface IAppDeploymentConfigUpdateDto {
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
@@ -170,15 +174,17 @@ export interface IAppDeploymentConfigUpdateDto {
     domainName?: string | undefined;
     port?: number | undefined;
 }
+
 export interface IAppDeploymentInfo {
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     lastDeployed?: Date | undefined;
     status?: string | undefined;
     supportedFeatures?: string[] | undefined;
 }
+
 export interface IAppDeploymentRequestDto {
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
@@ -190,6 +196,7 @@ export interface IAppDeploymentRequestDto {
     apiIntegration?: boolean;
     authenticationMode?: string | undefined;
 }
+
 export interface IApplicationHealthDto {
     status?: string | undefined;
     lastCheck?: Date;
@@ -198,6 +205,7 @@ export interface IApplicationHealthDto {
     details?: { [key: string]: any; } | undefined;
     checks?: IHealthCheckResultDto[] | undefined;
 }
+
 export interface IApplicationHealthDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -205,6 +213,7 @@ export interface IApplicationHealthDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IApplicationMetricsDto {
     programId?: string | undefined;
     collectedAt?: Date;
@@ -217,6 +226,7 @@ export interface IApplicationMetricsDto {
     activeInstances?: number;
     customMetrics?: { [key: string]: any; } | undefined;
 }
+
 export interface IApplicationMetricsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -224,12 +234,14 @@ export interface IApplicationMetricsDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAuditInfoResponseDto {
     createdAt?: Date;
     updatedAt?: Date | undefined;
     createdBy?: string | undefined;
     updatedBy?: string | undefined;
 }
+
 export interface IAuthenticationResponseDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
@@ -237,6 +249,7 @@ export interface IAuthenticationResponseDto {
     tokenType?: string | undefined;
     user?: IUserDto;
 }
+
 export interface IAuthenticationResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -244,9 +257,10 @@ export interface IAuthenticationResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IAvalancheHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
@@ -257,6 +271,7 @@ export interface IAvalancheHazardDto {
     firstHillLocation?: ILocationRequestDto;
     elevationDifference?: number;
 }
+
 export interface IAvalancheHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -270,6 +285,7 @@ export interface IAvalancheHazardResponseDto {
     firstHillLocation?: ILocationResponseDto;
     elevationDifference?: number;
 }
+
 export interface IBlockResponseDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -281,6 +297,7 @@ export interface IBlockResponseDto {
     shortLength?: number;
     totalHeight?: number;
 }
+
 export interface IBlockResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -288,6 +305,7 @@ export interface IBlockResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBlockResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -295,6 +313,7 @@ export interface IBlockResponseDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBlockStatisticsResponseDto {
     blockId?: string | undefined;
     modelingType?: string | undefined;
@@ -304,6 +323,7 @@ export interface IBlockStatisticsResponseDto {
     aspectRatio?: number;
     volumeEstimate?: number;
 }
+
 export interface IBlockStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -311,6 +331,7 @@ export interface IBlockStatisticsResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBlockSummaryResponseDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -318,6 +339,7 @@ export interface IBlockSummaryResponseDto {
     totalHeight?: number;
     storeyCount?: number;
 }
+
 export interface IBlockSummaryResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -325,6 +347,7 @@ export interface IBlockSummaryResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBooleanApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -332,17 +355,20 @@ export interface IBooleanApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBuildingBlockAddDto {
     blockId: string;
 }
+
 export interface IBuildingCreateDto {
     tmId: string;
     buildingTMID: number;
     name?: string | undefined;
-    type: BuildingType;
+    type: enums.BuildingType;
     inScopeOfMETU?: boolean;
     reportName?: string | undefined;
 }
+
 export interface IBuildingDetailResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
@@ -358,6 +384,7 @@ export interface IBuildingDetailResponseDto {
     blockCount?: number;
     auditInfo?: IAuditInfoResponseDto;
 }
+
 export interface IBuildingDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -365,6 +392,7 @@ export interface IBuildingDetailResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBuildingListResponseDto {
     id?: string | undefined;
     tmName?: string | undefined;
@@ -375,6 +403,7 @@ export interface IBuildingListResponseDto {
     blockCount?: number;
     reportName?: string | undefined;
 }
+
 export interface IBuildingListResponseDtoPagedResponse {
     items?: IBuildingListResponseDto[] | undefined;
     pageNumber?: number;
@@ -384,6 +413,7 @@ export interface IBuildingListResponseDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IBuildingListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -391,6 +421,7 @@ export interface IBuildingListResponseDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBuildingResponseDto {
     id?: string | undefined;
     tmId?: string | undefined;
@@ -402,6 +433,7 @@ export interface IBuildingResponseDto {
     code?: number;
     bks?: number;
 }
+
 export interface IBuildingResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -409,13 +441,15 @@ export interface IBuildingResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBuildingSearchDto {
     name?: string | undefined;
     tmId?: string | undefined;
-    type?: BuildingType;
+    type?: enums.BuildingType;
     inScopeOfMETU?: boolean | undefined;
     reportName?: string | undefined;
 }
+
 export interface IBuildingStatisticsResponseDto {
     buildingId?: string | undefined;
     blockCount?: number;
@@ -426,6 +460,7 @@ export interface IBuildingStatisticsResponseDto {
     code?: number;
     bks?: number;
 }
+
 export interface IBuildingStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -433,6 +468,7 @@ export interface IBuildingStatisticsResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBuildingSummaryResponseDto {
     id?: string | undefined;
     buildingTMID?: number;
@@ -440,20 +476,29 @@ export interface IBuildingSummaryResponseDto {
     type?: string | undefined;
     blockCount?: number;
 }
+
 export interface IBuildingUpdateDto {
     tmId?: string | undefined;
     buildingTMID?: number | undefined;
     name?: string | undefined;
-    type?: BuildingType;
+    type?: enums.BuildingType;
     inScopeOfMETU?: boolean | undefined;
     reportName?: string | undefined;
 }
+
+export interface IBulkDownloadRequest {
+    filePaths?: string[] | undefined;
+    includeMetadata?: boolean;
+    compressionLevel?: string | undefined;
+}
+
 export interface IBulkOperationResult {
     successCount?: number;
     failureCount?: number;
     totalProcessed?: number;
     errors?: string[] | undefined;
 }
+
 export interface IBulkOperationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -461,15 +506,18 @@ export interface IBulkOperationResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IBulkRequestStatusUpdateDto {
     requestIds: string[];
     status: string;
     reason?: string | undefined;
 }
+
 export interface IClientCreateDto {
     name: string;
-    type: ClientType;
+    type: enums.ClientType;
 }
+
 export interface IClientDetailResponseDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -478,6 +526,7 @@ export interface IClientDetailResponseDto {
     regions?: IRegionSummaryResponseDto[] | undefined;
     auditInfo?: IAuditInfoResponseDto;
 }
+
 export interface IClientDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -485,6 +534,7 @@ export interface IClientDetailResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IClientListResponseDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -492,6 +542,7 @@ export interface IClientListResponseDto {
     regionCount?: number;
     totalTMCount?: number;
 }
+
 export interface IClientListResponseDtoPagedResponse {
     items?: IClientListResponseDto[] | undefined;
     pageNumber?: number;
@@ -501,6 +552,7 @@ export interface IClientListResponseDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IClientListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -508,11 +560,13 @@ export interface IClientListResponseDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IClientResponseDto {
     id?: string | undefined;
     name?: string | undefined;
     type?: string | undefined;
 }
+
 export interface IClientResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -520,6 +574,7 @@ export interface IClientResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IClientStatisticsResponseDto {
     clientId?: string | undefined;
     regionCount?: number;
@@ -527,6 +582,7 @@ export interface IClientStatisticsResponseDto {
     totalBuildings?: number;
     activeTMs?: number;
 }
+
 export interface IClientStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -534,14 +590,17 @@ export interface IClientStatisticsResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IClientSummaryResponseDto {
     id?: string | undefined;
     name?: string | undefined;
 }
+
 export interface IClientUpdateDto {
     name?: string | undefined;
-    type?: ClientType;
+    type?: enums.ClientType;
 }
+
 export interface IComparisonScoreDto {
     earthquakeImprovement?: number;
     hazardImprovement?: number;
@@ -549,6 +608,7 @@ export interface IComparisonScoreDto {
     advantages?: string[] | undefined;
     disadvantages?: string[] | undefined;
 }
+
 export interface IConcreteBlockResponseDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -566,6 +626,7 @@ export interface IConcreteBlockResponseDto {
     hookExists?: boolean;
     isStrengthened?: boolean;
 }
+
 export interface IConcreteBlockResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -573,6 +634,7 @@ export interface IConcreteBlockResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IConcreteBlockResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -580,6 +642,7 @@ export interface IConcreteBlockResponseDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IConcreteCreateDto {
     id: string;
     name: string;
@@ -593,6 +656,7 @@ export interface IConcreteCreateDto {
     hookExists?: boolean;
     isStrengthened?: boolean;
 }
+
 export interface IConcreteUpdateDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -606,6 +670,7 @@ export interface IConcreteUpdateDto {
     hookExists?: boolean | undefined;
     isStrengthened?: boolean | undefined;
 }
+
 export interface IConnectionTestResult {
     isConnected?: boolean;
     responseTimeMs?: number;
@@ -613,6 +678,7 @@ export interface IConnectionTestResult {
     message?: string | undefined;
     testedAt?: Date;
 }
+
 export interface IConnectionTestResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -620,8 +686,9 @@ export interface IConnectionTestResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IContainerDeploymentRequestDto {
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
@@ -642,6 +709,7 @@ export interface IContainerDeploymentRequestDto {
     replicas?: number;
     healthCheck?: IContainerHealthCheckDto;
 }
+
 export interface IContainerHealthCheckDto {
     command?: string | undefined;
     intervalSeconds?: number;
@@ -649,33 +717,39 @@ export interface IContainerHealthCheckDto {
     retries?: number;
     startPeriodSeconds?: number;
 }
+
 export interface IContainerPortMappingDto {
     containerPort?: number;
     hostPort?: number | undefined;
     protocol?: string | undefined;
 }
+
 export interface IContainerResourceLimitsDto {
     cpuLimit?: string | undefined;
     memoryLimit?: string | undefined;
     cpuRequest?: string | undefined;
     memoryRequest?: string | undefined;
 }
+
 export interface IContainerVolumeMountDto {
     containerPath?: string | undefined;
     hostPath?: string | undefined;
     type?: string | undefined;
     readOnly?: boolean;
 }
+
 export interface ICopyBlockDto {
     newBlockId: string | undefined;
     newName?: string | undefined;
 }
+
 export interface ICreateFromTMDto {
     location: ILocationRequestDto;
     address?: IAddressDto;
     copyHazardData?: boolean;
     copyEarthquakeData?: boolean;
 }
+
 export interface IDeploymentHistoryDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -687,6 +761,7 @@ export interface IDeploymentHistoryDto {
     duration?: string;
     errorMessage?: string | undefined;
 }
+
 export interface IDeploymentHistoryDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -694,6 +769,7 @@ export interface IDeploymentHistoryDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IDeploymentResourceUsageDto {
     programId?: string | undefined;
     cpuUsagePercent?: number;
@@ -703,6 +779,7 @@ export interface IDeploymentResourceUsageDto {
     networkOutMB?: number;
     lastUpdated?: Date;
 }
+
 export interface IDeploymentResourceUsageDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -710,6 +787,7 @@ export interface IDeploymentResourceUsageDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IDeploymentStatisticsDto {
     totalDeployments?: number;
     successfulDeployments?: number;
@@ -720,6 +798,7 @@ export interface IDeploymentStatisticsDto {
     fromDate?: Date;
     toDate?: Date;
 }
+
 export interface IDeploymentStatisticsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -727,6 +806,7 @@ export interface IDeploymentStatisticsDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IDeploymentValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
@@ -734,6 +814,7 @@ export interface IDeploymentValidationResult {
     recommendations?: string[] | undefined;
     validatedConfiguration?: { [key: string]: any; } | undefined;
 }
+
 export interface IDeploymentValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -741,9 +822,7 @@ export interface IDeploymentValidationResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
-export interface IDownloadRequest {
-    downloadPath?: string | undefined;
-}
+
 export interface IEarthquakeLevelDto {
     pga?: number;
     pgv?: number;
@@ -752,6 +831,7 @@ export interface IEarthquakeLevelDto {
     sds?: number;
     sd1?: number;
 }
+
 export interface IEarthquakeLevelResponseDto {
     pga?: number;
     pgv?: number;
@@ -760,6 +840,7 @@ export interface IEarthquakeLevelResponseDto {
     sds?: number;
     sd1?: number;
 }
+
 export interface IExecutionCleanupReportDto {
     cleanupDate?: Date;
     executionsRemoved?: number;
@@ -767,6 +848,7 @@ export interface IExecutionCleanupReportDto {
     daysRetained?: number;
     removedByStatus?: { [key: string]: number; } | undefined;
 }
+
 export interface IExecutionCleanupReportDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -774,6 +856,7 @@ export interface IExecutionCleanupReportDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionDetailDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -789,12 +872,12 @@ export interface IExecutionDetailDto {
     programName?: string | undefined;
     userName?: string | undefined;
     versionNumber?: number | undefined;
-    outputFiles?: IExecutionOutputFileDto[] | undefined;
     recentLogs?: string[] | undefined;
     environment?: IExecutionEnvironmentDto;
     webAppUrl?: string | undefined;
     webAppStatus?: IWebAppStatusDto;
 }
+
 export interface IExecutionDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -802,6 +885,7 @@ export interface IExecutionDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -815,6 +899,7 @@ export interface IExecutionDto {
     results?: IExecutionResultDto;
     resourceUsage?: IExecutionResourceUsageDto;
 }
+
 export interface IExecutionDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -822,6 +907,7 @@ export interface IExecutionDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionEnvironmentDto {
     programId?: string | undefined;
     environment?: { [key: string]: string; } | undefined;
@@ -829,6 +915,7 @@ export interface IExecutionEnvironmentDto {
     configuration?: { [key: string]: any; } | undefined;
     lastUpdated?: Date;
 }
+
 export interface IExecutionEnvironmentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -836,11 +923,13 @@ export interface IExecutionEnvironmentDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionEnvironmentUpdateDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: IExecutionResourceLimitsDto;
     configuration?: { [key: string]: any; } | undefined;
 }
+
 export interface IExecutionListDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -858,6 +947,7 @@ export interface IExecutionListDto {
     duration?: number | undefined;
     resourceUsage?: IExecutionResourceUsageDto;
 }
+
 export interface IExecutionListDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -865,6 +955,7 @@ export interface IExecutionListDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionListDtoPagedResponse {
     items?: IExecutionListDto[] | undefined;
     pageNumber?: number;
@@ -874,6 +965,7 @@ export interface IExecutionListDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IExecutionListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -881,35 +973,7 @@ export interface IExecutionListDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
-export interface IExecutionOutputFileContentDto {
-    fileName?: string | undefined;
-    contentType?: string | undefined;
-    content?: string | undefined;
-    size?: number;
-    createdAt?: Date;
-}
-export interface IExecutionOutputFileContentDtoApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: IExecutionOutputFileContentDto;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-}
-export interface IExecutionOutputFileDto {
-    fileName?: string | undefined;
-    path?: string | undefined;
-    size?: number;
-    contentType?: string | undefined;
-    createdAt?: Date;
-    downloadUrl?: string | undefined;
-}
-export interface IExecutionOutputFileDtoListApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: IExecutionOutputFileDto[] | undefined;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-}
+
 export interface IExecutionParametersDto {
     programId: string;
     versionId?: string | undefined;
@@ -920,6 +984,7 @@ export interface IExecutionParametersDto {
     timeoutMinutes?: number;
     executionName?: string | undefined;
 }
+
 export interface IExecutionPerformanceDto {
     programId?: string | undefined;
     programName?: string | undefined;
@@ -929,6 +994,7 @@ export interface IExecutionPerformanceDto {
     averageResourceUsage?: number;
     lastExecution?: Date;
 }
+
 export interface IExecutionPerformanceDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -936,6 +1002,7 @@ export interface IExecutionPerformanceDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionQueueStatusDto {
     queueLength?: number;
     runningExecutions?: number;
@@ -943,6 +1010,7 @@ export interface IExecutionQueueStatusDto {
     averageWaitTime?: number;
     queuedExecutions?: IExecutionListDto[] | undefined;
 }
+
 export interface IExecutionQueueStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -950,6 +1018,7 @@ export interface IExecutionQueueStatusDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionResourceLimitsDto {
     maxCpuPercentage?: number;
     maxMemoryMb?: number;
@@ -957,6 +1026,7 @@ export interface IExecutionResourceLimitsDto {
     maxExecutionTimeMinutes?: number;
     maxConcurrentExecutions?: number;
 }
+
 export interface IExecutionResourceLimitsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -964,6 +1034,7 @@ export interface IExecutionResourceLimitsDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionResourceLimitsUpdateDto {
     maxCpuPercentage?: number | undefined;
     maxMemoryMb?: number | undefined;
@@ -971,6 +1042,7 @@ export interface IExecutionResourceLimitsUpdateDto {
     maxExecutionTimeMinutes?: number | undefined;
     maxConcurrentExecutions?: number | undefined;
 }
+
 export interface IExecutionResourceTrendDto {
     timestamp?: Date;
     cpuUsage?: number;
@@ -978,6 +1050,7 @@ export interface IExecutionResourceTrendDto {
     diskUsage?: number;
     activeExecutions?: number;
 }
+
 export interface IExecutionResourceTrendDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -985,12 +1058,14 @@ export interface IExecutionResourceTrendDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionResourceUpdateDto {
     cpuTime?: number;
     memoryUsed?: number;
     diskUsed?: number;
     additionalMetrics?: { [key: string]: any; } | undefined;
 }
+
 export interface IExecutionResourceUsageDto {
     cpuTime?: number;
     memoryUsed?: number;
@@ -1000,6 +1075,7 @@ export interface IExecutionResourceUsageDto {
     diskPercentage?: number;
     lastUpdated?: Date;
 }
+
 export interface IExecutionResourceUsageDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1007,6 +1083,7 @@ export interface IExecutionResourceUsageDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionResultDto {
     exitCode?: number;
     output?: string | undefined;
@@ -1015,6 +1092,7 @@ export interface IExecutionResultDto {
     webAppUrl?: string | undefined;
     completedAt?: Date | undefined;
 }
+
 export interface IExecutionResultDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1022,6 +1100,7 @@ export interface IExecutionResultDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionScheduleRequestDto {
     scheduledTime?: Date;
     parameters?: any | undefined;
@@ -1030,6 +1109,7 @@ export interface IExecutionScheduleRequestDto {
     saveResults?: boolean;
     description?: string | undefined;
 }
+
 export interface IExecutionSearchDto {
     programId?: string | undefined;
     versionId?: string | undefined;
@@ -1044,6 +1124,7 @@ export interface IExecutionSearchDto {
     exitCodeTo?: number | undefined;
     hasErrors?: boolean | undefined;
 }
+
 export interface IExecutionSecurityScanResult {
     isSecure?: boolean;
     securityIssues?: string[] | undefined;
@@ -1051,6 +1132,7 @@ export interface IExecutionSecurityScanResult {
     riskLevel?: number;
     scanDate?: Date;
 }
+
 export interface IExecutionSecurityScanResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1058,6 +1140,7 @@ export interface IExecutionSecurityScanResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionStatsDto {
     totalExecutions?: number;
     successfulExecutions?: number;
@@ -1070,6 +1153,7 @@ export interface IExecutionStatsDto {
     executionsByStatus?: { [key: string]: number; } | undefined;
     executionsByType?: { [key: string]: number; } | undefined;
 }
+
 export interface IExecutionStatsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1077,6 +1161,7 @@ export interface IExecutionStatsDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionStatusDto {
     id?: string | undefined;
     status?: string | undefined;
@@ -1087,6 +1172,7 @@ export interface IExecutionStatusDto {
     resourceUsage?: IExecutionResourceUsageDto;
     statusMessage?: string | undefined;
 }
+
 export interface IExecutionStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1094,6 +1180,7 @@ export interface IExecutionStatusDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionSummaryDto {
     userId?: string | undefined;
     totalExecutions?: number;
@@ -1104,6 +1191,7 @@ export interface IExecutionSummaryDto {
     lastExecution?: Date | undefined;
     programPerformance?: IExecutionPerformanceDto[] | undefined;
 }
+
 export interface IExecutionSummaryDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1111,6 +1199,7 @@ export interface IExecutionSummaryDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionTemplateDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -1120,6 +1209,7 @@ export interface IExecutionTemplateDto {
     defaultEnvironment?: { [key: string]: string; } | undefined;
     defaultResourceLimits?: IExecutionResourceLimitsDto;
 }
+
 export interface IExecutionTemplateDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1127,6 +1217,7 @@ export interface IExecutionTemplateDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionTrendDto {
     date?: Date;
     executionCount?: number;
@@ -1135,6 +1226,7 @@ export interface IExecutionTrendDto {
     averageExecutionTime?: number;
     totalResourceUsage?: number;
 }
+
 export interface IExecutionTrendDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1142,12 +1234,14 @@ export interface IExecutionTrendDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IExecutionValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     recommendedLimits?: IExecutionResourceLimitsDto;
 }
+
 export interface IExecutionValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1155,6 +1249,7 @@ export interface IExecutionValidationResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IFileStorageResult {
     filePath?: string | undefined;
     storageKey?: string | undefined;
@@ -1164,6 +1259,7 @@ export interface IFileStorageResult {
     success?: boolean;
     errorMessage?: string | undefined;
 }
+
 export interface IFileStorageResultListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1171,17 +1267,20 @@ export interface IFileStorageResultListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IFileValidationRequest {
     fileName: string;
     content: string;
     contentType: string;
 }
+
 export interface IFileValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestedContentType?: string | undefined;
 }
+
 export interface IFileValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1189,9 +1288,10 @@ export interface IFileValidationResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IFireHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
@@ -1210,6 +1310,7 @@ export interface IFireHazardDto {
     distanceToClosestForest?: number;
     vegetationType?: string | undefined;
 }
+
 export interface IFireHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -1231,9 +1332,10 @@ export interface IFireHazardResponseDto {
     distanceToClosestForest?: number;
     vegetationType?: string | undefined;
 }
+
 export interface IFloodHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
@@ -1244,6 +1346,7 @@ export interface IFloodHazardDto {
     basementFlooding?: string | undefined;
     extremeEventCondition?: string | undefined;
 }
+
 export interface IFloodHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -1257,12 +1360,14 @@ export interface IFloodHazardResponseDto {
     basementFlooding?: string | undefined;
     extremeEventCondition?: string | undefined;
 }
+
 export interface IHazardResponseDto {
     score?: number;
     level?: string | undefined;
     description?: string | undefined;
     hasCCTV?: boolean | undefined;
 }
+
 export interface IHazardSummaryResponseDto {
     fireHazardScore?: number;
     securityHazardScore?: number;
@@ -1275,6 +1380,7 @@ export interface IHazardSummaryResponseDto {
     overallRiskScore?: number;
     highestRiskType?: string | undefined;
 }
+
 export interface IHealthCheckResultDto {
     name?: string | undefined;
     status?: string | undefined;
@@ -1282,6 +1388,7 @@ export interface IHealthCheckResultDto {
     durationMs?: number;
     message?: string | undefined;
 }
+
 export interface IInt32ApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1289,14 +1396,16 @@ export interface IInt32ApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ILandslideHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory: number;
 }
+
 export interface ILandslideHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -1305,14 +1414,17 @@ export interface ILandslideHazardResponseDto {
     previousIncidentDescription?: string | undefined;
     distanceToInventory?: number;
 }
+
 export interface ILocationRequestDto {
     latitude: number;
     longitude: number;
 }
+
 export interface ILocationResponseDto {
     latitude?: number;
     longitude?: number;
 }
+
 export interface IMasonryBlockResponseDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -1325,6 +1437,7 @@ export interface IMasonryBlockResponseDto {
     totalHeight?: number;
     unitTypeList?: IMasonryUnitTypeResponseDto[] | undefined;
 }
+
 export interface IMasonryBlockResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1332,6 +1445,7 @@ export interface IMasonryBlockResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IMasonryBlockResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1339,6 +1453,7 @@ export interface IMasonryBlockResponseDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IMasonryCreateDto {
     id: string;
     name: string;
@@ -1347,10 +1462,13 @@ export interface IMasonryCreateDto {
     storeyHeight: { [key: string]: number; };
     unitTypeList?: IMasonryUnitType[] | undefined;
 }
+
 export interface IMasonryUnitType {
 }
+
 export interface IMasonryUnitTypeResponseDto {
 }
+
 export interface IMasonryUpdateDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -1359,9 +1477,10 @@ export interface IMasonryUpdateDto {
     storeyHeight?: { [key: string]: number; } | undefined;
     unitTypeList?: IMasonryUnitType[] | undefined;
 }
+
 export interface INoiseHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
@@ -1373,6 +1492,7 @@ export interface INoiseHazardDto {
     extremeNoise?: boolean;
     extremeNoiseDescription?: string | undefined;
 }
+
 export interface INoiseHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -1387,10 +1507,18 @@ export interface INoiseHazardResponseDto {
     extremeNoise?: boolean;
     extremeNoiseDescription?: string | undefined;
 }
+
+export interface INoiseMeasurementsForBuildings {
+    control?: number;
+    security?: number;
+    switchyard?: number;
+}
+
 export interface IPasswordResetResponseDto {
     success?: boolean;
     message?: string | undefined;
 }
+
 export interface IPasswordResetResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1398,13 +1526,15 @@ export interface IPasswordResetResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IPollutionDto {
     pollutantLocation: ILocationRequestDto;
     pollutantNo: number;
     pollutantSource?: string | undefined;
     pollutantDistance?: number;
-    pollutantLevel?: Level;
+    pollutantLevel?: enums.Level;
 }
+
 export interface IPollutionResponseDto {
     pollutantLocation?: ILocationResponseDto;
     pollutantNo?: number;
@@ -1412,6 +1542,7 @@ export interface IPollutionResponseDto {
     pollutantDistance?: number;
     pollutantLevel?: string | undefined;
 }
+
 export interface IProgramComponentMappingDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -1424,6 +1555,7 @@ export interface IProgramComponentMappingDto {
     isActive?: boolean;
     createdAt?: Date;
 }
+
 export interface IProgramComponentMappingDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1431,6 +1563,7 @@ export interface IProgramComponentMappingDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramCreateDto {
     name: string;
     description?: string | undefined;
@@ -1442,9 +1575,10 @@ export interface IProgramCreateDto {
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
 }
+
 export interface IProgramDeploymentDto {
     id?: string | undefined;
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     status?: string | undefined;
     lastDeployed?: Date | undefined;
     configuration?: { [key: string]: any; } | undefined;
@@ -1452,6 +1586,7 @@ export interface IProgramDeploymentDto {
     applicationUrl?: string | undefined;
     logs?: string[] | undefined;
 }
+
 export interface IProgramDeploymentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1459,8 +1594,9 @@ export interface IProgramDeploymentDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramDeploymentStatusDto {
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     status?: string | undefined;
     lastDeployed?: Date | undefined;
     applicationUrl?: string | undefined;
@@ -1468,6 +1604,7 @@ export interface IProgramDeploymentStatusDto {
     lastHealthCheck?: Date;
     recentLogs?: string[] | undefined;
 }
+
 export interface IProgramDeploymentStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1475,6 +1612,7 @@ export interface IProgramDeploymentStatusDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramDetailDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -1495,6 +1633,7 @@ export interface IProgramDetailDto {
     deploymentStatus?: IProgramDeploymentStatusDto;
     stats?: IProgramStatsDto;
 }
+
 export interface IProgramDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1502,6 +1641,7 @@ export interface IProgramDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -1518,6 +1658,7 @@ export interface IProgramDto {
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
 }
+
 export interface IProgramDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1525,6 +1666,7 @@ export interface IProgramDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramExecutionRequestDto {
     parameters?: any | undefined;
     environment?: { [key: string]: string; } | undefined;
@@ -1532,6 +1674,7 @@ export interface IProgramExecutionRequestDto {
     saveResults?: boolean;
     timeoutMinutes?: number;
 }
+
 export interface IProgramFileDto {
     path?: string | undefined;
     contentType?: string | undefined;
@@ -1540,10 +1683,12 @@ export interface IProgramFileDto {
     description?: string | undefined;
     hash?: string | undefined;
 }
+
 export interface IProgramGroupPermissionDto {
     groupId: string;
     accessLevel: string;
 }
+
 export interface IProgramListDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -1555,9 +1700,10 @@ export interface IProgramListDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     deploymentStatus?: string | undefined;
 }
+
 export interface IProgramListDtoPagedResponse {
     items?: IProgramListDto[] | undefined;
     pageNumber?: number;
@@ -1567,6 +1713,7 @@ export interface IProgramListDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IProgramListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1574,12 +1721,14 @@ export interface IProgramListDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramPermissionDto {
     type?: string | undefined;
     id?: string | undefined;
     name?: string | undefined;
     accessLevel?: string | undefined;
 }
+
 export interface IProgramPermissionDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1587,6 +1736,7 @@ export interface IProgramPermissionDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProgramSearchDto {
     name?: string | undefined;
     description?: string | undefined;
@@ -1598,8 +1748,9 @@ export interface IProgramSearchDto {
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
     tags?: string[] | undefined;
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
 }
+
 export interface IProgramStatsDto {
     totalExecutions?: number;
     successfulExecutions?: number;
@@ -1609,6 +1760,7 @@ export interface IProgramStatsDto {
     totalVersions?: number;
     lastUpdate?: Date | undefined;
 }
+
 export interface IProgramUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
@@ -1620,10 +1772,12 @@ export interface IProgramUpdateDto {
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
 }
+
 export interface IProgramUserPermissionDto {
     userId: string;
     accessLevel: string;
 }
+
 export interface IProjectComplexityDto {
     totalFiles?: number;
     totalLines?: number;
@@ -1631,6 +1785,7 @@ export interface IProjectComplexityDto {
     complexityLevel?: string | undefined;
     complexityScore?: number;
 }
+
 export interface IProjectFileDto {
     path?: string | undefined;
     type?: string | undefined;
@@ -1639,11 +1794,13 @@ export interface IProjectFileDto {
     isEntryPoint?: boolean;
     lineCount?: number;
 }
+
 export interface IProjectSecurityScanDto {
     hasSecurityIssues?: boolean;
     issues?: ISecurityIssueDto[] | undefined;
     riskLevel?: number;
 }
+
 export interface IProjectStructureAnalysisDto {
     language?: string | undefined;
     projectType?: string | undefined;
@@ -1657,6 +1814,7 @@ export interface IProjectStructureAnalysisDto {
     complexity?: IProjectComplexityDto;
     metadata?: { [key: string]: any; } | undefined;
 }
+
 export interface IProjectStructureAnalysisDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1664,6 +1822,7 @@ export interface IProjectStructureAnalysisDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IProjectValidationResultDto {
     isValid?: boolean;
     errors?: string[] | undefined;
@@ -1672,6 +1831,7 @@ export interface IProjectValidationResultDto {
     securityScan?: IProjectSecurityScanDto;
     complexity?: IProjectComplexityDto;
 }
+
 export interface IProjectValidationResultDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1679,20 +1839,24 @@ export interface IProjectValidationResultDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRefreshTokenDto {
     accessToken: string;
     refreshToken: string;
 }
+
 export interface IRegionCityUpdateDto {
-    action: Operation;
+    action: enums.Operation;
     cities: string[];
 }
+
 export interface IRegionCreateDto {
     clientId: string;
     regionId: number;
     cities: string[];
     headquarters: string;
 }
+
 export interface IRegionDetailResponseDto {
     id?: string | undefined;
     clientId?: string | undefined;
@@ -1705,6 +1869,7 @@ export interface IRegionDetailResponseDto {
     tMs?: ITMSummaryResponseDto[] | undefined;
     auditInfo?: IAuditInfoResponseDto;
 }
+
 export interface IRegionDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1712,6 +1877,7 @@ export interface IRegionDetailResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRegionListResponseDto {
     id?: string | undefined;
     regionId?: number;
@@ -1721,6 +1887,7 @@ export interface IRegionListResponseDto {
     tmCount?: number;
     activeTMCount?: number;
 }
+
 export interface IRegionListResponseDtoPagedResponse {
     items?: IRegionListResponseDto[] | undefined;
     pageNumber?: number;
@@ -1730,6 +1897,7 @@ export interface IRegionListResponseDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IRegionListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1737,6 +1905,7 @@ export interface IRegionListResponseDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRegionResponseDto {
     id?: string | undefined;
     clientId?: string | undefined;
@@ -1744,6 +1913,7 @@ export interface IRegionResponseDto {
     cities?: string[] | undefined;
     headquarters?: string | undefined;
 }
+
 export interface IRegionResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1751,6 +1921,7 @@ export interface IRegionResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRegionStatisticsResponseDto {
     regionId?: string | undefined;
     cityCount?: number;
@@ -1759,6 +1930,7 @@ export interface IRegionStatisticsResponseDto {
     buildingCount?: number;
     tMsPerCity?: { [key: string]: number; } | undefined;
 }
+
 export interface IRegionStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1766,12 +1938,14 @@ export interface IRegionStatisticsResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRegionSummaryResponseDto {
     id?: string | undefined;
     regionId?: number;
     headquarters?: string | undefined;
     cityCount?: number;
 }
+
 export interface IRegionSummaryResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1779,21 +1953,25 @@ export interface IRegionSummaryResponseDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRegionUpdateDto {
     clientId?: string | undefined;
     id?: number | undefined;
     cities?: string[] | undefined;
     headquarters?: string | undefined;
 }
+
 export interface IRequestAssignmentDto {
     assignedTo: string;
     assignmentNotes?: string | undefined;
 }
+
 export interface IRequestCompletionDto {
     completionNotes: string;
     deliverableLinks?: string[] | undefined;
     completionData?: any | undefined;
 }
+
 export interface IRequestCreateDto {
     type: string;
     title: string;
@@ -1805,6 +1983,7 @@ export interface IRequestCreateDto {
     priority?: string | undefined;
     metadata?: any | undefined;
 }
+
 export interface IRequestDetailDto {
     id?: string | undefined;
     type?: string | undefined;
@@ -1827,6 +2006,7 @@ export interface IRequestDetailDto {
     timeline?: IRequestTimelineDto;
     subscribers?: string[] | undefined;
 }
+
 export interface IRequestDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1834,6 +2014,7 @@ export interface IRequestDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestDto {
     id?: string | undefined;
     type?: string | undefined;
@@ -1849,6 +2030,7 @@ export interface IRequestDto {
     priority?: string | undefined;
     metadata?: any | undefined;
 }
+
 export interface IRequestDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1856,12 +2038,14 @@ export interface IRequestDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestFromTemplateDto {
     fieldValues: { [key: string]: any; };
     programId?: string | undefined;
     relatedEntityId?: string | undefined;
     relatedEntityType?: string | undefined;
 }
+
 export interface IRequestListDto {
     id?: string | undefined;
     type?: string | undefined;
@@ -1880,6 +2064,7 @@ export interface IRequestListDto {
     lastResponseAt?: Date | undefined;
     relatedEntityType?: string | undefined;
 }
+
 export interface IRequestListDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1887,6 +2072,7 @@ export interface IRequestListDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestListDtoPagedResponse {
     items?: IRequestListDto[] | undefined;
     pageNumber?: number;
@@ -1896,6 +2082,7 @@ export interface IRequestListDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IRequestListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1903,12 +2090,14 @@ export interface IRequestListDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestMetricDto {
     category?: string | undefined;
     label?: string | undefined;
     count?: number;
     percentage?: number;
 }
+
 export interface IRequestMetricDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1916,6 +2105,7 @@ export interface IRequestMetricDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestPerformanceDto {
     userId?: string | undefined;
     userName?: string | undefined;
@@ -1925,6 +2115,7 @@ export interface IRequestPerformanceDto {
     averageResolutionTime?: number;
     rating?: number;
 }
+
 export interface IRequestPerformanceDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1932,25 +2123,30 @@ export interface IRequestPerformanceDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestPriorityUpdateDto {
     priority: string;
     reason?: string | undefined;
 }
+
 export interface IRequestRejectionDto {
     rejectionReason: string;
     alternativeSuggestions?: string[] | undefined;
 }
+
 export interface IRequestRelatedEntityDto {
     entityType?: string | undefined;
     entityId?: string | undefined;
     entityName?: string | undefined;
     linkDescription?: string | undefined;
 }
+
 export interface IRequestResponseCreateDto {
     message: string;
     isInternal?: boolean;
     attachments?: string[] | undefined;
 }
+
 export interface IRequestResponseDto {
     id?: string | undefined;
     requestId?: string | undefined;
@@ -1961,6 +2157,7 @@ export interface IRequestResponseDto {
     isInternal?: boolean;
     attachments?: string[] | undefined;
 }
+
 export interface IRequestResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1968,6 +2165,7 @@ export interface IRequestResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1975,11 +2173,13 @@ export interface IRequestResponseDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestResponseUpdateDto {
     message: string;
     isInternal?: boolean | undefined;
     attachments?: string[] | undefined;
 }
+
 export interface IRequestSearchDto {
     type?: string | undefined;
     title?: string | undefined;
@@ -1995,6 +2195,7 @@ export interface IRequestSearchDto {
     requestedTo?: Date | undefined;
     tags?: string[] | undefined;
 }
+
 export interface IRequestStatsDto {
     totalRequests?: number;
     openRequests?: number;
@@ -2006,6 +2207,7 @@ export interface IRequestStatsDto {
     requestsByType?: { [key: string]: number; } | undefined;
     requestsByPriority?: { [key: string]: number; } | undefined;
 }
+
 export interface IRequestStatsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2013,10 +2215,12 @@ export interface IRequestStatsDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestStatusUpdateDto {
     status: string;
     reason?: string | undefined;
 }
+
 export interface IRequestTemplateCreateDto {
     name: string;
     description?: string | undefined;
@@ -2027,6 +2231,7 @@ export interface IRequestTemplateCreateDto {
     priority?: string | undefined;
     isActive?: boolean;
 }
+
 export interface IRequestTemplateDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -2041,6 +2246,7 @@ export interface IRequestTemplateDto {
     createdAt?: Date;
     usageCount?: number;
 }
+
 export interface IRequestTemplateDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2048,6 +2254,7 @@ export interface IRequestTemplateDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestTemplateDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2055,6 +2262,7 @@ export interface IRequestTemplateDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestTimelineDto {
     createdAt?: Date;
     assignedAt?: Date | undefined;
@@ -2063,6 +2271,7 @@ export interface IRequestTimelineDto {
     resolutionTime?: string | undefined;
     events?: IRequestTimelineEventDto[] | undefined;
 }
+
 export interface IRequestTimelineEventDto {
     timestamp?: Date;
     eventType?: string | undefined;
@@ -2070,12 +2279,14 @@ export interface IRequestTimelineEventDto {
     userId?: string | undefined;
     userName?: string | undefined;
 }
+
 export interface IRequestTrendDto {
     date?: Date;
     createdCount?: number;
     completedCount?: number;
     totalOpen?: number;
 }
+
 export interface IRequestTrendDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2083,6 +2294,7 @@ export interface IRequestTrendDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestUpdateDto {
     programId?: string | undefined;
     title?: string | undefined;
@@ -2090,12 +2302,14 @@ export interface IRequestUpdateDto {
     priority?: string | undefined;
     metadata?: any | undefined;
 }
+
 export interface IRequestValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestions?: IRequestValidationSuggestionDto[] | undefined;
 }
+
 export interface IRequestValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2103,22 +2317,26 @@ export interface IRequestValidationResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IRequestValidationSuggestionDto {
     field?: string | undefined;
     message?: string | undefined;
     suggestedValue?: string | undefined;
 }
+
 export interface IRevokeTokenDto {
     token: string | undefined;
 }
+
 export interface IRockFallHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory: number;
 }
+
 export interface IRockFallHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -2127,14 +2345,16 @@ export interface IRockFallHazardResponseDto {
     previousIncidentDescription?: string | undefined;
     distanceToInventory?: number;
 }
+
 export interface IRollbackRequestDto {
     targetVersion: string;
     reason?: string | undefined;
     forceRollback?: boolean;
 }
+
 export interface ISecurityHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
@@ -2143,15 +2363,16 @@ export interface ISecurityHazardDto {
     securitySystemScore?: number;
     egmRiskLevel?: number;
     egmRiskLevelScore?: number;
-    perimeterFenceType?: PerimeterWallType;
+    perimeterFenceType?: enums.PerimeterWallType;
     perimeterWallTypeScore?: number;
-    wallCondition?: WallCondition;
+    wallCondition?: enums.WallCondition;
     wallConditionScore?: number;
     hasCCTV?: boolean;
     cctvConditionScore?: number;
     iemDistance?: number;
     iemDistanceScore?: number;
 }
+
 export interface ISecurityHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -2172,6 +2393,7 @@ export interface ISecurityHazardResponseDto {
     iemDistance?: number;
     iemDistanceScore?: number;
 }
+
 export interface ISecurityIssueDto {
     type?: string | undefined;
     description?: string | undefined;
@@ -2179,6 +2401,7 @@ export interface ISecurityIssueDto {
     line?: number;
     severity?: string | undefined;
 }
+
 export interface ISoilDto {
     hasSoilStudyReport?: boolean;
     soilStudyReportDate?: Date | undefined;
@@ -2186,21 +2409,22 @@ export interface ISoilDto {
     geotechnicalReport?: string | undefined;
     results?: string | undefined;
     drillHoleCount?: number;
-    soilClassTDY2007?: TDY2007SoilClass;
-    soilClassTBDY2018?: TBDY2018SoilClass;
-    finalDecisionOnOldData?: TBDY2018SoilClass;
+    soilClassTDY2007?: enums.TDY2007SoilClass;
+    soilClassTBDY2018?: enums.TBDY2018SoilClass;
+    finalDecisionOnOldData?: enums.TBDY2018SoilClass;
     notes?: string | undefined;
     newSoilClassDataReport?: string | undefined;
     newLiquefactionRiskDataReport?: string | undefined;
     geotechnicalReportMTV?: string | undefined;
     liquefactionRiskGeotechnicalReport?: string | undefined;
     distanceToActiveFaultKm?: number;
-    finalSoilClassification?: TBDY2018SoilClass;
+    finalSoilClassification?: enums.TBDY2018SoilClass;
     soilVS30?: number;
     structureType?: string | undefined;
     vass?: string | undefined;
     liquefactionRisk?: boolean;
 }
+
 export interface ISoilResponseDto {
     hasSoilStudyReport?: boolean;
     soilStudyReportDate?: Date | undefined;
@@ -2223,8 +2447,9 @@ export interface ISoilResponseDto {
     vass?: string | undefined;
     liquefactionRisk?: boolean;
 }
+
 export interface IStaticSiteDeploymentRequestDto {
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     supportedFeatures?: string[] | undefined;
@@ -2240,6 +2465,7 @@ export interface IStaticSiteDeploymentRequestDto {
     cdnEnabled?: boolean;
     headers?: { [key: string]: string; } | undefined;
 }
+
 export interface IStorageStatistics {
     programId?: string | undefined;
     totalFiles?: number;
@@ -2249,6 +2475,7 @@ export interface IStorageStatistics {
     fileTypeCount?: { [key: string]: number; } | undefined;
     fileTypeSizes?: { [key: string]: number; } | undefined;
 }
+
 export interface IStorageStatisticsApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2256,6 +2483,7 @@ export interface IStorageStatisticsApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IStringApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2263,6 +2491,7 @@ export interface IStringApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IStringListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2270,6 +2499,7 @@ export interface IStringListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IStringStringDictionaryApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2277,6 +2507,7 @@ export interface IStringStringDictionaryApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IStringStringListDictionaryApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2284,8 +2515,9 @@ export interface IStringStringListDictionaryApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ISupportedDeploymentOptionDto {
-    deploymentType?: AppDeploymentType;
+    deploymentType?: enums.AppDeploymentType;
     name?: string | undefined;
     description?: string | undefined;
     isRecommended?: boolean;
@@ -2293,6 +2525,7 @@ export interface ISupportedDeploymentOptionDto {
     supportedFeatures?: string[] | undefined;
     defaultConfiguration?: { [key: string]: any; } | undefined;
 }
+
 export interface ISupportedDeploymentOptionDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2300,17 +2533,19 @@ export interface ISupportedDeploymentOptionDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITMCreateDto {
     regionId: string;
     tmId: number;
     name: string;
-    type?: TMType;
-    state?: TMState;
+    type?: enums.TMType;
+    state?: enums.TMState;
     voltages: number[];
     provisionalAcceptanceDate?: Date | undefined;
     location: ILocationRequestDto;
     address?: IAddressDto;
 }
+
 export interface ITMDetailResponseDto {
     id?: string | undefined;
     regionId?: string | undefined;
@@ -2342,6 +2577,7 @@ export interface ITMDetailResponseDto {
     buildings?: IBuildingSummaryResponseDto[] | undefined;
     alternativeTMs?: IAlternativeTMSummaryResponseDto[] | undefined;
 }
+
 export interface ITMDetailResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2349,6 +2585,7 @@ export interface ITMDetailResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITMHazardSummaryResponseDto {
     tmId?: string | undefined;
     fireHazard?: IHazardResponseDto;
@@ -2356,6 +2593,7 @@ export interface ITMHazardSummaryResponseDto {
     floodHazard?: IHazardResponseDto;
     overallRiskScore?: number;
 }
+
 export interface ITMHazardSummaryResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2363,6 +2601,7 @@ export interface ITMHazardSummaryResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITMListResponseDto {
     id?: string | undefined;
     tmId?: number;
@@ -2374,6 +2613,7 @@ export interface ITMListResponseDto {
     city?: string | undefined;
     buildingCount?: number;
 }
+
 export interface ITMListResponseDtoPagedResponse {
     items?: ITMListResponseDto[] | undefined;
     pageNumber?: number;
@@ -2383,6 +2623,7 @@ export interface ITMListResponseDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface ITMListResponseDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2390,6 +2631,7 @@ export interface ITMListResponseDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITMResponseDto {
     id?: string | undefined;
     regionId?: string | undefined;
@@ -2403,6 +2645,7 @@ export interface ITMResponseDto {
     location?: ILocationResponseDto;
     address?: IAddressResponseDto;
 }
+
 export interface ITMResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2410,11 +2653,12 @@ export interface ITMResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITMSearchDto {
     name?: string | undefined;
     regionId?: string | undefined;
-    type?: TMType;
-    state?: TMState;
+    type?: enums.TMType;
+    state?: enums.TMState;
     voltages?: number[] | undefined;
     city?: string | undefined;
     county?: string | undefined;
@@ -2422,9 +2666,11 @@ export interface ITMSearchDto {
     provisionalAcceptanceDateFrom?: Date | undefined;
     provisionalAcceptanceDateTo?: Date | undefined;
 }
+
 export interface ITMStateUpdateDto {
-    state: TMState;
+    state: enums.TMState;
 }
+
 export interface ITMStatisticsResponseDto {
     tmId?: string | undefined;
     buildingCount?: number;
@@ -2433,6 +2679,7 @@ export interface ITMStatisticsResponseDto {
     overallRiskScore?: number;
     daysSinceAcceptance?: number;
 }
+
 export interface ITMStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2440,6 +2687,7 @@ export interface ITMStatisticsResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITMSummaryResponseDto {
     id?: string | undefined;
     tmId?: number;
@@ -2447,12 +2695,13 @@ export interface ITMSummaryResponseDto {
     state?: string | undefined;
     maxVoltage?: number;
 }
+
 export interface ITMUpdateDto {
     regionId?: string | undefined;
     id?: number | undefined;
     name?: string | undefined;
-    type?: TMType;
-    state?: TMState;
+    type?: enums.TMType;
+    state?: enums.TMState;
     voltages?: number[] | undefined;
     provisionalAcceptanceDate?: Date | undefined;
     location?: ILocationRequestDto;
@@ -2472,15 +2721,18 @@ export interface ITMUpdateDto {
     tsunamiHazard?: ITsunamiHazardDto;
     soil?: ISoilDto;
 }
+
 export interface ITMVoltageUpdateDto {
     voltages: number[];
 }
+
 export interface ITokenResponseDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
     expiresAt?: Date;
     tokenType?: string | undefined;
 }
+
 export interface ITokenResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2488,14 +2740,16 @@ export interface ITokenResponseDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface ITsunamiHazardDto {
     score?: number;
-    level?: Level;
+    level?: enums.Level;
     eliminationCosts?: { [key: string]: number; } | undefined;
     previousIncidentOccurred: boolean;
     previousIncidentDescription?: string | undefined;
     distanceToInventory: number;
 }
+
 export interface ITsunamiHazardResponseDto {
     score?: number;
     level?: string | undefined;
@@ -2504,6 +2758,7 @@ export interface ITsunamiHazardResponseDto {
     previousIncidentDescription?: string | undefined;
     distanceToInventory?: number;
 }
+
 export interface IUiComponentAssetDto {
     path?: string | undefined;
     contentType?: string | undefined;
@@ -2512,6 +2767,7 @@ export interface IUiComponentAssetDto {
     lastModified?: Date;
     url?: string | undefined;
 }
+
 export interface IUiComponentAssetDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2519,12 +2775,14 @@ export interface IUiComponentAssetDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentAssetUploadDto {
     path: string;
     content: string;
     contentType: string;
     assetType?: string | undefined;
 }
+
 export interface IUiComponentBundleDto {
     id?: string | undefined;
     componentId?: string | undefined;
@@ -2534,6 +2792,7 @@ export interface IUiComponentBundleDto {
     createdAt?: Date;
     totalSize?: number;
 }
+
 export interface IUiComponentBundleDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2541,6 +2800,7 @@ export interface IUiComponentBundleDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentBundleInfoDto {
     bundleType?: string | undefined;
     assetUrls?: string[] | undefined;
@@ -2548,17 +2808,20 @@ export interface IUiComponentBundleInfoDto {
     lastUpdated?: Date;
     totalSize?: number;
 }
+
 export interface IUiComponentBundleUploadDto {
     assets: IUiComponentAssetUploadDto[];
     dependencies?: { [key: string]: string; } | undefined;
     bundleType?: string | undefined;
 }
+
 export interface IUiComponentCategoryDto {
     name?: string | undefined;
     description?: string | undefined;
     componentCount?: number;
     subCategories?: string[] | undefined;
 }
+
 export interface IUiComponentCategoryDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2566,18 +2829,21 @@ export interface IUiComponentCategoryDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentCompatibilitySearchDto {
     programType: string;
     programLanguage?: string | undefined;
     requiredFeatures?: string[] | undefined;
     compatibleTypes?: string[] | undefined;
 }
+
 export interface IUiComponentConfigDto {
     componentId?: string | undefined;
     configuration?: any | undefined;
     lastUpdated?: Date;
     updatedBy?: string | undefined;
 }
+
 export interface IUiComponentConfigDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2585,9 +2851,11 @@ export interface IUiComponentConfigDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentConfigUpdateDto {
     configuration: any;
 }
+
 export interface IUiComponentCreateDto {
     name: string;
     description?: string | undefined;
@@ -2596,6 +2864,7 @@ export interface IUiComponentCreateDto {
     schema?: any | undefined;
     tags?: string[] | undefined;
 }
+
 export interface IUiComponentDetailDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -2617,6 +2886,7 @@ export interface IUiComponentDetailDto {
     stats?: IUiComponentStatsDto;
     usage?: IUiComponentUsageDto[] | undefined;
 }
+
 export interface IUiComponentDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2624,6 +2894,7 @@ export interface IUiComponentDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -2638,6 +2909,7 @@ export interface IUiComponentDto {
     status?: string | undefined;
     tags?: string[] | undefined;
 }
+
 export interface IUiComponentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2645,6 +2917,7 @@ export interface IUiComponentDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentListDto {
     id?: string | undefined;
     name?: string | undefined;
@@ -2661,6 +2934,7 @@ export interface IUiComponentListDto {
     usageCount?: number;
     tags?: string[] | undefined;
 }
+
 export interface IUiComponentListDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2668,6 +2942,7 @@ export interface IUiComponentListDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentListDtoPagedResponse {
     items?: IUiComponentListDto[] | undefined;
     pageNumber?: number;
@@ -2677,6 +2952,7 @@ export interface IUiComponentListDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IUiComponentListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2684,6 +2960,7 @@ export interface IUiComponentListDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentMappingDto {
     componentId: string;
     mappingName: string;
@@ -2691,6 +2968,7 @@ export interface IUiComponentMappingDto {
     displayOrder?: number;
     isActive?: boolean;
 }
+
 export interface IUiComponentRecommendationDto {
     componentId?: string | undefined;
     componentName?: string | undefined;
@@ -2702,6 +2980,7 @@ export interface IUiComponentRecommendationDto {
     usageCount?: number;
     rating?: number;
 }
+
 export interface IUiComponentRecommendationDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2709,6 +2988,7 @@ export interface IUiComponentRecommendationDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentSchemaDto {
     componentId?: string | undefined;
     schema?: any | undefined;
@@ -2716,6 +2996,7 @@ export interface IUiComponentSchemaDto {
     updatedBy?: string | undefined;
     isValid?: boolean;
 }
+
 export interface IUiComponentSchemaDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2723,9 +3004,11 @@ export interface IUiComponentSchemaDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentSchemaUpdateDto {
     schema: any;
 }
+
 export interface IUiComponentSearchDto {
     name?: string | undefined;
     description?: string | undefined;
@@ -2738,6 +3021,7 @@ export interface IUiComponentSearchDto {
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
 }
+
 export interface IUiComponentStatsDto {
     totalUsage?: number;
     activeUsage?: number;
@@ -2746,6 +3030,7 @@ export interface IUiComponentStatsDto {
     ratingCount?: number;
     totalDownloads?: number;
 }
+
 export interface IUiComponentUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
@@ -2754,6 +3039,7 @@ export interface IUiComponentUpdateDto {
     schema?: any | undefined;
     tags?: string[] | undefined;
 }
+
 export interface IUiComponentUsageDto {
     programId?: string | undefined;
     programName?: string | undefined;
@@ -2764,6 +3050,7 @@ export interface IUiComponentUsageDto {
     isActive?: boolean;
     displayOrder?: number;
 }
+
 export interface IUiComponentUsageDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2771,12 +3058,14 @@ export interface IUiComponentUsageDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentValidationResult {
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     suggestions?: IUiComponentValidationSuggestionDto[] | undefined;
 }
+
 export interface IUiComponentValidationResultApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2784,11 +3073,18 @@ export interface IUiComponentValidationResultApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUiComponentValidationSuggestionDto {
     type?: string | undefined;
     message?: string | undefined;
     suggestedValue?: string | undefined;
 }
+
+export interface IUserClientAssignmentDto {
+    userId: string;
+    clientIds: string[];
+}
+
 export interface IUserDetailDto {
     id?: string | undefined;
     email?: string | undefined;
@@ -2805,6 +3101,7 @@ export interface IUserDetailDto {
     modifiedDate?: Date | undefined;
     assignedClients?: IClientSummaryResponseDto[] | undefined;
 }
+
 export interface IUserDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2812,6 +3109,7 @@ export interface IUserDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUserDto {
     id?: string | undefined;
     email?: string | undefined;
@@ -2824,6 +3122,7 @@ export interface IUserDto {
     lastLoginDate?: Date | undefined;
     createdDate?: Date;
 }
+
 export interface IUserDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2831,6 +3130,7 @@ export interface IUserDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUserListDto {
     id?: string | undefined;
     email?: string | undefined;
@@ -2840,6 +3140,7 @@ export interface IUserListDto {
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
 }
+
 export interface IUserListDtoPagedResponse {
     items?: IUserListDto[] | undefined;
     pageNumber?: number;
@@ -2849,6 +3150,7 @@ export interface IUserListDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IUserListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2856,28 +3158,34 @@ export interface IUserListDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUserLoginDto {
     usernameOrEmail: string;
     password: string;
     rememberMe?: boolean;
 }
+
 export interface IUserPasswordChangeDto {
     currentPassword: string;
     newPassword: string;
     confirmNewPassword: string;
 }
+
 export interface IUserPasswordResetDto {
     resetToken: string;
     newPassword: string;
     confirmNewPassword: string;
 }
+
 export interface IUserPasswordResetRequestDto {
     email: string;
 }
+
 export interface IUserPermissionUpdateDto {
     userId: string;
     permissions: string[];
 }
+
 export interface IUserProfileDto {
     id?: string | undefined;
     username?: string | undefined;
@@ -2886,6 +3194,7 @@ export interface IUserProfileDto {
     createdDate?: Date;
     lastLoginDate?: Date | undefined;
 }
+
 export interface IUserProfileDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2893,6 +3202,7 @@ export interface IUserProfileDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IUserRegisterDto {
     email: string;
     username: string;
@@ -2901,9 +3211,11 @@ export interface IUserRegisterDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
 }
+
 export interface IUserRoleUpdateDto {
     roles: string[];
 }
+
 export interface IUserSearchDto {
     email?: string | undefined;
     username?: string | undefined;
@@ -2916,11 +3228,13 @@ export interface IUserSearchDto {
     lastLoginFrom?: Date | undefined;
     lastLoginTo?: Date | undefined;
 }
+
 export interface IUserUpdateDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     email?: string | undefined;
 }
+
 export interface IVersionActivityDto {
     date?: Date;
     activity?: string | undefined;
@@ -2928,6 +3242,7 @@ export interface IVersionActivityDto {
     userName?: string | undefined;
     description?: string | undefined;
 }
+
 export interface IVersionActivityDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2935,12 +3250,14 @@ export interface IVersionActivityDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionChangeDto {
     path?: string | undefined;
     action?: string | undefined;
     description?: string | undefined;
     impactLevel?: number;
 }
+
 export interface IVersionChangeDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2948,18 +3265,22 @@ export interface IVersionChangeDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionCommitDto {
     commitMessage: string;
     changes: IVersionFileChangeDto[];
 }
+
 export interface IVersionCommitValidationDto {
     changes: IVersionFileChangeDto[];
 }
+
 export interface IVersionCreateDto {
     programId: string;
     commitMessage: string;
     files?: IVersionFileCreateDto[] | undefined;
 }
+
 export interface IVersionDeploymentDto {
     id?: string | undefined;
     versionId?: string | undefined;
@@ -2969,6 +3290,7 @@ export interface IVersionDeploymentDto {
     targetEnvironments?: string[] | undefined;
     configuration?: { [key: string]: any; } | undefined;
 }
+
 export interface IVersionDeploymentDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -2976,17 +3298,20 @@ export interface IVersionDeploymentDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionDeploymentInfoDto {
     isDeployed?: boolean;
     lastDeployment?: Date | undefined;
     deploymentStatus?: string | undefined;
     environments?: string[] | undefined;
 }
+
 export interface IVersionDeploymentRequestDto {
     deploymentConfiguration?: { [key: string]: any; } | undefined;
     targetEnvironments?: string[] | undefined;
     setAsCurrent?: boolean;
 }
+
 export interface IVersionDetailDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -3005,6 +3330,7 @@ export interface IVersionDetailDto {
     stats?: IVersionStatsDto;
     deploymentInfo?: IVersionDeploymentInfoDto;
 }
+
 export interface IVersionDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3012,6 +3338,7 @@ export interface IVersionDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionDiffDto {
     fromVersionId?: string | undefined;
     toVersionId?: string | undefined;
@@ -3020,6 +3347,7 @@ export interface IVersionDiffDto {
     changes?: IVersionFileChangeSummaryDto[] | undefined;
     stats?: IVersionDiffStatsDto;
 }
+
 export interface IVersionDiffDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3027,6 +3355,7 @@ export interface IVersionDiffDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionDiffStatsDto {
     filesChanged?: number;
     filesAdded?: number;
@@ -3034,6 +3363,7 @@ export interface IVersionDiffStatsDto {
     totalLinesAdded?: number;
     totalLinesRemoved?: number;
 }
+
 export interface IVersionDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -3046,6 +3376,7 @@ export interface IVersionDto {
     reviewedAt?: Date | undefined;
     reviewComments?: string | undefined;
 }
+
 export interface IVersionDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3053,6 +3384,7 @@ export interface IVersionDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionExecutionRequestDto {
     parameters?: any | undefined;
     environment?: { [key: string]: string; } | undefined;
@@ -3060,12 +3392,14 @@ export interface IVersionExecutionRequestDto {
     saveResults?: boolean;
     timeoutMinutes?: number;
 }
+
 export interface IVersionFileChangeDto {
     path: string;
     action: string;
     content?: string | undefined;
     contentType?: string | undefined;
 }
+
 export interface IVersionFileChangeSummaryDto {
     path?: string | undefined;
     action?: string | undefined;
@@ -3074,12 +3408,14 @@ export interface IVersionFileChangeSummaryDto {
     sizeBefore?: number;
     sizeAfter?: number;
 }
+
 export interface IVersionFileCreateDto {
     path: string;
     content: string;
     contentType?: string | undefined;
     fileType?: string | undefined;
 }
+
 export interface IVersionFileDetailDto {
     path?: string | undefined;
     storageKey?: string | undefined;
@@ -3090,6 +3426,7 @@ export interface IVersionFileDetailDto {
     content?: string | undefined;
     lastModified?: Date;
 }
+
 export interface IVersionFileDetailDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3097,6 +3434,7 @@ export interface IVersionFileDetailDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionFileDto {
     path?: string | undefined;
     storageKey?: string | undefined;
@@ -3105,6 +3443,7 @@ export interface IVersionFileDto {
     fileType?: string | undefined;
     contentType?: string | undefined;
 }
+
 export interface IVersionFileDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3112,11 +3451,13 @@ export interface IVersionFileDtoListApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionFileUpdateDto {
     content: string;
     contentType?: string | undefined;
     fileType?: string | undefined;
 }
+
 export interface IVersionListDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -3133,6 +3474,7 @@ export interface IVersionListDto {
     fileCount?: number;
     isCurrent?: boolean;
 }
+
 export interface IVersionListDtoPagedResponse {
     items?: IVersionListDto[] | undefined;
     pageNumber?: number;
@@ -3142,6 +3484,7 @@ export interface IVersionListDtoPagedResponse {
     hasPreviousPage?: boolean;
     hasNextPage?: boolean;
 }
+
 export interface IVersionListDtoPagedResponseApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3149,6 +3492,7 @@ export interface IVersionListDtoPagedResponseApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionReviewDto {
     id?: string | undefined;
     versionId?: string | undefined;
@@ -3158,6 +3502,7 @@ export interface IVersionReviewDto {
     reviewedByName?: string | undefined;
     reviewedAt?: Date;
 }
+
 export interface IVersionReviewDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3165,10 +3510,12 @@ export interface IVersionReviewDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionReviewSubmissionDto {
     status: string;
     comments: string;
 }
+
 export interface IVersionSearchDto {
     programId?: string | undefined;
     createdBy?: string | undefined;
@@ -3181,6 +3528,7 @@ export interface IVersionSearchDto {
     versionNumberFrom?: number | undefined;
     versionNumberTo?: number | undefined;
 }
+
 export interface IVersionStatsDto {
     totalFiles?: number;
     totalSize?: number;
@@ -3188,6 +3536,7 @@ export interface IVersionStatsDto {
     executionCount?: number;
     isCurrentVersion?: boolean;
 }
+
 export interface IVersionStatsDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3195,14 +3544,17 @@ export interface IVersionStatsDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
+
 export interface IVersionStatusUpdateDto {
     status: string;
     comments?: string | undefined;
 }
+
 export interface IVersionUpdateDto {
     commitMessage?: string | undefined;
     reviewComments?: string | undefined;
 }
+
 export interface IWebAppDeploymentRequestDto {
     configuration?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
@@ -3211,6 +3563,7 @@ export interface IWebAppDeploymentRequestDto {
     port?: number | undefined;
     domainName?: string | undefined;
 }
+
 export interface IWebAppStatusDto {
     status?: string | undefined;
     url?: string | undefined;
@@ -3220,6 +3573,7 @@ export interface IWebAppStatusDto {
     errorMessage?: string | undefined;
     metrics?: { [key: string]: any; } | undefined;
 }
+
 export interface IWebAppStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -3227,8 +3581,5 @@ export interface IWebAppStatusDtoApiResponse {
     errors?: string[] | undefined;
     timestamp?: Date;
 }
-export interface INoiseMeasurementsForBuildings {
-    control?: number;
-    security?: number;
-    switchyard?: number;
-}
+
+// --- END OF FILE typeInterfaces.ts ---

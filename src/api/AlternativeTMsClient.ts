@@ -1,20 +1,20 @@
+// --- START OF FILE AlternativeTMsClient.ts ---
+
 import * as types from './types';
 import * as interfaces from './interfaces';
+import * as enums from './enums';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
-
-
 
 export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get alternative TM by ID
      * @return OK
@@ -25,16 +25,19 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_GetById(_response);
         });
     }
+
     protected processAlternativeTMs_GetById(response: Response): Promise<types.AlternativeTMDetailResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -52,6 +55,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMDetailResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Update alternative TM
      * @param body (optional) 
@@ -63,7 +67,9 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -72,10 +78,12 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_Update(_response);
         });
     }
+
     protected processAlternativeTMs_Update(response: Response): Promise<types.AlternativeTMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -93,6 +101,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Delete alternative TM
      * @return OK
@@ -103,16 +112,19 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_Delete(_response);
         });
     }
+
     protected processAlternativeTMs_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -130,6 +142,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get alternative TMs by TM ID
      * @param pageNumber (optional) 
@@ -137,7 +150,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    alternativeTMs_GetByTmId(tmId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
+    alternativeTMs_GetByTmId(tmId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/AlternativeTMs/by-tm/{tmId}?";
         if (tmId === undefined || tmId === null)
             throw new Error("The parameter 'tmId' must be defined.");
@@ -159,16 +172,19 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_GetByTmId(_response);
         });
     }
+
     protected processAlternativeTMs_GetByTmId(response: Response): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -186,6 +202,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get alternative TMs by city
      * @param pageNumber (optional) 
@@ -193,7 +210,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    alternativeTMs_GetByCity(city: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
+    alternativeTMs_GetByCity(city: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/AlternativeTMs/by-city/{city}?";
         if (city === undefined || city === null)
             throw new Error("The parameter 'city' must be defined.");
@@ -215,16 +232,19 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_GetByCity(_response);
         });
     }
+
     protected processAlternativeTMs_GetByCity(response: Response): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -242,6 +262,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get alternative TMs by county
      * @param pageNumber (optional) 
@@ -249,7 +270,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    alternativeTMs_GetByCounty(county: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
+    alternativeTMs_GetByCounty(county: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/AlternativeTMs/by-county/{county}?";
         if (county === undefined || county === null)
             throw new Error("The parameter 'county' must be defined.");
@@ -271,16 +292,19 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_GetByCounty(_response);
         });
     }
+
     protected processAlternativeTMs_GetByCounty(response: Response): Promise<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -298,6 +322,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMSummaryResponseDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new alternative TM
      * @param body (optional) 
@@ -306,7 +331,9 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
     alternativeTMs_Create(body: types.AlternativeTMCreateDto | undefined): Promise<types.AlternativeTMResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/AlternativeTMs";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -315,10 +342,12 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_Create(_response);
         });
     }
+
     protected processAlternativeTMs_Create(response: Response): Promise<types.AlternativeTMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -336,6 +365,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Compare alternative TMs for a specific TM
      * @return OK
@@ -346,16 +376,19 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             throw new Error("The parameter 'tmId' must be defined.");
         url_ = url_.replace("{tmId}", encodeURIComponent("" + tmId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_CompareAlternatives(_response);
         });
     }
+
     protected processAlternativeTMs_CompareAlternatives(response: Response): Promise<types.AlternativeTMComparisonResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -373,6 +406,7 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         }
         return Promise.resolve<types.AlternativeTMComparisonResponseDtoListApiResponse>(null as any);
     }
+
     /**
      * Create alternative TM from existing TM
      * @param body (optional) 
@@ -384,7 +418,9 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
             throw new Error("The parameter 'tmId' must be defined.");
         url_ = url_.replace("{tmId}", encodeURIComponent("" + tmId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -393,10 +429,12 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processAlternativeTMs_CreateFromTM(_response);
         });
     }
+
     protected processAlternativeTMs_CreateFromTM(response: Response): Promise<types.AlternativeTMResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -415,3 +453,4 @@ export class AlternativeTMsClient implements interfaces.IAlternativeTMsClient {
         return Promise.resolve<types.AlternativeTMResponseDtoApiResponse>(null as any);
     }
 }
+// --- END OF FILE AlternativeTMsClient.ts ---

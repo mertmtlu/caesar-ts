@@ -1,18 +1,20 @@
+// --- START OF FILE RequestsClient.ts ---
+
 import * as types from './types';
 import * as interfaces from './interfaces';
+import * as enums from './enums';
 import { throwException } from './utils';
-import {
-    SortDirection,
-} from './enums';
 
 export class RequestsClient implements interfaces.IRequestsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
     }
+
     /**
      * Get all requests with pagination
      * @param pageNumber (optional) 
@@ -20,7 +22,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -39,16 +41,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetAll(_response);
         });
     }
+
     protected processRequests_GetAll(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -66,6 +71,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Create new request
      * @param body (optional) 
@@ -74,7 +80,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_Create(body: types.RequestCreateDto | undefined): Promise<types.RequestDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Requests";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -83,10 +91,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_Create(_response);
         });
     }
+
     protected processRequests_Create(response: Response): Promise<types.RequestDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -104,6 +114,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
     }
+
     /**
      * Get request by ID
      * @return OK
@@ -114,16 +125,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetById(_response);
         });
     }
+
     protected processRequests_GetById(response: Response): Promise<types.RequestDetailDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -141,6 +155,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDetailDtoApiResponse>(null as any);
     }
+
     /**
      * Update request
      * @param body (optional) 
@@ -152,7 +167,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -161,10 +178,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_Update(_response);
         });
     }
+
     protected processRequests_Update(response: Response): Promise<types.RequestDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -182,6 +201,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
     }
+
     /**
      * Delete request
      * @return OK
@@ -192,16 +212,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_Delete(_response);
         });
     }
+
     protected processRequests_Delete(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -219,6 +242,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Advanced request search
      * @param pageNumber (optional) 
@@ -227,7 +251,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param body (optional) 
      * @return OK
      */
-    requests_Search(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined, body: types.RequestSearchDto | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_Search(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined, body: types.RequestSearchDto | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/search?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -246,7 +270,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -255,10 +281,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_Search(_response);
         });
     }
+
     protected processRequests_Search(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -276,6 +304,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get requests by type
      * @param pageNumber (optional) 
@@ -283,7 +312,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetByType(type: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetByType(type: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/by-type/{type}?";
         if (type === undefined || type === null)
             throw new Error("The parameter 'type' must be defined.");
@@ -305,16 +334,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetByType(_response);
         });
     }
+
     protected processRequests_GetByType(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -332,6 +364,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get requests by status
      * @param pageNumber (optional) 
@@ -339,7 +372,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetByStatus(status: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetByStatus(status: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/by-status/{status}?";
         if (status === undefined || status === null)
             throw new Error("The parameter 'status' must be defined.");
@@ -361,16 +394,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetByStatus(_response);
         });
     }
+
     protected processRequests_GetByStatus(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -388,6 +424,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get requests by priority
      * @param pageNumber (optional) 
@@ -395,7 +432,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetByPriority(priority: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetByPriority(priority: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/by-priority/{priority}?";
         if (priority === undefined || priority === null)
             throw new Error("The parameter 'priority' must be defined.");
@@ -417,16 +454,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetByPriority(_response);
         });
     }
+
     protected processRequests_GetByPriority(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -444,6 +484,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get requests by requester
      * @param pageNumber (optional) 
@@ -451,7 +492,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetByRequester(userId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetByRequester(userId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/by-requester/{userId}?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -473,16 +514,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetByRequester(_response);
         });
     }
+
     protected processRequests_GetByRequester(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -500,6 +544,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get requests by assignee
      * @param pageNumber (optional) 
@@ -507,7 +552,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetByAssignee(userId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetByAssignee(userId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/by-assignee/{userId}?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined.");
@@ -529,16 +574,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetByAssignee(_response);
         });
     }
+
     protected processRequests_GetByAssignee(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -556,6 +604,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get requests by program
      * @param pageNumber (optional) 
@@ -563,7 +612,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetByProgram(programId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetByProgram(programId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/by-program/{programId}?";
         if (programId === undefined || programId === null)
             throw new Error("The parameter 'programId' must be defined.");
@@ -585,16 +634,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetByProgram(_response);
         });
     }
+
     protected processRequests_GetByProgram(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -612,6 +664,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get unassigned requests
      * @param pageNumber (optional) 
@@ -619,7 +672,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetUnassignedRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetUnassignedRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/unassigned?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -638,16 +691,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetUnassignedRequests(_response);
         });
     }
+
     protected processRequests_GetUnassignedRequests(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -665,6 +721,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Update request status
      * @param body (optional) 
@@ -676,7 +733,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -685,10 +744,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_UpdateStatus(_response);
         });
     }
+
     protected processRequests_UpdateStatus(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -706,6 +767,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Assign request
      * @param body (optional) 
@@ -717,7 +779,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -726,10 +790,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_AssignRequest(_response);
         });
     }
+
     protected processRequests_AssignRequest(response: Response): Promise<types.RequestDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -747,6 +813,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
     }
+
     /**
      * Unassign request
      * @return OK
@@ -757,16 +824,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_UnassignRequest(_response);
         });
     }
+
     protected processRequests_UnassignRequest(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -784,6 +854,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Update request priority
      * @param body (optional) 
@@ -795,7 +866,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -804,10 +877,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_UpdatePriority(_response);
         });
     }
+
     protected processRequests_UpdatePriority(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -825,6 +900,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Add response to request
      * @param body (optional) 
@@ -836,7 +912,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -845,10 +923,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_AddResponse(_response);
         });
     }
+
     protected processRequests_AddResponse(response: Response): Promise<types.RequestResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -866,6 +946,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestResponseDtoApiResponse>(null as any);
     }
+
     /**
      * Get responses for request
      * @return OK
@@ -876,16 +957,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetResponses(_response);
         });
     }
+
     protected processRequests_GetResponses(response: Response): Promise<types.RequestResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -903,6 +987,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestResponseDtoListApiResponse>(null as any);
     }
+
     /**
      * Update request response
      * @param body (optional) 
@@ -917,7 +1002,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'responseId' must be defined.");
         url_ = url_.replace("{responseId}", encodeURIComponent("" + responseId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -926,10 +1013,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_UpdateResponse(_response);
         });
     }
+
     protected processRequests_UpdateResponse(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -947,6 +1036,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Delete request response
      * @return OK
@@ -960,16 +1050,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'responseId' must be defined.");
         url_ = url_.replace("{responseId}", encodeURIComponent("" + responseId));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_DeleteResponse(_response);
         });
     }
+
     protected processRequests_DeleteResponse(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -987,6 +1080,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Open request
      * @return OK
@@ -997,16 +1091,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "POST",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_OpenRequest(_response);
         });
     }
+
     protected processRequests_OpenRequest(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1024,6 +1121,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Start work on request
      * @param body (optional) 
@@ -1035,7 +1133,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1044,10 +1144,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_StartWorkOnRequest(_response);
         });
     }
+
     protected processRequests_StartWorkOnRequest(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1065,6 +1167,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Complete request
      * @param body (optional) 
@@ -1076,7 +1179,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1085,10 +1190,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_CompleteRequest(_response);
         });
     }
+
     protected processRequests_CompleteRequest(response: Response): Promise<types.RequestDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1106,6 +1213,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
     }
+
     /**
      * Reject request
      * @param body (optional) 
@@ -1117,7 +1225,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1126,10 +1236,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_RejectRequest(_response);
         });
     }
+
     protected processRequests_RejectRequest(response: Response): Promise<types.RequestDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1147,6 +1259,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
     }
+
     /**
      * Reopen request
      * @param body (optional) 
@@ -1158,7 +1271,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1167,10 +1282,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_ReopenRequest(_response);
         });
     }
+
     protected processRequests_ReopenRequest(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1188,6 +1305,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get request statistics
      * @param programId (optional) 
@@ -1225,16 +1343,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (statuses !== undefined)
             statuses && statuses.forEach(item => { url_ += "Statuses=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRequestStats(_response);
         });
     }
+
     protected processRequests_GetRequestStats(response: Response): Promise<types.RequestStatsDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1252,6 +1373,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestStatsDtoApiResponse>(null as any);
     }
+
     /**
      * Get request trends
      * @param days (optional) 
@@ -1264,16 +1386,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (days !== undefined)
             url_ += "days=" + encodeURIComponent("" + days) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRequestTrends(_response);
         });
     }
+
     protected processRequests_GetRequestTrends(response: Response): Promise<types.RequestTrendDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1291,6 +1416,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestTrendDtoListApiResponse>(null as any);
     }
+
     /**
      * Get request metrics by type
      * @return OK
@@ -1298,16 +1424,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_GetRequestMetricsByType(): Promise<types.RequestMetricDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/metrics/by-type";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRequestMetricsByType(_response);
         });
     }
+
     protected processRequests_GetRequestMetricsByType(response: Response): Promise<types.RequestMetricDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1325,6 +1454,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestMetricDtoListApiResponse>(null as any);
     }
+
     /**
      * Get request metrics by status
      * @return OK
@@ -1332,16 +1462,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_GetRequestMetricsByStatus(): Promise<types.RequestMetricDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/metrics/by-status";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRequestMetricsByStatus(_response);
         });
     }
+
     protected processRequests_GetRequestMetricsByStatus(response: Response): Promise<types.RequestMetricDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1359,6 +1492,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestMetricDtoListApiResponse>(null as any);
     }
+
     /**
      * Get assignee performance
      * @return OK
@@ -1366,16 +1500,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_GetAssigneePerformance(): Promise<types.RequestPerformanceDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/performance";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetAssigneePerformance(_response);
         });
     }
+
     protected processRequests_GetAssigneePerformance(response: Response): Promise<types.RequestPerformanceDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1393,6 +1530,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestPerformanceDtoListApiResponse>(null as any);
     }
+
     /**
      * Get request templates
      * @param type (optional) 
@@ -1405,16 +1543,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (type !== undefined)
             url_ += "type=" + encodeURIComponent("" + type) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRequestTemplates(_response);
         });
     }
+
     protected processRequests_GetRequestTemplates(response: Response): Promise<types.RequestTemplateDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1432,6 +1573,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestTemplateDtoListApiResponse>(null as any);
     }
+
     /**
      * Create request template
      * @param body (optional) 
@@ -1440,7 +1582,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_CreateRequestTemplate(body: types.RequestTemplateCreateDto | undefined): Promise<types.RequestTemplateDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/templates";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1449,10 +1593,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_CreateRequestTemplate(_response);
         });
     }
+
     protected processRequests_CreateRequestTemplate(response: Response): Promise<types.RequestTemplateDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1470,6 +1616,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestTemplateDtoApiResponse>(null as any);
     }
+
     /**
      * Create request from template
      * @param body (optional) 
@@ -1481,7 +1628,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'templateId' must be defined.");
         url_ = url_.replace("{templateId}", encodeURIComponent("" + templateId));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1490,10 +1639,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_CreateFromTemplate(_response);
         });
     }
+
     protected processRequests_CreateFromTemplate(response: Response): Promise<types.RequestDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1511,6 +1662,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestDtoApiResponse>(null as any);
     }
+
     /**
      * Subscribe to request updates
      * @param body (optional) 
@@ -1522,7 +1674,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1531,10 +1685,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_SubscribeToRequestUpdates(_response);
         });
     }
+
     protected processRequests_SubscribeToRequestUpdates(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1552,6 +1708,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Unsubscribe from request updates
      * @param body (optional) 
@@ -1563,7 +1720,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1572,10 +1731,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_UnsubscribeFromRequestUpdates(_response);
         });
     }
+
     protected processRequests_UnsubscribeFromRequestUpdates(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1593,6 +1754,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get request subscribers
      * @return OK
@@ -1603,16 +1765,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRequestSubscribers(_response);
         });
     }
+
     protected processRequests_GetRequestSubscribers(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1630,6 +1795,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Validate request
      * @param body (optional) 
@@ -1638,7 +1804,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_ValidateRequest(body: types.RequestCreateDto | undefined): Promise<types.RequestValidationResultApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/validate";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "POST",
@@ -1647,10 +1815,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_ValidateRequest(_response);
         });
     }
+
     protected processRequests_ValidateRequest(response: Response): Promise<types.RequestValidationResultApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1668,6 +1838,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestValidationResultApiResponse>(null as any);
     }
+
     /**
      * Check if user can modify request
      * @param userId (optional) 
@@ -1683,16 +1854,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (userId !== undefined)
             url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_CanUserModifyRequest(_response);
         });
     }
+
     protected processRequests_CanUserModifyRequest(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1710,6 +1884,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
+
     /**
      * Get available request types
      * @return OK
@@ -1717,16 +1892,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_GetAvailableRequestTypes(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/types";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetAvailableRequestTypes(_response);
         });
     }
+
     protected processRequests_GetAvailableRequestTypes(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1744,6 +1922,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Get available request statuses
      * @return OK
@@ -1751,16 +1930,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_GetAvailableRequestStatuses(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/statuses";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetAvailableRequestStatuses(_response);
         });
     }
+
     protected processRequests_GetAvailableRequestStatuses(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1778,6 +1960,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Get available request priorities
      * @return OK
@@ -1785,16 +1968,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_GetAvailableRequestPriorities(): Promise<types.StringListApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/priorities";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetAvailableRequestPriorities(_response);
         });
     }
+
     protected processRequests_GetAvailableRequestPriorities(response: Response): Promise<types.StringListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1812,6 +1998,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.StringListApiResponse>(null as any);
     }
+
     /**
      * Get my requests (current user)
      * @param pageNumber (optional) 
@@ -1819,7 +2006,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetMyRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetMyRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/my-requests?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -1838,16 +2025,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetMyRequests(_response);
         });
     }
+
     protected processRequests_GetMyRequests(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1865,6 +2055,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get my assigned requests (current user)
      * @param pageNumber (optional) 
@@ -1872,7 +2063,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetMyAssignments(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetMyAssignments(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/my-assignments?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -1891,16 +2082,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetMyAssignments(_response);
         });
     }
+
     protected processRequests_GetMyAssignments(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1918,6 +2112,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get recent requests
      * @param count (optional) 
@@ -1930,16 +2125,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (count !== undefined)
             url_ += "count=" + encodeURIComponent("" + count) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetRecentRequests(_response);
         });
     }
+
     protected processRequests_GetRecentRequests(response: Response): Promise<types.RequestListDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -1957,6 +2155,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoListApiResponse>(null as any);
     }
+
     /**
      * Get priority requests
      * @param pageNumber (optional) 
@@ -1964,7 +2163,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetPriorityRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetPriorityRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/priority?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -1983,16 +2182,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetPriorityRequests(_response);
         });
     }
+
     protected processRequests_GetPriorityRequests(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2010,6 +2212,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Get overdue requests
      * @param pageNumber (optional) 
@@ -2017,7 +2220,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    requests_GetOverdueRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
+    requests_GetOverdueRequests(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RequestListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/overdue?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -2036,16 +2239,19 @@ export class RequestsClient implements interfaces.IRequestsClient {
         else if (sorting_Direction !== undefined)
             url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
         url_ = url_.replace(/[?&]$/, "");
+
         let options_: RequestInit = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_GetOverdueRequests(_response);
         });
     }
+
     protected processRequests_GetOverdueRequests(response: Response): Promise<types.RequestListDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2063,6 +2269,7 @@ export class RequestsClient implements interfaces.IRequestsClient {
         }
         return Promise.resolve<types.RequestListDtoPagedResponseApiResponse>(null as any);
     }
+
     /**
      * Bulk update request status
      * @param body (optional) 
@@ -2071,7 +2278,9 @@ export class RequestsClient implements interfaces.IRequestsClient {
     requests_BulkUpdateStatus(body: types.BulkRequestStatusUpdateDto | undefined): Promise<types.BooleanApiResponse> {
         let url_ = this.baseUrl + "/api/Requests/bulk-status";
         url_ = url_.replace(/[?&]$/, "");
+
         const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
             body: content_,
             method: "PUT",
@@ -2080,10 +2289,12 @@ export class RequestsClient implements interfaces.IRequestsClient {
                 "Accept": "application/json"
             }
         };
+
         return this.http.fetch(url_, options_).then((_response: Response) => {
             return this.processRequests_BulkUpdateStatus(_response);
         });
     }
+
     protected processRequests_BulkUpdateStatus(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
@@ -2102,3 +2313,4 @@ export class RequestsClient implements interfaces.IRequestsClient {
         return Promise.resolve<types.BooleanApiResponse>(null as any);
     }
 }
+// --- END OF FILE RequestsClient.ts ---
