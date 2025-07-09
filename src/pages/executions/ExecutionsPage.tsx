@@ -1,448 +1,439 @@
 // src/pages/executions/ExecutionsPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import Modal from '@/components/common/Modal';
-import { ExecutionSearchDto, ProgramExecutionRequestDto } from '@/api';
+import { ConfirmationModal } from '@/components/common/Modal';
+import { ExecutionResourceLimitsDto, ProgramExecutionRequestDto } from '@/api';
 
 // Interfaces
-interface ExecutionListItem {
+interface ProgramItem {
+  id: string;
+  name: string;
+  description?: string;
+  language: string;
+  type: string;
+  status: string;
+  hasVersions: boolean;
+  currentVersion?: string;
+  icon?: string;
+}
+
+interface ExecutionItem {
   id: string;
   programId: string;
   programName: string;
-  versionNumber?: number;
-  userName: string;
-  executionType: string;
+  status: string;
   startedAt: Date;
   completedAt?: Date;
-  status: string;
-  duration?: number;
-  hasError: boolean;
+  userId: string;
+  executionType: string;
 }
 
-interface ProgramOption {
-  id: string;
-  name: string;
-  language: string;
-  currentVersion?: string;
-  status: string;
+interface ExecuteModalState {
+  isOpen: boolean;
+  program: ProgramItem | null;
+  isExecuting: boolean;
 }
 
-interface QuickExecutionForm {
-  programId: string;
-  parameters: string;
-  environment: Record<string, string>;
-  saveResults: boolean;
-  timeoutMinutes: number;
+interface ProgramMenuState {
+  isOpen: boolean;
+  programId: string | null;
+  position: { x: number; y: number };
 }
 
-// Sort field mapping configuration - easily modifiable
-interface SortOption {
-  label: string;
-  field: string;
-  direction: SortDirection;
-}
+// Desktop icons configuration for different program types and languages
+const getDesktopIcon = (program: ProgramItem): React.ReactNode => {
+  const { language, type } = program;
+  const lang = language.toLowerCase();
+  const programType = type.toLowerCase();
+  
+  // Create icon based on language and type
+  const createIcon = (bgColor: string, textColor: string, iconText: string, useBuiltInIcon?: boolean, builtInIconPath?: string) => (
+    <div className={`w-16 h-16 ${bgColor} rounded-lg flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer border-2 border-gray-200 dark:border-gray-600`}>
+      {useBuiltInIcon && builtInIconPath ? (
+        <svg className={`w-8 h-8 ${textColor}`} fill="currentColor" viewBox="0 0 24 24">
+          <path d={builtInIconPath} />
+        </svg>
+      ) : (
+        <div className={`${textColor} font-bold text-sm`}>
+          {iconText}
+        </div>
+      )}
+    </div>
+  );
 
-const SORT_OPTIONS: SortOption[] = [
-  { label: 'Newest First', field: 'CreatedDate', direction: SortDirection._1 },
-  { label: 'Oldest First', field: 'CreatedDate', direction: SortDirection._0 },
-  { label: 'Recently Updated', field: 'UpdatedDate', direction: SortDirection._1 },
-  { label: 'Name A-Z', field: 'Name', direction: SortDirection._0 },
-  { label: 'Name Z-A', field: 'Name', direction: SortDirection._1 },
-  { label: 'ID Ascending', field: 'Id', direction: SortDirection._0 },
-  { label: 'ID Descending', field: 'Id', direction: SortDirection._1 },
-];
+  // Web applications
+  if (programType.includes('web')) {
+    return createIcon('bg-blue-500', 'text-white', 'WEB', true, 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5');
+  }
 
-// Helper function to get sort option key
-const getSortOptionKey = (field: string, direction: SortDirection): string => {
-  return `${field}-${direction}`;
+  // API applications
+  if (programType.includes('api')) {
+    return createIcon('bg-green-500', 'text-white', 'API', true, 'M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z');
+  }
+
+  // Console/CLI applications
+  if (programType.includes('console') || programType.includes('cli')) {
+    return createIcon('bg-gray-800', 'text-green-400', 'CLI', true, 'M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2z');
+  }
+
+  // Language-specific icons
+  if (lang.includes('javascript') || lang.includes('js')) {
+    return createIcon('bg-yellow-400', 'text-black', 'JS');
+  }
+  if (lang.includes('python')) {
+    return createIcon('bg-blue-500', 'text-white', 'PY');
+  }
+  if (lang.includes('java')) {
+    return createIcon('bg-red-500', 'text-white', 'JAVA');
+  }
+  if (lang.includes('c#') || lang.includes('csharp')) {
+    return createIcon('bg-purple-500', 'text-white', 'C#');
+  }
+  if (lang.includes('go')) {
+    return createIcon('bg-cyan-500', 'text-white', 'GO');
+  }
+  if (lang.includes('rust')) {
+    return createIcon('bg-orange-600', 'text-white', 'RUST');
+  }
+  if (lang.includes('php')) {
+    return createIcon('bg-indigo-500', 'text-white', 'PHP');
+  }
+
+  // Default icon
+  return createIcon('bg-gray-500', 'text-white', 'APP', true, 'M13 2.05v2.02c4.39.54 7.5 4.53 6.96 8.92-.39 3.18-2.34 5.97-5.35 7.47l.7 1.87c4.3-1.92 7.07-6.23 6.58-10.94C21.24 6.25 17.57 2.05 13 2.05z');
 };
 
-// Helper function to find sort option
-const findSortOption = (field: string, direction: SortDirection): SortOption | undefined => {
-  return SORT_OPTIONS.find(option => option.field === field && option.direction === direction);
+const getStatusColor = (status: string): string => {
+  switch (status.toLowerCase()) {
+    case 'running':
+      return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30';
+    case 'completed':
+      return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30';
+    case 'failed':
+      return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
+    case 'pending':
+      return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30';
+    default:
+      return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
+  }
+};
+
+const formatRelativeTime = (date: Date): string => {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+  if (diffDays > 0) return `${diffDays}d ago`;
+  if (diffHours > 0) return `${diffHours}h ago`;
+  if (diffMinutes > 0) return `${diffMinutes}m ago`;
+  return 'Just now';
 };
 
 const ExecutionsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
   // State management
-  const [executions, setExecutions] = useState<ExecutionListItem[]>([]);
-  const [programs, setPrograms] = useState<ProgramOption[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingPrograms, setIsLoadingPrograms] = useState(false);
+  const [programs, setPrograms] = useState<ProgramItem[]>([]);
+  const [executions, setExecutions] = useState<ExecutionItem[]>([]);
+  const [isLoadingPrograms, setIsLoadingPrograms] = useState(true);
+  const [isLoadingExecutions, setIsLoadingExecutions] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  // Desktop view state
+  const [view, setView] = useState<'desktop' | 'executions'>('desktop');
   
-  // Filtering and search
+  // Search and filters
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [sortField, setSortField] = useState('CreatedDate');
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection._1); // Descending
+  const [languageFilter, setLanguageFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   
-  // Quick execution modal
-  const [showQuickExecution, setShowQuickExecution] = useState(false);
-  const [quickExecutionForm, setQuickExecutionForm] = useState<QuickExecutionForm>({
-    programId: '',
-    parameters: '{}',
-    environment: {},
-    saveResults: true,
-    timeoutMinutes: 30
+  // Execution modal
+  const [executeModal, setExecuteModal] = useState<ExecuteModalState>({
+    isOpen: false,
+    program: null,
+    isExecuting: false
   });
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [executionSuccess, setExecutionSuccess] = useState<string | null>(null);
 
-  // Load executions
+  // Program menu state
+  const [programMenu, setProgramMenu] = useState<ProgramMenuState>({
+    isOpen: false,
+    programId: null,
+    position: { x: 0, y: 0 }
+  });
+
+  // Load data on component mount
   useEffect(() => {
-    loadExecutions();
-  }, [currentPage, pageSize, sortField, sortDirection, statusFilter]);
+    loadPrograms();
+    loadRecentExecutions();
+    
+    // Check if there's a program to execute from URL params
+    const executeParam = searchParams.get('execute');
+    if (executeParam) {
+      // Find and execute the program
+      handleQuickExecute(executeParam);
+    }
+  }, [searchParams]);
 
-  // Load executions with search when search term changes
+  // Close menu when clicking outside
   useEffect(() => {
-    const delayedSearch = setTimeout(() => {
-      if (searchTerm) {
-        searchExecutions();
-      } else {
-        loadExecutions();
+    const handleClickOutside = (event: MouseEvent) => {
+      if (programMenu.isOpen) {
+        const target = event.target as HTMLElement;
+        // Don't close if clicking on the menu itself
+        if (!target.closest('[data-menu="context"]')) {
+          setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+        }
       }
-    }, 500);
+    };
 
-    return () => clearTimeout(delayedSearch);
-  }, [searchTerm]);
-
-  const loadExecutions = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await api.executions.executions_GetAll(
-        currentPage,
-        pageSize,
-        sortField,
-        sortDirection
-      );
-
-      if (response.success && response.data) {
-        const executionItems = response.data.items?.map(execution => ({
-          id: execution.id || '',
-          programId: execution.programId || '',
-          programName: execution.programName || 'Unknown Program',
-          versionNumber: execution.versionNumber,
-          userName: execution.userName || 'Unknown User',
-          executionType: execution.executionType || 'Standard',
-          startedAt: execution.startedAt || new Date(),
-          completedAt: execution.completedAt,
-          status: execution.status || 'Unknown',
-          duration: execution.duration,
-          hasError: execution.hasError || false
-        })) || [];
-
-        setExecutions(executionItems);
-        setTotalCount(response.data.totalCount || 0);
-        setTotalPages(response.data.totalPages || 0);
-      } else {
-        
-        setError(response.message || 'Failed to load executions');
-      }
-    } catch (error) {
-      console.error('Failed to load executions:', error);
-      setError('Failed to load executions. Please try again.');
-    } finally {
-      setIsLoading(false);
+    if (programMenu.isOpen) {
+      // Use a slight delay to prevent immediate closing
+      const timer = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 100);
+      
+      return () => {
+        clearTimeout(timer);
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
-  };
 
-  const searchExecutions = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await api.executions.executions_Search(
-        currentPage,
-        pageSize,
-        sortField,
-        sortDirection,
-        new ExecutionSearchDto({
-          // Use programName search if available, otherwise search in general
-          programId: undefined,
-          status: statusFilter || undefined,
-          executionType: undefined,
-          startedFrom: undefined,
-          startedTo: undefined
-        })
-      );
-
-      if (response.success && response.data) {
-        const executionItems = response.data.items?.map(execution => ({
-          id: execution.id || '',
-          programId: execution.programId || '',
-          programName: execution.programName || 'Unknown Program',
-          versionNumber: execution.versionNumber,
-          userName: execution.userName || 'Unknown User',
-          executionType: execution.executionType || 'Standard',
-          startedAt: execution.startedAt || new Date(),
-          completedAt: execution.completedAt,
-          status: execution.status || 'Unknown',
-          duration: execution.duration,
-          hasError: execution.hasError || false
-        })) || [];
-
-        setExecutions(executionItems);
-        setTotalCount(response.data.totalCount || 0);
-        setTotalPages(response.data.totalPages || 0);
-      }
-    } catch (error) {
-      console.error('Failed to search executions:', error);
-      setError('Failed to search executions. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [programMenu.isOpen]);
 
   const loadPrograms = async () => {
     try {
       setIsLoadingPrograms(true);
-      
+      setError(null);
+
       const response = await api.programs.programs_GetUserAccessiblePrograms(
         1,
-        50, // Get first 50 programs
-        'name',
-        SortDirection._0 // Ascending
+        100, // Load more programs for desktop view
+        'Name',
+        SortDirection._0
       );
 
-      if (response.success && response.data?.items) {
-        const programOptions = response.data.items
-          // .filter(program => program.status === 'active') // Only show active programs
-          .map(program => ({
-            id: program.id || '',
-            name: program.name || 'Untitled Program',
-            language: program.language || 'Unknown',
-            currentVersion: program.currentVersion,
-            status: program.status || 'unknown'
-          }));
+      if (response.success && response.data) {
+        const programItems: ProgramItem[] = response.data.items?.map(program => ({
+          id: program.id || '',
+          name: program.name || 'Untitled Program',
+          description: program.description,
+          language: program.language || 'Unknown',
+          type: program.type || 'Unknown',
+          status: program.status || 'unknown',
+          hasVersions: false, // Will be populated by version check
+          currentVersion: program.currentVersion
+        })) || [];
 
-        setPrograms(programOptions);
+        // Check versions for each program
+        const programsWithVersions = await Promise.all(
+          programItems.map(async (program) => {
+            try {
+              const versionsResponse = await api.versions.versions_GetByProgram(program.id, 1, 1, 'CreatedDate', SortDirection._1);
+              const versionCount = versionsResponse.data?.totalCount || 0;
+              return {
+                ...program,
+                hasVersions: versionCount > 0
+              };
+            } catch {
+              return { ...program, hasVersions: false };
+            }
+          })
+        );
+
+        setPrograms(programsWithVersions);
+      } else {
+        setError(response.message || 'Failed to load programs');
       }
     } catch (error) {
       console.error('Failed to load programs:', error);
+      setError('Failed to load programs. Please try again.');
     } finally {
       setIsLoadingPrograms(false);
     }
   };
 
-  const handleQuickExecution = async () => {
-    if (!quickExecutionForm.programId) {
+  const loadRecentExecutions = async () => {
+    try {
+      setIsLoadingExecutions(true);
+      
+      const response = await api.executions.executions_GetRecentExecutions(20);
+      
+      if (response.success && response.data) {
+        const executionItems: ExecutionItem[] = response.data.map(execution => ({
+          id: execution.id || '',
+          programId: execution.programId || '',
+          programName: execution.programName || 'Unknown Program',
+          status: execution.status || 'unknown',
+          startedAt: execution.startedAt || new Date(),
+          completedAt: execution.completedAt,
+          userId: execution.userId || '',
+          executionType: execution.executionType || 'standard'
+        }));
+        
+        setExecutions(executionItems);
+      }
+    } catch (error) {
+      console.error('Failed to load executions:', error);
+    } finally {
+      setIsLoadingExecutions(false);
+    }
+  };
+
+  const handleQuickExecute = async (programId: string) => {
+    const program = programs.find(p => p.id === programId);
+    if (program && program.hasVersions) {
+      await handleExecuteProgram(program);
+    }
+  };
+
+  const handleExecuteProgram = async (program: ProgramItem) => {
+    if (!program.hasVersions) {
+      setError('Cannot execute program: No versions available');
       return;
     }
 
-    try {
-      setIsExecuting(true);
-      let parameters: any = {};
-      if (quickExecutionForm.parameters.trim()) {
-        try {
-          parameters = JSON.parse(quickExecutionForm.parameters);
-        } catch (e) {
-          throw new Error('Invalid JSON in parameters field');
-        }
+    setExecuteModal({
+      isOpen: true,
+      program,
+      isExecuting: false
+    });
+  };
+
+  const handleMenuClick = (event: React.MouseEvent, programId: string) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    
+    setProgramMenu({
+      isOpen: true,
+      programId,
+      position: {
+        x: rect.right + 8,
+        y: rect.top
       }
+    });
+  };
+
+  const confirmExecution = async () => {
+    if (!executeModal.program) return;
+    
+    try {
+      setExecuteModal(prev => ({ ...prev, isExecuting: true }));
       
-      const response = await api.executions.executions_ExecuteProgram(
-        quickExecutionForm.programId,
-        new ProgramExecutionRequestDto({
-          parameters,
-          environment: quickExecutionForm.environment,
-          saveResults: quickExecutionForm.saveResults,
-          timeoutMinutes: quickExecutionForm.timeoutMinutes
+      const executionRequest = new ProgramExecutionRequestDto({
+        parameters: {},
+        environment: {},
+        resourceLimits: new ExecutionResourceLimitsDto({
+          maxMemoryMb: 512,
+          maxCpuPercentage: 50,
+          maxExecutionTimeMinutes: 30
         })
+      });
+
+      const response = await api.executions.executions_ExecuteProgram(
+        executeModal.program.id,
+        executionRequest
       );
 
-      if (response.success && response.data) {
-        setExecutionSuccess(`Execution started successfully! ID: ${response.data.id}`);
-        setShowQuickExecution(false);
+      if (response.success) {
+        // Close modal and refresh executions
+        setExecuteModal({ isOpen: false, program: null, isExecuting: false });
+        setView('executions');
+        loadRecentExecutions();
         
-        // Reset form
-        setQuickExecutionForm({
-          programId: '',
-          parameters: '{}',
-          environment: {},
-          saveResults: true,
-          timeoutMinutes: 30
-        });
-        
-        // Reload executions to show the new one
-        loadExecutions();
-        
-        // Navigate to execution detail after a short delay
-        setTimeout(() => {
-          if (response.data?.id) {
-            navigate(`/executions/${response.data.id}`);
-          }
-        }, 1000);
+        // Navigate to execution detail if needed
+        if (response.data?.id) {
+          navigate(`/executions/${response.data.id}`);
+        }
       } else {
-        throw new Error(response.message || 'Failed to start execution');
+        setError(response.message || 'Failed to execute program');
       }
     } catch (error) {
-      console.error('Execution failed:', error);
-      setError(error instanceof Error ? error.message : 'Failed to start execution');
+      console.error('Failed to execute program:', error);
+      setError('Failed to execute program. Please try again.');
     } finally {
-      setIsExecuting(false);
-      setShowQuickExecution(false);
+      setExecuteModal(prev => ({ ...prev, isExecuting: false }));
     }
   };
 
-  const openQuickExecution = () => {
-    setShowQuickExecution(true);
-    loadPrograms();
-  };
-
-  const getStatusColor = (status: string): string => {
-    const statusLower = status.toLowerCase();
-    if (statusLower.includes('running') || statusLower.includes('executing')) {
-      return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30';
-    }
-    if (statusLower.includes('completed') || statusLower.includes('success')) {
-      return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30';
-    }
-    if (statusLower.includes('failed') || statusLower.includes('error')) {
-      return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
-    }
-    if (statusLower.includes('pending') || statusLower.includes('queued')) {
-      return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30';
-    }
-    return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
-  };
-
-  const formatDuration = (duration?: number): string => {
-    if (!duration) return '-';
-    const seconds = Math.floor(duration / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
+  const filteredPrograms = programs.filter(program => {
+    const matchesSearch = !searchTerm || 
+      program.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      program.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    if (hours > 0) {
-      return `${hours}h ${minutes % 60}m`;
-    } else if (minutes > 0) {
-      return `${minutes}m ${seconds % 60}s`;
-    } else {
-      return `${seconds}s`;
-    }
-  };
+    const matchesLanguage = !languageFilter || 
+      program.language.toLowerCase().includes(languageFilter.toLowerCase());
+    
+    const matchesType = !typeFilter || 
+      program.type.toLowerCase().includes(typeFilter.toLowerCase());
+    
+    return matchesSearch && matchesLanguage && matchesType;
+  });
 
-  const formatRelativeTime = (date: Date): string => {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays > 0) return `${diffDays}d ago`;
-    if (diffHours > 0) return `${diffHours}h ago`;
-    if (diffMinutes > 0) return `${diffMinutes}m ago`;
-    return 'Just now';
-  };
-
-  const addEnvironmentVar = () => {
-    setQuickExecutionForm(prev => ({
-      ...prev,
-      environment: { ...prev.environment, '': '' }
-    }));
-  };
-
-  const updateEnvironmentVar = (oldKey: string, newKey: string, value: string) => {
-    setQuickExecutionForm(prev => {
-      const newEnv = { ...prev.environment };
-      if (oldKey !== newKey && oldKey in newEnv) {
-        delete newEnv[oldKey];
-      }
-      if (newKey.trim()) {
-        newEnv[newKey] = value;
-      }
-      return { ...prev, environment: newEnv };
-    });
-  };
-
-  const removeEnvironmentVar = (key: string) => {
-    setQuickExecutionForm(prev => {
-      const newEnv = { ...prev.environment };
-      delete newEnv[key];
-      return { ...prev, environment: newEnv };
-    });
-  };
-
-  if (isLoading && executions.length === 0) {
+  if (isLoadingPrograms && programs.length === 0) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
           <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Executions
+            Program Executions
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Monitor and manage program executions
+            Run your programs with desktop interface
           </p>
         </div>
         
-        <div className="mt-4 sm:mt-0">
+        <div className="mt-4 sm:mt-0 flex space-x-2">
           <Button
-            variant="primary"
-            onClick={openQuickExecution}
+            variant={view === 'desktop' ? 'primary' : 'outline'}
+            onClick={() => setView('desktop')}
             leftIcon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
               </svg>
             }
           >
-            Quick Execute
+            Desktop View
+          </Button>
+          <Button
+            variant={view === 'executions' ? 'primary' : 'outline'}
+            onClick={() => setView('executions')}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V5a2 2 0 012-2h2a2 2 0 012 2v8a2 2 0 01-2 2H9m0 0v2a2 2 0 002 2h2a2 2 0 002-2v-2M9 5v2a2 2 0 002 2h2a2 2 0 002-2V5" />
+              </svg>
+            }
+          >
+            Execution History
           </Button>
         </div>
       </div>
-
-      {/* Success Message */}
-      {executionSuccess && (
-        <div className="rounded-md bg-green-50 dark:bg-green-900/20 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-green-800 dark:text-green-200">{executionSuccess}</p>
-            </div>
-            <div className="ml-auto pl-3">
-              <button
-                onClick={() => setExecutionSuccess(null)}
-                className="text-green-800 dark:text-green-200 hover:text-green-600 dark:hover:text-green-300"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Error Message */}
       {error && (
@@ -458,392 +449,289 @@ const ExecutionsPage: React.FC = () => {
             </div>
             <div className="ml-auto pl-3">
               <button
-                onClick={loadExecutions}
+                onClick={() => setError(null)}
                 className="text-sm text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-300"
               >
-                Retry
+                Dismiss
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Filters and Search */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
-            label="Search executions"
-            placeholder="Search by program name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            }
-          />
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Status Filter
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="">All Statuses</option>
-              <option value="running">Running</option>
-              <option value="completed">Completed</option>
-              <option value="failed">Failed</option>
-              <option value="pending">Pending</option>
-            </select>
+      {view === 'desktop' && (
+        <>
+          {/* Desktop Filters */}
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                label="Search programs"
+                placeholder="Search by name or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                }
+              />
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Language Filter
+                </label>
+                <select
+                  value={languageFilter}
+                  onChange={(e) => setLanguageFilter(e.target.value)}
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="">All Languages</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="csharp">C#</option>
+                  <option value="go">Go</option>
+                  <option value="rust">Rust</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Type Filter
+                </label>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="">All Types</option>
+                  <option value="web">Web Application</option>
+                  <option value="api">API</option>
+                  <option value="console">Console Application</option>
+                  <option value="service">Service</option>
+                </select>
+              </div>
+            </div>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Sort By
-            </label>
-            <select
-              value={getSortOptionKey(sortField, sortDirection)}
-              onChange={(e) => {
-                const [field, direction] = e.target.value.split('-');
-                setSortField(field);
-                setSortDirection(parseInt(direction) as SortDirection);
-              }}
-              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={getSortOptionKey(option.field, option.direction)} value={getSortOptionKey(option.field, option.direction)}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
 
-      {/* Executions Table */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Program
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Started
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Duration
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {executions.map((execution) => (
-                <tr
-                  key={execution.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
-                  onClick={() => navigate(`/executions/${execution.id}`)}
+          {/* Desktop Icons Grid */}
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-6 min-h-96">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+              {filteredPrograms.map((program) => (
+                <div
+                  key={program.id}
+                  className="flex flex-col items-center space-y-2 group relative"
+                  onDoubleClick={() => handleExecuteProgram(program)}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {execution.programName}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {execution.executionType}
-                        {execution.versionNumber && ` • v${execution.versionNumber}`}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                    {execution.userName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(execution.status)}`}>
-                        {execution.status}
-                      </span>
-                      {execution.hasError && (
-                        <svg className="ml-2 w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatRelativeTime(execution.startedAt)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatDuration(execution.duration)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="relative">
+                    {getDesktopIcon(program)}
+                    
+                    {/* Three dots menu button */}
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/executions/${execution.id}`);
-                      }}
-                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                      onClick={(e) => handleMenuClick(e, program.id)}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50 dark:hover:bg-gray-700 z-10"
                     >
-                      View Details
+                      <svg className="w-3 h-3 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                      </svg>
                     </button>
-                  </td>
-                </tr>
+                    
+                    {/* Status indicator */}
+                    {program.status === 'active' && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                    )}
+                    
+                    {!program.hasVersions && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+                        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={program.name}>
+                      {program.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={program.language}>
+                      {program.language}
+                    </p>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-        
-        {executions.length === 0 && !isLoading && (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No executions found</h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {searchTerm || statusFilter ? 'Try adjusting your search criteria.' : 'Get started by executing a program.'}
-            </p>
-            {!searchTerm && !statusFilter && (
-              <div className="mt-6">
-                <Button
-                  variant="primary"
-                  onClick={openQuickExecution}
-                  leftIcon={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
-                    </svg>
-                  }
-                >
-                  Execute Program
-                </Button>
+            </div>
+            
+            {/* Empty State */}
+            {filteredPrograms.length === 0 && !isLoadingPrograms && (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No programs found</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {searchTerm || languageFilter || typeFilter ? 'Try adjusting your search criteria.' : 'Create some programs to see them here.'}
+                </p>
+                {!searchTerm && !languageFilter && !typeFilter && (
+                  <div className="mt-6">
+                    <Button
+                      variant="primary"
+                      onClick={() => navigate('/projects/create')}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      }
+                    >
+                      Create Your First Program
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Showing <span className="font-medium">{((currentPage - 1) * pageSize) + 1}</span> to{' '}
-                <span className="font-medium">{Math.min(currentPage * pageSize, totalCount)}</span> of{' '}
-                <span className="font-medium">{totalCount}</span> results
-              </p>
-            </div>
-            <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
-                {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                  const page = i + Math.max(1, currentPage - 2);
-                  if (page > totalPages) return null;
-                  return (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "primary" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </Button>
-                  );
-                })}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </Button>
-              </nav>
-            </div>
-          </div>
-        </div>
+        </>
       )}
 
-      {/* Quick Execution Modal */}
-      <Modal
-        isOpen={showQuickExecution}
-        onClose={() => setShowQuickExecution(false)}
-        title="Quick Execute Program"
-        size="lg"
-        footer={
-          <>
-            <Button
-              variant="outline"
-              onClick={() => setShowQuickExecution(false)}
-              disabled={isExecuting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleQuickExecution}
-              loading={isExecuting}
-              disabled={!quickExecutionForm.programId}
-            >
-              Execute
-            </Button>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          {/* Program Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Select Program *
-            </label>
-            {isLoadingPrograms ? (
-              <div className="animate-pulse h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            ) : (
-              <select
-                value={quickExecutionForm.programId}
-                onChange={(e) => setQuickExecutionForm(prev => ({ ...prev, programId: e.target.value }))}
-                className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              >
-                <option value="">Choose a program...</option>
-                {programs.map((program) => (
-                  <option key={program.id} value={program.id}>
-                    {program.name} ({program.language})
-                    {program.currentVersion && ` - v${program.currentVersion}`}
-                  </option>
-                ))}
-              </select>
-            )}
-            {programs.length === 0 && !isLoadingPrograms && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                No active programs available. Create a program first.
-              </p>
-            )}
+      {view === 'executions' && (
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Recent Executions</h2>
           </div>
-
-          {/* Parameters */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Parameters (JSON)
-            </label>
-            <textarea
-              value={quickExecutionForm.parameters}
-              onChange={(e) => setQuickExecutionForm(prev => ({ ...prev, parameters: e.target.value }))}
-              placeholder='{"key": "value"}'
-              rows={3}
-              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Enter execution parameters as valid JSON
-            </p>
-          </div>
-
-          {/* Environment Variables */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Environment Variables
-              </label>
-              <Button
-                variant="outline"
-                size="xs"
-                onClick={addEnvironmentVar}
-              >
-                Add Variable
-              </Button>
-            </div>
-            {Object.entries(quickExecutionForm.environment).map(([key, value], index) => (
-              <div key={index} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  placeholder="Variable name"
-                  value={key}
-                  onChange={(e) => updateEnvironmentVar(key, e.target.value, value)}
-                  className="flex-1 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-                <input
-                  type="text"
-                  placeholder="Value"
-                  value={value}
-                  onChange={(e) => updateEnvironmentVar(key, key, e.target.value)}
-                  className="flex-1 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeEnvironmentVar(key)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </Button>
+          
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {executions.map((execution) => (
+              <div key={execution.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {execution.programName}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatRelativeTime(execution.startedAt)}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(execution.status)}`}>
+                      {execution.status}
+                    </span>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/executions/${execution.id}`)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-
-          {/* Settings */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Timeout (minutes)
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="120"
-                value={quickExecutionForm.timeoutMinutes}
-                onChange={(e) => setQuickExecutionForm(prev => ({ ...prev, timeoutMinutes: parseInt(e.target.value) || 30 }))}
-                className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+          
+          {executions.length === 0 && !isLoadingExecutions && (
+            <div className="text-center py-12">
+              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V5a2 2 0 012-2h2a2 2 0 012 2v8a2 2 0 01-2 2H9m0 0v2a2 2 0 002 2h2a2 2 0 002-2v-2M9 5v2a2 2 0 002 2h2a2 2 0 002-2V5" />
+              </svg>
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No executions yet</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Start executing some programs to see the history here.
+              </p>
             </div>
-            <div className="flex items-end">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={quickExecutionForm.saveResults}
-                  onChange={(e) => setQuickExecutionForm(prev => ({ ...prev, saveResults: e.target.checked }))}
-                  className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Save results</span>
-              </label>
-            </div>
-          </div>
+          )}
         </div>
-      </Modal>
+      )}
+
+      {/* Global Context Menu */}
+      {programMenu.isOpen && (
+        <div
+          data-menu="context"
+          className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50"
+          style={{
+            left: `${programMenu.position.x}px`,
+            top: `${programMenu.position.y}px`
+          }}
+        >
+          {(() => {
+            const program = programs.find(p => p.id === programMenu.programId);
+            if (!program) return null;
+            
+            return (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleExecuteProgram(program);
+                    setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                  }}
+                  disabled={!program.hasVersions}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Execute</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/projects/${program.id}`);
+                    setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Details</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/editor/${program.id}`);
+                    setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                  }}
+                  disabled={!program.hasVersions}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  <span>Edit Code</span>
+                </button>
+              </>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* Execute Program Modal */}
+      <ConfirmationModal
+        isOpen={executeModal.isOpen}
+        onClose={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false })}
+        onConfirm={confirmExecution}
+        title={`Execute ${executeModal.program?.name}`}
+        message={
+          executeModal.program 
+            ? `Are you sure you want to execute "${executeModal.program.name}"? This will start a new execution with the current version.`
+            : 'Are you sure you want to execute this program?'
+        }
+        confirmText="Execute Program"
+        cancelText="Cancel"
+        loading={executeModal.isExecuting}
+      />
     </div>
   );
 };

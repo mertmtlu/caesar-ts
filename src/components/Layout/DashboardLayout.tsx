@@ -1,6 +1,6 @@
 // src/components/layouts/DashboardLayout.tsx
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/stores/themeStore';
 
@@ -83,7 +83,6 @@ const DashboardLayout: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
   const { toggleTheme, isDark } = useTheme();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Determine which navigation items to show
   const navItems = isAdmin ? [...navigationItems, ...adminNavigationItems] : navigationItems;

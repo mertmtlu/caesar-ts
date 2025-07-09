@@ -24,7 +24,7 @@ import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
 // Editor Pages (to be created)
 import EditorPage from '@/pages/editor/EditorPage';
 
-// Execution Pages (to be created)
+// Execution Pages
 import ExecutionsPage from '@/pages/executions/ExecutionsPage';
 import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
 
@@ -136,7 +136,7 @@ export const router = createBrowserRouter([
         ]
       },
 
-      // Executions routes
+      // Execution routes
       {
         path: 'executions',
         element: (
