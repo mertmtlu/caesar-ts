@@ -20,6 +20,9 @@ import DashboardHome from '@/pages/dashboard/DashboardHome';
 import ProjectsPage from '@/pages/projects/ProjectsPage';
 import CreateProjectPage from '@/pages/projects/CreateProjectPage';
 import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
+import ComponentsPage from '@/pages/projects/ComponentsPage';
+import CreateComponentPage from '@/pages/projects/CreateComponentPage';
+import ComponentDesignerPage from '@/pages/projects/ComponentDesignerPage';
 
 // Editor Pages (to be created)
 import EditorPage from '@/pages/editor/EditorPage';
@@ -116,6 +119,18 @@ export const router = createBrowserRouter([
           {
             path: ':projectId',
             element: <ProjectDetailPage />
+          },
+          {
+            path: ':projectId/components',
+            element: <ComponentsPage />
+          },
+          {
+            path: ':projectId/components/create',
+            element: <CreateComponentPage />
+          },
+          {
+            path: ':projectId/components/designer',
+            element: <ComponentDesignerPage />
           }
         ]
       },

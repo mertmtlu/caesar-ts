@@ -19,6 +19,18 @@ interface ProgramItem {
   hasVersions: boolean;
   currentVersion?: string;
   icon?: string;
+  newestComponent?: ComponentItem | null;
+  hasComponents?: boolean;
+}
+
+interface ComponentItem {
+  id: string;
+  name: string;
+  type: string; // input_form, visualization, composite
+  status: string;
+  programId: string;
+  versionId: string;
+  createdAt: Date;
 }
 
 interface ExecutionItem {
@@ -231,26 +243,40 @@ const ExecutionsPage: React.FC = () => {
           type: program.type || 'Unknown',
           status: program.status || 'unknown',
           hasVersions: false, // Will be populated by version check
-          currentVersion: program.currentVersion
+          currentVersion: program.currentVersion,
+          newestComponent: null, // Will be populated by component check
+          hasComponents: false // Will be populated by component check
         })) || [];
 
-        // Check versions for each program
-        const programsWithVersions = await Promise.all(
+        // Check versions and components for each program
+        const programsWithVersionsAndComponents = await Promise.all(
           programItems.map(async (program) => {
             try {
+              // Load versions
               const versionsResponse = await api.versions.versions_GetByProgram(program.id, 1, 1, 'CreatedDate', SortDirection._1);
               const versionCount = versionsResponse.data?.totalCount || 0;
+              
+              // Load newest component
+              const newestComponent = await loadNewestComponent(program.id);
+              
               return {
                 ...program,
-                hasVersions: versionCount > 0
+                hasVersions: versionCount > 0,
+                newestComponent,
+                hasComponents: newestComponent !== null
               };
             } catch {
-              return { ...program, hasVersions: false };
+              return { 
+                ...program, 
+                hasVersions: false,
+                newestComponent: null,
+                hasComponents: false
+              };
             }
           })
         );
 
-        setPrograms(programsWithVersions);
+        setPrograms(programsWithVersionsAndComponents);
       } else {
         setError(response.message || 'Failed to load programs');
       }
@@ -286,6 +312,35 @@ const ExecutionsPage: React.FC = () => {
       console.error('Failed to load executions:', error);
     } finally {
       setIsLoadingExecutions(false);
+    }
+  };
+
+  const loadNewestComponent = async (programId: string): Promise<ComponentItem | null> => {
+    try {
+      const response = await api.uiComponents.uiComponents_GetByProgram(
+        programId,
+        1, // pageNumber
+        1, // pageSize - only need the newest one
+        'CreatedAt', // sort by creation date
+        1 // descending order to get newest first
+      );
+
+      if (response.success && response.data?.items && response.data.items.length > 0) {
+        const component = response.data.items[0];
+        return {
+          id: component.id || '',
+          name: component.name || 'Untitled Component',
+          type: component.type || 'unknown',
+          status: component.status || 'draft',
+          programId: component.programId || programId,
+          versionId: component.versionId || '',
+          createdAt: component.createdAt || new Date()
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error(`Failed to load components for program ${programId}:`, error);
+      return null;
     }
   };
 
@@ -548,15 +603,56 @@ const ExecutionsPage: React.FC = () => {
                         </svg>
                       </div>
                     )}
+                    
+                    {/* Component indicator */}
+                    {program.hasComponents && program.newestComponent && (
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+                        {program.newestComponent.type === 'input_form' && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        )}
+                        {program.newestComponent.type === 'visualization' && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z M4 5a2 2 0 012-2v6a2 2 0 01-2 2 2 2 0 01-2-2V5z M16 7a2 2 0 11-4 0 2 2 0 014 0z M8 15a2 2 0 01-2-2V9a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2H8z" />
+                          </svg>
+                        )}
+                        {program.newestComponent.type === 'composite' && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5z M5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z M11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5z M11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                          </svg>
+                        )}
+                        {!['input_form', 'visualization', 'composite'].includes(program.newestComponent.type) && (
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7z M4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z M2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                          </svg>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Component status indicator */}
+                    {program.hasComponents && program.newestComponent && (
+                      <div className={`absolute -top-1 -left-1 w-3 h-3 rounded-full border border-white dark:border-gray-800 ${
+                        program.newestComponent.status === 'active' ? 'bg-green-500' : 
+                        program.newestComponent.status === 'draft' ? 'bg-yellow-500' : 
+                        'bg-gray-500'
+                      }`}></div>
+                    )}
                   </div>
                   
                   <div className="text-center">
                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={program.name}>
                       {program.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={program.language}>
-                      {program.language}
-                    </p>
+                    {program.hasComponents && program.newestComponent ? (
+                      <p className="text-xs text-blue-600 dark:text-blue-400 truncate max-w-20" title={program.newestComponent.name}>
+                        {program.newestComponent.name}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={program.language}>
+                        {program.language}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -711,6 +807,63 @@ const ExecutionsPage: React.FC = () => {
                   </svg>
                   <span>Edit Code</span>
                 </button>
+                
+                {/* Component Options */}
+                {program.hasComponents && program.newestComponent && (
+                  <>
+                    <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // TODO: Implement component execution
+                        console.log('Launch component:', program.newestComponent);
+                        setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                      }}
+                      disabled={program.newestComponent.status !== 'active'}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
+                      </svg>
+                      <span>Launch Component</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate(`/projects/${program.id}/components`);
+                        setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                      <span>View All Components</span>
+                    </button>
+                  </>
+                )}
+                
+                {!program.hasComponents && (
+                  <>
+                    <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate(`/projects/${program.id}/components/create`);
+                        setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <span>Create Component</span>
+                    </button>
+                  </>
+                )}
               </>
             );
           })()}

@@ -20,6 +20,9 @@ interface ProjectListItem {
   versionCount: number;
   hasVersions: boolean;
   currentVersion?: string;
+  componentCount?: number;
+  hasComponents?: boolean;
+  newestComponentType?: string;
 }
 
 interface ProjectToDelete {
@@ -86,6 +89,42 @@ const ProjectsPage: React.FC = () => {
     return () => clearTimeout(delayedSearch);
   }, [searchTerm]);
 
+  const loadComponentInfo = async (projectId: string) => {
+    try {
+      const response = await api.uiComponents.uiComponents_GetByProgram(
+        projectId,
+        1, // pageNumber
+        1, // pageSize - only need count and newest
+        'CreatedAt', // sort by creation date
+        SortDirection._1 // descending to get newest first
+      );
+
+      if (response.success && response.data) {
+        const totalCount = response.data.totalCount || 0;
+        const newestComponent = response.data.items?.[0];
+        
+        return {
+          componentCount: totalCount,
+          hasComponents: totalCount > 0,
+          newestComponentType: newestComponent?.type || undefined
+        };
+      }
+      
+      return {
+        componentCount: 0,
+        hasComponents: false,
+        newestComponentType: undefined
+      };
+    } catch (error) {
+      console.error(`Failed to load component info for project ${projectId}:`, error);
+      return {
+        componentCount: 0,
+        hasComponents: false,
+        newestComponentType: undefined
+      };
+    }
+  };
+
   const loadProjects = async () => {
     try {
       setIsLoading(true);
@@ -109,27 +148,44 @@ const ProjectsPage: React.FC = () => {
           status: project.status || 'unknown',
           versionCount: 0, // Will be populated by version check
           hasVersions: false, // Will be populated by version check
-          currentVersion: project.currentVersion
+          currentVersion: project.currentVersion,
+          componentCount: 0, // Will be populated by component check
+          hasComponents: false, // Will be populated by component check
+          newestComponentType: undefined // Will be populated by component check
         })) || [];
 
-        // Check versions for each project
-        const projectsWithVersions = await Promise.all(
+        // Check versions and components for each project
+        const projectsWithVersionsAndComponents = await Promise.all(
           projectItems.map(async (project) => {
             try {
-              const versionsResponse = await api.versions.versions_GetByProgram(project.id, 1, 1, 'CreatedDate', SortDirection._1);
+              // Load versions and components in parallel
+              const [versionsResponse, componentInfo] = await Promise.all([
+                api.versions.versions_GetByProgram(project.id, 1, 1, 'CreatedDate', SortDirection._1),
+                loadComponentInfo(project.id)
+              ]);
+              
               const versionCount = versionsResponse.data?.totalCount || 0;
+              
               return {
                 ...project,
                 versionCount,
-                hasVersions: versionCount > 0
+                hasVersions: versionCount > 0,
+                ...componentInfo
               };
             } catch {
-              return { ...project, versionCount: 0, hasVersions: false };
+              return { 
+                ...project, 
+                versionCount: 0, 
+                hasVersions: false,
+                componentCount: 0,
+                hasComponents: false,
+                newestComponentType: undefined
+              };
             }
           })
         );
 
-        setProjects(projectsWithVersions);
+        setProjects(projectsWithVersionsAndComponents);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
       } else {
@@ -169,12 +225,46 @@ const ProjectsPage: React.FC = () => {
           type: project.type || 'Unknown',
           createdAt: project.createdAt || new Date(),
           status: project.status || 'unknown',
-          versionCount: 0,
-          hasVersions: false,
-          currentVersion: project.currentVersion
+          versionCount: 0, // Will be populated by version check
+          hasVersions: false, // Will be populated by version check
+          currentVersion: project.currentVersion,
+          componentCount: 0, // Will be populated by component check
+          hasComponents: false, // Will be populated by component check
+          newestComponentType: undefined // Will be populated by component check
         })) || [];
 
-        setProjects(projectItems);
+        // Check versions and components for search results
+        const projectsWithVersionsAndComponents = await Promise.all(
+          projectItems.map(async (project) => {
+            try {
+              // Load versions and components in parallel
+              const [versionsResponse, componentInfo] = await Promise.all([
+                api.versions.versions_GetByProgram(project.id, 1, 1, 'CreatedDate', SortDirection._1),
+                loadComponentInfo(project.id)
+              ]);
+              
+              const versionCount = versionsResponse.data?.totalCount || 0;
+              
+              return {
+                ...project,
+                versionCount,
+                hasVersions: versionCount > 0,
+                ...componentInfo
+              };
+            } catch {
+              return { 
+                ...project, 
+                versionCount: 0, 
+                hasVersions: false,
+                componentCount: 0,
+                hasComponents: false,
+                newestComponentType: undefined
+              };
+            }
+          })
+        );
+
+        setProjects(projectsWithVersionsAndComponents);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
       }
@@ -470,13 +560,46 @@ const ProjectsPage: React.FC = () => {
 
               <div className="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                 <span>{formatRelativeTime(project.createdAt)}</span>
-                <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.414 1.414 0 01-2.828 0l-7-7A1.414 1.414 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                  <span>{project.versionCount} version{project.versionCount !== 1 ? 's' : ''}</span>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.414 1.414 0 01-2.828 0l-7-7A1.414 1.414 0 713 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span>{project.versionCount} version{project.versionCount !== 1 ? 's' : ''}</span>
+                  </div>
+                  {project.hasComponents && (
+                    <div className="flex items-center space-x-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                      <span>{project.componentCount} component{project.componentCount !== 1 ? 's' : ''}</span>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Component Type Badge */}
+              {project.hasComponents && project.newestComponentType && (
+                <div className="mt-3 flex items-center">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      {project.newestComponentType === 'input_form' && (
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      )}
+                      {project.newestComponentType === 'visualization' && (
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z M4 5a2 2 0 012-2v6a2 2 0 01-2 2 2 2 0 01-2-2V5z M16 7a2 2 0 11-4 0 2 2 0 014 0z M8 15a2 2 0 01-2-2V9a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2H8z" />
+                      )}
+                      {project.newestComponentType === 'composite' && (
+                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5z M5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z M11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5z M11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                      )}
+                      {!['input_form', 'visualization', 'composite'].includes(project.newestComponentType) && (
+                        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7z M4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z M2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                      )}
+                    </svg>
+                    {project.newestComponentType.replace('_', ' ')}
+                  </span>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="mt-4 space-y-2">
