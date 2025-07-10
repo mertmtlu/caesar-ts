@@ -95,7 +95,7 @@ const ProjectsPage: React.FC = () => {
         projectId,
         1, // pageNumber
         1, // pageSize - only need count and newest
-        'CreatedAt', // sort by creation date
+        'CreatedDate', // sort by creation date
         SortDirection._1 // descending to get newest first
       );
 
@@ -563,7 +563,12 @@ const ProjectsPage: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.414 1.414 0 01-2.828 0l-7-7A1.414 1.414 0 713 12V7a4 4 0 014-4z" />
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.414 1.414 0 01-2.828 0l-7-7A1.414 1.414 0 0 1 3 12V7a4 4 0 014-4z" 
+                      />  
                     </svg>
                     <span>{project.versionCount} version{project.versionCount !== 1 ? 's' : ''}</span>
                   </div>

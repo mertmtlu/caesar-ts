@@ -5,8 +5,9 @@ import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { ConfirmationModal } from '@/components/common/Modal';
 import { ExecutionResourceLimitsDto, ProgramExecutionRequestDto } from '@/api';
+import ComponentForm from '@/components/common/ComponentForm';
+import { UIElement, ComponentSchema } from '@/types/componentDesigner';
 
 // Interfaces
 interface ProgramItem {
@@ -30,7 +31,7 @@ interface ComponentItem {
   status: string;
   programId: string;
   versionId: string;
-  createdAt: Date;
+  createdDate: Date;
 }
 
 interface ExecutionItem {
@@ -48,6 +49,7 @@ interface ExecuteModalState {
   isOpen: boolean;
   program: ProgramItem | null;
   isExecuting: boolean;
+  componentElements: UIElement[] | null;
 }
 
 interface ProgramMenuState {
@@ -170,7 +172,8 @@ const ExecutionsPage: React.FC = () => {
   const [executeModal, setExecuteModal] = useState<ExecuteModalState>({
     isOpen: false,
     program: null,
-    isExecuting: false
+    isExecuting: false,
+    componentElements: null
   });
 
   // Program menu state
@@ -320,13 +323,17 @@ const ExecutionsPage: React.FC = () => {
       const response = await api.uiComponents.uiComponents_GetByProgram(
         programId,
         1, // pageNumber
-        1, // pageSize - only need the newest one
-        'CreatedAt', // sort by creation date
-        1 // descending order to get newest first
+        10, // pageSize - get more to find active components
+        'CreatedDate', // sort by creation date
+        SortDirection._1 // descending order to get newest first
       );
 
       if (response.success && response.data?.items && response.data.items.length > 0) {
-        const component = response.data.items[0];
+        
+        // Find the first active component, or fall back to the newest
+        const activeComponent = response.data.items.find(c => c.status === 'active');
+        const component = activeComponent || response.data.items[0];
+        
         return {
           id: component.id || '',
           name: component.name || 'Untitled Component',
@@ -334,7 +341,7 @@ const ExecutionsPage: React.FC = () => {
           status: component.status || 'draft',
           programId: component.programId || programId,
           versionId: component.versionId || '',
-          createdAt: component.createdAt || new Date()
+          createdDate: component.createdAt || new Date()
         };
       }
       return null;
@@ -351,16 +358,82 @@ const ExecutionsPage: React.FC = () => {
     }
   };
 
+  const loadComponentConfiguration = async (programId: string, versionId: string): Promise<UIElement[] | null> => {
+    try {
+      
+      // First, get the component list to find the component ID
+      const listResponse = await api.uiComponents.uiComponents_GetByProgram(
+        programId,
+        1,
+        10,
+        'CreatedDate',
+        SortDirection._1 // Get newest first
+      );
+
+      if (listResponse.success && listResponse.data?.items && listResponse.data.items.length > 0) {
+        // Find the first active component, or fall back to the newest
+        const activeComponent = listResponse.data.items.find(c => c.status === 'active');
+        const component = activeComponent || listResponse.data.items[0];
+        
+        // Try to get the component by ID to get full details
+        try {
+          if (!component.id) {
+            console.error('Component ID is missing');
+            return null;
+          }
+          
+          const detailResponse = await api.uiComponents.uiComponents_GetById(component.id);
+          
+          if (detailResponse.success && detailResponse.data) {
+            const fullComponent = detailResponse.data;
+            if (fullComponent.configuration) {
+              try {
+                let schema: ComponentSchema;
+                
+                // Check if configuration is already an object or a JSON string
+                if (typeof fullComponent.configuration === 'string') {
+                  schema = JSON.parse(fullComponent.configuration);
+                } else {
+                  schema = fullComponent.configuration as ComponentSchema;
+                }
+                return schema.elements || [];
+              } catch (error) {
+                console.error('Failed to process component configuration:', error);
+                console.error('Configuration data:', fullComponent.configuration);
+                return null;
+              }
+            }
+          }
+        } catch (detailError) {
+          console.error('Failed to fetch component details:', detailError);
+        }
+        
+        return null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to load component configuration:', error);
+      return null;
+    }
+  };
+
   const handleExecuteProgram = async (program: ProgramItem) => {
     if (!program.hasVersions) {
       setError('Cannot execute program: No versions available');
       return;
     }
 
+    // Load component configuration if available
+    let componentElements: UIElement[] | null = null;
+    if (program.hasComponents && program.newestComponent) {
+      componentElements = await loadComponentConfiguration(program.id, program.newestComponent.versionId);
+    }
+
     setExecuteModal({
       isOpen: true,
       program,
-      isExecuting: false
+      isExecuting: false,
+      componentElements
     });
   };
 
@@ -379,14 +452,14 @@ const ExecutionsPage: React.FC = () => {
     });
   };
 
-  const confirmExecution = async () => {
+  const confirmExecution = async (parameters: Record<string, any> = {}) => {
     if (!executeModal.program) return;
     
     try {
       setExecuteModal(prev => ({ ...prev, isExecuting: true }));
       
       const executionRequest = new ProgramExecutionRequestDto({
-        parameters: {},
+        parameters: parameters,
         environment: {},
         resourceLimits: new ExecutionResourceLimitsDto({
           maxMemoryMb: 512,
@@ -395,6 +468,8 @@ const ExecutionsPage: React.FC = () => {
         })
       });
 
+      console.log('Executing program with request:', executionRequest);
+
       const response = await api.executions.executions_ExecuteProgram(
         executeModal.program.id,
         executionRequest
@@ -402,7 +477,7 @@ const ExecutionsPage: React.FC = () => {
 
       if (response.success) {
         // Close modal and refresh executions
-        setExecuteModal({ isOpen: false, program: null, isExecuting: false });
+        setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null });
         setView('executions');
         loadRecentExecutions();
         
@@ -816,8 +891,7 @@ const ExecutionsPage: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // TODO: Implement component execution
-                        console.log('Launch component:', program.newestComponent);
+                        handleExecuteProgram(program); // This will automatically use the component form
                         setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
                       }}
                       disabled={program.newestComponent.status !== 'active'}
@@ -871,20 +945,64 @@ const ExecutionsPage: React.FC = () => {
       )}
 
       {/* Execute Program Modal */}
-      <ConfirmationModal
-        isOpen={executeModal.isOpen}
-        onClose={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false })}
-        onConfirm={confirmExecution}
-        title={`Execute ${executeModal.program?.name}`}
-        message={
-          executeModal.program 
-            ? `Are you sure you want to execute "${executeModal.program.name}"? This will start a new execution with the current version.`
-            : 'Are you sure you want to execute this program?'
-        }
-        confirmText="Execute Program"
-        cancelText="Cancel"
-        loading={executeModal.isExecuting}
-      />
+      {executeModal.isOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                Execute {executeModal.program?.name}
+              </h3>
+              <button
+                onClick={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null })}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                disabled={executeModal.isExecuting}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="max-h-96 overflow-y-auto">
+              {executeModal.componentElements && executeModal.componentElements.length > 0 ? (
+                <ComponentForm
+                  elements={executeModal.componentElements}
+                  onSubmit={confirmExecution}
+                  onCancel={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null })}
+                  isSubmitting={executeModal.isExecuting}
+                  title="Program Parameters"
+                />
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {executeModal.program 
+                      ? `Are you sure you want to execute "${executeModal.program.name}"? This will start a new execution with the current version.`
+                      : 'Are you sure you want to execute this program?'
+                    }
+                  </p>
+                  <div className="flex items-center justify-end space-x-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null })}
+                      disabled={executeModal.isExecuting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => confirmExecution()}
+                      loading={executeModal.isExecuting}
+                      disabled={executeModal.isExecuting}
+                    >
+                      Execute Program
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

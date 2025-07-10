@@ -152,11 +152,13 @@ const ComponentDesignerPage: React.FC = () => {
 
       const schema = generateSchema();
       
+      const configString = JSON.stringify(schema);
+      
       const componentData = new UiComponentCreateDto({
         name: saveForm.name,
         description: saveForm.description,
         type: saveForm.type,
-        configuration: JSON.stringify(schema)
+        configuration: configString
       });
 
       const response = await api.uiComponents.uiComponents_Create(
@@ -398,6 +400,34 @@ const ComponentDesignerPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                Component Preview
+              </h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="max-h-96 overflow-y-auto">
+              <PreviewPanel
+                elements={designerState.elements}
+                layout={designerState.layout}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Save Modal */}
       {showSaveModal && (

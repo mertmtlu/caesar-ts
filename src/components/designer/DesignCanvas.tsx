@@ -41,6 +41,7 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
   const [draggedElementId, setDraggedElementId] = useState<string | null>(null);
+  const [tempDragPosition, setTempDragPosition] = useState<Position | null>(null);
 
   // Handle canvas click to deselect elements
   const handleCanvasClick = (e: React.MouseEvent) => {
@@ -134,7 +135,7 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!draggedElementId || !canvasRef.current) return;
-
+      
       const rect = canvasRef.current.getBoundingClientRect();
       const newPosition: Position = {
         x: (e.clientX - rect.left) / zoom - dragOffset.x,
@@ -151,12 +152,19 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
       newPosition.x = Math.max(0, Math.min(newPosition.x, canvasSize.width - 100));
       newPosition.y = Math.max(0, Math.min(newPosition.y, canvasSize.height - 50));
 
-      onElementUpdate(draggedElementId, { position: newPosition });
+      // Update temporary position for immediate visual feedback
+      setTempDragPosition(newPosition);
     };
 
     const handleMouseUp = () => {
+      // Update the actual element position when drag ends
+      if (draggedElementId && tempDragPosition) {
+        onElementUpdate(draggedElementId, { position: tempDragPosition });
+      }
+      
       setDraggedElementId(null);
       setDragOffset({ x: 0, y: 0 });
+      setTempDragPosition(null);
     };
 
     if (draggedElementId) {
@@ -168,18 +176,30 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [draggedElementId, dragOffset, zoom, showGrid, gridSize, canvasSize, onElementUpdate]);
+  }, [draggedElementId, dragOffset, zoom, showGrid, gridSize, canvasSize, onElementUpdate, tempDragPosition]);
 
   // Handle keyboard events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle keyboard events if user is editing text in an input/textarea
+      const activeElement = document.activeElement;
+      if (activeElement && (
+        activeElement.tagName === 'INPUT' || 
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.getAttribute('contenteditable') === 'true'
+      )) {
+        return;
+      }
+
       if (selectedElementId) {
         switch (e.key) {
           case 'Delete':
           case 'Backspace':
+            e.preventDefault();
             onElementDelete(selectedElementId);
             break;
           case 'Escape':
+            e.preventDefault();
             onElementSelect(null);
             break;
           case 'ArrowUp':
@@ -242,16 +262,19 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
   const renderElement = (element: UIElement) => {
     const isSelected = element.id === selectedElementId;
     const isDragged = element.id === draggedElementId;
+    
+    // Use temporary position if element is being dragged, otherwise use actual position
+    const position = isDragged && tempDragPosition ? tempDragPosition : element.position;
 
     return (
       <div
         key={element.id}
-        className={`absolute cursor-move select-none transition-all duration-200 ${
-          isDragged ? 'opacity-75 shadow-lg' : ''
+        className={`absolute cursor-move select-none ${
+          isDragged ? 'opacity-75 shadow-lg transition-none' : 'transition-all duration-200'
         }`}
         style={{
-          left: element.position.x * zoom,
-          top: element.position.y * zoom,
+          left: position.x * zoom,
+          top: position.y * zoom,
           width: element.size.width * zoom,
           height: element.size.height * zoom,
           zIndex: isSelected ? 1000 : 1,
@@ -369,11 +392,20 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
     }
   };
 
-  // Grid background
+  // Grid background with dark mode support
   const gridPattern = showGrid ? {
     backgroundImage: `
-      linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-      linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+      linear-gradient(to right, rgb(229 231 235 / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(229 231 235 / 0.5) 1px, transparent 1px)
+    `,
+    backgroundSize: `${gridSize * zoom}px ${gridSize * zoom}px`
+  } : {};
+
+  // Dark mode grid pattern
+  const darkGridPattern = showGrid ? {
+    backgroundImage: `
+      linear-gradient(to right, rgb(75 85 99 / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(75 85 99 / 0.5) 1px, transparent 1px)
     `,
     backgroundSize: `${gridSize * zoom}px ${gridSize * zoom}px`
   } : {};
@@ -433,8 +465,7 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
             width: canvasSize.width * zoom,
             height: canvasSize.height * zoom,
             minWidth: '100%',
-            minHeight: '100%',
-            ...gridPattern
+            minHeight: '100%'
           }}
           onClick={handleCanvasClick}
           onDoubleClick={handleCanvasDoubleClick}
@@ -443,6 +474,20 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
         >
+          {/* Light mode grid */}
+          {showGrid && (
+            <div 
+              className="absolute inset-0 dark:hidden pointer-events-none"
+              style={gridPattern}
+            />
+          )}
+          {/* Dark mode grid */}
+          {showGrid && (
+            <div 
+              className="absolute inset-0 hidden dark:block pointer-events-none"
+              style={darkGridPattern}
+            />
+          )}
           {elements.map(renderElement)}
           
           {/* Drop indicator */}

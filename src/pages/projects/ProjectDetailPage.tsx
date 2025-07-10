@@ -143,8 +143,6 @@ const ProjectDetailPage: React.FC = () => {
         SortDirection._1 // Descending - newest first
       );
 
-      console.log('Loaded versions:', response.data);
-
       if (response.success && response.data) {
         const versionData = response.data.items?.map(version => ({
           id: version.id || '',
@@ -195,7 +193,6 @@ const ProjectDetailPage: React.FC = () => {
         files: files
       });
 
-      console.log('Creating new version with DTO:', createDto);
       const response = await api.versions.versions_Create(createDto);
 
       if (response.success && response.data) {

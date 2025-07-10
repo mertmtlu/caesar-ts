@@ -85,7 +85,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const onTokenExpired = (): void => {
-    console.log('Token expired, logging out...');
     logout();
   };
 

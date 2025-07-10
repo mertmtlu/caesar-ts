@@ -448,16 +448,6 @@ const EditorPage: React.FC = () => {
       if (!content) {
         throw new Error('File content is required');
       }
-      
-      // Log the data being sent for debugging
-      console.log('Saving file:', {
-        originalPath: filePath,
-        cleanPath: cleanPath,
-        contentLength: content.length,
-        contentType: contentType,
-        isBinary: file.isBinary,
-        isNew: file.isNew
-      });
 
       if (file.isNew) {
         // Create new file with proper content type
@@ -467,12 +457,8 @@ const EditorPage: React.FC = () => {
           contentType: contentType
         });
         
-        console.log('Creating file DTO:', fileDto);
-        console.log('JSON payload:', JSON.stringify([fileDto], null, 2));
-        
         // Use bulk upload endpoint (confirmed working)
         const response = await api.files.files_BulkUploadFiles(project.id, version.id, [fileDto]);
-        console.log('Upload response:', response);
       } else {
         // Update existing file
         const updateDto = new VersionFileUpdateDto({
@@ -480,7 +466,6 @@ const EditorPage: React.FC = () => {
           contentType: contentType
         });
         
-        console.log('Updating file DTO:', updateDto);
         await api.files.files_UpdateVersionFile(project.id, version.id, filePath, updateDto);
       }
 
@@ -710,15 +695,6 @@ const EditorPage: React.FC = () => {
           continue;
         }
 
-        // Check if file already exists
-        const existsInOpenFiles = openFiles.some(f => f.path === cleanPath);
-        const existsInFileTree = fileTree.some(item => findFileInTree(item, cleanPath));
-
-        if (existsInOpenFiles || existsInFileTree) {
-          // If file exists, we'll overwrite it
-          console.log(`File ${cleanPath} already exists, will be overwritten`);
-        }
-
         // Read file content
         const { content, isBinary } = await readFileContent(file);
         const language = detectLanguage(cleanPath, project.language);
@@ -768,9 +744,7 @@ const EditorPage: React.FC = () => {
 
       // Bulk upload all files at once
       if (filesToUpload.length > 0) {
-        console.log(`Uploading ${filesToUpload.length} files:`, filesToUpload.map(f => f.path));
         const response = await api.files.files_BulkUploadFiles(project.id, version.id, filesToUpload);
-        console.log('Bulk upload response:', response);
 
         // Add all files to editor
         setOpenFiles(prev => {

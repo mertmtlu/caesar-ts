@@ -60,7 +60,10 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ elements, layout }) => {
       case 'maxLength':
         return typeof value === 'string' && value.length > (rule.value as number);
       case 'pattern':
-        return typeof value === 'string' && rule.value && !new RegExp(rule.value as string).test(value);
+        if (typeof value !== 'string' || !rule.value) {
+          return false;
+        }
+        return !new RegExp(rule.value as string).test(value);
       default:
         return false;
     }
@@ -71,7 +74,6 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ elements, layout }) => {
     e.preventDefault();
     
     if (validateForm()) {
-      console.log('Form submitted:', formData);
       alert('Form submitted successfully! Check console for data.');
     }
   };
@@ -100,12 +102,242 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ elements, layout }) => {
       margin: element.styling?.margin,
     };
 
-    const inputClasses = `w-full rounded-md border ${
-      hasError 
-        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-        : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
-    } bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm`;
+    // For absolute layout, add positioning styles
+    const positioningStyle: React.CSSProperties = layout.type === 'absolute' ? {
+      position: 'absolute',
+      left: element.position.x,
+      top: element.position.y,
+      width: element.size.width,
+      height: element.size.height,
+      ...customStyle
+    } : customStyle;
 
+    const inputClasses = layout.type === 'absolute' 
+      ? `rounded-md border ${
+          hasError 
+            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+            : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+        } bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm`
+      : `w-full rounded-md border ${
+          hasError 
+            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+            : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+        } bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm`;
+
+    // For absolute layout, render elements with absolute positioning
+    if (layout.type === 'absolute') {
+      switch (element.type) {
+        case 'text_input':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <input
+                type="text"
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                placeholder={element.placeholder || element.label}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%' }}
+              />
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'email_input':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <input
+                type="email"
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                placeholder={element.placeholder || element.label}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%' }}
+              />
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'password_input':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <input
+                type="password"
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                placeholder={element.placeholder || element.label}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%' }}
+              />
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'number_input':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <input
+                type="number"
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                placeholder={element.placeholder || element.label}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%' }}
+              />
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'textarea':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <textarea
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                placeholder={element.placeholder || element.label}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%', resize: 'none' }}
+              />
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'checkbox':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <label className="flex items-center space-x-2 h-full">
+                <input
+                  type="checkbox"
+                  checked={value}
+                  onChange={(e) => handleInputChange(element.name, e.target.checked)}
+                  disabled={element.disabled}
+                  className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {element.label}
+                  {element.required && <span className="text-red-500 ml-1">*</span>}
+                </span>
+              </label>
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'dropdown':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <select
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%' }}
+              >
+                <option value="">{element.placeholder || element.label || 'Select an option...'}</option>
+                {element.options?.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'date_picker':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <input
+                type="date"
+                value={value}
+                onChange={(e) => handleInputChange(element.name, e.target.value)}
+                disabled={element.disabled}
+                className={inputClasses}
+                style={{ width: '100%', height: '100%' }}
+              />
+              {hasError && (
+                <div className="absolute -bottom-5 left-0 text-xs text-red-600">
+                  {error}
+                </div>
+              )}
+            </div>
+          );
+        
+        case 'button':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <Button
+                type={element.name === 'submit' ? 'submit' : 'button'}
+                variant="primary"
+                disabled={element.disabled}
+                style={{ width: '100%', height: '100%' }}
+                onClick={() => {
+                  if (element.name === 'submit') {
+                    handleSubmit(new Event('submit') as any);
+                  } else if (element.name === 'reset') {
+                    handleReset();
+                  }
+                }}
+              >
+                {element.label}
+              </Button>
+            </div>
+          );
+        
+        case 'label':
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <label className="flex items-center h-full text-sm font-medium text-gray-700 dark:text-gray-300">
+                {element.label}
+              </label>
+            </div>
+          );
+        
+        default:
+          return (
+            <div key={element.id} style={positioningStyle}>
+              <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700 rounded-md">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Unknown element type: {element.type}
+                </p>
+              </div>
+            </div>
+          );
+      }
+    }
+
+    // Regular layout rendering (non-absolute)
     switch (element.type) {
       case 'text_input':
         return (
@@ -342,8 +574,22 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ elements, layout }) => {
     }
   };
 
-  // Get layout styles
+  // Get layout styles - use absolute positioning to match designer canvas
   const getLayoutStyles = () => {
+    // For absolute layout, use relative positioning container to match designer canvas
+    if (layout.type === 'absolute') {
+      return {
+        position: 'relative' as const,
+        width: '800px', // Match canvas width
+        height: '600px', // Match canvas height
+        padding: layout.padding || 16,
+        margin: '0 auto',
+        borderRadius: '8px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+      };
+    }
+    
+    // Fallback for other layout types
     switch (layout.type) {
       case 'grid':
         return {
@@ -419,39 +665,50 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ elements, layout }) => {
         ) : (
           <div className="p-4">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div style={getLayoutStyles()}>
-                {elements
-                  .filter(element => element.type !== 'button')
-                  .map(renderElement)}
+              <div 
+                className={layout.type === 'absolute' 
+                  ? 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
+                  : ''
+                }
+                style={getLayoutStyles()}
+              >
+                {layout.type === 'absolute' 
+                  ? elements.map(renderElement)
+                  : elements
+                      .filter(element => element.type !== 'button')
+                      .map(renderElement)
+                }
               </div>
               
-              {/* Action buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex space-x-2">
-                  {elements
-                    .filter(element => element.type === 'button')
-                    .map(renderElement)}
-                </div>
-                
-                {/* Default submit button if no button elements */}
-                {elements.filter(element => element.type === 'button').length === 0 && (
+              {/* Action buttons - only show for non-absolute layouts */}
+              {layout.type !== 'absolute' && (
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex space-x-2">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleReset}
-                    >
-                      Reset
-                    </Button>
+                    {elements
+                      .filter(element => element.type === 'button')
+                      .map(renderElement)}
                   </div>
-                )}
-              </div>
+                  
+                  {/* Default submit button if no button elements */}
+                  {elements.filter(element => element.type === 'button').length === 0 && (
+                    <div className="flex space-x-2">
+                      <Button
+                        type="submit"
+                        variant="primary"
+                      >
+                        Submit
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleReset}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </form>
           </div>
         )}
