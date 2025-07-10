@@ -870,9 +870,43 @@ const EditorPage: React.FC = () => {
     try {
         const language = detectLanguage(filePath, project.language);
         
+        // Get default content based on file type
+        const getDefaultContent = (filePath: string, language: string): string => {
+            const extension = filePath.split('.').pop()?.toLowerCase();
+            
+            if (extension === 'py') {
+                return `from UIComponent import ui
+import sys
+
+if __name__ == "__main__":
+    ui.from_json(sys.argv[1])
+
+    # Your main logic here
+    description = {
+        "30 MPa": ("High-strength concrete", "suitable for heavy structural elements."),
+        "25 MPa": ("Standard concrete", "used in general-purpose construction."),
+        "20 MPa": ("Low-strength concrete", "typically used for non-structural work."),
+    }
+
+    match ui.dropdown:
+        case strength if strength in description:
+            strength_label, usage = description[strength]
+            print(f"Element: {ui.text_input}")
+            print(f"Selected: {strength_label} ({strength})")
+            print(f"Usage: {usage}")
+        case _:
+            print("Invalid concrete strength selected.")
+`;
+            }
+            
+            return '';
+        };
+        
+        const defaultContent = getDefaultContent(filePath, language);
+        
         const newFile: EditorFile = {
         path: filePath,
-        content: '',
+        content: defaultContent,
         language,
         isModified: true,
         isNew: true,
