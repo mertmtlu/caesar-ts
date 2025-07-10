@@ -296,4 +296,4 @@ export function createApiClient(
 }
 
 // Export default instance that will be configured later
-export const api = createApiClient('http://144.122.222.143:5090');
+export const api = createApiClient('http://144.122.103.206:5090');
