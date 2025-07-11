@@ -16,7 +16,7 @@ import ElementToolbox from '@/components/designer/ElementToolbox';
 import DesignCanvas from '@/components/designer/DesignCanvas';
 import PropertyPanel from '@/components/designer/PropertyPanel';
 import PreviewPanel from '@/components/designer/PreviewPanel';
-import { UiComponentCreateDto } from '@/api';
+import { UiComponentCreateDto, UiComponentUpdateDto } from '@/api';
 
 // Interfaces
 interface ProjectInfo {
@@ -32,11 +32,13 @@ interface SaveComponentForm {
 }
 
 const ComponentDesignerPage: React.FC = () => {
-  const { projectId } = useParams<{ projectId: string }>();
+  const { projectId, componentId } = useParams<{ projectId: string; componentId?: string }>();
   const navigate = useNavigate();
+  const isEditMode = !!componentId;
 
   // State management
   const [project, setProject] = useState<ProjectInfo | null>(null);
+  const [existingComponent, setExistingComponent] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,14 +74,18 @@ const ComponentDesignerPage: React.FC = () => {
   useEffect(() => {
     if (projectId) {
       loadProjectInfo();
+      if (isEditMode && componentId) {
+        loadExistingComponent();
+      } else {
+        setIsLoading(false);
+      }
     }
-  }, [projectId]);
+  }, [projectId, componentId, isEditMode]);
 
   const loadProjectInfo = async () => {
     if (!projectId) return;
 
     try {
-      setIsLoading(true);
       setError(null);
 
       const response = await api.programs.programs_GetById(projectId);
@@ -96,6 +102,53 @@ const ComponentDesignerPage: React.FC = () => {
     } catch (error) {
       console.error('Failed to load project:', error);
       setError('Failed to load project details. Please try again.');
+    }
+  };
+
+  const loadExistingComponent = async () => {
+    if (!componentId) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await api.uiComponents.uiComponents_GetById(componentId);
+
+      if (response.success && response.data) {
+        const data = response.data;
+        setExistingComponent(data);
+
+        // Update save form with existing component data
+        setSaveForm({
+          name: data.name || '',
+          description: data.description || '',
+          type: (data.type as 'input_form' | 'visualization' | 'composite') || 'input_form'
+        });
+
+        // Load designer state from configuration
+        if (data.configuration) {
+          try {
+            const config = typeof data.configuration === 'string' 
+              ? JSON.parse(data.configuration) 
+              : data.configuration;
+
+            if (config.elements && Array.isArray(config.elements)) {
+              setDesignerState(prev => ({
+                ...prev,
+                elements: config.elements,
+                layout: config.layout || prev.layout
+              }));
+            }
+          } catch (parseError) {
+            console.error('Failed to parse component configuration:', parseError);
+          }
+        }
+      } else {
+        setError(response.message || 'Failed to load component details');
+      }
+    } catch (error) {
+      console.error('Failed to load component:', error);
+      setError('Failed to load component. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -151,26 +204,47 @@ const ComponentDesignerPage: React.FC = () => {
       setError(null);
 
       const schema = generateSchema();
-      
       const configString = JSON.stringify(schema);
-      
-      const componentData = new UiComponentCreateDto({
-        name: saveForm.name,
-        description: saveForm.description,
-        type: saveForm.type,
-        configuration: configString
-      });
 
-      const response = await api.uiComponents.uiComponents_Create(
-        projectId!,
-        project?.currentVersion || '',
-        componentData
-      );
+      if (isEditMode && existingComponent) {
+        // Update existing component
+        const updateData = new UiComponentUpdateDto({
+          name: saveForm.name,
+          description: saveForm.description,
+          type: saveForm.type,
+          configuration: configString
+        });
 
-      if (response.success) {
-        navigate(`/projects/${projectId}/components`);
+        const response = await api.uiComponents.uiComponents_Update(
+          existingComponent.id,
+          updateData
+        );
+
+        if (response.success) {
+          navigate(`/projects/${projectId}/components/${existingComponent.id}`);
+        } else {
+          setError(response.message || 'Failed to update component');
+        }
       } else {
-        setError(response.message || 'Failed to save component');
+        // Create new component
+        const componentData = new UiComponentCreateDto({
+          name: saveForm.name,
+          description: saveForm.description,
+          type: saveForm.type,
+          configuration: configString
+        });
+
+        const response = await api.uiComponents.uiComponents_Create(
+          projectId!,
+          project?.currentVersion || '',
+          componentData
+        );
+
+        if (response.success) {
+          navigate(`/projects/${projectId}/components`);
+        } else {
+          setError(response.message || 'Failed to save component');
+        }
       }
     } catch (error) {
       console.error('Failed to save component:', error);

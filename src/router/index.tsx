@@ -23,6 +23,8 @@ import ProjectDetailPage from '@/pages/projects/ProjectDetailPage';
 import ComponentsPage from '@/pages/projects/ComponentsPage';
 import CreateComponentPage from '@/pages/projects/CreateComponentPage';
 import ComponentDesignerPage from '@/pages/projects/ComponentDesignerPage';
+import ComponentDetailPage from '@/pages/projects/ComponentDetailPage';
+import ComponentEditPage from '@/pages/projects/ComponentEditPage';
 
 // Editor Pages (to be created)
 import EditorPage from '@/pages/editor/EditorPage';
@@ -130,6 +132,18 @@ export const router = createBrowserRouter([
           },
           {
             path: ':projectId/components/designer',
+            element: <ComponentDesignerPage />
+          },
+          {
+            path: ':projectId/components/:componentId',
+            element: <ComponentDetailPage />
+          },
+          {
+            path: ':projectId/components/:componentId/edit',
+            element: <ComponentEditPage />
+          },
+          {
+            path: ':projectId/components/:componentId/designer',
             element: <ComponentDesignerPage />
           }
         ]

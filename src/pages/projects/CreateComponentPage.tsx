@@ -237,7 +237,7 @@ const CreateComponentPage: React.FC = () => {
             placeholder="Enter component name..."
             value={form.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            error={formErrors.name}
+            errorMessage={formErrors.name}
             required
           />
 
@@ -288,8 +288,8 @@ const CreateComponentPage: React.FC = () => {
             placeholder="Enter tags separated by commas..."
             value={form.tags}
             onChange={(e) => handleInputChange('tags', e.target.value)}
-            error={formErrors.tags}
-            helpText="Separate multiple tags with commas"
+            errorMessage={formErrors.tags}
+            helperText="Separate multiple tags with commas"
           />
 
           {/* Action Buttons */}
