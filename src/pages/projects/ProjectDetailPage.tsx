@@ -655,7 +655,7 @@ Add your project documentation here.`,
             Manage Components
           </Button>
           
-          <Button
+          {/* <Button
             variant="outline"
             onClick={() => navigate(`/projects/${project.id}/components/designer`)}
             leftIcon={
@@ -665,7 +665,7 @@ Add your project documentation here.`,
             }
           >
             Design Component
-          </Button>
+          </Button> */}
         </div>
       </div>
 
