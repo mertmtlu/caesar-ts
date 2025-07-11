@@ -10,12 +10,10 @@ import {
 
 interface ElementToolboxProps {
   onElementSelect: (element: UIElement) => void;
-  selectedElementId: string | null;
 }
 
 const ElementToolbox: React.FC<ElementToolboxProps> = ({
-  onElementSelect,
-  selectedElementId
+  onElementSelect
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [draggedTemplate, setDraggedTemplate] = useState<ElementTemplate | null>(null);

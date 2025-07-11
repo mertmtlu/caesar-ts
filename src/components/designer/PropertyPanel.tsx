@@ -194,9 +194,9 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="Name"
               value={formData.name || ''}
               onChange={(e) => handleInputChange('name', e.target.value)}
-              error={errors.name}
+              errorMessage={errors.name}
               required
-              helpText="Unique identifier for this element"
+              helperText="Unique identifier for this element"
             />
 
             {/* Label */}
@@ -204,9 +204,9 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="Label"
               value={formData.label || ''}
               onChange={(e) => handleInputChange('label', e.target.value)}
-              error={errors.label}
+              errorMessage={errors.label}
               required
-              helpText="Display text for this element"
+              helperText="Display text for this element"
             />
 
             {/* Placeholder */}
@@ -215,7 +215,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 label="Placeholder"
                 value={formData.placeholder || ''}
                 onChange={(e) => handleInputChange('placeholder', e.target.value)}
-                helpText="Placeholder text shown when empty"
+                helperText="Placeholder text shown when empty"
               />
             )}
 
@@ -290,18 +290,18 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 type="number"
                 value={formData.size?.width || 0}
                 onChange={(e) => handleInputChange('size.width', parseInt(e.target.value))}
-                error={errors.width}
+                errorMessage={errors.width}
                 min={50}
-                helpText="Width in pixels"
+                helperText="Width in pixels"
               />
               <Input
                 label="Height"
                 type="number"
                 value={formData.size?.height || 0}
                 onChange={(e) => handleInputChange('size.height', parseInt(e.target.value))}
-                error={errors.height}
+                errorMessage={errors.height}
                 min={30}
-                helpText="Height in pixels"
+                helperText="Height in pixels"
               />
             </div>
 
@@ -313,7 +313,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 value={formData.position?.x || 0}
                 onChange={(e) => handleInputChange('position.x', parseInt(e.target.value))}
                 min={0}
-                helpText="X coordinate"
+                helperText="X coordinate"
               />
               <Input
                 label="Y Position"
@@ -321,7 +321,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 value={formData.position?.y || 0}
                 onChange={(e) => handleInputChange('position.y', parseInt(e.target.value))}
                 min={0}
-                helpText="Y coordinate"
+                helperText="Y coordinate"
               />
             </div>
 
@@ -499,7 +499,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 value={formData.styling?.borderRadius || 0}
                 onChange={(e) => handleInputChange('styling.borderRadius', parseInt(e.target.value))}
                 min={0}
-                helpText="Border radius in pixels"
+                helperText="Border radius in pixels"
               />
 
               {/* Font Size */}
@@ -510,7 +510,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 onChange={(e) => handleInputChange('styling.fontSize', parseInt(e.target.value))}
                 min={8}
                 max={72}
-                helpText="Font size in pixels"
+                helperText="Font size in pixels"
               />
 
               {/* Font Weight */}
@@ -536,7 +536,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 value={formData.styling?.padding || 0}
                 onChange={(e) => handleInputChange('styling.padding', parseInt(e.target.value))}
                 min={0}
-                helpText="Inner padding in pixels"
+                helperText="Inner padding in pixels"
               />
 
               {/* Margin */}
@@ -546,7 +546,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                 value={formData.styling?.margin || 0}
                 onChange={(e) => handleInputChange('styling.margin', parseInt(e.target.value))}
                 min={0}
-                helpText="Outer margin in pixels"
+                helperText="Outer margin in pixels"
               />
             </div>
           </>

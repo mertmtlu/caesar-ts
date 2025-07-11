@@ -6,7 +6,8 @@
       "Bash(npm run build:*)",
       "Bash(find:*)",
       "Bash(npm run:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": []
   }

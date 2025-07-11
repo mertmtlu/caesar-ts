@@ -1,5 +1,5 @@
 // src/pages/projects/ComponentDesignerPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import Button from '@/components/common/Button';
@@ -7,9 +7,17 @@ import {
   DesignerState, 
   UIElement, 
   ComponentSchema, 
-  LayoutConfig,
   generateComponentSchema 
 } from '@/types/componentDesigner';
+import { useUndoRedo } from '@/hooks/useUndoRedo';
+import { useKeyboardShortcuts, designerShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { 
+  AddElementCommand, 
+  DeleteElementCommand, 
+  UpdateElementCommand,
+  MoveElementCommand,
+  DuplicateElementCommand 
+} from '@/commands/designerCommands';
 
 // Component imports (to be created)
 import ElementToolbox from '@/components/designer/ElementToolbox';
@@ -70,6 +78,20 @@ const ComponentDesignerPage: React.FC = () => {
     description: '',
     type: 'input_form'
   });
+
+  // Undo/Redo system
+  const {
+    executeCommand,
+    undo,
+    redo,
+    state: undoRedoState,
+    getUndoDescription,
+    getRedoDescription
+  } = useUndoRedo(50);
+
+  // Multi-select state
+  const [selectedElementIds, setSelectedElementIds] = useState<string[]>([]);
+  const [clipboard, setClipboard] = useState<UIElement[]>([]);
 
   useEffect(() => {
     if (projectId) {
@@ -154,35 +176,114 @@ const ComponentDesignerPage: React.FC = () => {
     }
   };
 
-  const updateDesignerState = (updates: Partial<DesignerState>) => {
-    setDesignerState(prev => ({ ...prev, ...updates }));
-  };
+  const updateDesignerState = useCallback((updater: (state: DesignerState) => DesignerState) => {
+    setDesignerState(updater);
+  }, []);
 
-  const addElement = (element: UIElement) => {
-    updateDesignerState({
-      elements: [...designerState.elements, element],
-      selectedElementId: element.id
+  const getDesignerState = useCallback(() => designerState, [designerState]);
+
+  // Command-based operations
+  const addElement = useCallback((element: UIElement) => {
+    const command = new AddElementCommand(element, updateDesignerState);
+    executeCommand(command);
+  }, [executeCommand, updateDesignerState]);
+
+  const updateElement = useCallback((elementId: string, updates: Partial<UIElement>) => {
+    const oldElement = designerState.elements.find(el => el.id === elementId);
+    if (!oldElement) return;
+    
+    const newElement = { ...oldElement, ...updates };
+    const command = new UpdateElementCommand(elementId, oldElement, newElement, updateDesignerState);
+    executeCommand(command);
+  }, [designerState.elements, executeCommand, updateDesignerState]);
+
+  const deleteElement = useCallback((elementId: string) => {
+    const command = new DeleteElementCommand(elementId, updateDesignerState, getDesignerState);
+    executeCommand(command);
+  }, [executeCommand, updateDesignerState, getDesignerState]);
+
+  const duplicateElement = useCallback((elementId: string) => {
+    const originalElement = designerState.elements.find(el => el.id === elementId);
+    if (!originalElement) return;
+
+    const duplicatedElement: UIElement = {
+      ...originalElement,
+      id: `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name: `${originalElement.name}_copy`,
+      position: {
+        x: originalElement.position.x + 20,
+        y: originalElement.position.y + 20
+      }
+    };
+
+    const command = new DuplicateElementCommand(originalElement, duplicatedElement, updateDesignerState);
+    executeCommand(command);
+  }, [designerState.elements, executeCommand, updateDesignerState]);
+
+  const selectElement = useCallback((elementId: string | null) => {
+    updateDesignerState(state => ({ ...state, selectedElementId: elementId }));
+    setSelectedElementIds(elementId ? [elementId] : []);
+  }, [updateDesignerState]);
+
+  // Copy/Paste functionality
+  const copySelectedElements = useCallback(() => {
+    const selectedElements = designerState.elements.filter(el => 
+      selectedElementIds.includes(el.id)
+    );
+    setClipboard(selectedElements);
+  }, [designerState.elements, selectedElementIds]);
+
+  const pasteElements = useCallback(() => {
+    if (clipboard.length === 0) return;
+
+    clipboard.forEach((element, index) => {
+      const pastedElement: UIElement = {
+        ...element,
+        id: `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name: `${element.name}_paste`,
+        position: {
+          x: element.position.x + 20 + (index * 10),
+          y: element.position.y + 20 + (index * 10)
+        }
+      };
+      
+      const command = new AddElementCommand(pastedElement, updateDesignerState);
+      executeCommand(command);
     });
-  };
+  }, [clipboard, executeCommand, updateDesignerState]);
 
-  const updateElement = (elementId: string, updates: Partial<UIElement>) => {
-    updateDesignerState({
-      elements: designerState.elements.map(el => 
-        el.id === elementId ? { ...el, ...updates } : el
-      )
-    });
-  };
+  // Keyboard movement
+  const moveSelectedElement = useCallback((direction: 'up' | 'down' | 'left' | 'right', distance: number = 10) => {
+    if (!designerState.selectedElementId) return;
 
-  const deleteElement = (elementId: string) => {
-    updateDesignerState({
-      elements: designerState.elements.filter(el => el.id !== elementId),
-      selectedElementId: designerState.selectedElementId === elementId ? null : designerState.selectedElementId
-    });
-  };
+    const element = designerState.elements.find(el => el.id === designerState.selectedElementId);
+    if (!element) return;
 
-  const selectElement = (elementId: string | null) => {
-    updateDesignerState({ selectedElementId: elementId });
-  };
+    let newPosition = { ...element.position };
+    
+    switch (direction) {
+      case 'up':
+        newPosition.y -= distance;
+        break;
+      case 'down':
+        newPosition.y += distance;
+        break;
+      case 'left':
+        newPosition.x -= distance;
+        break;
+      case 'right':
+        newPosition.x += distance;
+        break;
+    }
+
+    const command = new MoveElementCommand(
+      designerState.selectedElementId,
+      element.position,
+      newPosition,
+      updateDesignerState
+    );
+    executeCommand(command);
+  }, [designerState.selectedElementId, designerState.elements, executeCommand, updateDesignerState]);
 
   const generateSchema = (): ComponentSchema => {
     return generateComponentSchema(
@@ -275,12 +376,46 @@ const ComponentDesignerPage: React.FC = () => {
 
   const handleClearCanvas = () => {
     if (window.confirm('Are you sure you want to clear all elements? This action cannot be undone.')) {
-      updateDesignerState({
+      updateDesignerState(state => ({
+        ...state,
         elements: [],
         selectedElementId: null
-      });
+      }));
     }
   };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    designerShortcuts.undo(undo),
+    designerShortcuts.redo(redo),
+    designerShortcuts.copy(copySelectedElements),
+    designerShortcuts.paste(pasteElements),
+    designerShortcuts.duplicate(() => {
+      if (designerState.selectedElementId) {
+        duplicateElement(designerState.selectedElementId);
+      }
+    }),
+    designerShortcuts.delete(() => {
+      if (designerState.selectedElementId) {
+        deleteElement(designerState.selectedElementId);
+      }
+    }),
+    designerShortcuts.deleteAlt(() => {
+      if (designerState.selectedElementId) {
+        deleteElement(designerState.selectedElementId);
+      }
+    }),
+    designerShortcuts.deselect(() => selectElement(null)),
+    designerShortcuts.save(handleSave),
+    designerShortcuts.moveUp(() => moveSelectedElement('up')),
+    designerShortcuts.moveDown(() => moveSelectedElement('down')),
+    designerShortcuts.moveLeft(() => moveSelectedElement('left')),
+    designerShortcuts.moveRight(() => moveSelectedElement('right')),
+    designerShortcuts.moveUpFine(() => moveSelectedElement('up', 1)),
+    designerShortcuts.moveDownFine(() => moveSelectedElement('down', 1)),
+    designerShortcuts.moveLeftFine(() => moveSelectedElement('left', 1)),
+    designerShortcuts.moveRightFine(() => moveSelectedElement('right', 1)),
+  ]);
 
   if (isLoading) {
     return (
@@ -336,6 +471,40 @@ const ComponentDesignerPage: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-3">
+            {/* Undo/Redo Toolbar */}
+            <div className="flex items-center border border-gray-200 dark:border-gray-600 rounded-md overflow-hidden">
+              <button
+                onClick={undo}
+                disabled={!undoRedoState.canUndo}
+                title={undoRedoState.canUndo ? `Undo: ${getUndoDescription()}` : 'Nothing to undo'}
+                className="px-3 py-2 text-sm bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed border-r border-gray-200 dark:border-gray-600 flex items-center space-x-1"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                </svg>
+                <span className="hidden sm:inline">Undo</span>
+              </button>
+              
+              <button
+                onClick={redo}
+                disabled={!undoRedoState.canRedo}
+                title={undoRedoState.canRedo ? `Redo: ${getRedoDescription()}` : 'Nothing to redo'}
+                className="px-3 py-2 text-sm bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10H11a8 8 0 00-8 8v2m18-10l-6-6m6 6l-6 6" />
+                </svg>
+                <span className="hidden sm:inline">Redo</span>
+              </button>
+            </div>
+
+            {/* History Status */}
+            {undoRedoState.historySize > 0 && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 hidden md:inline">
+                {undoRedoState.currentIndex + 1}/{undoRedoState.historySize}
+              </span>
+            )}
+
             <Button
               variant="outline"
               onClick={() => setShowPreview(!showPreview)}
@@ -408,7 +577,6 @@ const ComponentDesignerPage: React.FC = () => {
         <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
           <ElementToolbox
             onElementSelect={addElement}
-            selectedElementId={designerState.selectedElementId}
           />
         </div>
 
@@ -425,7 +593,7 @@ const ComponentDesignerPage: React.FC = () => {
             onElementUpdate={updateElement}
             onElementDelete={deleteElement}
             onElementSelect={selectElement}
-            onCanvasUpdate={(updates) => updateDesignerState(updates)}
+            onCanvasUpdate={(updates) => updateDesignerState(state => ({ ...state, ...updates }))}
           />
         </div>
 
