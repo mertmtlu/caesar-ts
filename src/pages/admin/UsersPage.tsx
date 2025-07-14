@@ -3,7 +3,6 @@ import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import { UserSearchDto } from '@/api/types';
 import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
 import { ConfirmationModal } from '@/components/common/Modal';
 import UserDetailsModal from '@/components/admin/UserDetailsModal';
 import CreateUserModal from '@/components/admin/CreateUserModal';
@@ -24,21 +23,21 @@ interface UserToDelete {
   fullName: string;
 }
 
-interface SortOption {
-  label: string;
-  field: string;
-  direction: SortDirection;
-}
+// interface SortOption {
+//   label: string;
+//   field: string;
+//   direction: SortDirection;
+// }
 
-const SORT_OPTIONS: SortOption[] = [
-  { label: 'Name A-Z', field: 'FullName', direction: SortDirection._0 },
-  { label: 'Name Z-A', field: 'FullName', direction: SortDirection._1 },
-  { label: 'Email A-Z', field: 'Email', direction: SortDirection._0 },
-  { label: 'Email Z-A', field: 'Email', direction: SortDirection._1 },
-  { label: 'Recently Created', field: 'CreatedDate', direction: SortDirection._1 },
-  { label: 'Oldest First', field: 'CreatedDate', direction: SortDirection._0 },
-  { label: 'Recently Active', field: 'LastLoginDate', direction: SortDirection._1 },
-];
+// const SORT_OPTIONS: SortOption[] = [
+//   { label: 'Name A-Z', field: 'FullName', direction: SortDirection._0 },
+//   { label: 'Name Z-A', field: 'FullName', direction: SortDirection._1 },
+//   { label: 'Email A-Z', field: 'Email', direction: SortDirection._0 },
+//   { label: 'Email Z-A', field: 'Email', direction: SortDirection._1 },
+//   { label: 'Recently Created', field: 'CreatedDate', direction: SortDirection._1 },
+//   { label: 'Oldest First', field: 'CreatedDate', direction: SortDirection._0 },
+//   { label: 'Recently Active', field: 'LastLoginDate', direction: SortDirection._1 },
+// ];
 
 const UsersPage: React.FC = () => {
   // State management
@@ -57,11 +56,13 @@ const UsersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [sortField, setSortField] = useState('Name');
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection._0);
+  const [sortField] = useState('Name');
+  const [sortDirection] = useState<SortDirection>(SortDirection._0);
   
   // Available roles
   const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+
+  console.log(availableRoles);
   
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -292,10 +293,6 @@ const UsersPage: React.FC = () => {
     if (diffHours > 0) return `${diffHours}h ago`;
     if (diffMinutes > 0) return `${diffMinutes}m ago`;
     return 'Just now';
-  };
-
-  const getSortOptionKey = (field: string, direction: SortDirection): string => {
-    return `${field}-${direction}`;
   };
 
   const getRoleColor = (role: string): string => {
