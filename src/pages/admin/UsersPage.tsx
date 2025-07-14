@@ -315,13 +315,77 @@ const UsersPage: React.FC = () => {
   if (isLoading && users.length === 0) {
     return (
       <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div className="space-y-3">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            ))}
+        <div className="animate-pulse space-y-6">
+          {/* Header skeleton */}
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
+            </div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+          </div>
+          
+          {/* Filters skeleton */}
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                  <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Results summary skeleton */}
+          <div className="flex justify-between items-center">
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+          </div>
+          
+          {/* Table skeleton */}
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center space-x-4">
+                <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                <div className="ml-auto h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+              </div>
+            </div>
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="p-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-12 w-12 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                    </div>
+                    <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
+                    <div className="space-y-1">
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -341,20 +405,95 @@ const UsersPage: React.FC = () => {
           </p>
         </div>
         
-        <div className="mt-4 sm:mt-0 flex space-x-3">
+        <div className="mt-4 sm:mt-0 flex flex-wrap gap-2">
           {selectedUsers.size > 0 && (
-            <Button
-              variant="danger"
-              onClick={handleBulkDelete}
-              disabled={isDeleting}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              }
-            >
-              Delete {selectedUsers.size} User{selectedUsers.size > 1 ? 's' : ''}
-            </Button>
+            <>
+              <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-lg">
+                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {selectedUsers.size} selected
+                </span>
+              </div>
+              
+              {/* Bulk Actions Dropdown */}
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                    </svg>
+                  }
+                >
+                  Bulk Actions
+                </Button>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  // Bulk activate selected users
+                  Promise.all(
+                    Array.from(selectedUsers).map(userId => {
+                      const user = users.find(u => u.id === userId);
+                      if (user && !user.isActive) {
+                        return handleUserToggleActive(userId, false);
+                      }
+                      return Promise.resolve();
+                    })
+                  );
+                }}
+                disabled={isDeleting}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                }
+              >
+                Activate
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  // Bulk deactivate selected users
+                  Promise.all(
+                    Array.from(selectedUsers).map(userId => {
+                      const user = users.find(u => u.id === userId);
+                      if (user && user.isActive) {
+                        return handleUserToggleActive(userId, true);
+                      }
+                      return Promise.resolve();
+                    })
+                  );
+                }}
+                disabled={isDeleting}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636" />
+                  </svg>
+                }
+              >
+                Deactivate
+              </Button>
+              
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={isDeleting}
+                loading={isDeleting}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                }
+              >
+                Delete
+              </Button>
+            </>
           )}
           
           <Button
@@ -395,20 +534,48 @@ const UsersPage: React.FC = () => {
         </div>
       )}
 
-      {/* Filters and Search */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Input
-            label="Search users"
-            placeholder="Search by name, email, or username..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            }
-          />
+      {/* Enhanced Filters and Search */}
+      {/* <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white">Search & Filters</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSearchTerm('');
+              setRoleFilter('');
+              setStatusFilter('');
+              setSortField('Name');
+              setSortDirection(SortDirection._0);
+            }}
+          >
+            Clear All
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative">
+            <Input
+              label="Search users"
+              placeholder="Search by name, email, or username..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              leftIcon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              }
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -462,6 +629,78 @@ const UsersPage: React.FC = () => {
             </select>
           </div>
         </div>
+        
+        {(searchTerm || roleFilter || statusFilter) && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active filters:</span>
+              {searchTerm && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                  Search: {searchTerm}
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {roleFilter && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                  Role: {roleFilter}
+                  <button
+                    onClick={() => setRoleFilter('')}
+                    className="ml-1 text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {statusFilter && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                  Status: {statusFilter}
+                  <button
+                    onClick={() => setStatusFilter('')}
+                    className="ml-1 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div> */}
+
+      {/* Results Summary */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+            Users ({totalCount})
+          </h2>
+          {selectedUsers.size > 0 && (
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {selectedUsers.size} selected
+            </span>
+          )}
+        </div>
+        
+        {/* View Options */}
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-500 dark:text-gray-400">View:</span>
+          <div className="border border-gray-300 dark:border-gray-600 rounded-md p-1 flex">
+            <button className="p-1 rounded text-blue-600 bg-blue-50 dark:bg-blue-900/30">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+            </button>
+            <button className="p-1 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Users Table */}
@@ -502,8 +741,21 @@ const UsersPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              {isLoading && users.length > 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-3 text-center">
+                    <div className="flex items-center justify-center space-x-2 text-blue-600 dark:text-blue-400">
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span className="text-sm">Updating users...</span>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr key={user.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${isDeleting ? 'opacity-50' : ''}`}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
@@ -522,16 +774,26 @@ const UsersPage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0">
-                        <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="h-12 w-12 flex-shrink-0">
+                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                          <span className="text-sm font-medium text-white">
                             {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
                           </span>
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {user.fullName}
+                        <div className="flex items-center space-x-2">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {user.fullName}
+                          </div>
+                          {user.roles.includes('admin') && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                              </svg>
+                              Admin
+                            </span>
+                          )}
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
                           {user.email}
@@ -555,33 +817,63 @@ const UsersPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}>
-                      {user.isActive ? 'Active' : 'Inactive'}
-                    </span>
+                    <div className="flex items-center">
+                      <div className={`w-2 h-2 rounded-full mr-2 ${
+                        user.isActive ? 'bg-green-400' : 'bg-red-400'
+                      }`}></div>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}>
+                        {user.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatRelativeTime(user.lastLoginDate)}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {formatRelativeTime(user.lastLoginDate)}
+                    </div>
+                    {user.lastLoginDate && (
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(user.lastLoginDate).toLocaleDateString()}
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
+                    <div className="flex justify-end items-center space-x-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleViewUserDetails(user.id)}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        }
                       >
                         View
                       </Button>
+                      
                       <Button
                         variant={user.isActive ? "ghost" : "outline"}
                         size="sm"
                         onClick={() => handleUserToggleActive(user.id, user.isActive)}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={user.isActive ? "M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636" : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"} />
+                          </svg>
+                        }
                       >
                         {user.isActive ? 'Deactivate' : 'Activate'}
                       </Button>
+                      
                       <Button
                         variant="danger"
                         size="sm"
                         onClick={() => handleDeleteUser(user.id, user.fullName)}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        }
                       >
                         Delete
                       </Button>
@@ -594,31 +886,103 @@ const UsersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Empty State */}
+      {/* Enhanced Empty State with Help */}
       {users.length === 0 && !isLoading && (
-        <div className="text-center py-12">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No users found</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {searchTerm || roleFilter || statusFilter ? 'Try adjusting your search criteria.' : 'Get started by creating your first user.'}
-          </p>
-          {!searchTerm && !roleFilter && !statusFilter && (
-            <div className="mt-6">
-              <Button
-                variant="primary"
-                onClick={() => setShowCreateUserModal(true)}
-                leftIcon={
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                }
-              >
-                Create Your First User
-              </Button>
+        <div className="text-center py-16">
+          <div className="max-w-lg mx-auto">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
             </div>
-          )}
+            
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              {searchTerm || roleFilter || statusFilter ? 'No users match your criteria' : 'Welcome to User Management'}
+            </h3>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              {searchTerm || roleFilter || statusFilter 
+                ? 'Try adjusting your search criteria or filters to find the users you\'re looking for.' 
+                : 'Get started by creating your first user account. You can assign roles, manage permissions, and control access to programs.'
+              }
+            </p>
+            
+            {!searchTerm && !roleFilter && !statusFilter && (
+              <div className="space-y-6">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setShowCreateUserModal(true)}
+                  leftIcon={
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  }
+                >
+                  Create Your First User
+                </Button>
+                
+                {/* Quick Tips */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg text-left">
+                  <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Quick Tips
+                  </h4>
+                  <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-2">
+                    <li className="flex items-start">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      Use the search bar to quickly find users by name, email, or username
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      Filter users by role or status to focus on specific groups
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      Select multiple users to perform bulk actions like activation or deletion
+                    </li>
+                    <li className="flex items-start">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                      Click on any user to view detailed information and manage their program access
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            
+            {(searchTerm || roleFilter || statusFilter) && (
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setRoleFilter('');
+                    setStatusFilter('');
+                  }}
+                  leftIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  }
+                >
+                  Clear Filters
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => setShowCreateUserModal(true)}
+                  leftIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  }
+                >
+                  Create New User
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

@@ -70,8 +70,8 @@ const ProgramPermissionsPage: React.FC = () => {
               const permResponse = await api.programs.programs_GetProgramPermissions(program.id!);
               if (permResponse.success && permResponse.data) {
                 const permissions = permResponse.data as ProgramPermission[];
-                const userPermissions = permissions.filter(p => p.type === 'User');
-                const groupPermissions = permissions.filter(p => p.type === 'Group');
+                const userPermissions = permissions.filter(p => p.type === 'user');
+                const groupPermissions = permissions.filter(p => p.type === 'group');
                 
                 return {
                   ...program,
@@ -373,7 +373,7 @@ const ProgramPermissionsPage: React.FC = () => {
                                 </h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                                   {program.permissions
-                                    .filter(p => p.type === 'User')
+                                    .filter(p => p.type === 'user')
                                     .map((permission) => (
                                       <div key={`${permission.type}-${permission.id}`} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded border">
                                         <span className="text-sm text-gray-900 dark:text-white">
@@ -389,14 +389,14 @@ const ProgramPermissionsPage: React.FC = () => {
                             )}
                             
                             {/* Group Permissions */}
-                            {program.permissions && program.permissions.filter(p => p.type === 'Group').length > 0 && (
+                            {program.permissions && program.permissions.filter(p => p.type === 'group').length > 0 && (
                               <div>
                                 <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
                                   Group Permissions
                                 </h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                                   {program.permissions
-                                    .filter(p => p.type === 'Group')
+                                    .filter(p => p.type === 'group')
                                     .map((permission) => (
                                       <div key={`${permission.type}-${permission.id}`} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded border">
                                         <span className="text-sm text-gray-900 dark:text-white">

@@ -201,10 +201,26 @@ const UserProgramAssignmentModal: React.FC<UserProgramAssignmentModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Manage Program Access - ${userName || 'User'}`}
+      title="User Program Access Management"
       size="xl"
     >
       <div className="space-y-6">
+        {/* User Header */}
+        {userName && (
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-sm font-medium text-white">
+                  {userName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{userName}</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Managing program access permissions</p>
+              </div>
+            </div>
+          </div>
+        )}
         {error && (
           <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
             <div className="flex">
@@ -223,9 +239,19 @@ const UserProgramAssignmentModal: React.FC<UserProgramAssignmentModalProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Current Program Assignments */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-              Current Program Access ({userPrograms.length})
-            </h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Current Program Access
+                </h3>
+              </div>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                {userPrograms.length} programs
+              </span>
+            </div>
             
             <div className="max-h-96 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
               {userPrograms.length === 0 ? (
@@ -252,24 +278,44 @@ const UserProgramAssignmentModal: React.FC<UserProgramAssignmentModalProps> = ({
 
           {/* Add Programs */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-              Add Program Access
-            </h3>
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                Grant New Program Access
+              </h3>
+            </div>
 
-            {/* Access Level Selection */}
-            <div className="space-y-2">
+            {/* Enhanced Access Level Selection */}
+            <div className="space-y-3">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Permission Level
+                Default Permission Level for New Programs
               </label>
-              <select
-                value={selectedAccessLevel}
-                onChange={(e) => setSelectedAccessLevel(e.target.value)}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              >
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {accessLevels.map(level => (
-                  <option key={level} value={level}>{level}</option>
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => setSelectedAccessLevel(level)}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      selectedAccessLevel === level
+                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-sm font-medium">{level}</div>
+                      <div className="text-xs mt-1 opacity-75">
+                        {level === 'Read' && 'View only'}
+                        {level === 'Write' && 'Edit content'}
+                        {level === 'Execute' && 'Run programs'}
+                        {level === 'Admin' && 'Full control'}
+                      </div>
+                    </div>
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
 
             {/* Program Search */}
@@ -350,22 +396,42 @@ const UserProgramAssignmentModal: React.FC<UserProgramAssignmentModalProps> = ({
               )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex space-x-3">
-              <Button
-                variant="primary"
-                onClick={handleAssignPrograms}
-                disabled={selectedPrograms.size === 0 || isSaving}
-              >
-                Grant Access to {selectedPrograms.size} Program{selectedPrograms.size !== 1 ? 's' : ''}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={onClose}
-                disabled={isSaving}
-              >
-                Close
-              </Button>
+            {/* Enhanced Action Buttons */}
+            <div className="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  variant="primary"
+                  onClick={handleAssignPrograms}
+                  disabled={selectedPrograms.size === 0 || isSaving}
+                  loading={isSaving}
+                  leftIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  }
+                  className="flex-1 sm:flex-initial"
+                >
+                  {isSaving 
+                    ? 'Granting Access...' 
+                    : `Grant ${selectedAccessLevel} Access to ${selectedPrograms.size} Program${selectedPrograms.size !== 1 ? 's' : ''}`
+                  }
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  disabled={isSaving}
+                  className="flex-1 sm:flex-initial"
+                >
+                  Cancel
+                </Button>
+              </div>
+              {selectedPrograms.size > 0 && (
+                <div className="mt-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-200 dark:border-purple-800">
+                  <p className="text-sm text-purple-700 dark:text-purple-300">
+                    💡 User will be granted <strong>{selectedAccessLevel}</strong> access to {selectedPrograms.size} program{selectedPrograms.size !== 1 ? 's' : ''}. Access levels can be modified individually after assignment.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
