@@ -227,11 +227,13 @@ const ComponentDesignerPage: React.FC = () => {
 
   // Copy/Paste functionality
   const copySelectedElements = useCallback(() => {
-    const selectedElements = designerState.elements.filter(el => 
-      selectedElementIds.includes(el.id)
-    );
-    setClipboard(selectedElements);
-  }, [designerState.elements, selectedElementIds]);
+    const elementsToCopy = selectedElementIds.length > 0 
+      ? designerState.elements.filter(el => selectedElementIds.includes(el.id))
+      : designerState.selectedElementId 
+      ? designerState.elements.filter(el => el.id === designerState.selectedElementId)
+      : [];
+    setClipboard(elementsToCopy);
+  }, [designerState.elements, selectedElementIds, designerState.selectedElementId]);
 
   const pasteElements = useCallback(() => {
     if (clipboard.length === 0) return;
@@ -252,38 +254,159 @@ const ComponentDesignerPage: React.FC = () => {
     });
   }, [clipboard, executeCommand, updateDesignerState]);
 
-  // Keyboard movement
-  const moveSelectedElement = useCallback((direction: 'up' | 'down' | 'left' | 'right', distance: number = 10) => {
-    if (!designerState.selectedElementId) return;
+  // Alignment functions for multiple selected elements
+  const alignElements = useCallback((alignment: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle') => {
+    if (selectedElementIds.length < 2) return;
 
-    const element = designerState.elements.find(el => el.id === designerState.selectedElementId);
-    if (!element) return;
-
-    let newPosition = { ...element.position };
+    const selectedElements = designerState.elements.filter(el => selectedElementIds.includes(el.id));
     
-    switch (direction) {
-      case 'up':
-        newPosition.y -= distance;
-        break;
-      case 'down':
-        newPosition.y += distance;
-        break;
+    // Calculate alignment position based on all selected elements
+    let alignPosition = 0;
+    
+    switch (alignment) {
       case 'left':
-        newPosition.x -= distance;
+        alignPosition = Math.min(...selectedElements.map(el => el.position.x));
+        selectedElements.forEach(el => {
+          updateElement(el.id, { position: { ...el.position, x: alignPosition } });
+        });
         break;
+        
       case 'right':
-        newPosition.x += distance;
+        alignPosition = Math.max(...selectedElements.map(el => el.position.x + el.size.width));
+        selectedElements.forEach(el => {
+          updateElement(el.id, { position: { ...el.position, x: alignPosition - el.size.width } });
+        });
+        break;
+        
+      case 'center':
+        const centerX = selectedElements.reduce((sum, el) => sum + (el.position.x + el.size.width / 2), 0) / selectedElements.length;
+        selectedElements.forEach(el => {
+          updateElement(el.id, { position: { ...el.position, x: centerX - el.size.width / 2 } });
+        });
+        break;
+        
+      case 'top':
+        alignPosition = Math.min(...selectedElements.map(el => el.position.y));
+        selectedElements.forEach(el => {
+          updateElement(el.id, { position: { ...el.position, y: alignPosition } });
+        });
+        break;
+        
+      case 'bottom':
+        alignPosition = Math.max(...selectedElements.map(el => el.position.y + el.size.height));
+        selectedElements.forEach(el => {
+          updateElement(el.id, { position: { ...el.position, y: alignPosition - el.size.height } });
+        });
+        break;
+        
+      case 'middle':
+        const centerY = selectedElements.reduce((sum, el) => sum + (el.position.y + el.size.height / 2), 0) / selectedElements.length;
+        selectedElements.forEach(el => {
+          updateElement(el.id, { position: { ...el.position, y: centerY - el.size.height / 2 } });
+        });
         break;
     }
+  }, [selectedElementIds, designerState.elements, updateElement]);
 
-    const command = new MoveElementCommand(
-      designerState.selectedElementId,
-      element.position,
-      newPosition,
-      updateDesignerState
-    );
-    executeCommand(command);
-  }, [designerState.selectedElementId, designerState.elements, executeCommand, updateDesignerState]);
+  // Distribution functions
+  const distributeElements = useCallback((direction: 'horizontal' | 'vertical') => {
+    if (selectedElementIds.length < 3) return;
+
+    const selectedElements = designerState.elements.filter(el => selectedElementIds.includes(el.id));
+    
+    if (direction === 'horizontal') {
+      // Sort by x position
+      const sortedElements = [...selectedElements].sort((a, b) => a.position.x - b.position.x);
+      const leftmost = sortedElements[0];
+      const rightmost = sortedElements[sortedElements.length - 1];
+      const totalWidth = (rightmost.position.x + rightmost.size.width) - leftmost.position.x;
+      const gap = (totalWidth - sortedElements.reduce((sum, el) => sum + el.size.width, 0)) / (sortedElements.length - 1);
+      
+      let currentX = leftmost.position.x;
+      sortedElements.forEach((el, index) => {
+        if (index > 0) {
+          updateElement(el.id, { position: { ...el.position, x: currentX } });
+        }
+        currentX += el.size.width + gap;
+      });
+    } else {
+      // Sort by y position
+      const sortedElements = [...selectedElements].sort((a, b) => a.position.y - b.position.y);
+      const topmost = sortedElements[0];
+      const bottommost = sortedElements[sortedElements.length - 1];
+      const totalHeight = (bottommost.position.y + bottommost.size.height) - topmost.position.y;
+      const gap = (totalHeight - sortedElements.reduce((sum, el) => sum + el.size.height, 0)) / (sortedElements.length - 1);
+      
+      let currentY = topmost.position.y;
+      sortedElements.forEach((el, index) => {
+        if (index > 0) {
+          updateElement(el.id, { position: { ...el.position, y: currentY } });
+        }
+        currentY += el.size.height + gap;
+      });
+    }
+  }, [selectedElementIds, designerState.elements, updateElement]);
+
+  // Keyboard movement for single or multiple elements
+  const moveSelectedElement = useCallback((direction: 'up' | 'down' | 'left' | 'right', distance: number = 10) => {
+    // Check if we have multiple selected elements
+    if (selectedElementIds.length > 1) {
+      // Move all selected elements
+      selectedElementIds.forEach(elementId => {
+        const element = designerState.elements.find(el => el.id === elementId);
+        if (!element) return;
+
+        let newPosition = { ...element.position };
+        
+        switch (direction) {
+          case 'up':
+            newPosition.y = Math.max(0, newPosition.y - distance);
+            break;
+          case 'down':
+            newPosition.y = Math.min(designerState.canvasSize.height - element.size.height, newPosition.y + distance);
+            break;
+          case 'left':
+            newPosition.x = Math.max(0, newPosition.x - distance);
+            break;
+          case 'right':
+            newPosition.x = Math.min(designerState.canvasSize.width - element.size.width, newPosition.x + distance);
+            break;
+        }
+
+        // Update element directly without command for group operations
+        updateElement(elementId, { position: newPosition });
+      });
+    } else if (designerState.selectedElementId) {
+      // Single element movement with command pattern
+      const element = designerState.elements.find(el => el.id === designerState.selectedElementId);
+      if (!element) return;
+
+      let newPosition = { ...element.position };
+      
+      switch (direction) {
+        case 'up':
+          newPosition.y = Math.max(0, newPosition.y - distance);
+          break;
+        case 'down':
+          newPosition.y = Math.min(designerState.canvasSize.height - element.size.height, newPosition.y + distance);
+          break;
+        case 'left':
+          newPosition.x = Math.max(0, newPosition.x - distance);
+          break;
+        case 'right':
+          newPosition.x = Math.min(designerState.canvasSize.width - element.size.width, newPosition.x + distance);
+          break;
+      }
+
+      const command = new MoveElementCommand(
+        designerState.selectedElementId,
+        element.position,
+        newPosition,
+        updateDesignerState
+      );
+      executeCommand(command);
+    }
+  }, [selectedElementIds, designerState.selectedElementId, designerState.elements, designerState.canvasSize, updateElement, executeCommand, updateDesignerState]);
 
   const generateSchema = (): ComponentSchema => {
     return generateComponentSchema(
@@ -327,6 +450,7 @@ const ComponentDesignerPage: React.FC = () => {
           setError(response.message || 'Failed to update component');
         }
       } else {
+
         // Create new component
         const componentData = new UiComponentCreateDto({
           name: saveForm.name,
@@ -334,13 +458,14 @@ const ComponentDesignerPage: React.FC = () => {
           type: saveForm.type,
           configuration: configString
         });
-
+        
         const response = await api.uiComponents.uiComponents_Create(
           projectId!,
           project?.currentVersion || '',
           componentData
         );
-
+        
+        console.log('Creating new component');
         if (response.success) {
           navigate(`/projects/${projectId}/components`);
         } else {
@@ -396,21 +521,42 @@ const ComponentDesignerPage: React.FC = () => {
       }
     }),
     designerShortcuts.delete(() => {
-      if (designerState.selectedElementId) {
+      if (selectedElementIds.length > 1) {
+        // Delete all selected elements
+        selectedElementIds.forEach(id => deleteElement(id));
+        setSelectedElementIds([]);
+        updateDesignerState(state => ({ ...state, selectedElementId: null }));
+      } else if (designerState.selectedElementId) {
         deleteElement(designerState.selectedElementId);
       }
     }),
     designerShortcuts.deleteAlt(() => {
-      if (designerState.selectedElementId) {
+      if (selectedElementIds.length > 1) {
+        // Delete all selected elements
+        selectedElementIds.forEach(id => deleteElement(id));
+        setSelectedElementIds([]);
+        updateDesignerState(state => ({ ...state, selectedElementId: null }));
+      } else if (designerState.selectedElementId) {
         deleteElement(designerState.selectedElementId);
       }
     }),
-    designerShortcuts.deselect(() => selectElement(null)),
+    designerShortcuts.selectAll(() => {
+      if (designerState.elements.length > 0) {
+        const allElementIds = designerState.elements.map(el => el.id);
+        setSelectedElementIds(allElementIds);
+        // Set the last element as the primary selection
+        selectElement(allElementIds[allElementIds.length - 1]);
+      }
+    }),
+    designerShortcuts.deselect(() => {
+      selectElement(null);
+      setSelectedElementIds([]);
+    }),
     designerShortcuts.save(handleSave),
-    designerShortcuts.moveUp(() => moveSelectedElement('up')),
-    designerShortcuts.moveDown(() => moveSelectedElement('down')),
-    designerShortcuts.moveLeft(() => moveSelectedElement('left')),
-    designerShortcuts.moveRight(() => moveSelectedElement('right')),
+    designerShortcuts.moveUp(() => moveSelectedElement('up', designerState.gridSize)),
+    designerShortcuts.moveDown(() => moveSelectedElement('down', designerState.gridSize)),
+    designerShortcuts.moveLeft(() => moveSelectedElement('left', designerState.gridSize)),
+    designerShortcuts.moveRight(() => moveSelectedElement('right', designerState.gridSize)),
     designerShortcuts.moveUpFine(() => moveSelectedElement('up', 1)),
     designerShortcuts.moveDownFine(() => moveSelectedElement('down', 1)),
     designerShortcuts.moveLeftFine(() => moveSelectedElement('left', 1)),
@@ -593,6 +739,9 @@ const ComponentDesignerPage: React.FC = () => {
             onElementUpdate={updateElement}
             onElementDelete={deleteElement}
             onElementSelect={selectElement}
+            onMultiSelect={setSelectedElementIds}
+            onAlignElements={alignElements}
+            onDistributeElements={distributeElements}
             onCanvasUpdate={(updates) => updateDesignerState(state => ({ ...state, ...updates }))}
           />
         </div>

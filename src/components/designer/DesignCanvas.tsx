@@ -1,5 +1,5 @@
 // src/components/designer/DesignCanvas.tsx
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { 
   UIElement, 
   Position, 
@@ -21,6 +21,8 @@ interface DesignCanvasProps {
   onElementDelete: (elementId: string) => void;
   onElementSelect: (elementId: string | null) => void;
   onMultiSelect?: (elementIds: string[]) => void;
+  onAlignElements?: (alignment: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle') => void;
+  onDistributeElements?: (direction: 'horizontal' | 'vertical') => void;
   onCanvasUpdate: (updates: Partial<DesignerState>) => void;
 }
 
@@ -36,6 +38,8 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
   onElementDelete,
   onElementSelect,
   onMultiSelect,
+  onAlignElements,
+  onDistributeElements,
   onCanvasUpdate
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -57,6 +61,10 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
     end: Position;
   } | null>(null);
   
+  // Group dragging functionality
+  const [isDraggingGroup, setIsDraggingGroup] = useState(false);
+  const [groupDragOffsets, setGroupDragOffsets] = useState<Map<string, Position>>(new Map());
+  
   // Resize functionality
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
@@ -64,6 +72,9 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
   const [resizeStartSize, setResizeStartSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [resizeStartElementPos, setResizeStartElementPos] = useState<Position>({ x: 0, y: 0 });
   const [tempResizeState, setTempResizeState] = useState<{ size: { width: number; height: number }; position: Position } | null>(null);
+  
+  // Group dragging temporary positions
+  const [tempGroupPositions, setTempGroupPositions] = useState<Map<string, Position>>(new Map());
 
   // Keep multi-select in sync with single select
   useEffect(() => {
@@ -306,19 +317,52 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
       } else {
         onElementSelect(null);
       }
-      return; // Don't start dragging on multi-select
+      return; // Don't start dragging on multi-select modifier
     } else {
-      // Single select
-      onElementSelect(elementId);
-      setDraggedElementId(elementId);
+      // Check if clicking on a multi-selected element to start group drag
+      const isMultiSelectedElement = selectedElementIds.length > 1 && selectedElementIds.includes(elementId);
       
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (rect) {
-        const offset: Position = {
-          x: (e.clientX - rect.left) / zoom - element.position.x,
-          y: (e.clientY - rect.top) / zoom - element.position.y
-        };
-        setDragOffset(offset);
+      if (isMultiSelectedElement) {
+        // Start group dragging
+        setIsDraggingGroup(true);
+        setDraggedElementId(elementId); // Primary element for snapping
+        
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (rect) {
+          const clickPos: Position = {
+            x: (e.clientX - rect.left) / zoom,
+            y: (e.clientY - rect.top) / zoom
+          };
+          
+          // Store initial positions for all selected elements
+          const initialPositions = new Map<string, Position>();
+          selectedElementIds.forEach(id => {
+            const el = elements.find(elem => elem.id === id);
+            if (el) {
+              initialPositions.set(id, { ...el.position });
+            }
+          });
+          setGroupDragOffsets(initialPositions);
+          
+          // Set primary element offset for drag calculations
+          setDragOffset({
+            x: clickPos.x - element.position.x,
+            y: clickPos.y - element.position.y
+          });
+        }
+      } else {
+        // Single select and drag
+        onElementSelect(elementId);
+        setDraggedElementId(elementId);
+        
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (rect) {
+          const offset: Position = {
+            x: (e.clientX - rect.left) / zoom - element.position.x,
+            y: (e.clientY - rect.top) / zoom - element.position.y
+          };
+          setDragOffset(offset);
+        }
       }
     }
   };
@@ -366,17 +410,64 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
           y: currentPos.y - dragOffset.y
         };
 
-        // Apply smart snapping
+        // Apply smart snapping for primary element
         const { snappedPosition, alignmentLines: activeLines } = findSnapPoints(draggedElement, newPosition);
-        newPosition = snappedPosition;
+        const snappedPrimaryPosition = snappedPosition;
 
-        // Keep element within canvas bounds
-        newPosition.x = Math.max(0, Math.min(newPosition.x, canvasSize.width - draggedElement.size.width));
-        newPosition.y = Math.max(0, Math.min(newPosition.y, canvasSize.height - draggedElement.size.height));
+        // Calculate movement delta from snapping
+        const deltaX = snappedPrimaryPosition.x - newPosition.x;
+        const deltaY = snappedPrimaryPosition.y - newPosition.y;
 
-        // Update temporary position for immediate visual feedback
-        setTempDragPosition(newPosition);
-        setAlignmentLines(activeLines);
+        if (isDraggingGroup && selectedElementIds.length > 1) {
+          // Group dragging: calculate positions for all selected elements
+          const groupPositions = new Map<string, Position>();
+          
+          // Get the primary element's initial position from stored offsets
+          const primaryInitialPos = groupDragOffsets.get(draggedElementId);
+          if (!primaryInitialPos) return;
+          
+          // Calculate the movement delta from the primary element's initial position
+          const primaryMovementDelta = {
+            x: snappedPrimaryPosition.x - primaryInitialPos.x,
+            y: snappedPrimaryPosition.y - primaryInitialPos.y
+          };
+
+          // Apply the same movement delta to all selected elements
+          selectedElementIds.forEach(id => {
+            const el = elements.find(elem => elem.id === id);
+            const initialPos = groupDragOffsets.get(id);
+            if (el && initialPos) {
+              const elementPos: Position = {
+                x: initialPos.x + primaryMovementDelta.x,
+                y: initialPos.y + primaryMovementDelta.y
+              };
+              
+              // Keep elements within canvas bounds
+              elementPos.x = Math.max(0, Math.min(elementPos.x, canvasSize.width - el.size.width));
+              elementPos.y = Math.max(0, Math.min(elementPos.y, canvasSize.height - el.size.height));
+              
+              groupPositions.set(id, elementPos);
+            }
+          });
+
+          // Update all temporary positions immediately for smooth rendering
+          setTempGroupPositions(groupPositions);
+          setAlignmentLines(activeLines);
+          
+          // Update primary element position
+          if (groupPositions.has(draggedElementId)) {
+            setTempDragPosition(groupPositions.get(draggedElementId)!);
+          }
+        } else {
+          // Single element dragging
+          // Keep element within canvas bounds
+          snappedPrimaryPosition.x = Math.max(0, Math.min(snappedPrimaryPosition.x, canvasSize.width - draggedElement.size.width));
+          snappedPrimaryPosition.y = Math.max(0, Math.min(snappedPrimaryPosition.y, canvasSize.height - draggedElement.size.height));
+
+          // Update temporary position for immediate visual feedback
+          setTempDragPosition(snappedPrimaryPosition);
+          setAlignmentLines(activeLines);
+        }
       }
 
       // Handle element resizing
@@ -452,9 +543,17 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
     };
 
     const handleMouseUp = () => {
-      // Update the actual element position when drag ends
-      if (draggedElementId && tempDragPosition) {
-        onElementUpdate(draggedElementId, { position: tempDragPosition });
+      // Update element positions when drag ends
+      if (draggedElementId) {
+        if (isDraggingGroup && selectedElementIds.length > 1 && tempGroupPositions.size > 0) {
+          // Update all elements in the group
+          tempGroupPositions.forEach((position, elementId) => {
+            onElementUpdate(elementId, { position });
+          });
+        } else if (tempDragPosition) {
+          // Update single element
+          onElementUpdate(draggedElementId, { position: tempDragPosition });
+        }
       }
       
       // Update the actual element size and position when resize ends
@@ -470,6 +569,9 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
       setDragOffset({ x: 0, y: 0 });
       setTempDragPosition(null);
       setAlignmentLines({ vertical: [], horizontal: [] });
+      setIsDraggingGroup(false);
+      setGroupDragOffsets(new Map());
+      setTempGroupPositions(new Map());
       
       // Reset resizing state
       setIsResizing(false);
@@ -486,7 +588,7 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [draggedElementId, dragOffset, zoom, showGrid, gridSize, canvasSize, onElementUpdate, tempDragPosition, isResizing, selectedElementId, resizeHandle, resizeStartPos, resizeStartSize, resizeStartElementPos, tempResizeState]);
+  }, [draggedElementId, dragOffset, zoom, showGrid, gridSize, canvasSize, onElementUpdate, tempDragPosition, isResizing, selectedElementId, resizeHandle, resizeStartPos, resizeStartSize, resizeStartElementPos, tempResizeState, isDraggingGroup, selectedElementIds, groupDragOffsets, tempGroupPositions]);
 
   // Handle selection box mouse events
   useEffect(() => {
@@ -583,62 +685,151 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
         return;
       }
 
-      if (selectedElementId) {
+      if (selectedElementId || selectedElementIds.length > 0) {
         switch (e.key) {
           case 'Delete':
           case 'Backspace':
             e.preventDefault();
-            onElementDelete(selectedElementId);
+            if (selectedElementIds.length > 1) {
+              // Delete all selected elements
+              selectedElementIds.forEach(id => onElementDelete(id));
+              setSelectedElementIds([]);
+              onElementSelect(null);
+            } else if (selectedElementId) {
+              // Delete single selected element
+              onElementDelete(selectedElementId);
+            }
             break;
           case 'Escape':
             e.preventDefault();
             onElementSelect(null);
+            setSelectedElementIds([]);
+            break;
+          case 'a':
+          case 'A':
+            if (e.ctrlKey || e.metaKey) {
+              e.preventDefault();
+              // Select all elements
+              const allElementIds = elements.map(el => el.id);
+              setSelectedElementIds(allElementIds);
+              if (onMultiSelect) {
+                onMultiSelect(allElementIds);
+              }
+              // Set the last element as the primary selection
+              if (allElementIds.length > 0) {
+                onElementSelect(allElementIds[allElementIds.length - 1]);
+              }
+            }
             break;
           case 'ArrowUp':
             if (e.shiftKey) {
               e.preventDefault();
-              const element = elements.find(el => el.id === selectedElementId);
-              if (element) {
-                const newY = element.position.y - (e.ctrlKey ? 1 : gridSize);
-                onElementUpdate(selectedElementId, { 
-                  position: { ...element.position, y: Math.max(0, newY) } 
+              const distance = e.ctrlKey ? 1 : gridSize;
+              
+              if (selectedElementIds.length > 1) {
+                // Move all selected elements
+                selectedElementIds.forEach(elementId => {
+                  const element = elements.find(el => el.id === elementId);
+                  if (element) {
+                    const newY = Math.max(0, element.position.y - distance);
+                    onElementUpdate(elementId, { 
+                      position: { ...element.position, y: newY } 
+                    });
+                  }
                 });
+              } else if (selectedElementId) {
+                // Move single element
+                const element = elements.find(el => el.id === selectedElementId);
+                if (element) {
+                  const newY = Math.max(0, element.position.y - distance);
+                  onElementUpdate(selectedElementId, { 
+                    position: { ...element.position, y: newY } 
+                  });
+                }
               }
             }
             break;
           case 'ArrowDown':
             if (e.shiftKey) {
               e.preventDefault();
-              const element = elements.find(el => el.id === selectedElementId);
-              if (element) {
-                const newY = element.position.y + (e.ctrlKey ? 1 : gridSize);
-                onElementUpdate(selectedElementId, { 
-                  position: { ...element.position, y: Math.min(canvasSize.height - 50, newY) } 
+              const distance = e.ctrlKey ? 1 : gridSize;
+              
+              if (selectedElementIds.length > 1) {
+                // Move all selected elements
+                selectedElementIds.forEach(elementId => {
+                  const element = elements.find(el => el.id === elementId);
+                  if (element) {
+                    const newY = Math.min(canvasSize.height - element.size.height, element.position.y + distance);
+                    onElementUpdate(elementId, { 
+                      position: { ...element.position, y: newY } 
+                    });
+                  }
                 });
+              } else if (selectedElementId) {
+                // Move single element
+                const element = elements.find(el => el.id === selectedElementId);
+                if (element) {
+                  const newY = Math.min(canvasSize.height - element.size.height, element.position.y + distance);
+                  onElementUpdate(selectedElementId, { 
+                    position: { ...element.position, y: newY } 
+                  });
+                }
               }
             }
             break;
           case 'ArrowLeft':
             if (e.shiftKey) {
               e.preventDefault();
-              const element = elements.find(el => el.id === selectedElementId);
-              if (element) {
-                const newX = element.position.x - (e.ctrlKey ? 1 : gridSize);
-                onElementUpdate(selectedElementId, { 
-                  position: { ...element.position, x: Math.max(0, newX) } 
+              const distance = e.ctrlKey ? 1 : gridSize;
+              
+              if (selectedElementIds.length > 1) {
+                // Move all selected elements
+                selectedElementIds.forEach(elementId => {
+                  const element = elements.find(el => el.id === elementId);
+                  if (element) {
+                    const newX = Math.max(0, element.position.x - distance);
+                    onElementUpdate(elementId, { 
+                      position: { ...element.position, x: newX } 
+                    });
+                  }
                 });
+              } else if (selectedElementId) {
+                // Move single element
+                const element = elements.find(el => el.id === selectedElementId);
+                if (element) {
+                  const newX = Math.max(0, element.position.x - distance);
+                  onElementUpdate(selectedElementId, { 
+                    position: { ...element.position, x: newX } 
+                  });
+                }
               }
             }
             break;
           case 'ArrowRight':
             if (e.shiftKey) {
               e.preventDefault();
-              const element = elements.find(el => el.id === selectedElementId);
-              if (element) {
-                const newX = element.position.x + (e.ctrlKey ? 1 : gridSize);
-                onElementUpdate(selectedElementId, { 
-                  position: { ...element.position, x: Math.min(canvasSize.width - 100, newX) } 
+              const distance = e.ctrlKey ? 1 : gridSize;
+              
+              if (selectedElementIds.length > 1) {
+                // Move all selected elements
+                selectedElementIds.forEach(elementId => {
+                  const element = elements.find(el => el.id === elementId);
+                  if (element) {
+                    const newX = Math.min(canvasSize.width - element.size.width, element.position.x + distance);
+                    onElementUpdate(elementId, { 
+                      position: { ...element.position, x: newX } 
+                    });
+                  }
                 });
+              } else if (selectedElementId) {
+                // Move single element
+                const element = elements.find(el => el.id === selectedElementId);
+                if (element) {
+                  const newX = Math.min(canvasSize.width - element.size.width, element.position.x + distance);
+                  onElementUpdate(selectedElementId, { 
+                    position: { ...element.position, x: newX } 
+                  });
+                }
               }
             }
             break;
@@ -648,20 +839,22 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedElementId, elements, gridSize, canvasSize, onElementUpdate, onElementDelete, onElementSelect]);
+  }, [selectedElementId, selectedElementIds, elements, gridSize, canvasSize, onElementUpdate, onElementDelete, onElementSelect]);
 
-  // Render element preview
-  const renderElement = (element: UIElement) => {
+  // Render element preview with optimized position calculation
+  const renderElement = useCallback((element: UIElement) => {
     const isSelected = element.id === selectedElementId;
     const isMultiSelected = selectedElementIds.includes(element.id);
     const isDragged = element.id === draggedElementId;
     const isBeingResized = isResizing && element.id === selectedElementId;
     
     // Use temporary states for immediate visual feedback
-    const position = isDragged && tempDragPosition 
-      ? tempDragPosition 
-      : isBeingResized && tempResizeState 
+    const position = isBeingResized && tempResizeState 
       ? tempResizeState.position 
+      : isDraggingGroup && tempGroupPositions.has(element.id)
+      ? tempGroupPositions.get(element.id)!
+      : isDragged && tempDragPosition 
+      ? tempDragPosition 
       : element.position;
       
     const size = isBeingResized && tempResizeState 
@@ -672,7 +865,7 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
       <div
         key={element.id}
         className={`absolute select-none group ${
-          isDragged ? 'opacity-75 shadow-2xl transition-none z-[1001]' : 'transition-all duration-200 hover:shadow-md'
+          isDragged || (isDraggingGroup && isMultiSelected) ? 'opacity-75 shadow-2xl transition-none z-[1001]' : 'transition-all duration-200 hover:shadow-md'
         } ${isSelected ? 'z-[1000]' : 'z-10'}`}
         style={{
           left: position.x * zoom,
@@ -748,6 +941,13 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
             {isMultiSelected && !isSelected && (
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-500 rounded-full border border-white shadow-sm"></div>
             )}
+            
+            {/* Group drag indicator */}
+            {isDraggingGroup && isMultiSelected && (
+              <div className="absolute -top-6 -right-6 px-2 py-1 text-xs bg-purple-600 text-white rounded shadow-lg">
+                +{selectedElementIds.length - 1}
+              </div>
+            )}
           </div>
         )}
 
@@ -782,7 +982,7 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
         )}
       </div>
     );
-  };
+  }, [selectedElementId, selectedElementIds, draggedElementId, isResizing, tempDragPosition, tempResizeState, isDraggingGroup, tempGroupPositions, zoom, onElementUpdate, handleElementMouseDown, handleResizeMouseDown]);
 
   // Render element content based on type
   const renderElementContent = (element: UIElement) => {
@@ -892,9 +1092,80 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
             Elements: {elements.length}
           </span>
           {selectedElementIds.length > 1 ? (
-            <span className="text-sm text-purple-600 dark:text-purple-400">
-              Selected: {selectedElementIds.length} elements
-            </span>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-purple-600 dark:text-purple-400">
+                Selected: {selectedElementIds.length} elements
+              </span>
+              
+              {/* Alignment Tools */}
+              <div className="flex items-center space-x-2 px-3 py-1 bg-purple-50 dark:bg-purple-900/20 rounded-md border border-purple-200 dark:border-purple-700">
+                <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">Align:</span>
+                
+                {/* Horizontal Alignment */}
+                <div className="flex items-center space-x-1">
+                  <button
+                    onClick={() => onAlignElements && onAlignElements('left')}
+                    title="Align Left"
+                    className="p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3 3h2v18H3V3zm4 4h14v2H7V7zm0 4h14v2H7v-2zm0 4h14v2H7v-2z"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onAlignElements && onAlignElements('center')}
+                    title="Align Center"
+                    className="p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M11 3h2v18h-2V3zM7 7h10v2H7V7zm2 4h6v2H9v-2zm-2 4h10v2H7v-2z"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onAlignElements && onAlignElements('right')}
+                    title="Align Right"
+                    className="p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 3h2v18h-2V3zM3 7h14v2H3V7zm0 4h14v2H3v-2zm0 4h14v2H3v-2z"/>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="w-px h-4 bg-purple-300 dark:bg-purple-600"></div>
+                
+                {/* Vertical Alignment */}
+                <div className="flex items-center space-x-1">
+                  <button
+                    onClick={() => onAlignElements && onAlignElements('top')}
+                    title="Align Top"
+                    className="p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3 3h18v2H3V3zm4 4h2v14H7V7zm4 0h2v14h-2V7zm4 0h2v14h-2V7z"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onAlignElements && onAlignElements('middle')}
+                    title="Align Middle"
+                    className="p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3 11h18v2H3v-2zM7 7h2v10H7V7zm4-2h2v14h-2V5zm4 2h2v10h-2V7z"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onAlignElements && onAlignElements('bottom')}
+                    title="Align Bottom"
+                    className="p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3 19h18v2H3v-2zM7 3h2v14H7V3zm4 0h2v14h-2V3zm4 0h2v14h-2V3z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : selectedElementId && (
             <span className="text-sm text-blue-600 dark:text-blue-400">
               Selected: {elements.find(el => el.id === selectedElementId)?.name}
@@ -970,6 +1241,56 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
             />
           )}
           {elements.map(renderElement)}
+          
+          {/* Group Bounding Box for Multiple Selection */}
+          {selectedElementIds.length > 1 && (() => {
+            const selectedElements = elements.filter(el => selectedElementIds.includes(el.id));
+            if (selectedElements.length === 0) return null;
+            
+            // Calculate bounding box using temporary positions if dragging
+            const positions = selectedElements.map(el => {
+              if (isDraggingGroup && tempGroupPositions.has(el.id)) {
+                return tempGroupPositions.get(el.id)!;
+              }
+              return el.position;
+            });
+            
+            const minX = Math.min(...positions.map(pos => pos.x));
+            const minY = Math.min(...positions.map(pos => pos.y));
+            const maxX = Math.max(...selectedElements.map((el, index) => positions[index].x + el.size.width));
+            const maxY = Math.max(...selectedElements.map((el, index) => positions[index].y + el.size.height));
+            
+            const boundingBox = {
+              x: minX - 10,
+              y: minY - 10,
+              width: maxX - minX + 20,
+              height: maxY - minY + 20
+            };
+            
+            return (
+              <div
+                className="absolute pointer-events-none border-2 border-purple-500 border-dashed bg-purple-500/5 rounded-lg"
+                style={{
+                  left: boundingBox.x * zoom,
+                  top: boundingBox.y * zoom,
+                  width: boundingBox.width * zoom,
+                  height: boundingBox.height * zoom,
+                  zIndex: 5
+                }}
+              >
+                {/* Group Selection Label */}
+                <div className="absolute -top-8 left-0 px-3 py-1 text-xs bg-purple-500 text-white rounded shadow-lg whitespace-nowrap border border-purple-600 font-medium">
+                  Group ({selectedElementIds.length} elements)
+                </div>
+                
+                {/* Corner indicators */}
+                <div className="absolute -top-1 -left-1 w-2 h-2 bg-purple-500 rounded-full border border-white shadow-sm"></div>
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-500 rounded-full border border-white shadow-sm"></div>
+                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-purple-500 rounded-full border border-white shadow-sm"></div>
+                <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-purple-500 rounded-full border border-white shadow-sm"></div>
+              </div>
+            );
+          })()}
           
           {/* Alignment Lines with Enhanced Styling */}
           {alignmentLines.vertical.map((x, index) => (
