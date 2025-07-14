@@ -30,6 +30,8 @@ interface EditorFile {
   originalContent: string;
   isBinary?: boolean;
   isEditorInitialized?: boolean;
+  isRenamed?: boolean;
+  originalPath?: string;
 }
 
 interface FileTreeItem {
@@ -1176,63 +1178,35 @@ if __name__ == "__main__":
 
       // Check if new name already exists
       const existsInTree = fileTree.some(item => findFileInTree(item, newPath));
-      if (existsInTree) {
+      const existsInOpenFiles = openFiles.some(f => f.path === newPath);
+      if (existsInTree || existsInOpenFiles) {
         setError('An item with this name already exists.');
         return;
       }
 
-      // For now, we'll handle renaming by creating a new file and deleting the old one
-      // This is a simplified approach since the API doesn't have a direct rename endpoint
       const fileInOpenFiles = openFiles.find(f => f.path === oldPath);
       
       if (fileInOpenFiles) {
-        // File is open - create new file with new name and same content
-        const newFile: EditorFile = {
-          ...fileInOpenFiles,
-          path: newPath,
-          isNew: true,
-          isModified: true
-        };
-        
-        setOpenFiles(prev => [
-          ...prev.filter(f => f.path !== oldPath),
-          newFile
-        ]);
-        
-        // Set as active file
-        setActiveFile(newPath);
-      } else {
-        // File is not open - we need to load it first, then create new one
-        try {
-          const response = await api.files.files_GetVersionFile(project.id, version.id, oldPath);
-          if (response.success && response.data) {
-            const content = response.data.content ? atob(response.data.content) : '';
-            const language = detectLanguage(newPath, project.language);
-            
-            const newFile: EditorFile = {
-              path: newPath,
-              content,
-              language,
-              isModified: true,
-              isNew: true,
-              originalContent: content,
-              isEditorInitialized: false
-            };
-
-            setOpenFiles(prev => [...prev, newFile]);
+        // File is currently open
+        if (fileInOpenFiles.isNew) {
+          // File is new and unsaved - just rename it in openFiles
+          setOpenFiles(prev => prev.map(f => 
+            f.path === oldPath 
+              ? { ...f, path: newPath }
+              : f
+          ));
+          
+          // Update active file if this was the active file
+          if (activeFile === oldPath) {
+            setActiveFile(newPath);
           }
-        } catch (error) {
-          console.error('Failed to load file for rename:', error);
-          setError('Failed to rename file. Please try again.');
-          return;
+        } else {
+          // File exists on server - do atomic rename
+          await performAtomicRename(oldPath, newPath, fileInOpenFiles);
         }
-      }
-
-      // Mark old file for deletion if it's not a new file
-      if (!fileInOpenFiles?.isNew) {
-        // We'll delete the old file when changes are saved/committed
-        // For now, just remove it from open files if it was open
-        setOpenFiles(prev => prev.filter(f => f.path !== oldPath));
+      } else {
+        // File is not currently open - do atomic rename
+        await performAtomicRename(oldPath, newPath);
       }
 
       setShowRenameModal(false);
@@ -1243,6 +1217,78 @@ if __name__ == "__main__":
     } catch (error) {
       console.error('Failed to rename item:', error);
       setError('Failed to rename item. Please try again.');
+    }
+  };
+
+  const performAtomicRename = async (oldPath: string, newPath: string, openFile?: EditorFile) => {
+    if (!project || !version) return;
+
+    try {
+      // Step 1: Get the file content
+      let content: string;
+      let contentType: string;
+      
+      if (openFile) {
+        // Use content from open file
+        if (openFile.isBinary) {
+          const dataUrlMatch = openFile.content.match(/^data:([^;]+);base64,(.+)$/);
+          if (dataUrlMatch) {
+            content = dataUrlMatch[2];
+            contentType = dataUrlMatch[1];
+          } else {
+            content = openFile.content;
+            contentType = 'application/octet-stream';
+          }
+        } else {
+          content = btoa(openFile.content);
+          contentType = openFile.language === 'json' ? 'application/json' : 
+                       openFile.language === 'html' ? 'text/html' :
+                       openFile.language === 'css' ? 'text/css' :
+                       openFile.language === 'javascript' ? 'text/javascript' :
+                       'text/plain';
+        }
+      } else {
+        // Load content from server
+        const response = await api.files.files_GetVersionFile(project.id, version.id, oldPath);
+        if (!response.success || !response.data) {
+          throw new Error('Failed to load file content for rename');
+        }
+        content = response.data.content || '';
+        contentType = 'text/plain'; // Default, will be updated based on file extension
+      }
+
+      // Step 2: Create the new file
+      const fileDto = new VersionFileCreateDto({
+        path: newPath.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/^\//, ''),
+        content: content,
+        contentType: contentType
+      });
+      
+      await api.files.files_BulkUploadFiles(project.id, version.id, [fileDto]);
+
+      // Step 3: Delete the old file
+      await api.files.files_DeleteVersionFile(project.id, version.id, oldPath);
+
+      // Step 4: Update openFiles if the file was open
+      if (openFile) {
+        setOpenFiles(prev => prev.map(f => 
+          f.path === oldPath 
+            ? { ...f, path: newPath, isModified: false }
+            : f
+        ));
+        
+        // Update active file if this was the active file
+        if (activeFile === oldPath) {
+          setActiveFile(newPath);
+        }
+      }
+
+      // Step 5: Reload file tree to reflect the changes
+      await loadFiles(project.id, version.id);
+      
+    } catch (error) {
+      console.error('Failed to perform atomic rename:', error);
+      throw error;
     }
   };
 
