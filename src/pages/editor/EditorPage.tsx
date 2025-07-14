@@ -876,11 +876,8 @@ const EditorPage: React.FC = () => {
             
             if (extension === 'py') {
                 return `from UIComponent import ui
-import sys
 
 if __name__ == "__main__":
-    ui.from_json(sys.argv[1])
-
     # Your main logic here
     description = {
         "30 MPa": ("High-strength concrete", "suitable for heavy structural elements."),

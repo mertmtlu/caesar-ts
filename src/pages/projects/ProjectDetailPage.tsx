@@ -160,6 +160,7 @@ const ProjectDetailPage: React.FC = () => {
         })) || [];
 
         setVersions(versionData);
+        console.log('Loaded versions:', versionData);
         setTotalVersions(response.data.totalCount || 0);
       }
     } catch (error) {
@@ -857,11 +858,7 @@ Add your project documentation here.`,
                         </div>
                       )}
                       
-                      {version.reviewComments && (
-                        <div className="text-xs text-gray-600 dark:text-gray-300 mt-1 italic">
-                          "{version.reviewComments}"
-                        </div>
-                      )}
+                      
                     </div>
                   </div>
                   
