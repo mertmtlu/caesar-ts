@@ -1,12 +1,12 @@
 // src/pages/projects/ProjectDetailPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
-import Input from '@/components/common/Input';
 import { VersionCreateDto, VersionFileCreateDto, VersionReviewSubmissionDto } from '@/api';
+import ProgramUserAssignmentModal from '@/components/admin/ProgramUserAssignmentModal';
 
 // Interfaces
 interface ProjectDetail {
@@ -71,6 +71,7 @@ const ProjectDetailPage: React.FC = () => {
   const [versionToReview, setVersionToReview] = useState<VersionDetail | null>(null);
   const [isDeletingVersion, setIsDeletingVersion] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [showAccessControlModal, setShowAccessControlModal] = useState(false);
   
 
   // Review form
@@ -645,6 +646,18 @@ Add your project documentation here.`,
           
           <Button
             variant="outline"
+            onClick={() => setShowAccessControlModal(true)}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            }
+          >
+            Manage Access
+          </Button>
+          
+          <Button
+            variant="outline"
             onClick={() => navigate(`/projects/${project.id}/components`)}
             leftIcon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1070,6 +1083,14 @@ Add your project documentation here.`,
         confirmText="Delete Version"
         variant="danger"
         loading={isDeletingVersion}
+      />
+
+      {/* Program User Assignment Modal */}
+      <ProgramUserAssignmentModal
+        isOpen={showAccessControlModal}
+        onClose={() => setShowAccessControlModal(false)}
+        programId={projectId || null}
+        onPermissionsUpdated={loadProjectDetails}
       />
     </div>
   );

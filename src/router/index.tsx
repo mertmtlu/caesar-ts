@@ -37,9 +37,10 @@ import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
 // import SettingsPage from '@/pages/settings/SettingsPage';
 // import ProfilePage from '@/pages/settings/ProfilePage';
 
-// // Admin Pages (to be created)
+// Admin Pages
+import UsersPage from '@/pages/admin/UsersPage';
+import ProgramPermissionsPage from '@/pages/admin/ProgramPermissionsPage';
 // import AdminDashboard from '@/pages/admin/AdminDashboard';
-// import UserManagementPage from '@/pages/admin/UserManagementPage';
 // import SystemMonitoringPage from '@/pages/admin/SystemMonitoringPage';
 
 // Protected Route Component (to be created)
@@ -218,10 +219,14 @@ export const router = createBrowserRouter([
           //   index: true,
           //   element: <AdminDashboard />
           // },
-          // {
-          //   path: 'users',
-          //   element: <UserManagementPage />
-          // },
+          {
+            path: 'users',
+            element: <UsersPage />
+          },
+          {
+            path: 'programs',
+            element: <ProgramPermissionsPage />
+          },
           // {
           //   path: 'monitoring',
           //   element: <SystemMonitoringPage />
