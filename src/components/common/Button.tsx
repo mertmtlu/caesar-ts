@@ -112,9 +112,6 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const renderRightIcon = () => {
-    if (loading && !leftIcon) {
-      return <LoadingSpinner />;
-    }
     if (rightIcon && !loading) {
       return (
         <span className={`${iconSizeStyles[size]} ${children ? 'ml-2' : ''}`}>
@@ -136,7 +133,7 @@ const Button: React.FC<ButtonProps> = ({
     >
       {renderLeftIcon()}
       {children && (
-        <span className={loading && !leftIcon ? 'ml-2' : ''}>
+        <span className={loading ? 'ml-2' : ''}>
           {children}
         </span>
       )}

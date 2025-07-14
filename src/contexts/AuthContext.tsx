@@ -22,7 +22,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (token: string, refreshToken: string, userData: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (userData: User) => void;
   hasRole: (role: string) => boolean;
   isAdmin: boolean;
@@ -160,13 +160,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     api.updateAuth(getToken, refreshTokenAsync, onTokenExpired);
   };
 
-  const logout = () => {
+  const logout = async () => {
     // Call logout API if we have a token
     const token = localStorage.getItem('accessToken');
     if (token) {
-      api.auth.auth_Logout().catch(error => {
+      try {
+        await api.auth.auth_Logout();
+      } catch (error) {
         console.error('Logout API call failed:', error);
-      });
+      }
     }
 
     localStorage.removeItem('accessToken');

@@ -1,5 +1,5 @@
 // src/components/layouts/DashboardLayout.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/stores/themeStore';
@@ -92,6 +92,7 @@ const DashboardLayout: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
   const { toggleTheme, isDark } = useTheme();
   const location = useLocation();
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Determine which navigation items to show
   const navItems = isAdmin ? [...navigationItems, ...adminNavigationItems] : navigationItems;
@@ -105,10 +106,34 @@ const DashboardLayout: React.FC = () => {
   };
 
   // Handle logout
-  const handleLogout = () => {
-    logout();
-    setUserMenuOpen(false);
+  const handleLogout = async (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    try {
+      await logout();
+      setUserMenuOpen(false);
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setUserMenuOpen(false);
+    }
   };
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userMenuOpen]);
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100 dark:bg-gray-900">
@@ -244,13 +269,16 @@ const DashboardLayout: React.FC = () => {
               </button>
 
               {/* User menu */}
-              <div className="relative">
+              <div className="relative" ref={userMenuRef}>
                 <button
-                  className="max-w-xs bg-white dark:bg-gray-800 flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  type="button"
+                  className="max-w-xs bg-white dark:bg-gray-800 flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  aria-expanded={userMenuOpen}
+                  aria-haspopup="true"
                 >
                   <span className="sr-only">Open user menu</span>
-                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors duration-150">
                     <span className="text-sm font-medium text-white">
                       {user?.firstName?.[0] || user?.username?.[0] || 'U'}
                     </span>
@@ -265,21 +293,25 @@ const DashboardLayout: React.FC = () => {
                     </div>
                     <Link
                       to="/settings/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
                       onClick={() => setUserMenuOpen(false)}
                     >
                       Your Profile
                     </Link>
                     <Link
                       to="/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
                       onClick={() => setUserMenuOpen(false)}
                     >
                       Settings
                     </Link>
                     <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 cursor-pointer"
                     >
                       Sign out
                     </button>
@@ -296,13 +328,6 @@ const DashboardLayout: React.FC = () => {
         </main>
       </div>
 
-      {/* Click outside to close user menu */}
-      {userMenuOpen && (
-        <div
-          className="fixed inset-0 z-30"
-          onClick={() => setUserMenuOpen(false)}
-        />
-      )}
     </div>
   );
 };

@@ -232,22 +232,8 @@ const RegisterPage: React.FC = () => {
       const response = await api.auth.auth_Register(registerDto);
 
       if (response.success && response.data) {
-        const { accessToken, refreshToken, user } = response.data;
-
-        if (accessToken && refreshToken && user) {
-          // Show success message briefly
-          setShowSuccessMessage(true);
-          
-          // Auto-login the user after successful registration
-          setTimeout(() => {
-            login(accessToken, refreshToken, user);
-            navigate('/dashboard', { replace: true });
-          }, 1500);
-        } else {
-          setErrors([{
-            message: 'Registration response is missing required data. Please try again.'
-          }]);
-        }
+        // Show success message for admin activation
+        setShowSuccessMessage(true);
       } else {
         // Handle API errors
         const errorMessages = response.errors && response.errors.length > 0 
@@ -281,19 +267,24 @@ const RegisterPage: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30">
-            <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30">
+            <svg className="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
             Registration Successful!
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Welcome to CodeSpace! You're being signed in automatically...
+            Your account has been created successfully. Please wait for an administrator to activate your account before you can sign in.
           </p>
-          <div className="mt-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="mt-6">
+            <Link
+              to="/auth/login"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            >
+              Back to Sign In
+            </Link>
           </div>
         </div>
       </div>
