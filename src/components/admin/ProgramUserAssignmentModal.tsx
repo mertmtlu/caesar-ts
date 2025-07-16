@@ -266,7 +266,7 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Current Permissions */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -283,7 +283,7 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
               </span>
             </div>
             
-            <div className="max-h-96 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="max-h-80 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
               {userPermissions.length === 0 ? (
                 <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                   No users assigned to this program
@@ -291,34 +291,37 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
               ) : (
                 <div className="divide-y divide-gray-200 dark:divide-gray-700">
                   {userPermissions.map((permission) => (
-                    <div key={permission.id} className="p-4 flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {permission.name}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          ID: {permission.id}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <select
-                          value={permission.accessLevel}
-                          onChange={(e) => handleUpdatePermission(permission.id!, e.target.value)}
-                          disabled={isSaving}
-                          className="text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        >
-                          {accessLevels.map(level => (
-                            <option key={level} value={level}>{level}</option>
-                          ))}
-                        </select>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleRemovePermission(permission.id!)}
-                          disabled={isSaving}
-                        >
-                          Remove
-                        </Button>
+                    <div key={permission.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            {permission.name}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            User ID: {permission.id}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-3 ml-4">
+                          <select
+                            value={permission.accessLevel}
+                            onChange={(e) => handleUpdatePermission(permission.id!, e.target.value)}
+                            disabled={isSaving}
+                            className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          >
+                            {accessLevels.map(level => (
+                              <option key={level} value={level}>{level}</option>
+                            ))}
+                          </select>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleRemovePermission(permission.id!)}
+                            disabled={isSaving}
+                            className="whitespace-nowrap"
+                          >
+                            Remove
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -343,21 +346,21 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Default Permission Level
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 {accessLevels.map(level => (
                   <button
                     key={level}
                     type="button"
                     onClick={() => setSelectedAccessLevel(level)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
+                    className={`p-4 rounded-lg border-2 transition-all hover:shadow-sm ${
                       selectedAccessLevel === level
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 shadow-sm'
                         : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
                     }`}
                   >
                     <div className="text-center">
-                      <div className="text-sm font-medium">{level}</div>
-                      <div className="text-xs mt-1 opacity-75">
+                      <div className="text-sm font-semibold">{level}</div>
+                      <div className="text-xs mt-1 opacity-75 leading-relaxed">
                         {level === 'Read' && 'View only'}
                         {level === 'Write' && 'Edit content'}
                         {level === 'Execute' && 'Run programs'}
@@ -378,42 +381,47 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
             />
 
             {/* Enhanced Bulk Selection Controls */}
-            <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSelectAll}
-                  disabled={filteredUsers.length === 0}
-                  leftIcon={
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div className="flex items-center space-x-4">
+                  <Button
+                    variant={filteredUsers.length > 0 && filteredUsers.every(user => selectedUsers.has(user.id!)) ? "primary" : "outline"}
+                    size="sm"
+                    onClick={handleSelectAll}
+                    disabled={filteredUsers.length === 0}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    }
+                  >
+                    {filteredUsers.length > 0 && filteredUsers.every(user => selectedUsers.has(user.id!)) 
+                      ? 'Deselect All' 
+                      : 'Select All'
+                    }
+                  </Button>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                     </svg>
-                  }
-                >
-                  {filteredUsers.length > 0 && filteredUsers.every(user => selectedUsers.has(user.id!)) 
-                    ? 'Deselect All' 
-                    : 'Select All'
-                  }
-                </Button>
-                <span className="text-sm text-gray-600 dark:text-gray-300">
-                  {filteredUsers.length} users available
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {selectedUsers.size} selected
-                </span>
-                {selectedUsers.size > 0 && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                    Ready to assign
-                  </span>
-                )}
+                    <span>{filteredUsers.length} users available</span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-3 h-3 rounded-full ${
+                      selectedUsers.size > 0 ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}></div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {selectedUsers.size} selected
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* User List */}
-            <div className="max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="max-h-72 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
               {isLoading ? (
                 <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                   Loading users...
@@ -423,37 +431,96 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
                   No users found
                 </div>
               ) : (
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                <div className="space-y-2">
                   {filteredUsers.map((user) => {
                     const hasPermission = getUserCurrentPermission(user.id!);
+                    const isSelected = selectedUsers.has(user.id!);
+                    const isDisabled = !!hasPermission;
+                    
                     return (
-                      <div key={user.id} className="p-3">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={selectedUsers.has(user.id!)}
-                            onChange={(e) => handleUserSelection(user.id!, e.target.checked)}
-                            disabled={!!hasPermission}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          />
-                          <div className="ml-3 flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {user.fullName}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {user.email} • @{user.username}
-                                </p>
-                              </div>
-                              {hasPermission && (
-                                <span className="text-xs px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded">
-                                  Already has {hasPermission.accessLevel} access
-                                </span>
+                      <div 
+                        key={user.id} 
+                        className={`relative rounded-lg border-2 transition-all duration-200 ${
+                          isSelected 
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm' 
+                            : isDisabled
+                              ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50'
+                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                        } ${!isDisabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                        onClick={() => !isDisabled && handleUserSelection(user.id!, !isSelected)}
+                      >
+                        <div className="p-4">
+                          <div className="flex items-center space-x-3">
+                            {/* User Avatar */}
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                              isSelected 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                            }`}>
+                              {isSelected ? (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                              ) : (
+                                user.fullName?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || '?'
                               )}
                             </div>
+                            
+                            {/* User Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <div className="min-w-0 flex-1">
+                                  <p className={`text-sm font-medium truncate ${
+                                    isSelected 
+                                      ? 'text-blue-900 dark:text-blue-100' 
+                                      : 'text-gray-900 dark:text-white'
+                                  }`}>
+                                    {user.fullName}
+                                  </p>
+                                  <p className={`text-xs truncate ${
+                                    isSelected 
+                                      ? 'text-blue-700 dark:text-blue-300' 
+                                      : 'text-gray-500 dark:text-gray-400'
+                                  }`}>
+                                    {user.email}
+                                  </p>
+                                  <p className={`text-xs ${
+                                    isSelected 
+                                      ? 'text-blue-600 dark:text-blue-400' 
+                                      : 'text-gray-400 dark:text-gray-500'
+                                  }`}>
+                                    @{user.username}
+                                  </p>
+                                </div>
+                                
+                                {/* Status Badge */}
+                                <div className="ml-3 flex items-center space-x-2">
+                                  {hasPermission && (
+                                    <span className="text-xs px-2.5 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full font-medium whitespace-nowrap">
+                                      {hasPermission.accessLevel} access
+                                    </span>
+                                  )}
+                                  {isSelected && !hasPermission && (
+                                    <span className="text-xs px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full font-medium">
+                                      Selected
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </label>
+                        </div>
+                        
+                        {/* Selection Indicator */}
+                        {isSelected && (
+                          <div className="absolute top-2 right-2">
+                            <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -462,8 +529,8 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
             </div>
 
             {/* Enhanced Action Buttons */}
-            <div className="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-              <div className="flex flex-col sm:flex-row gap-3">
+            <div className="bg-gray-50 dark:bg-gray-700/30 p-5 rounded-lg">
+              <div className="flex flex-col lg:flex-row gap-4">
                 <Button
                   variant="primary"
                   onClick={handleAssignUsers}
@@ -474,29 +541,24 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                   }
-                  className="flex-1 sm:flex-initial"
+                  className="flex-1 lg:flex-initial lg:min-w-0"
                 >
                   {isSaving 
                     ? 'Assigning...' 
-                    : `Assign ${selectedUsers.size} User${selectedUsers.size !== 1 ? 's' : ''} with ${selectedAccessLevel} Access`
+                    : selectedUsers.size > 0
+                      ? `Assign ${selectedUsers.size} User${selectedUsers.size !== 1 ? 's' : ''} (${selectedAccessLevel})`
+                      : 'Select users to assign'
                   }
                 </Button>
                 <Button
                   variant="outline"
                   onClick={onClose}
                   disabled={isSaving}
-                  className="flex-1 sm:flex-initial"
+                  className="flex-1 lg:flex-initial"
                 >
-                  Cancel
+                  Close
                 </Button>
               </div>
-              {selectedUsers.size > 0 && (
-                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    💡 Selected users will be granted <strong>{selectedAccessLevel}</strong> access to this program. You can change individual permissions after assignment.
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </div>

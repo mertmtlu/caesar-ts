@@ -258,22 +258,22 @@ const ProgramPermissionsPage: React.FC = () => {
       {/* Programs Table */}
       <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-fixed lg:table-auto">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-2/5">
                   Program
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/8">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/8">
                   User Access
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/8">
                   Group Access
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/6">
                   Actions
                 </th>
               </tr>
@@ -298,13 +298,13 @@ const ProgramPermissionsPage: React.FC = () => {
                 programs.map((program) => (
                   <React.Fragment key={program.id}>
                     <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
+                      <td className="px-6 py-4">
+                        <div className="flex items-start">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => toggleProgramExpansion(program.id!)}
-                            className="mr-2 p-1"
+                            className="mr-3 p-1 mt-1 flex-shrink-0"
                           >
                             <svg
                               className={`w-4 h-4 transition-transform ${
@@ -317,43 +317,58 @@ const ProgramPermissionsPage: React.FC = () => {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                           </Button>
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">
                               {program.name}
                             </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1 line-clamp-2">
                               {program.description || 'No description'}
                             </div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500">
-                              Version: {program.currentVersion || 'No version'}
+                            <div className="flex items-center space-x-4">
+                              <div className="text-xs text-gray-400 dark:text-gray-500">
+                                Version: {program.currentVersion || 'No version'}
+                              </div>
+                              <div className="text-xs text-gray-400 dark:text-gray-500">
+                                Type: {program.type || 'Unknown'}
+                              </div>
+                              <div className="text-xs text-gray-400 dark:text-gray-500">
+                                Language: {program.language || 'Unknown'}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(program.status || '')}`}>
                           {program.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <span className="text-sm text-gray-900 dark:text-white">
-                            {program.userCount || 0} users
+                          <span className="text-sm text-gray-900 dark:text-white font-medium">
+                            {program.userCount || 0}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                            {program.userCount === 1 ? 'user' : 'users'}
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <span className="text-sm text-gray-900 dark:text-white">
-                            {program.groupCount || 0} groups
+                          <span className="text-sm text-gray-900 dark:text-white font-medium">
+                            {program.groupCount || 0}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                            {program.groupCount === 1 ? 'group' : 'groups'}
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-6 py-4 text-right text-sm font-medium">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleManageUsers(program.id!)}
+                          className="whitespace-nowrap"
                         >
                           Manage Access
                         </Button>
@@ -363,23 +378,28 @@ const ProgramPermissionsPage: React.FC = () => {
                     {/* Expanded permissions details */}
                     {expandedPrograms.has(program.id!) && (
                       <tr>
-                        <td colSpan={5} className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50">
-                          <div className="space-y-4">
+                        <td colSpan={5} className="px-6 py-6 bg-gray-50 dark:bg-gray-700/50">
+                          <div className="space-y-6">
                             {/* User Permissions */}
-                            {program.permissions && program.permissions.filter(p => p.type === 'User').length > 0 && (
+                            {program.permissions && program.permissions.filter(p => p.type === 'user').length > 0 && (
                               <div>
-                                <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                                  User Permissions
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 flex items-center">
+                                  <svg className="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                  User Permissions ({program.permissions.filter(p => p.type === 'user').length})
                                 </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                                   {program.permissions
                                     .filter(p => p.type === 'user')
                                     .map((permission) => (
-                                      <div key={`${permission.type}-${permission.id}`} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded border">
-                                        <span className="text-sm text-gray-900 dark:text-white">
-                                          {permission.name}
-                                        </span>
-                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getAccessLevelColor(permission.accessLevel)}`}>
+                                      <div key={`${permission.type}-${permission.id}`} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="min-w-0 flex-1">
+                                          <span className="text-sm font-medium text-gray-900 dark:text-white truncate block">
+                                            {permission.name}
+                                          </span>
+                                        </div>
+                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ml-2 ${getAccessLevelColor(permission.accessLevel)}`}>
                                           {permission.accessLevel}
                                         </span>
                                       </div>
@@ -391,18 +411,23 @@ const ProgramPermissionsPage: React.FC = () => {
                             {/* Group Permissions */}
                             {program.permissions && program.permissions.filter(p => p.type === 'group').length > 0 && (
                               <div>
-                                <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                                  Group Permissions
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 flex items-center">
+                                  <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                  </svg>
+                                  Group Permissions ({program.permissions.filter(p => p.type === 'group').length})
                                 </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                                   {program.permissions
                                     .filter(p => p.type === 'group')
                                     .map((permission) => (
-                                      <div key={`${permission.type}-${permission.id}`} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded border">
-                                        <span className="text-sm text-gray-900 dark:text-white">
-                                          {permission.name}
-                                        </span>
-                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getAccessLevelColor(permission.accessLevel)}`}>
+                                      <div key={`${permission.type}-${permission.id}`} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="min-w-0 flex-1">
+                                          <span className="text-sm font-medium text-gray-900 dark:text-white truncate block">
+                                            {permission.name}
+                                          </span>
+                                        </div>
+                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ml-2 ${getAccessLevelColor(permission.accessLevel)}`}>
                                           {permission.accessLevel}
                                         </span>
                                       </div>
@@ -413,9 +438,15 @@ const ProgramPermissionsPage: React.FC = () => {
                             
                             {/* No permissions message */}
                             {(!program.permissions || program.permissions.length === 0) && (
-                              <div className="text-center py-4">
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-center py-8">
+                                <svg className="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                                   No permissions configured for this program
+                                </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                  Click "Manage Access" to assign users and groups
                                 </p>
                               </div>
                             )}
