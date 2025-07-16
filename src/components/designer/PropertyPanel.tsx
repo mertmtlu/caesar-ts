@@ -140,6 +140,50 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     updateElement({ options });
   };
 
+  // Handle table configuration
+  const updateTableConfig = (key: keyof import('@/types/componentDesigner').TableConfig, value: any) => {
+    const currentConfig = formData.tableConfig || { rows: 3, columns: 3, cells: [], showHeaders: true, editableCells: true };
+    const newConfig = { ...currentConfig, [key]: value };
+    
+    // Regenerate cells if rows or columns changed
+    if (key === 'rows' || key === 'columns') {
+      const newCells: import('@/types/componentDesigner').TableCellConfig[] = [];
+      for (let row = 0; row < newConfig.rows; row++) {
+        for (let col = 0; col < newConfig.columns; col++) {
+          const cellId = `${String.fromCharCode(97 + col)}${row + 1}`;
+          const existingCell = currentConfig.cells.find(c => c.cellId === cellId);
+          newCells.push(existingCell || {
+            cellId,
+            type: 'text',
+            value: '',
+            readonly: false,
+            placeholder: `Enter value for ${cellId}`
+          });
+        }
+      }
+      newConfig.cells = newCells;
+      
+      // Update header labels if columns changed
+      if (key === 'columns') {
+        newConfig.headerLabels = Array.from({ length: newConfig.columns }, (_, i) => String.fromCharCode(65 + i));
+      }
+    }
+    
+    updateElement({ tableConfig: newConfig });
+  };
+
+  const updateCellName = (cellId: string, customName: string) => {
+    const currentConfig = formData.tableConfig;
+    if (!currentConfig) return;
+    
+    const cells = [...currentConfig.cells];
+    const cellIndex = cells.findIndex(c => c.cellId === cellId);
+    if (cellIndex >= 0) {
+      cells[cellIndex] = { ...cells[cellIndex], customName: customName.trim() || undefined };
+      updateElement({ tableConfig: { ...currentConfig, cells } });
+    }
+  };
+
   if (!selectedElement) {
     return (
       <div className="p-6 text-center">
@@ -279,6 +323,87 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                       Add
                     </Button>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Table Configuration */}
+            {selectedElement.type === 'table' && (
+              <div className="space-y-4">
+                <h4 className="text-md font-medium text-gray-900 dark:text-white">
+                  Table Configuration
+                </h4>
+                
+                {/* Table Dimensions */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Rows"
+                    type="number"
+                    value={formData.tableConfig?.rows || 3}
+                    onChange={(e) => updateTableConfig('rows', parseInt(e.target.value))}
+                    min={1}
+                    max={20}
+                    helperText="Number of rows"
+                  />
+                  <Input
+                    label="Columns"
+                    type="number"
+                    value={formData.tableConfig?.columns || 3}
+                    onChange={(e) => updateTableConfig('columns', parseInt(e.target.value))}
+                    min={1}
+                    max={26}
+                    helperText="Number of columns"
+                  />
+                </div>
+
+                {/* Table Options */}
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.tableConfig?.showHeaders || false}
+                      onChange={(e) => updateTableConfig('showHeaders', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Show Column Headers
+                    </span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.tableConfig?.editableCells || false}
+                      onChange={(e) => updateTableConfig('editableCells', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Editable Cells
+                    </span>
+                  </label>
+                </div>
+
+                {/* Cell Names Configuration */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Cell Names
+                  </label>
+                  <div className="max-h-32 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded p-2 space-y-1">
+                    {formData.tableConfig?.cells?.map((cell, index) => (
+                      <div key={cell.cellId} className="flex items-center space-x-2 text-xs">
+                        <span className="w-8 text-gray-500">{cell.cellId}</span>
+                        <input
+                          type="text"
+                          value={cell.customName || ''}
+                          placeholder={`Custom name for ${cell.cellId}`}
+                          onChange={(e) => updateCellName(cell.cellId, e.target.value)}
+                          className="flex-1 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Custom names will be used in Python generation (e.g., "compressive_strength")
+                  </p>
                 </div>
               </div>
             )}

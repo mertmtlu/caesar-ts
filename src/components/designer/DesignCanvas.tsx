@@ -1056,6 +1056,42 @@ const DesignCanvas: React.FC<DesignCanvasProps> = ({
             <span className="text-sm font-medium">{element.label}</span>
           </div>
         );
+      case 'table':
+        return (
+          <div className="w-full h-full overflow-auto border border-gray-300 dark:border-gray-600">
+            <table className="w-full h-full border-collapse text-xs">
+              <thead>
+                {element.tableConfig?.showHeaders && (
+                  <tr>
+                    {element.tableConfig.headerLabels?.map((header, index) => (
+                      <th key={index} className="border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-1 py-0.5 text-left font-medium">
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                )}
+              </thead>
+              <tbody>
+                {Array.from({ length: element.tableConfig?.rows || 3 }, (_, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {Array.from({ length: element.tableConfig?.columns || 3 }, (_, colIndex) => {
+                      const cellConfig = element.tableConfig?.cells?.find(
+                        cell => cell.cellId === `${String.fromCharCode(97 + colIndex)}${rowIndex + 1}`
+                      );
+                      return (
+                        <td key={colIndex} className="border border-gray-300 dark:border-gray-600 p-1">
+                          <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                            {cellConfig?.customName || cellConfig?.cellId || `${String.fromCharCode(97 + colIndex)}${rowIndex + 1}`}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
       default:
         return (
           <div className="flex items-center justify-center h-full text-gray-500">

@@ -10,7 +10,8 @@ export type ElementType =
   | 'number_input' 
   | 'date_picker'
   | 'email_input'
-  | 'password_input';
+  | 'password_input'
+  | 'table';
 
 export type ValidationRuleType = 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
 
@@ -31,6 +32,28 @@ export interface ElementStyle {
   fontWeight?: 'normal' | 'bold' | 'lighter';
   margin?: number;
   padding?: number;
+}
+
+export type TableCellType = 'text' | 'number' | 'dropdown' | 'date';
+
+export interface TableCellConfig {
+  cellId: string; // e.g., "a1", "b1", "a2", "b2"
+  customName?: string; // e.g., "compressive_strength"
+  value?: string | number;
+  type: TableCellType;
+  validation?: ValidationRule[];
+  options?: string[]; // For dropdown cells
+  placeholder?: string;
+  readonly?: boolean;
+}
+
+export interface TableConfig {
+  rows: number;
+  columns: number;
+  cells: TableCellConfig[];
+  showHeaders: boolean;
+  editableCells: boolean;
+  headerLabels?: string[]; // Custom column headers
 }
 
 export interface Position {
@@ -58,6 +81,8 @@ export interface UIElement {
   options?: string[]; // For dropdown, radio buttons, etc.
   defaultValue?: string | boolean | number;
   helpText?: string;
+  // Table-specific properties
+  tableConfig?: TableConfig;
 }
 
 export interface LayoutConfig {
@@ -113,6 +138,37 @@ export interface ElementTemplate {
   description: string;
   defaultProps: Partial<UIElement>;
 }
+
+// Table utility functions (moved before ELEMENT_TEMPLATES)
+export const generateCellId = (row: number, col: number): string => {
+  const columnLetter = String.fromCharCode(65 + (col % 26)); // A, B, C, etc.
+  return `${columnLetter.toLowerCase()}${row + 1}`; // a1, b1, a2, b2, etc.
+};
+
+export const createDefaultTableConfig = (rows: number = 3, columns: number = 3): TableConfig => {
+  const cells: TableCellConfig[] = [];
+  
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      cells.push({
+        cellId: generateCellId(row, col),
+        type: 'text',
+        value: '',
+        readonly: false,
+        placeholder: `Enter value for ${generateCellId(row, col)}`
+      });
+    }
+  }
+
+  return {
+    rows,
+    columns,
+    cells,
+    showHeaders: true,
+    editableCells: true,
+    headerLabels: Array.from({ length: columns }, (_, i) => String.fromCharCode(65 + i))
+  };
+};
 
 // Predefined element templates
 export const ELEMENT_TEMPLATES: ElementTemplate[] = [
@@ -225,6 +281,20 @@ export const ELEMENT_TEMPLATES: ElementTemplate[] = [
       placeholder: 'Enter email address...',
       required: false,
       size: { width: 250, height: 40 }
+    }
+  },
+  {
+    id: 'table',
+    name: 'Table',
+    type: 'table',
+    icon: '📊',
+    description: 'Data table with customizable cells',
+    defaultProps: {
+      label: 'Data Table',
+      name: 'data_table',
+      required: false,
+      size: { width: 400, height: 200 },
+      tableConfig: createDefaultTableConfig(3, 3)
     }
   }
 ];
