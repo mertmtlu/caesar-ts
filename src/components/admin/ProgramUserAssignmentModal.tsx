@@ -121,20 +121,21 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
   };
 
   const getFilteredUsers = () => {
-    return users.filter(user => 
-      user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.username?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
+    return users.filter(user => {
+    
+      // Apply search filter
+      const matchesSearch = user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username?.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const getUserCurrentPermission = (userId: string) => {
-    return currentPermissions.find(p => p.type === 'User' && p.id === userId);
+      // Filter out users who already have permissions
+      const hasPermission = currentPermissions.some(p => p.type.toLowerCase() === 'user' && p.id === user.id);
+
+      return matchesSearch && !hasPermission;
+    });
   };
 
   const handleAssignUsers = async () => {
-
-    console.log('Assigning users:', Array.from(selectedUsers), 'with access level:', selectedAccessLevel);
     if (!programId || selectedUsers.size === 0) return;
 
     try {
@@ -433,21 +434,17 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
               ) : (
                 <div className="space-y-2">
                   {filteredUsers.map((user) => {
-                    const hasPermission = getUserCurrentPermission(user.id!);
                     const isSelected = selectedUsers.has(user.id!);
-                    const isDisabled = !!hasPermission;
                     
                     return (
                       <div 
                         key={user.id} 
-                        className={`relative rounded-lg border-2 transition-all duration-200 ${
+                        className={`relative rounded-lg border-2 transition-all duration-200 cursor-pointer ${
                           isSelected 
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm' 
-                            : isDisabled
-                              ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50'
-                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                        } ${!isDisabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-                        onClick={() => !isDisabled && handleUserSelection(user.id!, !isSelected)}
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                        }`}
+                        onClick={() => handleUserSelection(user.id!, !isSelected)}
                       >
                         <div className="p-4">
                           <div className="flex items-center space-x-3">
@@ -495,12 +492,7 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
                                 
                                 {/* Status Badge */}
                                 <div className="ml-3 flex items-center space-x-2">
-                                  {hasPermission && (
-                                    <span className="text-xs px-2.5 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full font-medium whitespace-nowrap">
-                                      {hasPermission.accessLevel} access
-                                    </span>
-                                  )}
-                                  {isSelected && !hasPermission && (
+                                  {isSelected && (
                                     <span className="text-xs px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full font-medium">
                                       Selected
                                     </span>
