@@ -14,6 +14,7 @@ import {TMsClient} from './TMsClient'
 import {UiComponentsClient} from './UiComponentsClient'
 import {UsersClient, UserClientAssignmentDto} from './UsersClient'
 import {VersionsClient} from './VersionsClient'
+import { WorkflowsClient } from './WorkflowsClient'
 
 export {
     AlternativeTMsClient,
@@ -32,5 +33,6 @@ export {
     UiComponentsClient,
     UsersClient,
     VersionsClient,
-    UserClientAssignmentDto
+    UserClientAssignmentDto,
+    WorkflowsClient
 }

@@ -2070,6 +2070,2821 @@ export class BooleanApiResponse implements interfaces.IBooleanApiResponse {
     }
 }
 
+export class BsonBinaryData implements interfaces.IBsonBinaryData {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+    bytes?: string | undefined;
+    subType?: enums.BsonBinarySubType;
+
+    constructor(data?: interfaces.IBsonBinaryData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+            this.bytes = _data["bytes"];
+            this.subType = _data["subType"];
+        }
+    }
+
+    static fromJS(data: any): BsonBinaryData {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonBinaryData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        data["bytes"] = this.bytes;
+        data["subType"] = this.subType;
+        return data;
+    }
+}
+
+export class BsonDateTime implements interfaces.IBsonDateTime {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    bsonType?: enums.BsonType;
+    readonly isValidDateTime?: boolean;
+    readonly millisecondsSinceEpoch?: number;
+
+    constructor(data?: interfaces.IBsonDateTime) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            this.bsonType = _data["bsonType"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            (<any>this).millisecondsSinceEpoch = _data["millisecondsSinceEpoch"];
+        }
+    }
+
+    static fromJS(data: any): BsonDateTime {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonDateTime();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["bsonType"] = this.bsonType;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["millisecondsSinceEpoch"] = this.millisecondsSinceEpoch;
+        return data;
+    }
+}
+
+export class BsonElement implements interfaces.IBsonElement {
+    name?: string | undefined;
+    value?: BsonValue;
+
+    constructor(data?: interfaces.IBsonElement) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.value = _data["value"] ? BsonValue.fromJS(_data["value"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): BsonElement {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonElement();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["value"] = this.value ? this.value.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class BsonJavaScript implements interfaces.IBsonJavaScript {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+    code?: string | undefined;
+
+    constructor(data?: interfaces.IBsonJavaScript) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+            this.code = _data["code"];
+        }
+    }
+
+    static fromJS(data: any): BsonJavaScript {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonJavaScript();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        data["code"] = this.code;
+        return data;
+    }
+}
+
+export class BsonJavaScriptWithScope implements interfaces.IBsonJavaScriptWithScope {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    code?: string | undefined;
+    bsonType?: enums.BsonType;
+    scope?: BsonElement[] | undefined;
+
+    constructor(data?: interfaces.IBsonJavaScriptWithScope) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.code = _data["code"];
+            this.bsonType = _data["bsonType"];
+            if (Array.isArray(_data["scope"])) {
+                this.scope = [] as any;
+                for (let item of _data["scope"])
+                    this.scope!.push(BsonElement.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BsonJavaScriptWithScope {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonJavaScriptWithScope();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["code"] = this.code;
+        data["bsonType"] = this.bsonType;
+        if (Array.isArray(this.scope)) {
+            data["scope"] = [];
+            for (let item of this.scope)
+                data["scope"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class BsonMaxKey implements interfaces.IBsonMaxKey {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+
+    constructor(data?: interfaces.IBsonMaxKey) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+        }
+    }
+
+    static fromJS(data: any): BsonMaxKey {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonMaxKey();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        return data;
+    }
+}
+
+export class BsonMinKey implements interfaces.IBsonMinKey {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+
+    constructor(data?: interfaces.IBsonMinKey) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+        }
+    }
+
+    static fromJS(data: any): BsonMinKey {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonMinKey();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        return data;
+    }
+}
+
+export class BsonNull implements interfaces.IBsonNull {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+
+    constructor(data?: interfaces.IBsonNull) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+        }
+    }
+
+    static fromJS(data: any): BsonNull {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonNull();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        return data;
+    }
+}
+
+export class BsonRegularExpression implements interfaces.IBsonRegularExpression {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+    pattern?: string | undefined;
+    readonly options?: string | undefined;
+
+    constructor(data?: interfaces.IBsonRegularExpression) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+            this.pattern = _data["pattern"];
+            (<any>this).options = _data["options"];
+        }
+    }
+
+    static fromJS(data: any): BsonRegularExpression {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonRegularExpression();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        data["pattern"] = this.pattern;
+        data["options"] = this.options;
+        return data;
+    }
+}
+
+export class BsonSymbol implements interfaces.IBsonSymbol {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+    readonly name?: string | undefined;
+
+    constructor(data?: interfaces.IBsonSymbol) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+            (<any>this).name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): BsonSymbol {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonSymbol();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export class BsonTimestamp implements interfaces.IBsonTimestamp {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+    value?: number;
+    readonly increment?: number;
+    readonly timestamp?: number;
+
+    constructor(data?: interfaces.IBsonTimestamp) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+            this.value = _data["value"];
+            (<any>this).increment = _data["increment"];
+            (<any>this).timestamp = _data["timestamp"];
+        }
+    }
+
+    static fromJS(data: any): BsonTimestamp {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonTimestamp();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        data["value"] = this.value;
+        data["increment"] = this.increment;
+        data["timestamp"] = this.timestamp;
+        return data;
+    }
+}
+
+export class BsonUndefined implements interfaces.IBsonUndefined {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+    bsonType?: enums.BsonType;
+
+    constructor(data?: interfaces.IBsonUndefined) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+            this.bsonType = _data["bsonType"];
+        }
+    }
+
+    static fromJS(data: any): BsonUndefined {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonUndefined();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        data["bsonType"] = this.bsonType;
+        return data;
+    }
+}
+
+export class BsonValue implements interfaces.IBsonValue {
+    readonly asBoolean?: boolean;
+    readonly asBsonArray?: BsonValue[] | undefined;
+    asBsonBinaryData?: BsonBinaryData;
+    asBsonDateTime?: BsonDateTime;
+    readonly asBsonDocument?: BsonElement[] | undefined;
+    asBsonJavaScript?: BsonJavaScript;
+    asBsonJavaScriptWithScope?: BsonJavaScriptWithScope;
+    asBsonMaxKey?: BsonMaxKey;
+    asBsonMinKey?: BsonMinKey;
+    asBsonNull?: BsonNull;
+    asBsonRegularExpression?: BsonRegularExpression;
+    asBsonSymbol?: BsonSymbol;
+    asBsonTimestamp?: BsonTimestamp;
+    asBsonUndefined?: BsonUndefined;
+    asBsonValue?: BsonValue;
+    readonly asByteArray?: string | undefined;
+    readonly asDecimal?: number;
+    asDecimal128?: Decimal128;
+    readonly asDouble?: number;
+    readonly asGuid?: string;
+    readonly asInt32?: number;
+    readonly asInt64?: number;
+    readonly asLocalTime?: Date;
+    readonly asNullableBoolean?: boolean | undefined;
+    readonly asNullableDecimal?: number | undefined;
+    asNullableDecimal128?: Decimal128;
+    readonly asNullableDouble?: number | undefined;
+    readonly asNullableGuid?: string | undefined;
+    readonly asNullableInt32?: number | undefined;
+    readonly asNullableInt64?: number | undefined;
+    readonly asNullableLocalTime?: Date | undefined;
+    asNullableObjectId?: ObjectId;
+    readonly asNullableUniversalTime?: Date | undefined;
+    asObjectId?: ObjectId;
+    asRegex?: Regex;
+    readonly asString?: string | undefined;
+    readonly asUniversalTime?: Date;
+    bsonType?: enums.BsonType;
+    readonly isBoolean?: boolean;
+    readonly isBsonArray?: boolean;
+    readonly isBsonBinaryData?: boolean;
+    readonly isBsonDateTime?: boolean;
+    readonly isBsonDocument?: boolean;
+    readonly isBsonJavaScript?: boolean;
+    readonly isBsonJavaScriptWithScope?: boolean;
+    readonly isBsonMaxKey?: boolean;
+    readonly isBsonMinKey?: boolean;
+    readonly isBsonNull?: boolean;
+    readonly isBsonRegularExpression?: boolean;
+    readonly isBsonSymbol?: boolean;
+    readonly isBsonTimestamp?: boolean;
+    readonly isBsonUndefined?: boolean;
+    readonly isDecimal128?: boolean;
+    readonly isDouble?: boolean;
+    readonly isGuid?: boolean;
+    readonly isInt32?: boolean;
+    readonly isInt64?: boolean;
+    readonly isNumeric?: boolean;
+    readonly isObjectId?: boolean;
+    readonly isString?: boolean;
+    readonly isValidDateTime?: boolean;
+
+    constructor(data?: interfaces.IBsonValue) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).asBoolean = _data["asBoolean"];
+            if (Array.isArray(_data["asBsonArray"])) {
+                (<any>this).asBsonArray = [] as any;
+                for (let item of _data["asBsonArray"])
+                    (<any>this).asBsonArray!.push(BsonValue.fromJS(item));
+            }
+            this.asBsonBinaryData = _data["asBsonBinaryData"] ? BsonBinaryData.fromJS(_data["asBsonBinaryData"]) : <any>undefined;
+            this.asBsonDateTime = _data["asBsonDateTime"] ? BsonDateTime.fromJS(_data["asBsonDateTime"]) : <any>undefined;
+            if (Array.isArray(_data["asBsonDocument"])) {
+                (<any>this).asBsonDocument = [] as any;
+                for (let item of _data["asBsonDocument"])
+                    (<any>this).asBsonDocument!.push(BsonElement.fromJS(item));
+            }
+            this.asBsonJavaScript = _data["asBsonJavaScript"] ? BsonJavaScript.fromJS(_data["asBsonJavaScript"]) : <any>undefined;
+            this.asBsonJavaScriptWithScope = _data["asBsonJavaScriptWithScope"] ? BsonJavaScriptWithScope.fromJS(_data["asBsonJavaScriptWithScope"]) : <any>undefined;
+            this.asBsonMaxKey = _data["asBsonMaxKey"] ? BsonMaxKey.fromJS(_data["asBsonMaxKey"]) : <any>undefined;
+            this.asBsonMinKey = _data["asBsonMinKey"] ? BsonMinKey.fromJS(_data["asBsonMinKey"]) : <any>undefined;
+            this.asBsonNull = _data["asBsonNull"] ? BsonNull.fromJS(_data["asBsonNull"]) : <any>undefined;
+            this.asBsonRegularExpression = _data["asBsonRegularExpression"] ? BsonRegularExpression.fromJS(_data["asBsonRegularExpression"]) : <any>undefined;
+            this.asBsonSymbol = _data["asBsonSymbol"] ? BsonSymbol.fromJS(_data["asBsonSymbol"]) : <any>undefined;
+            this.asBsonTimestamp = _data["asBsonTimestamp"] ? BsonTimestamp.fromJS(_data["asBsonTimestamp"]) : <any>undefined;
+            this.asBsonUndefined = _data["asBsonUndefined"] ? BsonUndefined.fromJS(_data["asBsonUndefined"]) : <any>undefined;
+            this.asBsonValue = _data["asBsonValue"] ? BsonValue.fromJS(_data["asBsonValue"]) : <any>undefined;
+            (<any>this).asByteArray = _data["asByteArray"];
+            (<any>this).asDecimal = _data["asDecimal"];
+            this.asDecimal128 = _data["asDecimal128"] ? Decimal128.fromJS(_data["asDecimal128"]) : <any>undefined;
+            (<any>this).asDouble = _data["asDouble"];
+            (<any>this).asGuid = _data["asGuid"];
+            (<any>this).asInt32 = _data["asInt32"];
+            (<any>this).asInt64 = _data["asInt64"];
+            (<any>this).asLocalTime = _data["asLocalTime"] ? new Date(_data["asLocalTime"].toString()) : <any>undefined;
+            (<any>this).asNullableBoolean = _data["asNullableBoolean"];
+            (<any>this).asNullableDecimal = _data["asNullableDecimal"];
+            this.asNullableDecimal128 = _data["asNullableDecimal128"] ? Decimal128.fromJS(_data["asNullableDecimal128"]) : <any>undefined;
+            (<any>this).asNullableDouble = _data["asNullableDouble"];
+            (<any>this).asNullableGuid = _data["asNullableGuid"];
+            (<any>this).asNullableInt32 = _data["asNullableInt32"];
+            (<any>this).asNullableInt64 = _data["asNullableInt64"];
+            (<any>this).asNullableLocalTime = _data["asNullableLocalTime"] ? new Date(_data["asNullableLocalTime"].toString()) : <any>undefined;
+            this.asNullableObjectId = _data["asNullableObjectId"] ? ObjectId.fromJS(_data["asNullableObjectId"]) : <any>undefined;
+            (<any>this).asNullableUniversalTime = _data["asNullableUniversalTime"] ? new Date(_data["asNullableUniversalTime"].toString()) : <any>undefined;
+            this.asObjectId = _data["asObjectId"] ? ObjectId.fromJS(_data["asObjectId"]) : <any>undefined;
+            this.asRegex = _data["asRegex"] ? Regex.fromJS(_data["asRegex"]) : <any>undefined;
+            (<any>this).asString = _data["asString"];
+            (<any>this).asUniversalTime = _data["asUniversalTime"] ? new Date(_data["asUniversalTime"].toString()) : <any>undefined;
+            this.bsonType = _data["bsonType"];
+            (<any>this).isBoolean = _data["isBoolean"];
+            (<any>this).isBsonArray = _data["isBsonArray"];
+            (<any>this).isBsonBinaryData = _data["isBsonBinaryData"];
+            (<any>this).isBsonDateTime = _data["isBsonDateTime"];
+            (<any>this).isBsonDocument = _data["isBsonDocument"];
+            (<any>this).isBsonJavaScript = _data["isBsonJavaScript"];
+            (<any>this).isBsonJavaScriptWithScope = _data["isBsonJavaScriptWithScope"];
+            (<any>this).isBsonMaxKey = _data["isBsonMaxKey"];
+            (<any>this).isBsonMinKey = _data["isBsonMinKey"];
+            (<any>this).isBsonNull = _data["isBsonNull"];
+            (<any>this).isBsonRegularExpression = _data["isBsonRegularExpression"];
+            (<any>this).isBsonSymbol = _data["isBsonSymbol"];
+            (<any>this).isBsonTimestamp = _data["isBsonTimestamp"];
+            (<any>this).isBsonUndefined = _data["isBsonUndefined"];
+            (<any>this).isDecimal128 = _data["isDecimal128"];
+            (<any>this).isDouble = _data["isDouble"];
+            (<any>this).isGuid = _data["isGuid"];
+            (<any>this).isInt32 = _data["isInt32"];
+            (<any>this).isInt64 = _data["isInt64"];
+            (<any>this).isNumeric = _data["isNumeric"];
+            (<any>this).isObjectId = _data["isObjectId"];
+            (<any>this).isString = _data["isString"];
+            (<any>this).isValidDateTime = _data["isValidDateTime"];
+        }
+    }
+
+    static fromJS(data: any): BsonValue {
+        data = typeof data === 'object' ? data : {};
+        let result = new BsonValue();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asBoolean"] = this.asBoolean;
+        if (Array.isArray(this.asBsonArray)) {
+            data["asBsonArray"] = [];
+            for (let item of this.asBsonArray)
+                data["asBsonArray"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonBinaryData"] = this.asBsonBinaryData ? this.asBsonBinaryData.toJSON() : <any>undefined;
+        data["asBsonDateTime"] = this.asBsonDateTime ? this.asBsonDateTime.toJSON() : <any>undefined;
+        if (Array.isArray(this.asBsonDocument)) {
+            data["asBsonDocument"] = [];
+            for (let item of this.asBsonDocument)
+                data["asBsonDocument"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["asBsonJavaScript"] = this.asBsonJavaScript ? this.asBsonJavaScript.toJSON() : <any>undefined;
+        data["asBsonJavaScriptWithScope"] = this.asBsonJavaScriptWithScope ? this.asBsonJavaScriptWithScope.toJSON() : <any>undefined;
+        data["asBsonMaxKey"] = this.asBsonMaxKey ? this.asBsonMaxKey.toJSON() : <any>undefined;
+        data["asBsonMinKey"] = this.asBsonMinKey ? this.asBsonMinKey.toJSON() : <any>undefined;
+        data["asBsonNull"] = this.asBsonNull ? this.asBsonNull.toJSON() : <any>undefined;
+        data["asBsonRegularExpression"] = this.asBsonRegularExpression ? this.asBsonRegularExpression.toJSON() : <any>undefined;
+        data["asBsonSymbol"] = this.asBsonSymbol ? this.asBsonSymbol.toJSON() : <any>undefined;
+        data["asBsonTimestamp"] = this.asBsonTimestamp ? this.asBsonTimestamp.toJSON() : <any>undefined;
+        data["asBsonUndefined"] = this.asBsonUndefined ? this.asBsonUndefined.toJSON() : <any>undefined;
+        data["asBsonValue"] = this.asBsonValue ? this.asBsonValue.toJSON() : <any>undefined;
+        data["asByteArray"] = this.asByteArray;
+        data["asDecimal"] = this.asDecimal;
+        data["asDecimal128"] = this.asDecimal128 ? this.asDecimal128.toJSON() : <any>undefined;
+        data["asDouble"] = this.asDouble;
+        data["asGuid"] = this.asGuid;
+        data["asInt32"] = this.asInt32;
+        data["asInt64"] = this.asInt64;
+        data["asLocalTime"] = this.asLocalTime ? this.asLocalTime.toISOString() : <any>undefined;
+        data["asNullableBoolean"] = this.asNullableBoolean;
+        data["asNullableDecimal"] = this.asNullableDecimal;
+        data["asNullableDecimal128"] = this.asNullableDecimal128 ? this.asNullableDecimal128.toJSON() : <any>undefined;
+        data["asNullableDouble"] = this.asNullableDouble;
+        data["asNullableGuid"] = this.asNullableGuid;
+        data["asNullableInt32"] = this.asNullableInt32;
+        data["asNullableInt64"] = this.asNullableInt64;
+        data["asNullableLocalTime"] = this.asNullableLocalTime ? this.asNullableLocalTime.toISOString() : <any>undefined;
+        data["asNullableObjectId"] = this.asNullableObjectId ? this.asNullableObjectId.toJSON() : <any>undefined;
+        data["asNullableUniversalTime"] = this.asNullableUniversalTime ? this.asNullableUniversalTime.toISOString() : <any>undefined;
+        data["asObjectId"] = this.asObjectId ? this.asObjectId.toJSON() : <any>undefined;
+        data["asRegex"] = this.asRegex ? this.asRegex.toJSON() : <any>undefined;
+        data["asString"] = this.asString;
+        data["asUniversalTime"] = this.asUniversalTime ? this.asUniversalTime.toISOString() : <any>undefined;
+        data["bsonType"] = this.bsonType;
+        data["isBoolean"] = this.isBoolean;
+        data["isBsonArray"] = this.isBsonArray;
+        data["isBsonBinaryData"] = this.isBsonBinaryData;
+        data["isBsonDateTime"] = this.isBsonDateTime;
+        data["isBsonDocument"] = this.isBsonDocument;
+        data["isBsonJavaScript"] = this.isBsonJavaScript;
+        data["isBsonJavaScriptWithScope"] = this.isBsonJavaScriptWithScope;
+        data["isBsonMaxKey"] = this.isBsonMaxKey;
+        data["isBsonMinKey"] = this.isBsonMinKey;
+        data["isBsonNull"] = this.isBsonNull;
+        data["isBsonRegularExpression"] = this.isBsonRegularExpression;
+        data["isBsonSymbol"] = this.isBsonSymbol;
+        data["isBsonTimestamp"] = this.isBsonTimestamp;
+        data["isBsonUndefined"] = this.isBsonUndefined;
+        data["isDecimal128"] = this.isDecimal128;
+        data["isDouble"] = this.isDouble;
+        data["isGuid"] = this.isGuid;
+        data["isInt32"] = this.isInt32;
+        data["isInt64"] = this.isInt64;
+        data["isNumeric"] = this.isNumeric;
+        data["isObjectId"] = this.isObjectId;
+        data["isString"] = this.isString;
+        data["isValidDateTime"] = this.isValidDateTime;
+        return data;
+    }
+}
+
 export class BuildingBlockAddDto implements interfaces.IBuildingBlockAddDto {
     blockId!: string;
 
@@ -4433,6 +7248,575 @@ export class CreateFromTMDto implements interfaces.ICreateFromTMDto {
     }
 }
 
+export class DataAttachment implements interfaces.IDataAttachment {
+    attachmentId?: string | undefined;
+    fileName?: string | undefined;
+    contentType?: string | undefined;
+    size?: number;
+    storagePath?: string | undefined;
+    checksum?: string | undefined;
+    description?: string | undefined;
+    createdAt?: Date;
+
+    constructor(data?: interfaces.IDataAttachment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.attachmentId = _data["attachmentId"];
+            this.fileName = _data["fileName"];
+            this.contentType = _data["contentType"];
+            this.size = _data["size"];
+            this.storagePath = _data["storagePath"];
+            this.checksum = _data["checksum"];
+            this.description = _data["description"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DataAttachment {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataAttachment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["attachmentId"] = this.attachmentId;
+        data["fileName"] = this.fileName;
+        data["contentType"] = this.contentType;
+        data["size"] = this.size;
+        data["storagePath"] = this.storagePath;
+        data["checksum"] = this.checksum;
+        data["description"] = this.description;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class DataContractMetadata implements interfaces.IDataContractMetadata {
+    contentType?: string | undefined;
+    encoding?: string | undefined;
+    size?: number;
+    originalFormat?: string | undefined;
+    transformations?: DataTransformation[] | undefined;
+    validationResults?: DataValidationResult[] | undefined;
+    quality?: DataQualityMetrics;
+    lineage?: DataLineage;
+    customMetadata?: BsonElement[] | undefined;
+
+    constructor(data?: interfaces.IDataContractMetadata) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contentType = _data["contentType"];
+            this.encoding = _data["encoding"];
+            this.size = _data["size"];
+            this.originalFormat = _data["originalFormat"];
+            if (Array.isArray(_data["transformations"])) {
+                this.transformations = [] as any;
+                for (let item of _data["transformations"])
+                    this.transformations!.push(DataTransformation.fromJS(item));
+            }
+            if (Array.isArray(_data["validationResults"])) {
+                this.validationResults = [] as any;
+                for (let item of _data["validationResults"])
+                    this.validationResults!.push(DataValidationResult.fromJS(item));
+            }
+            this.quality = _data["quality"] ? DataQualityMetrics.fromJS(_data["quality"]) : <any>undefined;
+            this.lineage = _data["lineage"] ? DataLineage.fromJS(_data["lineage"]) : <any>undefined;
+            if (Array.isArray(_data["customMetadata"])) {
+                this.customMetadata = [] as any;
+                for (let item of _data["customMetadata"])
+                    this.customMetadata!.push(BsonElement.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DataContractMetadata {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataContractMetadata();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contentType"] = this.contentType;
+        data["encoding"] = this.encoding;
+        data["size"] = this.size;
+        data["originalFormat"] = this.originalFormat;
+        if (Array.isArray(this.transformations)) {
+            data["transformations"] = [];
+            for (let item of this.transformations)
+                data["transformations"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.validationResults)) {
+            data["validationResults"] = [];
+            for (let item of this.validationResults)
+                data["validationResults"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["quality"] = this.quality ? this.quality.toJSON() : <any>undefined;
+        data["lineage"] = this.lineage ? this.lineage.toJSON() : <any>undefined;
+        if (Array.isArray(this.customMetadata)) {
+            data["customMetadata"] = [];
+            for (let item of this.customMetadata)
+                data["customMetadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class DataDependency implements interfaces.IDataDependency {
+    nodeId?: string | undefined;
+    outputName?: string | undefined;
+    dependencyType?: enums.DependencyType;
+    isOptional?: boolean;
+
+    constructor(data?: interfaces.IDataDependency) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.nodeId = _data["nodeId"];
+            this.outputName = _data["outputName"];
+            this.dependencyType = _data["dependencyType"];
+            this.isOptional = _data["isOptional"];
+        }
+    }
+
+    static fromJS(data: any): DataDependency {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataDependency();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["nodeId"] = this.nodeId;
+        data["outputName"] = this.outputName;
+        data["dependencyType"] = this.dependencyType;
+        data["isOptional"] = this.isOptional;
+        return data;
+    }
+}
+
+export class DataLineage implements interfaces.IDataLineage {
+    sourceNodes?: string[] | undefined;
+    transformationPath?: string[] | undefined;
+    dependencies?: DataDependency[] | undefined;
+    originalSources?: DataSource[] | undefined;
+
+    constructor(data?: interfaces.IDataLineage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["sourceNodes"])) {
+                this.sourceNodes = [] as any;
+                for (let item of _data["sourceNodes"])
+                    this.sourceNodes!.push(item);
+            }
+            if (Array.isArray(_data["transformationPath"])) {
+                this.transformationPath = [] as any;
+                for (let item of _data["transformationPath"])
+                    this.transformationPath!.push(item);
+            }
+            if (Array.isArray(_data["dependencies"])) {
+                this.dependencies = [] as any;
+                for (let item of _data["dependencies"])
+                    this.dependencies!.push(DataDependency.fromJS(item));
+            }
+            if (Array.isArray(_data["originalSources"])) {
+                this.originalSources = [] as any;
+                for (let item of _data["originalSources"])
+                    this.originalSources!.push(DataSource.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DataLineage {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataLineage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.sourceNodes)) {
+            data["sourceNodes"] = [];
+            for (let item of this.sourceNodes)
+                data["sourceNodes"].push(item);
+        }
+        if (Array.isArray(this.transformationPath)) {
+            data["transformationPath"] = [];
+            for (let item of this.transformationPath)
+                data["transformationPath"].push(item);
+        }
+        if (Array.isArray(this.dependencies)) {
+            data["dependencies"] = [];
+            for (let item of this.dependencies)
+                data["dependencies"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.originalSources)) {
+            data["originalSources"] = [];
+            for (let item of this.originalSources)
+                data["originalSources"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class DataQualityIssue implements interfaces.IDataQualityIssue {
+    type?: enums.DataQualityIssueType;
+    severity?: enums.IssueSeverity;
+    description?: string | undefined;
+    field?: string | undefined;
+    recommendation?: string | undefined;
+
+    constructor(data?: interfaces.IDataQualityIssue) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.severity = _data["severity"];
+            this.description = _data["description"];
+            this.field = _data["field"];
+            this.recommendation = _data["recommendation"];
+        }
+    }
+
+    static fromJS(data: any): DataQualityIssue {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataQualityIssue();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["severity"] = this.severity;
+        data["description"] = this.description;
+        data["field"] = this.field;
+        data["recommendation"] = this.recommendation;
+        return data;
+    }
+}
+
+export class DataQualityMetrics implements interfaces.IDataQualityMetrics {
+    completeness?: number;
+    accuracy?: number;
+    consistency?: number;
+    validity?: number;
+    timeliness?: number;
+    uniqueness?: number;
+    overallScore?: number;
+    issues?: DataQualityIssue[] | undefined;
+
+    constructor(data?: interfaces.IDataQualityMetrics) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.completeness = _data["completeness"];
+            this.accuracy = _data["accuracy"];
+            this.consistency = _data["consistency"];
+            this.validity = _data["validity"];
+            this.timeliness = _data["timeliness"];
+            this.uniqueness = _data["uniqueness"];
+            this.overallScore = _data["overallScore"];
+            if (Array.isArray(_data["issues"])) {
+                this.issues = [] as any;
+                for (let item of _data["issues"])
+                    this.issues!.push(DataQualityIssue.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DataQualityMetrics {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataQualityMetrics();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["completeness"] = this.completeness;
+        data["accuracy"] = this.accuracy;
+        data["consistency"] = this.consistency;
+        data["validity"] = this.validity;
+        data["timeliness"] = this.timeliness;
+        data["uniqueness"] = this.uniqueness;
+        data["overallScore"] = this.overallScore;
+        if (Array.isArray(this.issues)) {
+            data["issues"] = [];
+            for (let item of this.issues)
+                data["issues"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class DataSource implements interfaces.IDataSource {
+    sourceId?: string | undefined;
+    sourceType?: enums.DataSourceType;
+    location?: string | undefined;
+    accessedAt?: Date;
+    version?: string | undefined;
+
+    constructor(data?: interfaces.IDataSource) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.sourceType = _data["sourceType"];
+            this.location = _data["location"];
+            this.accessedAt = _data["accessedAt"] ? new Date(_data["accessedAt"].toString()) : <any>undefined;
+            this.version = _data["version"];
+        }
+    }
+
+    static fromJS(data: any): DataSource {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSource();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["sourceType"] = this.sourceType;
+        data["location"] = this.location;
+        data["accessedAt"] = this.accessedAt ? this.accessedAt.toISOString() : <any>undefined;
+        data["version"] = this.version;
+        return data;
+    }
+}
+
+export class DataTransformation implements interfaces.IDataTransformation {
+    transformationId?: string | undefined;
+    type?: enums.TransformationType;
+    expression?: string | undefined;
+    appliedAt?: Date;
+    appliedBy?: string | undefined;
+    inputSchema?: BsonElement[] | undefined;
+    outputSchema?: BsonElement[] | undefined;
+    success?: boolean;
+    error?: string | undefined;
+
+    constructor(data?: interfaces.IDataTransformation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.transformationId = _data["transformationId"];
+            this.type = _data["type"];
+            this.expression = _data["expression"];
+            this.appliedAt = _data["appliedAt"] ? new Date(_data["appliedAt"].toString()) : <any>undefined;
+            this.appliedBy = _data["appliedBy"];
+            if (Array.isArray(_data["inputSchema"])) {
+                this.inputSchema = [] as any;
+                for (let item of _data["inputSchema"])
+                    this.inputSchema!.push(BsonElement.fromJS(item));
+            }
+            if (Array.isArray(_data["outputSchema"])) {
+                this.outputSchema = [] as any;
+                for (let item of _data["outputSchema"])
+                    this.outputSchema!.push(BsonElement.fromJS(item));
+            }
+            this.success = _data["success"];
+            this.error = _data["error"];
+        }
+    }
+
+    static fromJS(data: any): DataTransformation {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataTransformation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transformationId"] = this.transformationId;
+        data["type"] = this.type;
+        data["expression"] = this.expression;
+        data["appliedAt"] = this.appliedAt ? this.appliedAt.toISOString() : <any>undefined;
+        data["appliedBy"] = this.appliedBy;
+        if (Array.isArray(this.inputSchema)) {
+            data["inputSchema"] = [];
+            for (let item of this.inputSchema)
+                data["inputSchema"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.outputSchema)) {
+            data["outputSchema"] = [];
+            for (let item of this.outputSchema)
+                data["outputSchema"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["success"] = this.success;
+        data["error"] = this.error;
+        return data;
+    }
+}
+
+export class DataValidationResult implements interfaces.IDataValidationResult {
+    validationId?: string | undefined;
+    isValid?: boolean;
+    errors?: string[] | undefined;
+    warnings?: string[] | undefined;
+    validatedAt?: Date;
+    validationType?: enums.ValidationType;
+    schemaUsed?: BsonElement[] | undefined;
+
+    constructor(data?: interfaces.IDataValidationResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.validationId = _data["validationId"];
+            this.isValid = _data["isValid"];
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            if (Array.isArray(_data["warnings"])) {
+                this.warnings = [] as any;
+                for (let item of _data["warnings"])
+                    this.warnings!.push(item);
+            }
+            this.validatedAt = _data["validatedAt"] ? new Date(_data["validatedAt"].toString()) : <any>undefined;
+            this.validationType = _data["validationType"];
+            if (Array.isArray(_data["schemaUsed"])) {
+                this.schemaUsed = [] as any;
+                for (let item of _data["schemaUsed"])
+                    this.schemaUsed!.push(BsonElement.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DataValidationResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataValidationResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["validationId"] = this.validationId;
+        data["isValid"] = this.isValid;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        if (Array.isArray(this.warnings)) {
+            data["warnings"] = [];
+            for (let item of this.warnings)
+                data["warnings"].push(item);
+        }
+        data["validatedAt"] = this.validatedAt ? this.validatedAt.toISOString() : <any>undefined;
+        data["validationType"] = this.validationType;
+        if (Array.isArray(this.schemaUsed)) {
+            data["schemaUsed"] = [];
+            for (let item of this.schemaUsed)
+                data["schemaUsed"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class Decimal128 implements interfaces.IDecimal128 {
+
+    constructor(data?: interfaces.IDecimal128) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): Decimal128 {
+        data = typeof data === 'object' ? data : {};
+        let result = new Decimal128();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
 export class DeploymentHistoryDto implements interfaces.IDeploymentHistoryDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -4990,6 +8374,462 @@ export class EarthquakeLevelResponseDto implements interfaces.IEarthquakeLevelRe
         data["s1"] = this.s1;
         data["sds"] = this.sds;
         data["sd1"] = this.sd1;
+        return data;
+    }
+}
+
+export class EdgeConditionDto implements interfaces.IEdgeConditionDto {
+    expression!: string;
+    conditionType?: enums.EdgeConditionType;
+    evaluateOnSourceOutput?: boolean;
+    defaultValue?: BsonValue;
+    failureAction?: enums.EdgeFailureAction;
+
+    constructor(data?: interfaces.IEdgeConditionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expression = _data["expression"];
+            this.conditionType = _data["conditionType"];
+            this.evaluateOnSourceOutput = _data["evaluateOnSourceOutput"];
+            this.defaultValue = _data["defaultValue"] ? BsonValue.fromJS(_data["defaultValue"]) : <any>undefined;
+            this.failureAction = _data["failureAction"];
+        }
+    }
+
+    static fromJS(data: any): EdgeConditionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgeConditionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expression"] = this.expression;
+        data["conditionType"] = this.conditionType;
+        data["evaluateOnSourceOutput"] = this.evaluateOnSourceOutput;
+        data["defaultValue"] = this.defaultValue ? this.defaultValue.toJSON() : <any>undefined;
+        data["failureAction"] = this.failureAction;
+        return data;
+    }
+}
+
+export class EdgePointDto implements interfaces.IEdgePointDto {
+    x?: number;
+    y?: number;
+    type?: enums.EdgePointType;
+
+    constructor(data?: interfaces.IEdgePointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.type = _data["type"];
+        }
+    }
+
+    static fromJS(data: any): EdgePointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgePointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["type"] = this.type;
+        return data;
+    }
+}
+
+export class EdgeTransformationDto implements interfaces.IEdgeTransformationDto {
+    transformationType?: enums.EdgeTransformationType;
+    expression!: string;
+    inputSchema?: BsonElement[] | undefined;
+    outputSchema?: BsonElement[] | undefined;
+    customFunction?: string | undefined;
+    parameters?: BsonElement[] | undefined;
+    validateSchema?: boolean;
+
+    constructor(data?: interfaces.IEdgeTransformationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.transformationType = _data["transformationType"];
+            this.expression = _data["expression"];
+            if (Array.isArray(_data["inputSchema"])) {
+                this.inputSchema = [] as any;
+                for (let item of _data["inputSchema"])
+                    this.inputSchema!.push(BsonElement.fromJS(item));
+            }
+            if (Array.isArray(_data["outputSchema"])) {
+                this.outputSchema = [] as any;
+                for (let item of _data["outputSchema"])
+                    this.outputSchema!.push(BsonElement.fromJS(item));
+            }
+            this.customFunction = _data["customFunction"];
+            if (Array.isArray(_data["parameters"])) {
+                this.parameters = [] as any;
+                for (let item of _data["parameters"])
+                    this.parameters!.push(BsonElement.fromJS(item));
+            }
+            this.validateSchema = _data["validateSchema"];
+        }
+    }
+
+    static fromJS(data: any): EdgeTransformationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgeTransformationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transformationType"] = this.transformationType;
+        data["expression"] = this.expression;
+        if (Array.isArray(this.inputSchema)) {
+            data["inputSchema"] = [];
+            for (let item of this.inputSchema)
+                data["inputSchema"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.outputSchema)) {
+            data["outputSchema"] = [];
+            for (let item of this.outputSchema)
+                data["outputSchema"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["customFunction"] = this.customFunction;
+        if (Array.isArray(this.parameters)) {
+            data["parameters"] = [];
+            for (let item of this.parameters)
+                data["parameters"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["validateSchema"] = this.validateSchema;
+        return data;
+    }
+}
+
+export class EdgeUIConfigurationDto implements interfaces.IEdgeUIConfigurationDto {
+    color?: string | undefined;
+    style?: enums.EdgeStyle;
+    width?: number;
+    label?: string | undefined;
+    showLabel?: boolean;
+    animateFlow?: boolean;
+    points?: EdgePointDto[] | undefined;
+
+    constructor(data?: interfaces.IEdgeUIConfigurationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.color = _data["color"];
+            this.style = _data["style"];
+            this.width = _data["width"];
+            this.label = _data["label"];
+            this.showLabel = _data["showLabel"];
+            this.animateFlow = _data["animateFlow"];
+            if (Array.isArray(_data["points"])) {
+                this.points = [] as any;
+                for (let item of _data["points"])
+                    this.points!.push(EdgePointDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EdgeUIConfigurationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgeUIConfigurationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["color"] = this.color;
+        data["style"] = this.style;
+        data["width"] = this.width;
+        data["label"] = this.label;
+        data["showLabel"] = this.showLabel;
+        data["animateFlow"] = this.animateFlow;
+        if (Array.isArray(this.points)) {
+            data["points"] = [];
+            for (let item of this.points)
+                data["points"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class EdgeValidationError implements interfaces.IEdgeValidationError {
+    errorCode?: string | undefined;
+    errorType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    severity?: enums.ValidationSeverity;
+    suggestedFix?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IEdgeValidationError) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.errorCode = _data["errorCode"];
+            this.errorType = _data["errorType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            this.severity = _data["severity"];
+            this.suggestedFix = _data["suggestedFix"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): EdgeValidationError {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgeValidationError();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["errorCode"] = this.errorCode;
+        data["errorType"] = this.errorType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        data["severity"] = this.severity;
+        data["suggestedFix"] = this.suggestedFix;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class EdgeValidationResult implements interfaces.IEdgeValidationResult {
+    isValid?: boolean;
+    errors?: EdgeValidationError[] | undefined;
+    warnings?: EdgeValidationWarning[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IEdgeValidationResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isValid = _data["isValid"];
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(EdgeValidationError.fromJS(item));
+            }
+            if (Array.isArray(_data["warnings"])) {
+                this.warnings = [] as any;
+                for (let item of _data["warnings"])
+                    this.warnings!.push(EdgeValidationWarning.fromJS(item));
+            }
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): EdgeValidationResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgeValidationResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isValid"] = this.isValid;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.warnings)) {
+            data["warnings"] = [];
+            for (let item of this.warnings)
+                data["warnings"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class EdgeValidationWarning implements interfaces.IEdgeValidationWarning {
+    warningCode?: string | undefined;
+    warningType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    severity?: enums.ValidationSeverity;
+    recommendation?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IEdgeValidationWarning) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.warningCode = _data["warningCode"];
+            this.warningType = _data["warningType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            this.severity = _data["severity"];
+            this.recommendation = _data["recommendation"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): EdgeValidationWarning {
+        data = typeof data === 'object' ? data : {};
+        let result = new EdgeValidationWarning();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["warningCode"] = this.warningCode;
+        data["warningType"] = this.warningType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        data["severity"] = this.severity;
+        data["recommendation"] = this.recommendation;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class EncryptionInfo implements interfaces.IEncryptionInfo {
+    algorithm?: string | undefined;
+    keyId?: string | undefined;
+    isEncrypted?: boolean;
+    encryptedFields?: string[] | undefined;
+
+    constructor(data?: interfaces.IEncryptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.algorithm = _data["algorithm"];
+            this.keyId = _data["keyId"];
+            this.isEncrypted = _data["isEncrypted"];
+            if (Array.isArray(_data["encryptedFields"])) {
+                this.encryptedFields = [] as any;
+                for (let item of _data["encryptedFields"])
+                    this.encryptedFields!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): EncryptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new EncryptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["algorithm"] = this.algorithm;
+        data["keyId"] = this.keyId;
+        data["isEncrypted"] = this.isEncrypted;
+        if (Array.isArray(this.encryptedFields)) {
+            data["encryptedFields"] = [];
+            for (let item of this.encryptedFields)
+                data["encryptedFields"].push(item);
+        }
         return data;
     }
 }
@@ -8872,6 +12712,1052 @@ export class MasonryUpdateDto implements interfaces.IMasonryUpdateDto {
     }
 }
 
+export class NodeConditionalExecutionDto implements interfaces.INodeConditionalExecutionDto {
+    condition!: string;
+    conditionType?: enums.ConditionalType;
+    skipIfConditionFails?: boolean;
+    alternativeNodeId?: string | undefined;
+
+    constructor(data?: interfaces.INodeConditionalExecutionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.condition = _data["condition"];
+            this.conditionType = _data["conditionType"];
+            this.skipIfConditionFails = _data["skipIfConditionFails"];
+            this.alternativeNodeId = _data["alternativeNodeId"];
+        }
+    }
+
+    static fromJS(data: any): NodeConditionalExecutionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeConditionalExecutionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["condition"] = this.condition;
+        data["conditionType"] = this.conditionType;
+        data["skipIfConditionFails"] = this.skipIfConditionFails;
+        data["alternativeNodeId"] = this.alternativeNodeId;
+        return data;
+    }
+}
+
+export class NodeExecution implements interfaces.INodeExecution {
+    nodeId!: string | undefined;
+    nodeName?: string | undefined;
+    programId?: ObjectId;
+    programExecutionId?: ObjectId;
+    startedAt?: Date | undefined;
+    completedAt?: Date | undefined;
+    status?: enums.NodeExecutionStatus;
+    inputData?: BsonElement[] | undefined;
+    outputData?: BsonElement[] | undefined;
+    error?: NodeExecutionError;
+    retryCount?: number;
+    maxRetries?: number;
+    resourceUsage?: NodeResourceUsage;
+    logs?: NodeExecutionLog[] | undefined;
+    metadata?: BsonElement[] | undefined;
+    duration?: string | undefined;
+    wasSkipped?: boolean;
+    skipReason?: string | undefined;
+
+    constructor(data?: interfaces.INodeExecution) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.nodeId = _data["nodeId"];
+            this.nodeName = _data["nodeName"];
+            this.programId = _data["programId"] ? ObjectId.fromJS(_data["programId"]) : <any>undefined;
+            this.programExecutionId = _data["programExecutionId"] ? ObjectId.fromJS(_data["programExecutionId"]) : <any>undefined;
+            this.startedAt = _data["startedAt"] ? new Date(_data["startedAt"].toString()) : <any>undefined;
+            this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            if (Array.isArray(_data["inputData"])) {
+                this.inputData = [] as any;
+                for (let item of _data["inputData"])
+                    this.inputData!.push(BsonElement.fromJS(item));
+            }
+            if (Array.isArray(_data["outputData"])) {
+                this.outputData = [] as any;
+                for (let item of _data["outputData"])
+                    this.outputData!.push(BsonElement.fromJS(item));
+            }
+            this.error = _data["error"] ? NodeExecutionError.fromJS(_data["error"]) : <any>undefined;
+            this.retryCount = _data["retryCount"];
+            this.maxRetries = _data["maxRetries"];
+            this.resourceUsage = _data["resourceUsage"] ? NodeResourceUsage.fromJS(_data["resourceUsage"]) : <any>undefined;
+            if (Array.isArray(_data["logs"])) {
+                this.logs = [] as any;
+                for (let item of _data["logs"])
+                    this.logs!.push(NodeExecutionLog.fromJS(item));
+            }
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.duration = _data["duration"];
+            this.wasSkipped = _data["wasSkipped"];
+            this.skipReason = _data["skipReason"];
+        }
+    }
+
+    static fromJS(data: any): NodeExecution {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeExecution();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["nodeId"] = this.nodeId;
+        data["nodeName"] = this.nodeName;
+        data["programId"] = this.programId ? this.programId.toJSON() : <any>undefined;
+        data["programExecutionId"] = this.programExecutionId ? this.programExecutionId.toJSON() : <any>undefined;
+        data["startedAt"] = this.startedAt ? this.startedAt.toISOString() : <any>undefined;
+        data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        if (Array.isArray(this.inputData)) {
+            data["inputData"] = [];
+            for (let item of this.inputData)
+                data["inputData"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.outputData)) {
+            data["outputData"] = [];
+            for (let item of this.outputData)
+                data["outputData"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["error"] = this.error ? this.error.toJSON() : <any>undefined;
+        data["retryCount"] = this.retryCount;
+        data["maxRetries"] = this.maxRetries;
+        data["resourceUsage"] = this.resourceUsage ? this.resourceUsage.toJSON() : <any>undefined;
+        if (Array.isArray(this.logs)) {
+            data["logs"] = [];
+            for (let item of this.logs)
+                data["logs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["duration"] = this.duration;
+        data["wasSkipped"] = this.wasSkipped;
+        data["skipReason"] = this.skipReason;
+        return data;
+    }
+}
+
+export class NodeExecutionApiResponse implements interfaces.INodeExecutionApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: NodeExecution;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.INodeExecutionApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? NodeExecution.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): NodeExecutionApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeExecutionApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class NodeExecutionError implements interfaces.INodeExecutionError {
+    errorType?: enums.NodeErrorType;
+    message?: string | undefined;
+    exitCode?: number | undefined;
+    stackTrace?: string | undefined;
+    timestamp?: Date;
+    canRetry?: boolean;
+
+    constructor(data?: interfaces.INodeExecutionError) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.errorType = _data["errorType"];
+            this.message = _data["message"];
+            this.exitCode = _data["exitCode"];
+            this.stackTrace = _data["stackTrace"];
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+            this.canRetry = _data["canRetry"];
+        }
+    }
+
+    static fromJS(data: any): NodeExecutionError {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeExecutionError();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["errorType"] = this.errorType;
+        data["message"] = this.message;
+        data["exitCode"] = this.exitCode;
+        data["stackTrace"] = this.stackTrace;
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        data["canRetry"] = this.canRetry;
+        return data;
+    }
+}
+
+export class NodeExecutionLog implements interfaces.INodeExecutionLog {
+    timestamp?: Date;
+    level?: enums.LogLevel;
+    message?: string | undefined;
+    source?: string | undefined;
+
+    constructor(data?: interfaces.INodeExecutionLog) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+            this.level = _data["level"];
+            this.message = _data["message"];
+            this.source = _data["source"];
+        }
+    }
+
+    static fromJS(data: any): NodeExecutionLog {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeExecutionLog();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        data["level"] = this.level;
+        data["message"] = this.message;
+        data["source"] = this.source;
+        return data;
+    }
+}
+
+export class NodeExecutionSettingsDto implements interfaces.INodeExecutionSettingsDto {
+    timeoutMinutes?: number;
+    retryCount?: number;
+    retryDelaySeconds?: number;
+    resourceLimits?: NodeResourceLimitsDto;
+    environment?: { [key: string]: string; } | undefined;
+    runInParallel?: boolean;
+    priority?: number;
+
+    constructor(data?: interfaces.INodeExecutionSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.timeoutMinutes = _data["timeoutMinutes"];
+            this.retryCount = _data["retryCount"];
+            this.retryDelaySeconds = _data["retryDelaySeconds"];
+            this.resourceLimits = _data["resourceLimits"] ? NodeResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
+            if (_data["environment"]) {
+                this.environment = {} as any;
+                for (let key in _data["environment"]) {
+                    if (_data["environment"].hasOwnProperty(key))
+                        (<any>this.environment)![key] = _data["environment"][key];
+                }
+            }
+            this.runInParallel = _data["runInParallel"];
+            this.priority = _data["priority"];
+        }
+    }
+
+    static fromJS(data: any): NodeExecutionSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeExecutionSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["timeoutMinutes"] = this.timeoutMinutes;
+        data["retryCount"] = this.retryCount;
+        data["retryDelaySeconds"] = this.retryDelaySeconds;
+        data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
+        if (this.environment) {
+            data["environment"] = {};
+            for (let key in this.environment) {
+                if (this.environment.hasOwnProperty(key))
+                    (<any>data["environment"])[key] = (<any>this.environment)[key];
+            }
+        }
+        data["runInParallel"] = this.runInParallel;
+        data["priority"] = this.priority;
+        return data;
+    }
+}
+
+export class NodeInputConfigurationDto implements interfaces.INodeInputConfigurationDto {
+    inputMappings?: NodeInputMappingDto[] | undefined;
+    staticInputs?: BsonElement[] | undefined;
+    userInputs?: NodeUserInputDto[] | undefined;
+    validationRules?: NodeValidationRuleDto[] | undefined;
+
+    constructor(data?: interfaces.INodeInputConfigurationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["inputMappings"])) {
+                this.inputMappings = [] as any;
+                for (let item of _data["inputMappings"])
+                    this.inputMappings!.push(NodeInputMappingDto.fromJS(item));
+            }
+            if (Array.isArray(_data["staticInputs"])) {
+                this.staticInputs = [] as any;
+                for (let item of _data["staticInputs"])
+                    this.staticInputs!.push(BsonElement.fromJS(item));
+            }
+            if (Array.isArray(_data["userInputs"])) {
+                this.userInputs = [] as any;
+                for (let item of _data["userInputs"])
+                    this.userInputs!.push(NodeUserInputDto.fromJS(item));
+            }
+            if (Array.isArray(_data["validationRules"])) {
+                this.validationRules = [] as any;
+                for (let item of _data["validationRules"])
+                    this.validationRules!.push(NodeValidationRuleDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): NodeInputConfigurationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeInputConfigurationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.inputMappings)) {
+            data["inputMappings"] = [];
+            for (let item of this.inputMappings)
+                data["inputMappings"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.staticInputs)) {
+            data["staticInputs"] = [];
+            for (let item of this.staticInputs)
+                data["staticInputs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.userInputs)) {
+            data["userInputs"] = [];
+            for (let item of this.userInputs)
+                data["userInputs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.validationRules)) {
+            data["validationRules"] = [];
+            for (let item of this.validationRules)
+                data["validationRules"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class NodeInputMappingDto implements interfaces.INodeInputMappingDto {
+    inputName!: string;
+    sourceNodeId!: string;
+    sourceOutputName!: string;
+    transformation?: string | undefined;
+    isOptional?: boolean;
+    defaultValue?: BsonValue;
+
+    constructor(data?: interfaces.INodeInputMappingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.inputName = _data["inputName"];
+            this.sourceNodeId = _data["sourceNodeId"];
+            this.sourceOutputName = _data["sourceOutputName"];
+            this.transformation = _data["transformation"];
+            this.isOptional = _data["isOptional"];
+            this.defaultValue = _data["defaultValue"] ? BsonValue.fromJS(_data["defaultValue"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): NodeInputMappingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeInputMappingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["inputName"] = this.inputName;
+        data["sourceNodeId"] = this.sourceNodeId;
+        data["sourceOutputName"] = this.sourceOutputName;
+        data["transformation"] = this.transformation;
+        data["isOptional"] = this.isOptional;
+        data["defaultValue"] = this.defaultValue ? this.defaultValue.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class NodeOutputConfigurationDto implements interfaces.INodeOutputConfigurationDto {
+    outputMappings?: NodeOutputMappingDto[] | undefined;
+    outputSchema?: BsonElement[] | undefined;
+    cacheResults?: boolean;
+    cacheTtlMinutes?: number;
+
+    constructor(data?: interfaces.INodeOutputConfigurationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["outputMappings"])) {
+                this.outputMappings = [] as any;
+                for (let item of _data["outputMappings"])
+                    this.outputMappings!.push(NodeOutputMappingDto.fromJS(item));
+            }
+            if (Array.isArray(_data["outputSchema"])) {
+                this.outputSchema = [] as any;
+                for (let item of _data["outputSchema"])
+                    this.outputSchema!.push(BsonElement.fromJS(item));
+            }
+            this.cacheResults = _data["cacheResults"];
+            this.cacheTtlMinutes = _data["cacheTtlMinutes"];
+        }
+    }
+
+    static fromJS(data: any): NodeOutputConfigurationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeOutputConfigurationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.outputMappings)) {
+            data["outputMappings"] = [];
+            for (let item of this.outputMappings)
+                data["outputMappings"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.outputSchema)) {
+            data["outputSchema"] = [];
+            for (let item of this.outputSchema)
+                data["outputSchema"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["cacheResults"] = this.cacheResults;
+        data["cacheTtlMinutes"] = this.cacheTtlMinutes;
+        return data;
+    }
+}
+
+export class NodeOutputMappingDto implements interfaces.INodeOutputMappingDto {
+    outputName!: string;
+    sourceField!: string;
+    transformation?: string | undefined;
+    dataType?: string | undefined;
+    isArray?: boolean;
+
+    constructor(data?: interfaces.INodeOutputMappingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outputName = _data["outputName"];
+            this.sourceField = _data["sourceField"];
+            this.transformation = _data["transformation"];
+            this.dataType = _data["dataType"];
+            this.isArray = _data["isArray"];
+        }
+    }
+
+    static fromJS(data: any): NodeOutputMappingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeOutputMappingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outputName"] = this.outputName;
+        data["sourceField"] = this.sourceField;
+        data["transformation"] = this.transformation;
+        data["dataType"] = this.dataType;
+        data["isArray"] = this.isArray;
+        return data;
+    }
+}
+
+export class NodePositionDto implements interfaces.INodePositionDto {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+
+    constructor(data?: interfaces.INodePositionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+        }
+    }
+
+    static fromJS(data: any): NodePositionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodePositionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        return data;
+    }
+}
+
+export class NodeResourceLimitsDto implements interfaces.INodeResourceLimitsDto {
+    maxCpuPercentage?: number;
+    maxMemoryMb?: number;
+    maxDiskMb?: number;
+
+    constructor(data?: interfaces.INodeResourceLimitsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.maxCpuPercentage = _data["maxCpuPercentage"];
+            this.maxMemoryMb = _data["maxMemoryMb"];
+            this.maxDiskMb = _data["maxDiskMb"];
+        }
+    }
+
+    static fromJS(data: any): NodeResourceLimitsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeResourceLimitsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["maxCpuPercentage"] = this.maxCpuPercentage;
+        data["maxMemoryMb"] = this.maxMemoryMb;
+        data["maxDiskMb"] = this.maxDiskMb;
+        return data;
+    }
+}
+
+export class NodeResourceUsage implements interfaces.INodeResourceUsage {
+    cpuTimeSeconds?: number;
+    peakMemoryBytes?: number;
+    diskSpaceUsedBytes?: number;
+    processCount?: number;
+    outputSizeBytes?: number;
+
+    constructor(data?: interfaces.INodeResourceUsage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.cpuTimeSeconds = _data["cpuTimeSeconds"];
+            this.peakMemoryBytes = _data["peakMemoryBytes"];
+            this.diskSpaceUsedBytes = _data["diskSpaceUsedBytes"];
+            this.processCount = _data["processCount"];
+            this.outputSizeBytes = _data["outputSizeBytes"];
+        }
+    }
+
+    static fromJS(data: any): NodeResourceUsage {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeResourceUsage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cpuTimeSeconds"] = this.cpuTimeSeconds;
+        data["peakMemoryBytes"] = this.peakMemoryBytes;
+        data["diskSpaceUsedBytes"] = this.diskSpaceUsedBytes;
+        data["processCount"] = this.processCount;
+        data["outputSizeBytes"] = this.outputSizeBytes;
+        return data;
+    }
+}
+
+export class NodeUIConfigurationDto implements interfaces.INodeUIConfigurationDto {
+    color?: string | undefined;
+    icon?: string | undefined;
+    showProgress?: boolean;
+    customLabel?: string | undefined;
+
+    constructor(data?: interfaces.INodeUIConfigurationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.color = _data["color"];
+            this.icon = _data["icon"];
+            this.showProgress = _data["showProgress"];
+            this.customLabel = _data["customLabel"];
+        }
+    }
+
+    static fromJS(data: any): NodeUIConfigurationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeUIConfigurationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["color"] = this.color;
+        data["icon"] = this.icon;
+        data["showProgress"] = this.showProgress;
+        data["customLabel"] = this.customLabel;
+        return data;
+    }
+}
+
+export class NodeUserInputDto implements interfaces.INodeUserInputDto {
+    name!: string;
+    type?: string | undefined;
+    label?: string | undefined;
+    placeholder?: string | undefined;
+    isRequired?: boolean;
+    options?: string[] | undefined;
+    defaultValue?: BsonValue;
+    validation?: BsonElement[] | undefined;
+
+    constructor(data?: interfaces.INodeUserInputDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.type = _data["type"];
+            this.label = _data["label"];
+            this.placeholder = _data["placeholder"];
+            this.isRequired = _data["isRequired"];
+            if (Array.isArray(_data["options"])) {
+                this.options = [] as any;
+                for (let item of _data["options"])
+                    this.options!.push(item);
+            }
+            this.defaultValue = _data["defaultValue"] ? BsonValue.fromJS(_data["defaultValue"]) : <any>undefined;
+            if (Array.isArray(_data["validation"])) {
+                this.validation = [] as any;
+                for (let item of _data["validation"])
+                    this.validation!.push(BsonElement.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): NodeUserInputDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeUserInputDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["label"] = this.label;
+        data["placeholder"] = this.placeholder;
+        data["isRequired"] = this.isRequired;
+        if (Array.isArray(this.options)) {
+            data["options"] = [];
+            for (let item of this.options)
+                data["options"].push(item);
+        }
+        data["defaultValue"] = this.defaultValue ? this.defaultValue.toJSON() : <any>undefined;
+        if (Array.isArray(this.validation)) {
+            data["validation"] = [];
+            for (let item of this.validation)
+                data["validation"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class NodeValidationError implements interfaces.INodeValidationError {
+    errorCode?: string | undefined;
+    errorType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    severity?: enums.ValidationSeverity;
+    suggestedFix?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.INodeValidationError) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.errorCode = _data["errorCode"];
+            this.errorType = _data["errorType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            this.severity = _data["severity"];
+            this.suggestedFix = _data["suggestedFix"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): NodeValidationError {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeValidationError();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["errorCode"] = this.errorCode;
+        data["errorType"] = this.errorType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        data["severity"] = this.severity;
+        data["suggestedFix"] = this.suggestedFix;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class NodeValidationResult implements interfaces.INodeValidationResult {
+    isValid?: boolean;
+    errors?: NodeValidationError[] | undefined;
+    warnings?: NodeValidationWarning[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.INodeValidationResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isValid = _data["isValid"];
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(NodeValidationError.fromJS(item));
+            }
+            if (Array.isArray(_data["warnings"])) {
+                this.warnings = [] as any;
+                for (let item of _data["warnings"])
+                    this.warnings!.push(NodeValidationWarning.fromJS(item));
+            }
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): NodeValidationResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeValidationResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isValid"] = this.isValid;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.warnings)) {
+            data["warnings"] = [];
+            for (let item of this.warnings)
+                data["warnings"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class NodeValidationRuleDto implements interfaces.INodeValidationRuleDto {
+    field!: string;
+    rule!: string;
+    value?: BsonValue;
+    message?: string | undefined;
+
+    constructor(data?: interfaces.INodeValidationRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.field = _data["field"];
+            this.rule = _data["rule"];
+            this.value = _data["value"] ? BsonValue.fromJS(_data["value"]) : <any>undefined;
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): NodeValidationRuleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeValidationRuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["field"] = this.field;
+        data["rule"] = this.rule;
+        data["value"] = this.value ? this.value.toJSON() : <any>undefined;
+        data["message"] = this.message;
+        return data;
+    }
+}
+
+export class NodeValidationWarning implements interfaces.INodeValidationWarning {
+    warningCode?: string | undefined;
+    warningType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    severity?: enums.ValidationSeverity;
+    recommendation?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.INodeValidationWarning) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.warningCode = _data["warningCode"];
+            this.warningType = _data["warningType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            this.severity = _data["severity"];
+            this.recommendation = _data["recommendation"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): NodeValidationWarning {
+        data = typeof data === 'object' ? data : {};
+        let result = new NodeValidationWarning();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["warningCode"] = this.warningCode;
+        data["warningType"] = this.warningType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        data["severity"] = this.severity;
+        data["recommendation"] = this.recommendation;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
+        return data;
+    }
+}
+
 export class NoiseHazardDto implements interfaces.INoiseHazardDto {
     score?: number;
     level?: enums.Level;
@@ -9100,6 +13986,41 @@ export class NoiseMeasurementsForBuildings implements interfaces.INoiseMeasureme
     }
 }
 
+export class ObjectId implements interfaces.IObjectId {
+    readonly timestamp?: number;
+    readonly creationTime?: Date;
+
+    constructor(data?: interfaces.IObjectId) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).timestamp = _data["timestamp"];
+            (<any>this).creationTime = _data["creationTime"] ? new Date(_data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ObjectId {
+        data = typeof data === 'object' ? data : {};
+        let result = new ObjectId();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["timestamp"] = this.timestamp;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class PasswordResetResponseDto implements interfaces.IPasswordResetResponseDto {
     success?: boolean;
     message?: string | undefined;
@@ -9285,7 +14206,7 @@ export class ProgramComponentMappingDto implements interfaces.IProgramComponentM
     componentId?: string | undefined;
     componentName?: string | undefined;
     mappingName?: string | undefined;
-    mappingConfiguration?: any | undefined;
+    mappingConfiguration?: BsonElement[] | undefined;
     displayOrder?: number;
     isActive?: boolean;
     createdAt?: Date;
@@ -9307,7 +14228,11 @@ export class ProgramComponentMappingDto implements interfaces.IProgramComponentM
             this.componentId = _data["componentId"];
             this.componentName = _data["componentName"];
             this.mappingName = _data["mappingName"];
-            this.mappingConfiguration = _data["mappingConfiguration"];
+            if (Array.isArray(_data["mappingConfiguration"])) {
+                this.mappingConfiguration = [] as any;
+                for (let item of _data["mappingConfiguration"])
+                    this.mappingConfiguration!.push(BsonElement.fromJS(item));
+            }
             this.displayOrder = _data["displayOrder"];
             this.isActive = _data["isActive"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
@@ -9329,7 +14254,11 @@ export class ProgramComponentMappingDto implements interfaces.IProgramComponentM
         data["componentId"] = this.componentId;
         data["componentName"] = this.componentName;
         data["mappingName"] = this.mappingName;
-        data["mappingConfiguration"] = this.mappingConfiguration;
+        if (Array.isArray(this.mappingConfiguration)) {
+            data["mappingConfiguration"] = [];
+            for (let item of this.mappingConfiguration)
+                data["mappingConfiguration"].push(item ? item.toJSON() : <any>undefined);
+        }
         data["displayOrder"] = this.displayOrder;
         data["isActive"] = this.isActive;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
@@ -11052,6 +15981,44 @@ export class RefreshTokenDto implements interfaces.IRefreshTokenDto {
         data = typeof data === 'object' ? data : {};
         data["accessToken"] = this.accessToken;
         data["refreshToken"] = this.refreshToken;
+        return data;
+    }
+}
+
+export class Regex implements interfaces.IRegex {
+    options?: enums.RegexOptions;
+    readonly rightToLeft?: boolean;
+    readonly matchTimeout?: string;
+
+    constructor(data?: interfaces.IRegex) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.options = _data["options"];
+            (<any>this).rightToLeft = _data["rightToLeft"];
+            (<any>this).matchTimeout = _data["matchTimeout"];
+        }
+    }
+
+    static fromJS(data: any): Regex {
+        data = typeof data === 'object' ? data : {};
+        let result = new Regex();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["options"] = this.options;
+        data["rightToLeft"] = this.rightToLeft;
+        data["matchTimeout"] = this.matchTimeout;
         return data;
     }
 }
@@ -15082,6 +20049,70 @@ export class StringStringListDictionaryApiResponse implements interfaces.IString
     }
 }
 
+export class StringWorkflowDataContractDictionaryApiResponse implements interfaces.IStringWorkflowDataContractDictionaryApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: { [key: string]: WorkflowDataContract; } | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IStringWorkflowDataContractDictionaryApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (_data["data"]) {
+                this.data = {} as any;
+                for (let key in _data["data"]) {
+                    if (_data["data"].hasOwnProperty(key))
+                        (<any>this.data)![key] = _data["data"][key] ? WorkflowDataContract.fromJS(_data["data"][key]) : new WorkflowDataContract();
+                }
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): StringWorkflowDataContractDictionaryApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new StringWorkflowDataContractDictionaryApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (this.data) {
+            data["data"] = {};
+            for (let key in this.data) {
+                if (this.data.hasOwnProperty(key))
+                    (<any>data["data"])[key] = this.data[key] ? this.data[key].toJSON() : <any>undefined;
+            }
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class SupportedDeploymentOptionDto implements interfaces.ISupportedDeploymentOptionDto {
     deploymentType?: enums.AppDeploymentType;
     name?: string | undefined;
@@ -17129,7 +22160,7 @@ export class UiComponentConfigDtoApiResponse implements interfaces.IUiComponentC
 }
 
 export class UiComponentConfigUpdateDto implements interfaces.IUiComponentConfigUpdateDto {
-    configuration!: any;
+    configuration!: string;
 
     constructor(data?: interfaces.IUiComponentConfigUpdateDto) {
         if (data) {
@@ -17164,8 +22195,8 @@ export class UiComponentCreateDto implements interfaces.IUiComponentCreateDto {
     name!: string;
     description?: string | undefined;
     type!: string;
-    configuration?: any | undefined;
-    schema?: any | undefined;
+    configuration?: string | undefined;
+    schema?: string | undefined;
     tags?: string[] | undefined;
 
     constructor(data?: interfaces.IUiComponentCreateDto) {
@@ -17754,7 +22785,7 @@ export class UiComponentListDtoPagedResponseApiResponse implements interfaces.IU
 export class UiComponentMappingDto implements interfaces.IUiComponentMappingDto {
     componentId!: string;
     mappingName!: string;
-    mappingConfiguration?: any | undefined;
+    mappingConfiguration?: BsonElement[] | undefined;
     displayOrder?: number;
     isActive?: boolean;
 
@@ -17771,7 +22802,11 @@ export class UiComponentMappingDto implements interfaces.IUiComponentMappingDto 
         if (_data) {
             this.componentId = _data["componentId"];
             this.mappingName = _data["mappingName"];
-            this.mappingConfiguration = _data["mappingConfiguration"];
+            if (Array.isArray(_data["mappingConfiguration"])) {
+                this.mappingConfiguration = [] as any;
+                for (let item of _data["mappingConfiguration"])
+                    this.mappingConfiguration!.push(BsonElement.fromJS(item));
+            }
             this.displayOrder = _data["displayOrder"];
             this.isActive = _data["isActive"];
         }
@@ -17788,7 +22823,11 @@ export class UiComponentMappingDto implements interfaces.IUiComponentMappingDto 
         data = typeof data === 'object' ? data : {};
         data["componentId"] = this.componentId;
         data["mappingName"] = this.mappingName;
-        data["mappingConfiguration"] = this.mappingConfiguration;
+        if (Array.isArray(this.mappingConfiguration)) {
+            data["mappingConfiguration"] = [];
+            for (let item of this.mappingConfiguration)
+                data["mappingConfiguration"].push(item ? item.toJSON() : <any>undefined);
+        }
         data["displayOrder"] = this.displayOrder;
         data["isActive"] = this.isActive;
         return data;
@@ -18008,7 +23047,7 @@ export class UiComponentSchemaDtoApiResponse implements interfaces.IUiComponentS
 }
 
 export class UiComponentSchemaUpdateDto implements interfaces.IUiComponentSchemaUpdateDto {
-    schema!: any;
+    schema!: string;
 
     constructor(data?: interfaces.IUiComponentSchemaUpdateDto) {
         if (data) {
@@ -18157,8 +23196,8 @@ export class UiComponentUpdateDto implements interfaces.IUiComponentUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     type?: string | undefined;
-    configuration?: any | undefined;
-    schema?: any | undefined;
+    configuration?: string | undefined;
+    schema?: string | undefined;
     tags?: string[] | undefined;
 
     constructor(data?: interfaces.IUiComponentUpdateDto) {
@@ -21559,6 +26598,3818 @@ export class WebAppStatusDtoApiResponse implements interfaces.IWebAppStatusDtoAp
                 data["errors"].push(item);
         }
         data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowCloneDto implements interfaces.IWorkflowCloneDto {
+    name!: string;
+    description?: string | undefined;
+    clonePermissions?: boolean;
+    cloneExecutionHistory?: boolean;
+    tags?: string[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowCloneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.clonePermissions = _data["clonePermissions"];
+            this.cloneExecutionHistory = _data["cloneExecutionHistory"];
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowCloneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowCloneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["clonePermissions"] = this.clonePermissions;
+        data["cloneExecutionHistory"] = this.cloneExecutionHistory;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowComplexityMetrics implements interfaces.IWorkflowComplexityMetrics {
+    totalNodes?: number;
+    totalEdges?: number;
+    maxDepth?: number;
+    maxWidth?: number;
+    cyclomaticComplexity?: number;
+    connectivityRatio?: number;
+    parallelBranches?: number;
+    conditionalNodes?: number;
+    loopNodes?: number;
+    complexityLevel?: enums.ComplexityLevel;
+    additionalMetrics?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowComplexityMetrics) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalNodes = _data["totalNodes"];
+            this.totalEdges = _data["totalEdges"];
+            this.maxDepth = _data["maxDepth"];
+            this.maxWidth = _data["maxWidth"];
+            this.cyclomaticComplexity = _data["cyclomaticComplexity"];
+            this.connectivityRatio = _data["connectivityRatio"];
+            this.parallelBranches = _data["parallelBranches"];
+            this.conditionalNodes = _data["conditionalNodes"];
+            this.loopNodes = _data["loopNodes"];
+            this.complexityLevel = _data["complexityLevel"];
+            if (_data["additionalMetrics"]) {
+                this.additionalMetrics = {} as any;
+                for (let key in _data["additionalMetrics"]) {
+                    if (_data["additionalMetrics"].hasOwnProperty(key))
+                        (<any>this.additionalMetrics)![key] = _data["additionalMetrics"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowComplexityMetrics {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowComplexityMetrics();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalNodes"] = this.totalNodes;
+        data["totalEdges"] = this.totalEdges;
+        data["maxDepth"] = this.maxDepth;
+        data["maxWidth"] = this.maxWidth;
+        data["cyclomaticComplexity"] = this.cyclomaticComplexity;
+        data["connectivityRatio"] = this.connectivityRatio;
+        data["parallelBranches"] = this.parallelBranches;
+        data["conditionalNodes"] = this.conditionalNodes;
+        data["loopNodes"] = this.loopNodes;
+        data["complexityLevel"] = this.complexityLevel;
+        if (this.additionalMetrics) {
+            data["additionalMetrics"] = {};
+            for (let key in this.additionalMetrics) {
+                if (this.additionalMetrics.hasOwnProperty(key))
+                    (<any>data["additionalMetrics"])[key] = (<any>this.additionalMetrics)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowComplexityMetricsApiResponse implements interfaces.IWorkflowComplexityMetricsApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowComplexityMetrics;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowComplexityMetricsApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowComplexityMetrics.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowComplexityMetricsApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowComplexityMetricsApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
+    name!: string;
+    description?: string | undefined;
+    status?: enums.WorkflowStatus;
+    nodes?: WorkflowNodeCreateDto[] | undefined;
+    edges?: WorkflowEdgeCreateDto[] | undefined;
+    settings?: WorkflowSettingsDto;
+    permissions?: WorkflowPermissionsDto;
+    tags?: string[] | undefined;
+    metadata?: BsonElement[] | undefined;
+    isTemplate?: boolean;
+    templateId?: string | undefined;
+
+    constructor(data?: interfaces.IWorkflowCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.status = _data["status"];
+            if (Array.isArray(_data["nodes"])) {
+                this.nodes = [] as any;
+                for (let item of _data["nodes"])
+                    this.nodes!.push(WorkflowNodeCreateDto.fromJS(item));
+            }
+            if (Array.isArray(_data["edges"])) {
+                this.edges = [] as any;
+                for (let item of _data["edges"])
+                    this.edges!.push(WorkflowEdgeCreateDto.fromJS(item));
+            }
+            this.settings = _data["settings"] ? WorkflowSettingsDto.fromJS(_data["settings"]) : <any>undefined;
+            this.permissions = _data["permissions"] ? WorkflowPermissionsDto.fromJS(_data["permissions"]) : <any>undefined;
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isTemplate = _data["isTemplate"];
+            this.templateId = _data["templateId"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        if (Array.isArray(this.nodes)) {
+            data["nodes"] = [];
+            for (let item of this.nodes)
+                data["nodes"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.edges)) {
+            data["edges"] = [];
+            for (let item of this.edges)
+                data["edges"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["settings"] = this.settings ? this.settings.toJSON() : <any>undefined;
+        data["permissions"] = this.permissions ? this.permissions.toJSON() : <any>undefined;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isTemplate"] = this.isTemplate;
+        data["templateId"] = this.templateId;
+        return data;
+    }
+}
+
+export class WorkflowDataContract implements interfaces.IWorkflowDataContract {
+    contractId?: string | undefined;
+    sourceNodeId?: string | undefined;
+    targetNodeId?: string | undefined;
+    dataType?: enums.WorkflowDataType;
+    data?: BsonElement[] | undefined;
+    metadata?: DataContractMetadata;
+    schema?: BsonElement[] | undefined;
+    version?: string | undefined;
+    timestamp?: Date;
+    expiresAt?: Date | undefined;
+    checksum?: string | undefined;
+    compression?: enums.CompressionType;
+    encryption?: EncryptionInfo;
+    attachments?: DataAttachment[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowDataContract) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contractId = _data["contractId"];
+            this.sourceNodeId = _data["sourceNodeId"];
+            this.targetNodeId = _data["targetNodeId"];
+            this.dataType = _data["dataType"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(BsonElement.fromJS(item));
+            }
+            this.metadata = _data["metadata"] ? DataContractMetadata.fromJS(_data["metadata"]) : <any>undefined;
+            if (Array.isArray(_data["schema"])) {
+                this.schema = [] as any;
+                for (let item of _data["schema"])
+                    this.schema!.push(BsonElement.fromJS(item));
+            }
+            this.version = _data["version"];
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+            this.expiresAt = _data["expiresAt"] ? new Date(_data["expiresAt"].toString()) : <any>undefined;
+            this.checksum = _data["checksum"];
+            this.compression = _data["compression"];
+            this.encryption = _data["encryption"] ? EncryptionInfo.fromJS(_data["encryption"]) : <any>undefined;
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(DataAttachment.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowDataContract {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowDataContract();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contractId"] = this.contractId;
+        data["sourceNodeId"] = this.sourceNodeId;
+        data["targetNodeId"] = this.targetNodeId;
+        data["dataType"] = this.dataType;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["metadata"] = this.metadata ? this.metadata.toJSON() : <any>undefined;
+        if (Array.isArray(this.schema)) {
+            data["schema"] = [];
+            for (let item of this.schema)
+                data["schema"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["version"] = this.version;
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        data["expiresAt"] = this.expiresAt ? this.expiresAt.toISOString() : <any>undefined;
+        data["checksum"] = this.checksum;
+        data["compression"] = this.compression;
+        data["encryption"] = this.encryption ? this.encryption.toJSON() : <any>undefined;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class WorkflowDataContractApiResponse implements interfaces.IWorkflowDataContractApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowDataContract;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowDataContractApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowDataContract.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowDataContractApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowDataContractApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    creator?: string | undefined;
+    createdAt?: Date;
+    updatedAt?: Date | undefined;
+    status?: enums.WorkflowStatus;
+    version?: number;
+    nodes?: WorkflowNodeDto[] | undefined;
+    edges?: WorkflowEdgeDto[] | undefined;
+    settings?: WorkflowSettingsDto;
+    permissions?: WorkflowPermissionDto;
+    tags?: string[] | undefined;
+    metadata?: BsonElement[] | undefined;
+    isTemplate?: boolean;
+    templateId?: string | undefined;
+    lastExecutionId?: string | undefined;
+    executionCount?: number;
+    averageExecutionTime?: string | undefined;
+    complexityMetrics?: WorkflowComplexityMetrics;
+    validationResult?: WorkflowValidationResult;
+
+    constructor(data?: interfaces.IWorkflowDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.creator = _data["creator"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.updatedAt = _data["updatedAt"] ? new Date(_data["updatedAt"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.version = _data["version"];
+            if (Array.isArray(_data["nodes"])) {
+                this.nodes = [] as any;
+                for (let item of _data["nodes"])
+                    this.nodes!.push(WorkflowNodeDto.fromJS(item));
+            }
+            if (Array.isArray(_data["edges"])) {
+                this.edges = [] as any;
+                for (let item of _data["edges"])
+                    this.edges!.push(WorkflowEdgeDto.fromJS(item));
+            }
+            this.settings = _data["settings"] ? WorkflowSettingsDto.fromJS(_data["settings"]) : <any>undefined;
+            this.permissions = _data["permissions"] ? WorkflowPermissionDto.fromJS(_data["permissions"]) : <any>undefined;
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isTemplate = _data["isTemplate"];
+            this.templateId = _data["templateId"];
+            this.lastExecutionId = _data["lastExecutionId"];
+            this.executionCount = _data["executionCount"];
+            this.averageExecutionTime = _data["averageExecutionTime"];
+            this.complexityMetrics = _data["complexityMetrics"] ? WorkflowComplexityMetrics.fromJS(_data["complexityMetrics"]) : <any>undefined;
+            this.validationResult = _data["validationResult"] ? WorkflowValidationResult.fromJS(_data["validationResult"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["creator"] = this.creator;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["updatedAt"] = this.updatedAt ? this.updatedAt.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["version"] = this.version;
+        if (Array.isArray(this.nodes)) {
+            data["nodes"] = [];
+            for (let item of this.nodes)
+                data["nodes"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.edges)) {
+            data["edges"] = [];
+            for (let item of this.edges)
+                data["edges"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["settings"] = this.settings ? this.settings.toJSON() : <any>undefined;
+        data["permissions"] = this.permissions ? this.permissions.toJSON() : <any>undefined;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isTemplate"] = this.isTemplate;
+        data["templateId"] = this.templateId;
+        data["lastExecutionId"] = this.lastExecutionId;
+        data["executionCount"] = this.executionCount;
+        data["averageExecutionTime"] = this.averageExecutionTime;
+        data["complexityMetrics"] = this.complexityMetrics ? this.complexityMetrics.toJSON() : <any>undefined;
+        data["validationResult"] = this.validationResult ? this.validationResult.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowDetailDtoApiResponse implements interfaces.IWorkflowDetailDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowDetailDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowDetailDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowDetailDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowDetailDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowDetailDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowEdgeCreateDto implements interfaces.IWorkflowEdgeCreateDto {
+    id!: string;
+    sourceNodeId!: string;
+    targetNodeId!: string;
+    sourceOutputName?: string | undefined;
+    targetInputName?: string | undefined;
+    edgeType?: enums.WorkflowEdgeType;
+    condition?: EdgeConditionDto;
+    transformation?: EdgeTransformationDto;
+    uiConfiguration?: EdgeUIConfigurationDto;
+    metadata?: BsonElement[] | undefined;
+    isDisabled?: boolean;
+
+    constructor(data?: interfaces.IWorkflowEdgeCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.sourceNodeId = _data["sourceNodeId"];
+            this.targetNodeId = _data["targetNodeId"];
+            this.sourceOutputName = _data["sourceOutputName"];
+            this.targetInputName = _data["targetInputName"];
+            this.edgeType = _data["edgeType"];
+            this.condition = _data["condition"] ? EdgeConditionDto.fromJS(_data["condition"]) : <any>undefined;
+            this.transformation = _data["transformation"] ? EdgeTransformationDto.fromJS(_data["transformation"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? EdgeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isDisabled = _data["isDisabled"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowEdgeCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowEdgeCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sourceNodeId"] = this.sourceNodeId;
+        data["targetNodeId"] = this.targetNodeId;
+        data["sourceOutputName"] = this.sourceOutputName;
+        data["targetInputName"] = this.targetInputName;
+        data["edgeType"] = this.edgeType;
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
+        data["transformation"] = this.transformation ? this.transformation.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isDisabled"] = this.isDisabled;
+        return data;
+    }
+}
+
+export class WorkflowEdgeDto implements interfaces.IWorkflowEdgeDto {
+    id?: string | undefined;
+    sourceNodeId?: string | undefined;
+    targetNodeId?: string | undefined;
+    sourceOutputName?: string | undefined;
+    targetInputName?: string | undefined;
+    edgeType?: enums.WorkflowEdgeType;
+    condition?: EdgeConditionDto;
+    transformation?: EdgeTransformationDto;
+    uiConfiguration?: EdgeUIConfigurationDto;
+    metadata?: BsonElement[] | undefined;
+    isDisabled?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date | undefined;
+    validationResult?: EdgeValidationResult;
+
+    constructor(data?: interfaces.IWorkflowEdgeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.sourceNodeId = _data["sourceNodeId"];
+            this.targetNodeId = _data["targetNodeId"];
+            this.sourceOutputName = _data["sourceOutputName"];
+            this.targetInputName = _data["targetInputName"];
+            this.edgeType = _data["edgeType"];
+            this.condition = _data["condition"] ? EdgeConditionDto.fromJS(_data["condition"]) : <any>undefined;
+            this.transformation = _data["transformation"] ? EdgeTransformationDto.fromJS(_data["transformation"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? EdgeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isDisabled = _data["isDisabled"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.updatedAt = _data["updatedAt"] ? new Date(_data["updatedAt"].toString()) : <any>undefined;
+            this.validationResult = _data["validationResult"] ? EdgeValidationResult.fromJS(_data["validationResult"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowEdgeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowEdgeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sourceNodeId"] = this.sourceNodeId;
+        data["targetNodeId"] = this.targetNodeId;
+        data["sourceOutputName"] = this.sourceOutputName;
+        data["targetInputName"] = this.targetInputName;
+        data["edgeType"] = this.edgeType;
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
+        data["transformation"] = this.transformation ? this.transformation.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isDisabled"] = this.isDisabled;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["updatedAt"] = this.updatedAt ? this.updatedAt.toISOString() : <any>undefined;
+        data["validationResult"] = this.validationResult ? this.validationResult.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowEdgeUpdateDto implements interfaces.IWorkflowEdgeUpdateDto {
+    sourceNodeId?: string | undefined;
+    targetNodeId?: string | undefined;
+    sourceOutputName?: string | undefined;
+    targetInputName?: string | undefined;
+    edgeType?: enums.WorkflowEdgeType;
+    condition?: EdgeConditionDto;
+    transformation?: EdgeTransformationDto;
+    uiConfiguration?: EdgeUIConfigurationDto;
+    metadata?: BsonElement[] | undefined;
+    isDisabled?: boolean | undefined;
+
+    constructor(data?: interfaces.IWorkflowEdgeUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceNodeId = _data["sourceNodeId"];
+            this.targetNodeId = _data["targetNodeId"];
+            this.sourceOutputName = _data["sourceOutputName"];
+            this.targetInputName = _data["targetInputName"];
+            this.edgeType = _data["edgeType"];
+            this.condition = _data["condition"] ? EdgeConditionDto.fromJS(_data["condition"]) : <any>undefined;
+            this.transformation = _data["transformation"] ? EdgeTransformationDto.fromJS(_data["transformation"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? EdgeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isDisabled = _data["isDisabled"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowEdgeUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowEdgeUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceNodeId"] = this.sourceNodeId;
+        data["targetNodeId"] = this.targetNodeId;
+        data["sourceOutputName"] = this.sourceOutputName;
+        data["targetInputName"] = this.targetInputName;
+        data["edgeType"] = this.edgeType;
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
+        data["transformation"] = this.transformation ? this.transformation.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isDisabled"] = this.isDisabled;
+        return data;
+    }
+}
+
+export class WorkflowExecution implements interfaces.IWorkflowExecution {
+    _ID?: ObjectId;
+    workflowId!: ObjectId;
+    workflowVersion?: number;
+    executionName?: string | undefined;
+    executedBy!: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    status?: enums.WorkflowExecutionStatus;
+    progress?: WorkflowExecutionProgress;
+    nodeExecutions?: NodeExecution[] | undefined;
+    executionContext?: WorkflowExecutionContext;
+    results?: WorkflowExecutionResults;
+    error?: WorkflowExecutionError;
+    metadata?: BsonElement[] | undefined;
+    resourceUsage?: WorkflowResourceUsage;
+    logs?: WorkflowExecutionLog[] | undefined;
+    isRerun?: boolean;
+    parentExecutionId?: ObjectId;
+    triggerType?: enums.WorkflowTriggerType;
+    scheduleId?: ObjectId;
+
+    constructor(data?: interfaces.IWorkflowExecution) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.workflowId = new ObjectId();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this._ID = _data["_ID"] ? ObjectId.fromJS(_data["_ID"]) : <any>undefined;
+            this.workflowId = _data["workflowId"] ? ObjectId.fromJS(_data["workflowId"]) : new ObjectId();
+            this.workflowVersion = _data["workflowVersion"];
+            this.executionName = _data["executionName"];
+            this.executedBy = _data["executedBy"];
+            this.startedAt = _data["startedAt"] ? new Date(_data["startedAt"].toString()) : <any>undefined;
+            this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.progress = _data["progress"] ? WorkflowExecutionProgress.fromJS(_data["progress"]) : <any>undefined;
+            if (Array.isArray(_data["nodeExecutions"])) {
+                this.nodeExecutions = [] as any;
+                for (let item of _data["nodeExecutions"])
+                    this.nodeExecutions!.push(NodeExecution.fromJS(item));
+            }
+            this.executionContext = _data["executionContext"] ? WorkflowExecutionContext.fromJS(_data["executionContext"]) : <any>undefined;
+            this.results = _data["results"] ? WorkflowExecutionResults.fromJS(_data["results"]) : <any>undefined;
+            this.error = _data["error"] ? WorkflowExecutionError.fromJS(_data["error"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.resourceUsage = _data["resourceUsage"] ? WorkflowResourceUsage.fromJS(_data["resourceUsage"]) : <any>undefined;
+            if (Array.isArray(_data["logs"])) {
+                this.logs = [] as any;
+                for (let item of _data["logs"])
+                    this.logs!.push(WorkflowExecutionLog.fromJS(item));
+            }
+            this.isRerun = _data["isRerun"];
+            this.parentExecutionId = _data["parentExecutionId"] ? ObjectId.fromJS(_data["parentExecutionId"]) : <any>undefined;
+            this.triggerType = _data["triggerType"];
+            this.scheduleId = _data["scheduleId"] ? ObjectId.fromJS(_data["scheduleId"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecution {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecution();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["_ID"] = this._ID ? this._ID.toJSON() : <any>undefined;
+        data["workflowId"] = this.workflowId ? this.workflowId.toJSON() : <any>undefined;
+        data["workflowVersion"] = this.workflowVersion;
+        data["executionName"] = this.executionName;
+        data["executedBy"] = this.executedBy;
+        data["startedAt"] = this.startedAt ? this.startedAt.toISOString() : <any>undefined;
+        data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["progress"] = this.progress ? this.progress.toJSON() : <any>undefined;
+        if (Array.isArray(this.nodeExecutions)) {
+            data["nodeExecutions"] = [];
+            for (let item of this.nodeExecutions)
+                data["nodeExecutions"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["executionContext"] = this.executionContext ? this.executionContext.toJSON() : <any>undefined;
+        data["results"] = this.results ? this.results.toJSON() : <any>undefined;
+        data["error"] = this.error ? this.error.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["resourceUsage"] = this.resourceUsage ? this.resourceUsage.toJSON() : <any>undefined;
+        if (Array.isArray(this.logs)) {
+            data["logs"] = [];
+            for (let item of this.logs)
+                data["logs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isRerun"] = this.isRerun;
+        data["parentExecutionId"] = this.parentExecutionId ? this.parentExecutionId.toJSON() : <any>undefined;
+        data["triggerType"] = this.triggerType;
+        data["scheduleId"] = this.scheduleId ? this.scheduleId.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionApiResponse implements interfaces.IWorkflowExecutionApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowExecution;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowExecutionApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowExecution.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionContext implements interfaces.IWorkflowExecutionContext {
+    userInputs?: BsonElement[] | undefined;
+    globalVariables?: BsonElement[] | undefined;
+    environment?: { [key: string]: string; } | undefined;
+    executionMode?: enums.WorkflowExecutionMode;
+    debugMode?: boolean;
+    saveIntermediateResults?: boolean;
+    maxConcurrentNodes?: number;
+    timeoutMinutes?: number;
+
+    constructor(data?: interfaces.IWorkflowExecutionContext) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["userInputs"])) {
+                this.userInputs = [] as any;
+                for (let item of _data["userInputs"])
+                    this.userInputs!.push(BsonElement.fromJS(item));
+            }
+            if (Array.isArray(_data["globalVariables"])) {
+                this.globalVariables = [] as any;
+                for (let item of _data["globalVariables"])
+                    this.globalVariables!.push(BsonElement.fromJS(item));
+            }
+            if (_data["environment"]) {
+                this.environment = {} as any;
+                for (let key in _data["environment"]) {
+                    if (_data["environment"].hasOwnProperty(key))
+                        (<any>this.environment)![key] = _data["environment"][key];
+                }
+            }
+            this.executionMode = _data["executionMode"];
+            this.debugMode = _data["debugMode"];
+            this.saveIntermediateResults = _data["saveIntermediateResults"];
+            this.maxConcurrentNodes = _data["maxConcurrentNodes"];
+            this.timeoutMinutes = _data["timeoutMinutes"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionContext {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionContext();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.userInputs)) {
+            data["userInputs"] = [];
+            for (let item of this.userInputs)
+                data["userInputs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.globalVariables)) {
+            data["globalVariables"] = [];
+            for (let item of this.globalVariables)
+                data["globalVariables"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (this.environment) {
+            data["environment"] = {};
+            for (let key in this.environment) {
+                if (this.environment.hasOwnProperty(key))
+                    (<any>data["environment"])[key] = (<any>this.environment)[key];
+            }
+        }
+        data["executionMode"] = this.executionMode;
+        data["debugMode"] = this.debugMode;
+        data["saveIntermediateResults"] = this.saveIntermediateResults;
+        data["maxConcurrentNodes"] = this.maxConcurrentNodes;
+        data["timeoutMinutes"] = this.timeoutMinutes;
+        return data;
+    }
+}
+
+export class WorkflowExecutionError implements interfaces.IWorkflowExecutionError {
+    errorType?: enums.WorkflowErrorType;
+    message?: string | undefined;
+    nodeId?: string | undefined;
+    stackTrace?: string | undefined;
+    innerError?: string | undefined;
+    timestamp?: Date;
+    canRetry?: boolean;
+    retryCount?: number;
+
+    constructor(data?: interfaces.IWorkflowExecutionError) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.errorType = _data["errorType"];
+            this.message = _data["message"];
+            this.nodeId = _data["nodeId"];
+            this.stackTrace = _data["stackTrace"];
+            this.innerError = _data["innerError"];
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+            this.canRetry = _data["canRetry"];
+            this.retryCount = _data["retryCount"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionError {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionError();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["errorType"] = this.errorType;
+        data["message"] = this.message;
+        data["nodeId"] = this.nodeId;
+        data["stackTrace"] = this.stackTrace;
+        data["innerError"] = this.innerError;
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        data["canRetry"] = this.canRetry;
+        data["retryCount"] = this.retryCount;
+        return data;
+    }
+}
+
+export class WorkflowExecutionListApiResponse implements interfaces.IWorkflowExecutionListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowExecution[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowExecutionListApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(WorkflowExecution.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionListApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionListApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionLog implements interfaces.IWorkflowExecutionLog {
+    timestamp?: Date;
+    level?: enums.LogLevel;
+    message?: string | undefined;
+    nodeId?: string | undefined;
+    source?: string | undefined;
+    metadata?: BsonElement[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionLog) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+            this.level = _data["level"];
+            this.message = _data["message"];
+            this.nodeId = _data["nodeId"];
+            this.source = _data["source"];
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionLog {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionLog();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        data["level"] = this.level;
+        data["message"] = this.message;
+        data["nodeId"] = this.nodeId;
+        data["source"] = this.source;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class WorkflowExecutionLogListApiResponse implements interfaces.IWorkflowExecutionLogListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowExecutionLog[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowExecutionLogListApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(WorkflowExecutionLog.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionLogListApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionLogListApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionOptimizationDto implements interfaces.IWorkflowExecutionOptimizationDto {
+    optimizationType?: string | undefined;
+    description?: string | undefined;
+    recommendation?: string | undefined;
+    potentialTimeReduction?: number;
+    potentialResourceReduction?: number;
+    complexity?: enums.OptimizationComplexity;
+    affectedNodes?: string[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionOptimizationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.optimizationType = _data["optimizationType"];
+            this.description = _data["description"];
+            this.recommendation = _data["recommendation"];
+            this.potentialTimeReduction = _data["potentialTimeReduction"];
+            this.potentialResourceReduction = _data["potentialResourceReduction"];
+            this.complexity = _data["complexity"];
+            if (Array.isArray(_data["affectedNodes"])) {
+                this.affectedNodes = [] as any;
+                for (let item of _data["affectedNodes"])
+                    this.affectedNodes!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionOptimizationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionOptimizationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["optimizationType"] = this.optimizationType;
+        data["description"] = this.description;
+        data["recommendation"] = this.recommendation;
+        data["potentialTimeReduction"] = this.potentialTimeReduction;
+        data["potentialResourceReduction"] = this.potentialResourceReduction;
+        data["complexity"] = this.complexity;
+        if (Array.isArray(this.affectedNodes)) {
+            data["affectedNodes"] = [];
+            for (let item of this.affectedNodes)
+                data["affectedNodes"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowExecutionOptions implements interfaces.IWorkflowExecutionOptions {
+    dryRun?: boolean;
+    debugMode?: boolean;
+    saveIntermediateResults?: boolean;
+    continueOnError?: boolean;
+    maxConcurrentNodes?: number;
+    timeoutMinutes?: number;
+    enableNotifications?: boolean;
+    notificationRecipients?: string[] | undefined;
+    priority?: enums.ExecutionPriority;
+    customOptions?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionOptions) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.dryRun = _data["dryRun"];
+            this.debugMode = _data["debugMode"];
+            this.saveIntermediateResults = _data["saveIntermediateResults"];
+            this.continueOnError = _data["continueOnError"];
+            this.maxConcurrentNodes = _data["maxConcurrentNodes"];
+            this.timeoutMinutes = _data["timeoutMinutes"];
+            this.enableNotifications = _data["enableNotifications"];
+            if (Array.isArray(_data["notificationRecipients"])) {
+                this.notificationRecipients = [] as any;
+                for (let item of _data["notificationRecipients"])
+                    this.notificationRecipients!.push(item);
+            }
+            this.priority = _data["priority"];
+            if (_data["customOptions"]) {
+                this.customOptions = {} as any;
+                for (let key in _data["customOptions"]) {
+                    if (_data["customOptions"].hasOwnProperty(key))
+                        (<any>this.customOptions)![key] = _data["customOptions"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionOptions {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionOptions();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dryRun"] = this.dryRun;
+        data["debugMode"] = this.debugMode;
+        data["saveIntermediateResults"] = this.saveIntermediateResults;
+        data["continueOnError"] = this.continueOnError;
+        data["maxConcurrentNodes"] = this.maxConcurrentNodes;
+        data["timeoutMinutes"] = this.timeoutMinutes;
+        data["enableNotifications"] = this.enableNotifications;
+        if (Array.isArray(this.notificationRecipients)) {
+            data["notificationRecipients"] = [];
+            for (let item of this.notificationRecipients)
+                data["notificationRecipients"].push(item);
+        }
+        data["priority"] = this.priority;
+        if (this.customOptions) {
+            data["customOptions"] = {};
+            for (let key in this.customOptions) {
+                if (this.customOptions.hasOwnProperty(key))
+                    (<any>data["customOptions"])[key] = (<any>this.customOptions)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowExecutionPhaseDto implements interfaces.IWorkflowExecutionPhaseDto {
+    phaseNumber?: number;
+    phaseName?: string | undefined;
+    nodeIds?: string[] | undefined;
+    nodeNames?: string[] | undefined;
+    estimatedDuration?: string;
+    canRunInParallel?: boolean;
+    dependencies?: string[] | undefined;
+    outputs?: string[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionPhaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.phaseNumber = _data["phaseNumber"];
+            this.phaseName = _data["phaseName"];
+            if (Array.isArray(_data["nodeIds"])) {
+                this.nodeIds = [] as any;
+                for (let item of _data["nodeIds"])
+                    this.nodeIds!.push(item);
+            }
+            if (Array.isArray(_data["nodeNames"])) {
+                this.nodeNames = [] as any;
+                for (let item of _data["nodeNames"])
+                    this.nodeNames!.push(item);
+            }
+            this.estimatedDuration = _data["estimatedDuration"];
+            this.canRunInParallel = _data["canRunInParallel"];
+            if (Array.isArray(_data["dependencies"])) {
+                this.dependencies = [] as any;
+                for (let item of _data["dependencies"])
+                    this.dependencies!.push(item);
+            }
+            if (Array.isArray(_data["outputs"])) {
+                this.outputs = [] as any;
+                for (let item of _data["outputs"])
+                    this.outputs!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionPhaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionPhaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["phaseNumber"] = this.phaseNumber;
+        data["phaseName"] = this.phaseName;
+        if (Array.isArray(this.nodeIds)) {
+            data["nodeIds"] = [];
+            for (let item of this.nodeIds)
+                data["nodeIds"].push(item);
+        }
+        if (Array.isArray(this.nodeNames)) {
+            data["nodeNames"] = [];
+            for (let item of this.nodeNames)
+                data["nodeNames"].push(item);
+        }
+        data["estimatedDuration"] = this.estimatedDuration;
+        data["canRunInParallel"] = this.canRunInParallel;
+        if (Array.isArray(this.dependencies)) {
+            data["dependencies"] = [];
+            for (let item of this.dependencies)
+                data["dependencies"].push(item);
+        }
+        if (Array.isArray(this.outputs)) {
+            data["outputs"] = [];
+            for (let item of this.outputs)
+                data["outputs"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowExecutionPlanDto implements interfaces.IWorkflowExecutionPlanDto {
+    workflowId?: string | undefined;
+    workflowName?: string | undefined;
+    executionOrder?: string[] | undefined;
+    dependencyGraph?: { [key: string]: string[]; } | undefined;
+    executionPhases?: WorkflowExecutionPhaseDto[] | undefined;
+    estimatedExecutionTime?: string;
+    maxConcurrentNodes?: number;
+    potentialRisks?: WorkflowExecutionRiskDto[] | undefined;
+    optimizations?: WorkflowExecutionOptimizationDto[] | undefined;
+    validationResult?: WorkflowValidationResult;
+
+    constructor(data?: interfaces.IWorkflowExecutionPlanDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.workflowId = _data["workflowId"];
+            this.workflowName = _data["workflowName"];
+            if (Array.isArray(_data["executionOrder"])) {
+                this.executionOrder = [] as any;
+                for (let item of _data["executionOrder"])
+                    this.executionOrder!.push(item);
+            }
+            if (_data["dependencyGraph"]) {
+                this.dependencyGraph = {} as any;
+                for (let key in _data["dependencyGraph"]) {
+                    if (_data["dependencyGraph"].hasOwnProperty(key))
+                        (<any>this.dependencyGraph)![key] = _data["dependencyGraph"][key] !== undefined ? _data["dependencyGraph"][key] : [];
+                }
+            }
+            if (Array.isArray(_data["executionPhases"])) {
+                this.executionPhases = [] as any;
+                for (let item of _data["executionPhases"])
+                    this.executionPhases!.push(WorkflowExecutionPhaseDto.fromJS(item));
+            }
+            this.estimatedExecutionTime = _data["estimatedExecutionTime"];
+            this.maxConcurrentNodes = _data["maxConcurrentNodes"];
+            if (Array.isArray(_data["potentialRisks"])) {
+                this.potentialRisks = [] as any;
+                for (let item of _data["potentialRisks"])
+                    this.potentialRisks!.push(WorkflowExecutionRiskDto.fromJS(item));
+            }
+            if (Array.isArray(_data["optimizations"])) {
+                this.optimizations = [] as any;
+                for (let item of _data["optimizations"])
+                    this.optimizations!.push(WorkflowExecutionOptimizationDto.fromJS(item));
+            }
+            this.validationResult = _data["validationResult"] ? WorkflowValidationResult.fromJS(_data["validationResult"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionPlanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionPlanDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["workflowId"] = this.workflowId;
+        data["workflowName"] = this.workflowName;
+        if (Array.isArray(this.executionOrder)) {
+            data["executionOrder"] = [];
+            for (let item of this.executionOrder)
+                data["executionOrder"].push(item);
+        }
+        if (this.dependencyGraph) {
+            data["dependencyGraph"] = {};
+            for (let key in this.dependencyGraph) {
+                if (this.dependencyGraph.hasOwnProperty(key))
+                    (<any>data["dependencyGraph"])[key] = (<any>this.dependencyGraph)[key];
+            }
+        }
+        if (Array.isArray(this.executionPhases)) {
+            data["executionPhases"] = [];
+            for (let item of this.executionPhases)
+                data["executionPhases"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["estimatedExecutionTime"] = this.estimatedExecutionTime;
+        data["maxConcurrentNodes"] = this.maxConcurrentNodes;
+        if (Array.isArray(this.potentialRisks)) {
+            data["potentialRisks"] = [];
+            for (let item of this.potentialRisks)
+                data["potentialRisks"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.optimizations)) {
+            data["optimizations"] = [];
+            for (let item of this.optimizations)
+                data["optimizations"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["validationResult"] = this.validationResult ? this.validationResult.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionPlanDtoApiResponse implements interfaces.IWorkflowExecutionPlanDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowExecutionPlanDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowExecutionPlanDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowExecutionPlanDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionPlanDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionPlanDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionProgress implements interfaces.IWorkflowExecutionProgress {
+    totalNodes?: number;
+    completedNodes?: number;
+    failedNodes?: number;
+    skippedNodes?: number;
+    runningNodes?: number;
+    percentComplete?: number;
+    currentPhase?: string | undefined;
+    estimatedTimeRemaining?: string | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionProgress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalNodes = _data["totalNodes"];
+            this.completedNodes = _data["completedNodes"];
+            this.failedNodes = _data["failedNodes"];
+            this.skippedNodes = _data["skippedNodes"];
+            this.runningNodes = _data["runningNodes"];
+            this.percentComplete = _data["percentComplete"];
+            this.currentPhase = _data["currentPhase"];
+            this.estimatedTimeRemaining = _data["estimatedTimeRemaining"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionProgress {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionProgress();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalNodes"] = this.totalNodes;
+        data["completedNodes"] = this.completedNodes;
+        data["failedNodes"] = this.failedNodes;
+        data["skippedNodes"] = this.skippedNodes;
+        data["runningNodes"] = this.runningNodes;
+        data["percentComplete"] = this.percentComplete;
+        data["currentPhase"] = this.currentPhase;
+        data["estimatedTimeRemaining"] = this.estimatedTimeRemaining;
+        return data;
+    }
+}
+
+export class WorkflowExecutionRequest implements interfaces.IWorkflowExecutionRequest {
+    workflowId!: string | undefined;
+    workflowVersionId?: string | undefined;
+    userId!: string | undefined;
+    executionName?: string | undefined;
+    executionContext?: WorkflowExecutionContext;
+    options?: WorkflowExecutionOptions;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.workflowId = _data["workflowId"];
+            this.workflowVersionId = _data["workflowVersionId"];
+            this.userId = _data["userId"];
+            this.executionName = _data["executionName"];
+            this.executionContext = _data["executionContext"] ? WorkflowExecutionContext.fromJS(_data["executionContext"]) : <any>undefined;
+            this.options = _data["options"] ? WorkflowExecutionOptions.fromJS(_data["options"]) : <any>undefined;
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["workflowId"] = this.workflowId;
+        data["workflowVersionId"] = this.workflowVersionId;
+        data["userId"] = this.userId;
+        data["executionName"] = this.executionName;
+        data["executionContext"] = this.executionContext ? this.executionContext.toJSON() : <any>undefined;
+        data["options"] = this.options ? this.options.toJSON() : <any>undefined;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowExecutionResults implements interfaces.IWorkflowExecutionResults {
+    finalOutputs?: BsonElement[] | undefined;
+    intermediateResults?: { [key: string]: BsonElement[]; } | undefined;
+    artifactsGenerated?: string[] | undefined;
+    summary?: string | undefined;
+    outputFiles?: WorkflowOutputFile[] | undefined;
+    executionStatistics?: WorkflowExecutionStatistics;
+
+    constructor(data?: interfaces.IWorkflowExecutionResults) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["finalOutputs"])) {
+                this.finalOutputs = [] as any;
+                for (let item of _data["finalOutputs"])
+                    this.finalOutputs!.push(BsonElement.fromJS(item));
+            }
+            if (_data["intermediateResults"]) {
+                this.intermediateResults = {} as any;
+                for (let key in _data["intermediateResults"]) {
+                    if (_data["intermediateResults"].hasOwnProperty(key))
+                        (<any>this.intermediateResults)![key] = _data["intermediateResults"][key] ? _data["intermediateResults"][key].map((i: any) => BsonElement.fromJS(i)) : [];
+                }
+            }
+            if (Array.isArray(_data["artifactsGenerated"])) {
+                this.artifactsGenerated = [] as any;
+                for (let item of _data["artifactsGenerated"])
+                    this.artifactsGenerated!.push(item);
+            }
+            this.summary = _data["summary"];
+            if (Array.isArray(_data["outputFiles"])) {
+                this.outputFiles = [] as any;
+                for (let item of _data["outputFiles"])
+                    this.outputFiles!.push(WorkflowOutputFile.fromJS(item));
+            }
+            this.executionStatistics = _data["executionStatistics"] ? WorkflowExecutionStatistics.fromJS(_data["executionStatistics"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionResults {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionResults();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.finalOutputs)) {
+            data["finalOutputs"] = [];
+            for (let item of this.finalOutputs)
+                data["finalOutputs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (this.intermediateResults) {
+            data["intermediateResults"] = {};
+            for (let key in this.intermediateResults) {
+                if (this.intermediateResults.hasOwnProperty(key))
+                    (<any>data["intermediateResults"])[key] = (<any>this.intermediateResults)[key];
+            }
+        }
+        if (Array.isArray(this.artifactsGenerated)) {
+            data["artifactsGenerated"] = [];
+            for (let item of this.artifactsGenerated)
+                data["artifactsGenerated"].push(item);
+        }
+        data["summary"] = this.summary;
+        if (Array.isArray(this.outputFiles)) {
+            data["outputFiles"] = [];
+            for (let item of this.outputFiles)
+                data["outputFiles"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["executionStatistics"] = this.executionStatistics ? this.executionStatistics.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionRiskDto implements interfaces.IWorkflowExecutionRiskDto {
+    riskType?: string | undefined;
+    description?: string | undefined;
+    level?: enums.RiskLevel;
+    nodeId?: string | undefined;
+    edgeId?: string | undefined;
+    mitigation?: string | undefined;
+    impact?: number;
+    probability?: number;
+
+    constructor(data?: interfaces.IWorkflowExecutionRiskDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.riskType = _data["riskType"];
+            this.description = _data["description"];
+            this.level = _data["level"];
+            this.nodeId = _data["nodeId"];
+            this.edgeId = _data["edgeId"];
+            this.mitigation = _data["mitigation"];
+            this.impact = _data["impact"];
+            this.probability = _data["probability"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionRiskDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionRiskDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["riskType"] = this.riskType;
+        data["description"] = this.description;
+        data["level"] = this.level;
+        data["nodeId"] = this.nodeId;
+        data["edgeId"] = this.edgeId;
+        data["mitigation"] = this.mitigation;
+        data["impact"] = this.impact;
+        data["probability"] = this.probability;
+        return data;
+    }
+}
+
+export class WorkflowExecutionStatistics implements interfaces.IWorkflowExecutionStatistics {
+    totalExecutionTime?: string;
+    averageNodeExecutionTime?: string;
+    slowestNode?: string | undefined;
+    fastestNode?: string | undefined;
+    totalRetries?: number;
+    parallelizationEfficiency?: number;
+
+    constructor(data?: interfaces.IWorkflowExecutionStatistics) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalExecutionTime = _data["totalExecutionTime"];
+            this.averageNodeExecutionTime = _data["averageNodeExecutionTime"];
+            this.slowestNode = _data["slowestNode"];
+            this.fastestNode = _data["fastestNode"];
+            this.totalRetries = _data["totalRetries"];
+            this.parallelizationEfficiency = _data["parallelizationEfficiency"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionStatistics {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionStatistics();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalExecutionTime"] = this.totalExecutionTime;
+        data["averageNodeExecutionTime"] = this.averageNodeExecutionTime;
+        data["slowestNode"] = this.slowestNode;
+        data["fastestNode"] = this.fastestNode;
+        data["totalRetries"] = this.totalRetries;
+        data["parallelizationEfficiency"] = this.parallelizationEfficiency;
+        return data;
+    }
+}
+
+export class WorkflowExecutionStatisticsApiResponse implements interfaces.IWorkflowExecutionStatisticsApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowExecutionStatistics;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowExecutionStatisticsApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowExecutionStatistics.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionStatisticsApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionStatisticsApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowExecutionSummaryDto implements interfaces.IWorkflowExecutionSummaryDto {
+    id?: string | undefined;
+    executionName?: string | undefined;
+    executedBy?: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    duration?: string | undefined;
+    status?: enums.WorkflowExecutionStatus;
+    progress?: WorkflowExecutionProgress;
+    triggerType?: enums.WorkflowTriggerType;
+    isRerun?: boolean;
+    errorMessage?: string | undefined;
+    nodeStatuses?: { [key: string]: enums.NodeExecutionStatus; } | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.executionName = _data["executionName"];
+            this.executedBy = _data["executedBy"];
+            this.startedAt = _data["startedAt"] ? new Date(_data["startedAt"].toString()) : <any>undefined;
+            this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
+            this.duration = _data["duration"];
+            this.status = _data["status"];
+            this.progress = _data["progress"] ? WorkflowExecutionProgress.fromJS(_data["progress"]) : <any>undefined;
+            this.triggerType = _data["triggerType"];
+            this.isRerun = _data["isRerun"];
+            this.errorMessage = _data["errorMessage"];
+            if (_data["nodeStatuses"]) {
+                this.nodeStatuses = {} as any;
+                for (let key in _data["nodeStatuses"]) {
+                    if (_data["nodeStatuses"].hasOwnProperty(key))
+                        (<any>this.nodeStatuses)![key] = _data["nodeStatuses"][key];
+                }
+            }
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["executionName"] = this.executionName;
+        data["executedBy"] = this.executedBy;
+        data["startedAt"] = this.startedAt ? this.startedAt.toISOString() : <any>undefined;
+        data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
+        data["duration"] = this.duration;
+        data["status"] = this.status;
+        data["progress"] = this.progress ? this.progress.toJSON() : <any>undefined;
+        data["triggerType"] = this.triggerType;
+        data["isRerun"] = this.isRerun;
+        data["errorMessage"] = this.errorMessage;
+        if (this.nodeStatuses) {
+            data["nodeStatuses"] = {};
+            for (let key in this.nodeStatuses) {
+                if (this.nodeStatuses.hasOwnProperty(key))
+                    (<any>data["nodeStatuses"])[key] = (<any>this.nodeStatuses)[key];
+            }
+        }
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowExecutionSummaryDtoListApiResponse implements interfaces.IWorkflowExecutionSummaryDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowExecutionSummaryDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowExecutionSummaryDtoListApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(WorkflowExecutionSummaryDto.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionSummaryDtoListApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionSummaryDtoListApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowImportDto implements interfaces.IWorkflowImportDto {
+    workflowData!: string;
+    format?: string | undefined;
+    name!: string;
+    description?: string | undefined;
+    importPermissions?: boolean;
+    tags?: string[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowImportDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.workflowData = _data["workflowData"];
+            this.format = _data["format"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.importPermissions = _data["importPermissions"];
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowImportDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowImportDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["workflowData"] = this.workflowData;
+        data["format"] = this.format;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["importPermissions"] = this.importPermissions;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowListDto implements interfaces.IWorkflowListDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    creator?: string | undefined;
+    createdAt?: Date;
+    updatedAt?: Date | undefined;
+    status?: enums.WorkflowStatus;
+    version?: number;
+    tags?: string[] | undefined;
+    isTemplate?: boolean;
+    executionCount?: number;
+    averageExecutionTime?: string | undefined;
+    nodeCount?: number;
+    edgeCount?: number;
+    complexityLevel?: enums.ComplexityLevel;
+    isPublic?: boolean;
+    hasPermission?: boolean;
+
+    constructor(data?: interfaces.IWorkflowListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.creator = _data["creator"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.updatedAt = _data["updatedAt"] ? new Date(_data["updatedAt"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.version = _data["version"];
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+            this.isTemplate = _data["isTemplate"];
+            this.executionCount = _data["executionCount"];
+            this.averageExecutionTime = _data["averageExecutionTime"];
+            this.nodeCount = _data["nodeCount"];
+            this.edgeCount = _data["edgeCount"];
+            this.complexityLevel = _data["complexityLevel"];
+            this.isPublic = _data["isPublic"];
+            this.hasPermission = _data["hasPermission"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["creator"] = this.creator;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["updatedAt"] = this.updatedAt ? this.updatedAt.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["version"] = this.version;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        data["isTemplate"] = this.isTemplate;
+        data["executionCount"] = this.executionCount;
+        data["averageExecutionTime"] = this.averageExecutionTime;
+        data["nodeCount"] = this.nodeCount;
+        data["edgeCount"] = this.edgeCount;
+        data["complexityLevel"] = this.complexityLevel;
+        data["isPublic"] = this.isPublic;
+        data["hasPermission"] = this.hasPermission;
+        return data;
+    }
+}
+
+export class WorkflowListDtoPagedResponse implements interfaces.IWorkflowListDtoPagedResponse {
+    items?: WorkflowListDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    readonly hasPreviousPage?: boolean;
+    readonly hasNextPage?: boolean;
+
+    constructor(data?: interfaces.IWorkflowListDtoPagedResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(WorkflowListDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.pageSize = _data["pageSize"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            (<any>this).hasPreviousPage = _data["hasPreviousPage"];
+            (<any>this).hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowListDtoPagedResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowListDtoPagedResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["pageSize"] = this.pageSize;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export class WorkflowListDtoPagedResponseApiResponse implements interfaces.IWorkflowListDtoPagedResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowListDtoPagedResponse;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowListDtoPagedResponseApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowListDtoPagedResponse.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowListDtoPagedResponseApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowListDtoPagedResponseApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowNodeCreateDto implements interfaces.IWorkflowNodeCreateDto {
+    id!: string;
+    name!: string;
+    description?: string | undefined;
+    programId!: string;
+    versionId?: string | undefined;
+    nodeType?: enums.WorkflowNodeType;
+    position?: NodePositionDto;
+    inputConfiguration?: NodeInputConfigurationDto;
+    outputConfiguration?: NodeOutputConfigurationDto;
+    executionSettings?: NodeExecutionSettingsDto;
+    conditionalExecution?: NodeConditionalExecutionDto;
+    uiConfiguration?: NodeUIConfigurationDto;
+    metadata?: BsonElement[] | undefined;
+    isDisabled?: boolean;
+
+    constructor(data?: interfaces.IWorkflowNodeCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.programId = _data["programId"];
+            this.versionId = _data["versionId"];
+            this.nodeType = _data["nodeType"];
+            this.position = _data["position"] ? NodePositionDto.fromJS(_data["position"]) : <any>undefined;
+            this.inputConfiguration = _data["inputConfiguration"] ? NodeInputConfigurationDto.fromJS(_data["inputConfiguration"]) : <any>undefined;
+            this.outputConfiguration = _data["outputConfiguration"] ? NodeOutputConfigurationDto.fromJS(_data["outputConfiguration"]) : <any>undefined;
+            this.executionSettings = _data["executionSettings"] ? NodeExecutionSettingsDto.fromJS(_data["executionSettings"]) : <any>undefined;
+            this.conditionalExecution = _data["conditionalExecution"] ? NodeConditionalExecutionDto.fromJS(_data["conditionalExecution"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? NodeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isDisabled = _data["isDisabled"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowNodeCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowNodeCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["programId"] = this.programId;
+        data["versionId"] = this.versionId;
+        data["nodeType"] = this.nodeType;
+        data["position"] = this.position ? this.position.toJSON() : <any>undefined;
+        data["inputConfiguration"] = this.inputConfiguration ? this.inputConfiguration.toJSON() : <any>undefined;
+        data["outputConfiguration"] = this.outputConfiguration ? this.outputConfiguration.toJSON() : <any>undefined;
+        data["executionSettings"] = this.executionSettings ? this.executionSettings.toJSON() : <any>undefined;
+        data["conditionalExecution"] = this.conditionalExecution ? this.conditionalExecution.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isDisabled"] = this.isDisabled;
+        return data;
+    }
+}
+
+export class WorkflowNodeDto implements interfaces.IWorkflowNodeDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    programId?: string | undefined;
+    programName?: string | undefined;
+    versionId?: string | undefined;
+    nodeType?: enums.WorkflowNodeType;
+    position?: NodePositionDto;
+    inputConfiguration?: NodeInputConfigurationDto;
+    outputConfiguration?: NodeOutputConfigurationDto;
+    executionSettings?: NodeExecutionSettingsDto;
+    conditionalExecution?: NodeConditionalExecutionDto;
+    uiConfiguration?: NodeUIConfigurationDto;
+    metadata?: BsonElement[] | undefined;
+    isDisabled?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date | undefined;
+    validationResult?: NodeValidationResult;
+
+    constructor(data?: interfaces.IWorkflowNodeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.programId = _data["programId"];
+            this.programName = _data["programName"];
+            this.versionId = _data["versionId"];
+            this.nodeType = _data["nodeType"];
+            this.position = _data["position"] ? NodePositionDto.fromJS(_data["position"]) : <any>undefined;
+            this.inputConfiguration = _data["inputConfiguration"] ? NodeInputConfigurationDto.fromJS(_data["inputConfiguration"]) : <any>undefined;
+            this.outputConfiguration = _data["outputConfiguration"] ? NodeOutputConfigurationDto.fromJS(_data["outputConfiguration"]) : <any>undefined;
+            this.executionSettings = _data["executionSettings"] ? NodeExecutionSettingsDto.fromJS(_data["executionSettings"]) : <any>undefined;
+            this.conditionalExecution = _data["conditionalExecution"] ? NodeConditionalExecutionDto.fromJS(_data["conditionalExecution"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? NodeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isDisabled = _data["isDisabled"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.updatedAt = _data["updatedAt"] ? new Date(_data["updatedAt"].toString()) : <any>undefined;
+            this.validationResult = _data["validationResult"] ? NodeValidationResult.fromJS(_data["validationResult"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowNodeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowNodeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["programId"] = this.programId;
+        data["programName"] = this.programName;
+        data["versionId"] = this.versionId;
+        data["nodeType"] = this.nodeType;
+        data["position"] = this.position ? this.position.toJSON() : <any>undefined;
+        data["inputConfiguration"] = this.inputConfiguration ? this.inputConfiguration.toJSON() : <any>undefined;
+        data["outputConfiguration"] = this.outputConfiguration ? this.outputConfiguration.toJSON() : <any>undefined;
+        data["executionSettings"] = this.executionSettings ? this.executionSettings.toJSON() : <any>undefined;
+        data["conditionalExecution"] = this.conditionalExecution ? this.conditionalExecution.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isDisabled"] = this.isDisabled;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["updatedAt"] = this.updatedAt ? this.updatedAt.toISOString() : <any>undefined;
+        data["validationResult"] = this.validationResult ? this.validationResult.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowNodeUpdateDto implements interfaces.IWorkflowNodeUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    programId?: string | undefined;
+    versionId?: string | undefined;
+    nodeType?: enums.WorkflowNodeType;
+    position?: NodePositionDto;
+    inputConfiguration?: NodeInputConfigurationDto;
+    outputConfiguration?: NodeOutputConfigurationDto;
+    executionSettings?: NodeExecutionSettingsDto;
+    conditionalExecution?: NodeConditionalExecutionDto;
+    uiConfiguration?: NodeUIConfigurationDto;
+    metadata?: BsonElement[] | undefined;
+    isDisabled?: boolean | undefined;
+
+    constructor(data?: interfaces.IWorkflowNodeUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.programId = _data["programId"];
+            this.versionId = _data["versionId"];
+            this.nodeType = _data["nodeType"];
+            this.position = _data["position"] ? NodePositionDto.fromJS(_data["position"]) : <any>undefined;
+            this.inputConfiguration = _data["inputConfiguration"] ? NodeInputConfigurationDto.fromJS(_data["inputConfiguration"]) : <any>undefined;
+            this.outputConfiguration = _data["outputConfiguration"] ? NodeOutputConfigurationDto.fromJS(_data["outputConfiguration"]) : <any>undefined;
+            this.executionSettings = _data["executionSettings"] ? NodeExecutionSettingsDto.fromJS(_data["executionSettings"]) : <any>undefined;
+            this.conditionalExecution = _data["conditionalExecution"] ? NodeConditionalExecutionDto.fromJS(_data["conditionalExecution"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? NodeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isDisabled = _data["isDisabled"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowNodeUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowNodeUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["programId"] = this.programId;
+        data["versionId"] = this.versionId;
+        data["nodeType"] = this.nodeType;
+        data["position"] = this.position ? this.position.toJSON() : <any>undefined;
+        data["inputConfiguration"] = this.inputConfiguration ? this.inputConfiguration.toJSON() : <any>undefined;
+        data["outputConfiguration"] = this.outputConfiguration ? this.outputConfiguration.toJSON() : <any>undefined;
+        data["executionSettings"] = this.executionSettings ? this.executionSettings.toJSON() : <any>undefined;
+        data["conditionalExecution"] = this.conditionalExecution ? this.conditionalExecution.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isDisabled"] = this.isDisabled;
+        return data;
+    }
+}
+
+export class WorkflowNotificationSettingsDto implements interfaces.IWorkflowNotificationSettingsDto {
+    notifyOnStart?: boolean;
+    notifyOnCompletion?: boolean;
+    notifyOnFailure?: boolean;
+    recipients?: string[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowNotificationSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.notifyOnStart = _data["notifyOnStart"];
+            this.notifyOnCompletion = _data["notifyOnCompletion"];
+            this.notifyOnFailure = _data["notifyOnFailure"];
+            if (Array.isArray(_data["recipients"])) {
+                this.recipients = [] as any;
+                for (let item of _data["recipients"])
+                    this.recipients!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowNotificationSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowNotificationSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["notifyOnStart"] = this.notifyOnStart;
+        data["notifyOnCompletion"] = this.notifyOnCompletion;
+        data["notifyOnFailure"] = this.notifyOnFailure;
+        if (Array.isArray(this.recipients)) {
+            data["recipients"] = [];
+            for (let item of this.recipients)
+                data["recipients"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowOutputFile implements interfaces.IWorkflowOutputFile {
+    fileName?: string | undefined;
+    filePath?: string | undefined;
+    size?: number;
+    contentType?: string | undefined;
+    nodeId?: string | undefined;
+    createdAt?: Date;
+
+    constructor(data?: interfaces.IWorkflowOutputFile) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fileName = _data["fileName"];
+            this.filePath = _data["filePath"];
+            this.size = _data["size"];
+            this.contentType = _data["contentType"];
+            this.nodeId = _data["nodeId"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowOutputFile {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowOutputFile();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fileName"] = this.fileName;
+        data["filePath"] = this.filePath;
+        data["size"] = this.size;
+        data["contentType"] = this.contentType;
+        data["nodeId"] = this.nodeId;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowPermissionDto implements interfaces.IWorkflowPermissionDto {
+    isPublic?: boolean;
+    allowedUsers?: string[] | undefined;
+    allowedRoles?: string[] | undefined;
+    permissions?: WorkflowUserPermissionDto[] | undefined;
+    currentUserPermissions?: enums.WorkflowPermissionType[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isPublic = _data["isPublic"];
+            if (Array.isArray(_data["allowedUsers"])) {
+                this.allowedUsers = [] as any;
+                for (let item of _data["allowedUsers"])
+                    this.allowedUsers!.push(item);
+            }
+            if (Array.isArray(_data["allowedRoles"])) {
+                this.allowedRoles = [] as any;
+                for (let item of _data["allowedRoles"])
+                    this.allowedRoles!.push(item);
+            }
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(WorkflowUserPermissionDto.fromJS(item));
+            }
+            if (Array.isArray(_data["currentUserPermissions"])) {
+                this.currentUserPermissions = [] as any;
+                for (let item of _data["currentUserPermissions"])
+                    this.currentUserPermissions!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isPublic"] = this.isPublic;
+        if (Array.isArray(this.allowedUsers)) {
+            data["allowedUsers"] = [];
+            for (let item of this.allowedUsers)
+                data["allowedUsers"].push(item);
+        }
+        if (Array.isArray(this.allowedRoles)) {
+            data["allowedRoles"] = [];
+            for (let item of this.allowedRoles)
+                data["allowedRoles"].push(item);
+        }
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.currentUserPermissions)) {
+            data["currentUserPermissions"] = [];
+            for (let item of this.currentUserPermissions)
+                data["currentUserPermissions"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowPermissionDtoApiResponse implements interfaces.IWorkflowPermissionDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowPermissionDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowPermissionDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowPermissionDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowPermissionDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowPermissionDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowPermissionUpdateDto implements interfaces.IWorkflowPermissionUpdateDto {
+    isPublic?: boolean | undefined;
+    allowedUsers?: string[] | undefined;
+    allowedRoles?: string[] | undefined;
+    permissions?: WorkflowUserPermissionDto[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowPermissionUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isPublic = _data["isPublic"];
+            if (Array.isArray(_data["allowedUsers"])) {
+                this.allowedUsers = [] as any;
+                for (let item of _data["allowedUsers"])
+                    this.allowedUsers!.push(item);
+            }
+            if (Array.isArray(_data["allowedRoles"])) {
+                this.allowedRoles = [] as any;
+                for (let item of _data["allowedRoles"])
+                    this.allowedRoles!.push(item);
+            }
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(WorkflowUserPermissionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowPermissionUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowPermissionUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isPublic"] = this.isPublic;
+        if (Array.isArray(this.allowedUsers)) {
+            data["allowedUsers"] = [];
+            for (let item of this.allowedUsers)
+                data["allowedUsers"].push(item);
+        }
+        if (Array.isArray(this.allowedRoles)) {
+            data["allowedRoles"] = [];
+            for (let item of this.allowedRoles)
+                data["allowedRoles"].push(item);
+        }
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class WorkflowPermissionsDto implements interfaces.IWorkflowPermissionsDto {
+    isPublic?: boolean;
+    allowedUsers?: string[] | undefined;
+    allowedRoles?: string[] | undefined;
+    permissions?: WorkflowUserPermissionDto[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowPermissionsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isPublic = _data["isPublic"];
+            if (Array.isArray(_data["allowedUsers"])) {
+                this.allowedUsers = [] as any;
+                for (let item of _data["allowedUsers"])
+                    this.allowedUsers!.push(item);
+            }
+            if (Array.isArray(_data["allowedRoles"])) {
+                this.allowedRoles = [] as any;
+                for (let item of _data["allowedRoles"])
+                    this.allowedRoles!.push(item);
+            }
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(WorkflowUserPermissionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowPermissionsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowPermissionsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isPublic"] = this.isPublic;
+        if (Array.isArray(this.allowedUsers)) {
+            data["allowedUsers"] = [];
+            for (let item of this.allowedUsers)
+                data["allowedUsers"].push(item);
+        }
+        if (Array.isArray(this.allowedRoles)) {
+            data["allowedRoles"] = [];
+            for (let item of this.allowedRoles)
+                data["allowedRoles"].push(item);
+        }
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class WorkflowResourceUsage implements interfaces.IWorkflowResourceUsage {
+    totalCpuTimeSeconds?: number;
+    totalMemoryUsedBytes?: number;
+    totalDiskUsedBytes?: number;
+    peakConcurrentNodes?: number;
+    nodeResourceUsage?: { [key: string]: NodeResourceUsage; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowResourceUsage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCpuTimeSeconds = _data["totalCpuTimeSeconds"];
+            this.totalMemoryUsedBytes = _data["totalMemoryUsedBytes"];
+            this.totalDiskUsedBytes = _data["totalDiskUsedBytes"];
+            this.peakConcurrentNodes = _data["peakConcurrentNodes"];
+            if (_data["nodeResourceUsage"]) {
+                this.nodeResourceUsage = {} as any;
+                for (let key in _data["nodeResourceUsage"]) {
+                    if (_data["nodeResourceUsage"].hasOwnProperty(key))
+                        (<any>this.nodeResourceUsage)![key] = _data["nodeResourceUsage"][key] ? NodeResourceUsage.fromJS(_data["nodeResourceUsage"][key]) : new NodeResourceUsage();
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowResourceUsage {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowResourceUsage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCpuTimeSeconds"] = this.totalCpuTimeSeconds;
+        data["totalMemoryUsedBytes"] = this.totalMemoryUsedBytes;
+        data["totalDiskUsedBytes"] = this.totalDiskUsedBytes;
+        data["peakConcurrentNodes"] = this.peakConcurrentNodes;
+        if (this.nodeResourceUsage) {
+            data["nodeResourceUsage"] = {};
+            for (let key in this.nodeResourceUsage) {
+                if (this.nodeResourceUsage.hasOwnProperty(key))
+                    (<any>data["nodeResourceUsage"])[key] = this.nodeResourceUsage[key] ? this.nodeResourceUsage[key].toJSON() : <any>undefined;
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowRetryPolicyDto implements interfaces.IWorkflowRetryPolicyDto {
+    maxRetries?: number;
+    retryDelaySeconds?: number;
+    exponentialBackoff?: boolean;
+    retryOnFailureTypes?: string[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowRetryPolicyDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.maxRetries = _data["maxRetries"];
+            this.retryDelaySeconds = _data["retryDelaySeconds"];
+            this.exponentialBackoff = _data["exponentialBackoff"];
+            if (Array.isArray(_data["retryOnFailureTypes"])) {
+                this.retryOnFailureTypes = [] as any;
+                for (let item of _data["retryOnFailureTypes"])
+                    this.retryOnFailureTypes!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowRetryPolicyDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowRetryPolicyDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["maxRetries"] = this.maxRetries;
+        data["retryDelaySeconds"] = this.retryDelaySeconds;
+        data["exponentialBackoff"] = this.exponentialBackoff;
+        if (Array.isArray(this.retryOnFailureTypes)) {
+            data["retryOnFailureTypes"] = [];
+            for (let item of this.retryOnFailureTypes)
+                data["retryOnFailureTypes"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowSettingsDto implements interfaces.IWorkflowSettingsDto {
+    maxConcurrentNodes?: number;
+    timeoutMinutes?: number;
+    retryPolicy?: WorkflowRetryPolicyDto;
+    enableDebugging?: boolean;
+    saveIntermediateResults?: boolean;
+    notificationSettings?: WorkflowNotificationSettingsDto;
+
+    constructor(data?: interfaces.IWorkflowSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.maxConcurrentNodes = _data["maxConcurrentNodes"];
+            this.timeoutMinutes = _data["timeoutMinutes"];
+            this.retryPolicy = _data["retryPolicy"] ? WorkflowRetryPolicyDto.fromJS(_data["retryPolicy"]) : <any>undefined;
+            this.enableDebugging = _data["enableDebugging"];
+            this.saveIntermediateResults = _data["saveIntermediateResults"];
+            this.notificationSettings = _data["notificationSettings"] ? WorkflowNotificationSettingsDto.fromJS(_data["notificationSettings"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["maxConcurrentNodes"] = this.maxConcurrentNodes;
+        data["timeoutMinutes"] = this.timeoutMinutes;
+        data["retryPolicy"] = this.retryPolicy ? this.retryPolicy.toJSON() : <any>undefined;
+        data["enableDebugging"] = this.enableDebugging;
+        data["saveIntermediateResults"] = this.saveIntermediateResults;
+        data["notificationSettings"] = this.notificationSettings ? this.notificationSettings.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowStatisticsDto implements interfaces.IWorkflowStatisticsDto {
+    totalExecutions?: number;
+    successfulExecutions?: number;
+    failedExecutions?: number;
+    cancelledExecutions?: number;
+    successRate?: number;
+    averageExecutionTime?: string;
+    fastestExecutionTime?: string;
+    slowestExecutionTime?: string;
+    lastExecutionDate?: Date | undefined;
+    executionsByStatus?: { [key: string]: number; } | undefined;
+    executionsByMonth?: { [key: string]: number; } | undefined;
+    nodeSuccessRates?: { [key: string]: number; } | undefined;
+    nodeAverageExecutionTimes?: { [key: string]: string; } | undefined;
+    recentExecutions?: WorkflowExecutionSummaryDto[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowStatisticsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalExecutions = _data["totalExecutions"];
+            this.successfulExecutions = _data["successfulExecutions"];
+            this.failedExecutions = _data["failedExecutions"];
+            this.cancelledExecutions = _data["cancelledExecutions"];
+            this.successRate = _data["successRate"];
+            this.averageExecutionTime = _data["averageExecutionTime"];
+            this.fastestExecutionTime = _data["fastestExecutionTime"];
+            this.slowestExecutionTime = _data["slowestExecutionTime"];
+            this.lastExecutionDate = _data["lastExecutionDate"] ? new Date(_data["lastExecutionDate"].toString()) : <any>undefined;
+            if (_data["executionsByStatus"]) {
+                this.executionsByStatus = {} as any;
+                for (let key in _data["executionsByStatus"]) {
+                    if (_data["executionsByStatus"].hasOwnProperty(key))
+                        (<any>this.executionsByStatus)![key] = _data["executionsByStatus"][key];
+                }
+            }
+            if (_data["executionsByMonth"]) {
+                this.executionsByMonth = {} as any;
+                for (let key in _data["executionsByMonth"]) {
+                    if (_data["executionsByMonth"].hasOwnProperty(key))
+                        (<any>this.executionsByMonth)![key] = _data["executionsByMonth"][key];
+                }
+            }
+            if (_data["nodeSuccessRates"]) {
+                this.nodeSuccessRates = {} as any;
+                for (let key in _data["nodeSuccessRates"]) {
+                    if (_data["nodeSuccessRates"].hasOwnProperty(key))
+                        (<any>this.nodeSuccessRates)![key] = _data["nodeSuccessRates"][key];
+                }
+            }
+            if (_data["nodeAverageExecutionTimes"]) {
+                this.nodeAverageExecutionTimes = {} as any;
+                for (let key in _data["nodeAverageExecutionTimes"]) {
+                    if (_data["nodeAverageExecutionTimes"].hasOwnProperty(key))
+                        (<any>this.nodeAverageExecutionTimes)![key] = _data["nodeAverageExecutionTimes"][key];
+                }
+            }
+            if (Array.isArray(_data["recentExecutions"])) {
+                this.recentExecutions = [] as any;
+                for (let item of _data["recentExecutions"])
+                    this.recentExecutions!.push(WorkflowExecutionSummaryDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowStatisticsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowStatisticsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalExecutions"] = this.totalExecutions;
+        data["successfulExecutions"] = this.successfulExecutions;
+        data["failedExecutions"] = this.failedExecutions;
+        data["cancelledExecutions"] = this.cancelledExecutions;
+        data["successRate"] = this.successRate;
+        data["averageExecutionTime"] = this.averageExecutionTime;
+        data["fastestExecutionTime"] = this.fastestExecutionTime;
+        data["slowestExecutionTime"] = this.slowestExecutionTime;
+        data["lastExecutionDate"] = this.lastExecutionDate ? this.lastExecutionDate.toISOString() : <any>undefined;
+        if (this.executionsByStatus) {
+            data["executionsByStatus"] = {};
+            for (let key in this.executionsByStatus) {
+                if (this.executionsByStatus.hasOwnProperty(key))
+                    (<any>data["executionsByStatus"])[key] = (<any>this.executionsByStatus)[key];
+            }
+        }
+        if (this.executionsByMonth) {
+            data["executionsByMonth"] = {};
+            for (let key in this.executionsByMonth) {
+                if (this.executionsByMonth.hasOwnProperty(key))
+                    (<any>data["executionsByMonth"])[key] = (<any>this.executionsByMonth)[key];
+            }
+        }
+        if (this.nodeSuccessRates) {
+            data["nodeSuccessRates"] = {};
+            for (let key in this.nodeSuccessRates) {
+                if (this.nodeSuccessRates.hasOwnProperty(key))
+                    (<any>data["nodeSuccessRates"])[key] = (<any>this.nodeSuccessRates)[key];
+            }
+        }
+        if (this.nodeAverageExecutionTimes) {
+            data["nodeAverageExecutionTimes"] = {};
+            for (let key in this.nodeAverageExecutionTimes) {
+                if (this.nodeAverageExecutionTimes.hasOwnProperty(key))
+                    (<any>data["nodeAverageExecutionTimes"])[key] = (<any>this.nodeAverageExecutionTimes)[key];
+            }
+        }
+        if (Array.isArray(this.recentExecutions)) {
+            data["recentExecutions"] = [];
+            for (let item of this.recentExecutions)
+                data["recentExecutions"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class WorkflowStatisticsDtoApiResponse implements interfaces.IWorkflowStatisticsDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowStatisticsDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowStatisticsDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowStatisticsDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowStatisticsDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowStatisticsDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    status?: enums.WorkflowStatus;
+    nodes?: WorkflowNodeUpdateDto[] | undefined;
+    edges?: WorkflowEdgeUpdateDto[] | undefined;
+    settings?: WorkflowSettingsDto;
+    permissions?: WorkflowPermissionsDto;
+    tags?: string[] | undefined;
+    metadata?: BsonElement[] | undefined;
+    isTemplate?: boolean | undefined;
+
+    constructor(data?: interfaces.IWorkflowUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.status = _data["status"];
+            if (Array.isArray(_data["nodes"])) {
+                this.nodes = [] as any;
+                for (let item of _data["nodes"])
+                    this.nodes!.push(WorkflowNodeUpdateDto.fromJS(item));
+            }
+            if (Array.isArray(_data["edges"])) {
+                this.edges = [] as any;
+                for (let item of _data["edges"])
+                    this.edges!.push(WorkflowEdgeUpdateDto.fromJS(item));
+            }
+            this.settings = _data["settings"] ? WorkflowSettingsDto.fromJS(_data["settings"]) : <any>undefined;
+            this.permissions = _data["permissions"] ? WorkflowPermissionsDto.fromJS(_data["permissions"]) : <any>undefined;
+            if (Array.isArray(_data["tags"])) {
+                this.tags = [] as any;
+                for (let item of _data["tags"])
+                    this.tags!.push(item);
+            }
+            if (Array.isArray(_data["metadata"])) {
+                this.metadata = [] as any;
+                for (let item of _data["metadata"])
+                    this.metadata!.push(BsonElement.fromJS(item));
+            }
+            this.isTemplate = _data["isTemplate"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        if (Array.isArray(this.nodes)) {
+            data["nodes"] = [];
+            for (let item of this.nodes)
+                data["nodes"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.edges)) {
+            data["edges"] = [];
+            for (let item of this.edges)
+                data["edges"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["settings"] = this.settings ? this.settings.toJSON() : <any>undefined;
+        data["permissions"] = this.permissions ? this.permissions.toJSON() : <any>undefined;
+        if (Array.isArray(this.tags)) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        if (Array.isArray(this.metadata)) {
+            data["metadata"] = [];
+            for (let item of this.metadata)
+                data["metadata"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["isTemplate"] = this.isTemplate;
+        return data;
+    }
+}
+
+export class WorkflowUserPermissionDto implements interfaces.IWorkflowUserPermissionDto {
+    userId!: string;
+    permissions?: enums.WorkflowPermissionType[] | undefined;
+
+    constructor(data?: interfaces.IWorkflowUserPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowUserPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowUserPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item);
+        }
+        return data;
+    }
+}
+
+export class WorkflowValidationError implements interfaces.IWorkflowValidationError {
+    errorCode?: string | undefined;
+    errorType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    nodeId?: string | undefined;
+    edgeId?: string | undefined;
+    severity?: enums.ValidationSeverity;
+    suggestedFix?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowValidationError) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.errorCode = _data["errorCode"];
+            this.errorType = _data["errorType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            this.nodeId = _data["nodeId"];
+            this.edgeId = _data["edgeId"];
+            this.severity = _data["severity"];
+            this.suggestedFix = _data["suggestedFix"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowValidationError {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowValidationError();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["errorCode"] = this.errorCode;
+        data["errorType"] = this.errorType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        data["nodeId"] = this.nodeId;
+        data["edgeId"] = this.edgeId;
+        data["severity"] = this.severity;
+        data["suggestedFix"] = this.suggestedFix;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowValidationInfo implements interfaces.IWorkflowValidationInfo {
+    infoCode?: string | undefined;
+    infoType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowValidationInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.infoCode = _data["infoCode"];
+            this.infoType = _data["infoType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowValidationInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowValidationInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["infoCode"] = this.infoCode;
+        data["infoType"] = this.infoType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowValidationResult implements interfaces.IWorkflowValidationResult {
+    isValid?: boolean;
+    errors?: WorkflowValidationError[] | undefined;
+    warnings?: WorkflowValidationWarning[] | undefined;
+    info?: WorkflowValidationInfo[] | undefined;
+    complexityMetrics?: WorkflowComplexityMetrics;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowValidationResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isValid = _data["isValid"];
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(WorkflowValidationError.fromJS(item));
+            }
+            if (Array.isArray(_data["warnings"])) {
+                this.warnings = [] as any;
+                for (let item of _data["warnings"])
+                    this.warnings!.push(WorkflowValidationWarning.fromJS(item));
+            }
+            if (Array.isArray(_data["info"])) {
+                this.info = [] as any;
+                for (let item of _data["info"])
+                    this.info!.push(WorkflowValidationInfo.fromJS(item));
+            }
+            this.complexityMetrics = _data["complexityMetrics"] ? WorkflowComplexityMetrics.fromJS(_data["complexityMetrics"]) : <any>undefined;
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowValidationResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowValidationResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isValid"] = this.isValid;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.warnings)) {
+            data["warnings"] = [];
+            for (let item of this.warnings)
+                data["warnings"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.info)) {
+            data["info"] = [];
+            for (let item of this.info)
+                data["info"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["complexityMetrics"] = this.complexityMetrics ? this.complexityMetrics.toJSON() : <any>undefined;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class WorkflowValidationResultApiResponse implements interfaces.IWorkflowValidationResultApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: WorkflowValidationResult;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IWorkflowValidationResultApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? WorkflowValidationResult.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): WorkflowValidationResultApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowValidationResultApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class WorkflowValidationWarning implements interfaces.IWorkflowValidationWarning {
+    warningCode?: string | undefined;
+    warningType?: string | undefined;
+    message?: string | undefined;
+    details?: string | undefined;
+    nodeId?: string | undefined;
+    edgeId?: string | undefined;
+    severity?: enums.ValidationSeverity;
+    recommendation?: string | undefined;
+    context?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IWorkflowValidationWarning) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.warningCode = _data["warningCode"];
+            this.warningType = _data["warningType"];
+            this.message = _data["message"];
+            this.details = _data["details"];
+            this.nodeId = _data["nodeId"];
+            this.edgeId = _data["edgeId"];
+            this.severity = _data["severity"];
+            this.recommendation = _data["recommendation"];
+            if (_data["context"]) {
+                this.context = {} as any;
+                for (let key in _data["context"]) {
+                    if (_data["context"].hasOwnProperty(key))
+                        (<any>this.context)![key] = _data["context"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): WorkflowValidationWarning {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowValidationWarning();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["warningCode"] = this.warningCode;
+        data["warningType"] = this.warningType;
+        data["message"] = this.message;
+        data["details"] = this.details;
+        data["nodeId"] = this.nodeId;
+        data["edgeId"] = this.edgeId;
+        data["severity"] = this.severity;
+        data["recommendation"] = this.recommendation;
+        if (this.context) {
+            data["context"] = {};
+            for (let key in this.context) {
+                if (this.context.hasOwnProperty(key))
+                    (<any>data["context"])[key] = (<any>this.context)[key];
+            }
+        }
         return data;
     }
 }

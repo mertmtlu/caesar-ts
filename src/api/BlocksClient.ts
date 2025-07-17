@@ -2,6 +2,7 @@
 
 import * as types from './types';
 import * as interfaces from './interfaces';
+import * as enums from './enums';
 import { throwException } from './utils';
 
 export class BlocksClient implements interfaces.IBlocksClient {

@@ -52,6 +52,7 @@ export class UserClientAssignmentDto implements typeInterfaces.IUserClientAssign
     }
 }
 
+
 export class UsersClient implements interfaces.IUsersClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;

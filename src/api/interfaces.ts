@@ -2385,4 +2385,300 @@ export interface IVersionsClient {
     versions_GetVersionActivity(programId: string, days: number | undefined): Promise<types.IVersionActivityDtoListApiResponse>;
 }
 
+export interface IWorkflowsClient {
+
+    /**
+     * Get all workflows with pagination
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    workflows_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IWorkflowListDtoPagedResponseApiResponse>;
+
+    /**
+     * Create a new workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_Create(body: types.IWorkflowCreateDto | undefined): Promise<types.IWorkflowDetailDtoApiResponse>;
+
+    /**
+     * Get workflow by ID
+     * @return OK
+     */
+    workflows_GetById(id: string): Promise<types.IWorkflowDetailDtoApiResponse>;
+
+    /**
+     * Update an existing workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_Update(id: string, body: types.IWorkflowUpdateDto | undefined): Promise<types.IWorkflowDetailDtoApiResponse>;
+
+    /**
+     * Delete a workflow
+     * @return OK
+     */
+    workflows_Delete(id: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Get workflows by user
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    workflows_GetByUser(userId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IWorkflowListDtoPagedResponseApiResponse>;
+
+    /**
+     * Get workflows by status
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    workflows_GetByStatus(status: enums.WorkflowStatus, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IWorkflowListDtoPagedResponseApiResponse>;
+
+    /**
+     * Search workflows
+     * @param searchTerm (optional) 
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    workflows_Search(searchTerm: string | undefined, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IWorkflowListDtoPagedResponseApiResponse>;
+
+    /**
+     * Get workflow templates
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    workflows_GetTemplates(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IWorkflowListDtoPagedResponseApiResponse>;
+
+    /**
+     * Clone a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_Clone(id: string, body: types.IWorkflowCloneDto | undefined): Promise<types.IWorkflowDetailDtoApiResponse>;
+
+    /**
+     * Update workflow status
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_UpdateStatus(id: string, body: enums.WorkflowStatus | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Archive a workflow
+     * @return OK
+     */
+    workflows_Archive(id: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Restore an archived workflow
+     * @return OK
+     */
+    workflows_Restore(id: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Validate a workflow
+     * @return OK
+     */
+    workflows_Validate(id: string): Promise<types.IWorkflowValidationResultApiResponse>;
+
+    /**
+     * Get workflow execution plan
+     * @return OK
+     */
+    workflows_GetExecutionPlan(id: string): Promise<types.IWorkflowExecutionPlanDtoApiResponse>;
+
+    /**
+     * Get workflow complexity metrics
+     * @return OK
+     */
+    workflows_GetComplexity(id: string): Promise<types.IWorkflowComplexityMetricsApiResponse>;
+
+    /**
+     * Execute a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_Execute(id: string, body: types.IWorkflowExecutionRequest | undefined): Promise<types.IWorkflowExecutionApiResponse>;
+
+    /**
+     * Get workflow execution status
+     * @return OK
+     */
+    workflows_GetExecutionStatus(executionId: string): Promise<types.IWorkflowExecutionApiResponse>;
+
+    /**
+     * Pause a workflow execution
+     * @return OK
+     */
+    workflows_PauseExecution(executionId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Resume a workflow execution
+     * @return OK
+     */
+    workflows_ResumeExecution(executionId: string): Promise<types.IWorkflowExecutionApiResponse>;
+
+    /**
+     * Cancel a workflow execution
+     * @return OK
+     */
+    workflows_CancelExecution(executionId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Get all node outputs from a workflow execution
+     * @return OK
+     */
+    workflows_GetExecutionOutputs(executionId: string): Promise<types.IStringWorkflowDataContractDictionaryApiResponse>;
+
+    /**
+     * Get specific node output from a workflow execution
+     * @return OK
+     */
+    workflows_GetNodeOutput(executionId: string, nodeId: string): Promise<types.IWorkflowDataContractApiResponse>;
+
+    /**
+     * Get execution statistics
+     * @return OK
+     */
+    workflows_GetExecutionStatistics(executionId: string): Promise<types.IWorkflowExecutionStatisticsApiResponse>;
+
+    /**
+     * Get execution logs
+     * @param skip (optional) 
+     * @param take (optional) 
+     * @return OK
+     */
+    workflows_GetExecutionLogs(executionId: string, skip: number | undefined, take: number | undefined): Promise<types.IWorkflowExecutionLogListApiResponse>;
+
+    /**
+     * Add a node to a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_AddNode(id: string, body: types.IWorkflowNodeCreateDto | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Update a node in a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_UpdateNode(id: string, nodeId: string, body: types.IWorkflowNodeUpdateDto | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Remove a node from a workflow
+     * @return OK
+     */
+    workflows_RemoveNode(id: string, nodeId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Execute a specific node in a workflow execution
+     * @return OK
+     */
+    workflows_ExecuteNode(executionId: string, nodeId: string): Promise<types.INodeExecutionApiResponse>;
+
+    /**
+     * Retry a failed node in a workflow execution
+     * @return OK
+     */
+    workflows_RetryNode(executionId: string, nodeId: string): Promise<types.INodeExecutionApiResponse>;
+
+    /**
+     * Skip a node in a workflow execution
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_SkipNode(executionId: string, nodeId: string, body: string | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Add an edge to a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_AddEdge(id: string, body: types.IWorkflowEdgeCreateDto | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Update an edge in a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_UpdateEdge(id: string, edgeId: string, body: types.IWorkflowEdgeUpdateDto | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Remove an edge from a workflow
+     * @return OK
+     */
+    workflows_RemoveEdge(id: string, edgeId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Get workflow statistics
+     * @return OK
+     */
+    workflows_GetStatistics(id: string): Promise<types.IWorkflowStatisticsDtoApiResponse>;
+
+    /**
+     * Get workflow execution history
+     * @param limit (optional) 
+     * @return OK
+     */
+    workflows_GetExecutionHistory(id: string, limit: number | undefined): Promise<types.IWorkflowExecutionSummaryDtoListApiResponse>;
+
+    /**
+     * Get all active executions
+     * @return OK
+     */
+    workflows_GetActiveExecutions(): Promise<types.IWorkflowExecutionListApiResponse>;
+
+    /**
+     * Get workflow permissions
+     * @return OK
+     */
+    workflows_GetPermissions(id: string): Promise<types.IWorkflowPermissionDtoApiResponse>;
+
+    /**
+     * Update workflow permissions
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_UpdatePermissions(id: string, body: types.IWorkflowPermissionUpdateDto | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Get all workflow tags
+     * @return OK
+     */
+    workflows_GetTags(): Promise<types.IStringListApiResponse>;
+
+    /**
+     * Get workflows by tag
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    workflows_GetByTag(tag: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IWorkflowListDtoPagedResponseApiResponse>;
+
+    /**
+     * Export a workflow
+     * @param format (optional) 
+     * @return OK
+     */
+    workflows_Export(id: string, format: string | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Import a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_Import(body: types.IWorkflowImportDto | undefined): Promise<types.IWorkflowDetailDtoApiResponse>;
+}
+
 // --- END OF FILE interfaces.ts ---

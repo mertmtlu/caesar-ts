@@ -98,6 +98,7 @@ export class ApiClient {
     private _uiComponents!: interfaces.IUiComponentsClient;
     private _users!: interfaces.IUsersClient;
     private _versions!: interfaces.IVersionsClient;
+    private _workflows!: interfaces.IWorkflowsClient;
 
     /**
      * Initialize API client with base URL and authentication handlers
@@ -140,6 +141,7 @@ export class ApiClient {
         this._uiComponents = new clients.UiComponentsClient(this.baseUrl, this.http);
         this._users = new clients.UsersClient(this.baseUrl, this.http);
         this._versions = new clients.VersionsClient(this.baseUrl, this.http);
+        this._workflows = new clients.WorkflowsClient(this.baseUrl, this.http);
     }
 
     /**
@@ -252,6 +254,13 @@ export class ApiClient {
      */
     get versions(): interfaces.IVersionsClient {
         return this._versions;
+    }
+
+    /**
+     * Workflows management operations
+     */
+    get workflows(): interfaces.IWorkflowsClient {
+        return this._workflows;
     }
 
     /**
