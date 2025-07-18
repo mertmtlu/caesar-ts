@@ -511,17 +511,6 @@ const DashboardHome: React.FC = () => {
           </div>
           <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
             <Button
-              variant="outline"
-              onClick={() => navigate('/editor')}
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              }
-            >
-              Code Editor
-            </Button>
-            <Button
               variant="primary"
               onClick={() => navigate('/projects/create')}
               leftIcon={

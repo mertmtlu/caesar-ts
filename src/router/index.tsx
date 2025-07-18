@@ -33,6 +33,12 @@ import EditorPage from '@/pages/editor/EditorPage';
 import ExecutionsPage from '@/pages/executions/ExecutionsPage';
 import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
 
+// Workflow Pages
+import WorkflowsPage from '@/pages/workflows/WorkflowsPage';
+import WorkflowDetailPage from '@/pages/workflows/WorkflowDetailPage';
+import WorkflowDesignerPage from '@/pages/workflows/WorkflowDesignerPage';
+import WorkflowExecutionPage from '@/pages/workflows/WorkflowExecutionPage';
+
 // // Settings Pages (to be created)
 // import SettingsPage from '@/pages/settings/SettingsPage';
 // import ProfilePage from '@/pages/settings/ProfilePage';
@@ -182,6 +188,38 @@ export const router = createBrowserRouter([
           {
             path: ':executionId',
             element: <ExecutionDetailPage />
+          }
+        ]
+      },
+
+      // Workflow routes
+      {
+        path: 'workflows',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <WorkflowsPage />
+          },
+          {
+            path: 'designer',
+            element: <WorkflowDesignerPage />
+          },
+          {
+            path: ':workflowId',
+            element: <WorkflowDetailPage />
+          },
+          {
+            path: ':workflowId/designer',
+            element: <WorkflowDesignerPage />
+          },
+          {
+            path: ':workflowId/execution/:executionId',
+            element: <WorkflowExecutionPage />
           }
         ]
       },

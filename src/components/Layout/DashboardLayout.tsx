@@ -26,6 +26,15 @@ const navigationItems = [
     )
   },
   {
+    name: 'Workflows',
+    href: '/workflows',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5z M5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z M11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5z M11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg>
+    )
+  },
+  {
     name: 'Executions',
     href: '/executions',
     icon: (
@@ -243,6 +252,7 @@ const DashboardLayout: React.FC = () => {
               <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {location.pathname === '/dashboard' && 'Dashboard'}
                 {location.pathname.startsWith('/projects') && 'Projects'}
+                {location.pathname.startsWith('/workflows') && 'Workflows'}
                 {location.pathname.startsWith('/editor') && 'Code Editor'}
                 {location.pathname.startsWith('/executions') && 'Executions'}
                 {location.pathname.startsWith('/settings') && 'Settings'}
