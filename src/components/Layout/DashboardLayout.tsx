@@ -170,7 +170,7 @@ const DashboardLayout: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                   </div>
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">Ceasar</span>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">Caesar</span>
                 </div>
               </div>
               <nav className="mt-5 px-2 space-y-1">
@@ -207,7 +207,7 @@ const DashboardLayout: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                   </div>
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">Ceasar</span>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">Caesar</span>
                 </div>
               </div>
               <nav className="mt-8 flex-1 px-2 space-y-1">

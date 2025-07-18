@@ -48,7 +48,7 @@ const AuthLayout: React.FC = () => {
                 </svg>
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                Ceasar
+                Caesar
               </div>
             </div>
           </div>
