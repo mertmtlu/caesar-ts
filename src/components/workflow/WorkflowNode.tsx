@@ -182,45 +182,61 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
     }
   }, []);
   
-  // Calculate connection point positions
+  // Calculate connection point positions for bump-style connectors
   const getConnectionPointPosition = (point: ConnectionPoint): Position => {
-    const pointSize = CANVAS_DEFAULTS.CONNECTION_POINT_SIZE;
-    const headerHeight = 32; // Approximate header height
-    const bodyPadding = 8;
+    const bumpSize = 16; // Size of the bump
+    const headerHeight = 40; // Adjusted header height
+    const spacing = 8; // Space between connection points
+    const startY = headerHeight + 10; // Start position after header
+    
+    // Calculate Y position based on connection point index
+    const connectionPoints = node.connectionPoints || [];
+    const inputPoints = connectionPoints.filter(p => p.type === 'input');
+    const outputPoints = connectionPoints.filter(p => p.type === 'output');
+    
+    let yPosition = startY;
+    if (point.type === 'input') {
+      const inputIndex = inputPoints.findIndex(p => p.id === point.id);
+      yPosition = startY + (inputIndex * (bumpSize + spacing));
+    } else {
+      const outputIndex = outputPoints.findIndex(p => p.id === point.id);
+      yPosition = startY + (outputIndex * (bumpSize + spacing));
+    }
     
     if (point.type === 'input') {
       return {
-        x: -pointSize / 2,
-        y: headerHeight + bodyPadding + (point.position.y || 20),
+        x: -bumpSize / 2 + 6, // Half the bump extends from left edge
+        y: yPosition,
       };
     } else {
       return {
-        x: node.size.width - pointSize / 2,
-        y: headerHeight + bodyPadding + (point.position.y || 20),
+        x: node.size.width - bumpSize / 2 + 10, // Half the bump extends from right edge
+        y: yPosition,
       };
     }
   };
   
-  // Render connection point
+  // Render connection point with bump-style design
   const renderConnectionPoint = (point: ConnectionPoint) => {
     const position = getConnectionPointPosition(point);
     const isHovered = hoveredConnectionPoint === point.id;
     const isActive = point.isConnected || isHovered;
+    const bumpSize = 25;
     
     return (
       <div
         key={point.id}
-        className={`absolute cursor-crosshair z-50 ${
-          isActive ? 'opacity-100' : 'opacity-60'
+        className={`absolute cursor-crosshair z-50 transition-all duration-200 ${
+          isActive ? 'opacity-100 scale-110' : 'opacity-80 hover:opacity-100 hover:scale-105'
         }`}
         style={{
           left: position.x,
           top: position.y,
-          width: CANVAS_DEFAULTS.CONNECTION_POINT_SIZE + 8, // Larger click area
-          height: CANVAS_DEFAULTS.CONNECTION_POINT_SIZE + 8,
+          width:  3, // Slightly larger click area
+          height: bumpSize + 4,
           transform: 'translate(-50%, -50%)',
-          pointerEvents: 'auto', // Make sure it's clickable
-          zIndex: 1000, // Above everything
+          pointerEvents: 'auto',
+          zIndex: 1000,
         }}
         onMouseDown={(e) => handleConnectionPointMouseDown(e, point)}
         onMouseUp={(e) => handleConnectionPointMouseUp(e, point)}
@@ -228,29 +244,85 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
         onMouseLeave={handleConnectionPointMouseLeave}
         title={`${point.type}: ${point.label} (${point.dataType})`}
       >
-        <div
-          className={`w-3 h-3 rounded-full border-2 transition-all duration-200 shadow-sm cursor-crosshair mx-auto my-auto ${
-            isActive
-              ? 'bg-blue-500 border-blue-600 scale-125 shadow-lg'
-              : point.type === 'input'
-              ? 'bg-green-400 border-green-500 hover:bg-green-500 hover:scale-110'
-              : 'bg-orange-400 border-orange-500 hover:bg-orange-500 hover:scale-110'
-          }`}
-        />
+        {/* Bump Shape */}
+        <div className="relative w-full h-full flex items-center justify-center">
+          <div
+            className={`relative transition-all duration-200 border cursor-crosshair flex items-center justify-center ${
+              isActive 
+                ? 'bg-blue-500 border-blue-400 shadow-lg shadow-blue-500/50' 
+                : point.isConnected
+                ? 'bg-gray-600 border-gray-500 shadow-md'
+                : 'bg-gray-400 border-gray-300 hover:bg-gray-500 hover:border-gray-400 shadow-sm'
+            }`}
+            style={{
+              width: `${bumpSize}px`,
+              height: `${bumpSize - 4}px`,
+              borderRadius: point.type === 'input' 
+                ? '8px 2px 2px 8px' // Rounded on the left (protruding left)
+                : '2px 8px 8px 2px', // Rounded on the right (protruding right)
+              transform: isActive ? 'scale(1.1)' : 'scale(1)',
+            }}
+          >
+            {/* Arrow symbol inside bump */}
+            <div 
+              className={`text-white font-bold text-xs select-none ${
+                isActive ? 'text-white' : 'text-gray-100'
+              }`}
+              style={{ 
+                fontSize: '10px',
+                lineHeight: '1',
+                fontFamily: 'monospace',
+                transform: 'scaleX(0.8)' // Make arrow slightly narrower
+              }}
+            >
+{'>'}
+            </div>
+            
+            {/* Connection indicator dot */}
+            {point.isConnected && (
+              <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-green-400 rounded-full border border-white shadow-sm" />
+            )}
+            
+            {/* Glow effect when active */}
+            {isActive && (
+              <div 
+                className="absolute inset-0 rounded-full bg-blue-400 opacity-30 animate-pulse"
+                style={{ transform: 'scale(1.3)' }}
+              />
+            )}
+          </div>
+        </div>
         
-        {/* Connection point label */}
+        {/* Tooltip */}
         {isHovered && (
           <div
-            className={`absolute text-xs bg-gray-900 text-white px-2 py-1 rounded-md shadow-lg whitespace-nowrap z-20 pointer-events-none ${
+            className={`absolute text-xs bg-gray-900 text-white px-2 py-1.5 rounded-md shadow-lg whitespace-nowrap z-20 pointer-events-none border border-gray-700 ${
               point.type === 'input' ? 'left-6' : 'right-6'
             }`}
             style={{ top: '50%', transform: 'translateY(-50%)' }}
           >
-            <div className="font-medium">{point.label}</div>
-            <div className="text-gray-300 text-xs">{point.dataType}</div>
-            {point.required && <span className="text-red-300">*</span>}
+            <div className="flex items-center space-x-1.5">
+              {/* Mini bump icon in tooltip */}
+              <div 
+                className="w-3 h-2.5 bg-gray-500 border border-gray-400 flex items-center justify-center"
+                style={{
+                  borderRadius: point.type === 'input' 
+                    ? '4px 1px 1px 4px' // Match input bump shape
+                    : '1px 4px 4px 1px'  // Match output bump shape
+                }}
+              >
+                <span className="text-white text-xs font-mono" style={{ fontSize: '8px' }}>
+    {'>'}
+                </span>
+              </div>
+              <div>
+                <div className="font-medium text-white">{point.label}</div>
+                <div className="text-gray-300 text-xs">{point.dataType}</div>
+                {point.required && <span className="text-red-400">*</span>}
+              </div>
+            </div>
             <div className="text-xs text-gray-400 mt-1">
-              {point.type === 'input' ? 'Drop connections here' : 'Drag to connect'}
+              {point.type === 'input' ? 'Input connection' : 'Output connection'}
             </div>
           </div>
         )}

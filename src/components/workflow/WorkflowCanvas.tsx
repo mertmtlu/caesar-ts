@@ -29,8 +29,10 @@ interface WorkflowCanvasProps {
   onNodeAdd: (node: WorkflowDesignerNode) => void;
   onNodeUpdate: (nodeId: string, updates: Partial<WorkflowDesignerNode>) => void;
   onNodeSelect: (nodeId: string, addToSelection?: boolean) => void;
+  onNodeDelete?: (nodeId: string) => void;
   onEdgeAdd: (edge: WorkflowDesignerEdge) => void;
   onEdgeSelect: (edgeId: string, addToSelection?: boolean) => void;
+  onEdgeDelete?: (edgeId: string) => void;
   onSelectionChange: (selection: SelectionState) => void;
   onFullscreenToggle?: () => void;
 }
@@ -45,8 +47,10 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onNodeAdd,
   onNodeUpdate,
   onNodeSelect,
+  onNodeDelete,
   onEdgeAdd,
   onEdgeSelect,
+  onEdgeDelete,
   onSelectionChange,
   onFullscreenToggle,
 }) => {
@@ -131,6 +135,19 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   } | null>(null);
   const [hoveredConnectionPoint, setHoveredConnectionPoint] = useState<ConnectionPoint | null>(null);
   
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    nodeId?: string;
+    edgeId?: string;
+  }>({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
+  
   // Convert screen coordinates to world coordinates
   const screenToWorld = useCallback((screenPos: Position): Position => {
     return {
@@ -192,8 +209,64 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     }
   }, [canvasState.zoom, canvasState.pan, getMousePosition, screenToWorld, worldToScreen, onCanvasUpdate]);
   
+  // Handle right-click context menu
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const mousePos = getMousePosition(e);
+    const worldPos = screenToWorld(mousePos);
+    
+    // Check if right-clicking on a node
+    const clickedNode = Array.from(nodes.values()).find(node => {
+      const nodeRect = {
+        x: node.position.x,
+        y: node.position.y,
+        width: node.size.width,
+        height: node.size.height,
+      };
+      
+      return (
+        worldPos.x >= nodeRect.x &&
+        worldPos.x <= nodeRect.x + nodeRect.width &&
+        worldPos.y >= nodeRect.y &&
+        worldPos.y <= nodeRect.y + nodeRect.height
+      );
+    });
+    
+    // Check if right-clicking on an edge
+    let clickedEdge = null;
+    if (!clickedNode) {
+      // Simple edge hit testing - could be improved with more sophisticated geometry
+      clickedEdge = Array.from(edges.values()).find(edge => {
+        const sourceNode = nodes.get(edge.sourceNodeId || '');
+        const targetNode = nodes.get(edge.targetNodeId || '');
+        if (!sourceNode || !targetNode) return false;
+        
+        // Simplified edge hit detection - check if click is near edge path
+        const sourcePos = { x: sourceNode.position.x + sourceNode.size.width, y: sourceNode.position.y + sourceNode.size.height / 2 };
+        const targetPos = { x: targetNode.position.x, y: targetNode.position.y + targetNode.size.height / 2 };
+        
+        // Distance from point to line segment (simplified)
+        const distance = Math.abs((targetPos.y - sourcePos.y) * worldPos.x - (targetPos.x - sourcePos.x) * worldPos.y + targetPos.x * sourcePos.y - targetPos.y * sourcePos.x) / 
+                        Math.sqrt(Math.pow(targetPos.y - sourcePos.y, 2) + Math.pow(targetPos.x - sourcePos.x, 2));
+        
+        return distance < 10; // 10px tolerance
+      });
+    }
+    
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      nodeId: clickedNode?.id,
+      edgeId: clickedEdge?.id,
+    });
+  }, [getMousePosition, screenToWorld, nodes, edges]);
+
   // Handle mouse down for various interactions
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // Hide context menu on any click
+    setContextMenu(prev => ({ ...prev, visible: false }));
+    
     const mousePos = getMousePosition(e);
     const worldPos = screenToWorld(mousePos);
     
@@ -366,6 +439,8 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     // Clear connection preview
     if (connectionPreview) {
       setConnectionPreview(null);
+      // Reset cursor when ending connection mode
+      document.body.style.cursor = 'default';
     }
     
     if (dragMode === 'select' && selectionBox) {
@@ -417,6 +492,20 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     setSelectionBox(null);
     setDragPreview({ previewNodes: [], isDragging: false }); // Clear drag preview
   }, [dragMode, selectionBox, nodes, onSelectionChange, connectionPreview, dragPreview, onNodeUpdate]);
+
+  // Context menu handlers
+  const handleDeleteFromContext = useCallback(() => {
+    if (contextMenu.nodeId && onNodeDelete) {
+      onNodeDelete(contextMenu.nodeId);
+    } else if (contextMenu.edgeId && onEdgeDelete) {
+      onEdgeDelete(contextMenu.edgeId);
+    }
+    setContextMenu(prev => ({ ...prev, visible: false }));
+  }, [contextMenu, onNodeDelete, onEdgeDelete]);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenu(prev => ({ ...prev, visible: false }));
+  }, []);
   
   // Handle connection start
   const handleConnectionStart = useCallback((point: ConnectionPoint) => {
@@ -435,26 +524,107 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   // Handle connection hover
   const handleConnectionHover = useCallback((point: ConnectionPoint | null) => {
     setHoveredConnectionPoint(point);
-  }, []);
+    
+    // If we're in connection mode and hovering over a point, validate if connection is possible
+    if (connectionPreview && point) {
+      const sourcePoint = connectionPreview.sourcePoint;
+      
+      // Check if this would be a valid connection
+      const isValidTarget = 
+        sourcePoint.nodeId !== point.nodeId && // Not same node
+        sourcePoint.type !== point.type && // Different types
+        sourcePoint.type === 'output' && point.type === 'input' && // Output to input
+        !Array.from(edges.values()).some(edge => 
+          edge.sourceNodeId === sourcePoint.nodeId &&
+          edge.targetNodeId === point.nodeId &&
+          edge.sourceOutputName === sourcePoint.label &&
+          edge.targetInputName === point.label
+        ) && // No duplicate connection
+        !Array.from(edges.values()).some(edge => 
+          edge.targetNodeId === point.nodeId &&
+          edge.targetInputName === point.label
+        ); // Input not already connected
+      
+      // Update cursor based on validity
+      if (!isValidTarget) {
+        document.body.style.cursor = 'not-allowed';
+      } else {
+        document.body.style.cursor = 'crosshair';
+      }
+    } else if (!connectionPreview) {
+      // Reset cursor when not in connection mode
+      document.body.style.cursor = 'default';
+    }
+  }, [connectionPreview, edges]);
   
   // Handle connection end
   const handleConnectionEnd = useCallback((targetPoint: ConnectionPoint) => {
     if (connectionPreview) {
       console.log('Connecting:', connectionPreview.sourcePoint, 'to', targetPoint);
       
-      // Create new edge
+      // Validation checks
+      const sourcePoint = connectionPreview.sourcePoint;
+      
+      // 1. Prevent self-connections (same node)
+      if (sourcePoint.nodeId === targetPoint.nodeId) {
+        console.warn('Cannot connect node to itself');
+        setConnectionPreview(null);
+        return;
+      }
+      
+      // 2. Prevent connecting input to input or output to output
+      if (sourcePoint.type === targetPoint.type) {
+        console.warn('Cannot connect', sourcePoint.type, 'to', targetPoint.type);
+        setConnectionPreview(null);
+        return;
+      }
+      
+      // 3. Ensure we're connecting output to input (not input to output)
+      if (sourcePoint.type === 'input' || targetPoint.type === 'output') {
+        console.warn('Connections must go from output to input');
+        setConnectionPreview(null);
+        return;
+      }
+      
+      // 4. Check for duplicate connections
+      const existingConnection = Array.from(edges.values()).find(edge => 
+        edge.sourceNodeId === sourcePoint.nodeId &&
+        edge.targetNodeId === targetPoint.nodeId &&
+        edge.sourceOutputName === sourcePoint.label &&
+        edge.targetInputName === targetPoint.label
+      );
+      
+      if (existingConnection) {
+        console.warn('Connection already exists between these points');
+        setConnectionPreview(null);
+        return;
+      }
+      
+      // 5. Check if target input already has a connection (inputs can only have one connection)
+      const existingInputConnection = Array.from(edges.values()).find(edge => 
+        edge.targetNodeId === targetPoint.nodeId &&
+        edge.targetInputName === targetPoint.label
+      );
+      
+      if (existingInputConnection) {
+        console.warn('Input already has a connection');
+        setConnectionPreview(null);
+        return;
+      }
+      
+      // All validations passed - create new edge
       const newEdge: WorkflowDesignerEdge = {
         id: `edge-${Date.now()}`,
-        sourceNodeId: connectionPreview.sourcePoint.nodeId,
+        sourceNodeId: sourcePoint.nodeId,
         targetNodeId: targetPoint.nodeId,
-        sourceOutputName: connectionPreview.sourcePoint.label,
+        sourceOutputName: sourcePoint.label,
         targetInputName: targetPoint.label,
         edgeType: WorkflowEdgeType._0, // Standard
-        path: `M ${connectionPreview.sourcePoint.position.x} ${connectionPreview.sourcePoint.position.y} L ${targetPoint.position.x} ${targetPoint.position.y}`,
+        path: `M ${sourcePoint.position.x} ${sourcePoint.position.y} L ${targetPoint.position.x} ${targetPoint.position.y}`,
         isSelected: false,
         isHighlighted: false,
         validationErrors: [],
-        sourcePosition: connectionPreview.sourcePoint.position,
+        sourcePosition: sourcePoint.position,
         targetPosition: targetPoint.position,
         strokeWidth: 2,
         strokeColor: '#6b7280',
@@ -472,7 +642,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     
     // Clear connection preview
     setConnectionPreview(null);
-  }, [connectionPreview, onEdgeAdd]);
+  }, [connectionPreview, onEdgeAdd, edges]);
   
   // Handle mouse move for connection preview - removed as it's now handled inline
   
@@ -694,6 +864,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onWheel={handleWheel}
+          onContextMenu={handleContextMenu}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           style={{ touchAction: 'none' }}
@@ -725,14 +896,43 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                 
                 if (!sourceNode || !targetNode) return null;
                 
-                const sourcePos = {
-                  x: sourceNode.position.x + sourceNode.size.width,
-                  y: sourceNode.position.y + sourceNode.size.height / 2
+                // Calculate bump positions for connections with horizontal segments
+                const getBumpPosition = (node: any, isOutput: boolean, connectionName?: string) => {
+                  const bumpSize = 25; // Updated to match the new bump size
+                  const headerHeight = 40;
+                  const spacing = 8;
+                  const startY = headerHeight + 10;
+                  const horizontalOffset = 20; // 20px horizontal segment
+                  
+                  const connectionPoints = node.connectionPoints || [];
+                  const relevantPoints = connectionPoints.filter((p: any) => 
+                    isOutput ? p.type === 'output' : p.type === 'input'
+                  );
+                  
+                  // Find the specific connection point or use first one
+                  let pointIndex = 0;
+                  if (connectionName) {
+                    const foundIndex = relevantPoints.findIndex((p: any) => p.label === connectionName);
+                    if (foundIndex >= 0) pointIndex = foundIndex;
+                  }
+                  
+                  const yPosition = startY + (pointIndex * (bumpSize + spacing));
+                  
+                  if (isOutput) {
+                    return {
+                      x: node.position.x + node.size.width - bumpSize / 2 + 10 + horizontalOffset,
+                      y: node.position.y + yPosition
+                    };
+                  } else {
+                    return {
+                      x: node.position.x - bumpSize / 2 + 6 - horizontalOffset,
+                      y: node.position.y + yPosition
+                    };
+                  }
                 };
-                const targetPos = {
-                  x: targetNode.position.x,
-                  y: targetNode.position.y + targetNode.size.height / 2
-                };
+                
+                const sourcePos = getBumpPosition(sourceNode, true, edge.sourceOutputName);
+                const targetPos = getBumpPosition(targetNode, false, edge.targetInputName);
                 
                 return (
                   <WorkflowEdge
@@ -742,7 +942,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                     targetPosition={targetPos}
                     isSelected={selection.edges.includes(edge.id)}
                     onEdgeSelect={onEdgeSelect}
-                    onEdgeDelete={() => {}} // TODO: Implement edge deletion
+                    onEdgeDelete={onEdgeDelete ? () => onEdgeDelete(edge.id) : () => {}}
                     onEdgeHover={() => {}} // TODO: Implement edge hover
                   />
                 );
@@ -868,6 +1068,38 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           )}
         </div>
       </div>
+      
+      {/* Context Menu */}
+      {contextMenu.visible && (
+        <>
+          {/* Backdrop to close menu */}
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={handleCloseContextMenu}
+          />
+          
+          {/* Context menu */}
+          <div
+            className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-[120px]"
+            style={{
+              left: contextMenu.x,
+              top: contextMenu.y,
+            }}
+          >
+            {(contextMenu.nodeId || contextMenu.edgeId) && (
+              <button
+                className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                onClick={handleDeleteFromContext}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>Delete {contextMenu.nodeId ? 'Node' : 'Connection'}</span>
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

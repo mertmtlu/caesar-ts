@@ -61,6 +61,7 @@ const WorkflowDesignerPage: React.FC = () => {
     initializeDesigner();
   }, [workflowId]);
 
+
   const loadWorkflow = async () => {
     if (!workflowId) return;
 
@@ -211,13 +212,30 @@ const WorkflowDesignerPage: React.FC = () => {
     });
   }, []);
 
-  // const handleNodeDelete = useCallback((nodeId: string) => {
-  //   setDesignerState(prev => {
-  //     const newNodes = new Map(prev.nodes);
-  //     newNodes.delete(nodeId);
-  //     return { ...prev, nodes: newNodes };
-  //   });
-  // }, []);
+  const handleNodeDelete = useCallback((nodeId: string) => {
+    setDesignerState(prev => {
+      const newNodes = new Map(prev.nodes);
+      const newEdges = new Map(prev.edges);
+      
+      newNodes.delete(nodeId);
+      // Remove the node
+      
+      // Remove all edges connected to this node
+      const edgesToDelete = Array.from(newEdges.values()).filter(
+        edge => edge.sourceNodeId === nodeId || edge.targetNodeId === nodeId
+      );
+      edgesToDelete.forEach(edge => newEdges.delete(edge.id));
+      
+      // Update selection to remove deleted node
+      const newSelection = {
+        ...prev.selection,
+        nodes: prev.selection.nodes.filter(id => id !== nodeId),
+        edges: prev.selection.edges.filter(id => !edgesToDelete.some(edge => edge.id === id))
+      };
+      
+      return { ...prev, nodes: newNodes, edges: newEdges, selection: newSelection };
+    });
+  }, []);
 
   const handleEdgeAdd = useCallback((edge: WorkflowDesignerEdge) => {
     setDesignerState(prev => {
@@ -247,22 +265,62 @@ const WorkflowDesignerPage: React.FC = () => {
     });
   }, []);
 
-  // const handleEdgeDelete = useCallback((edgeId: string) => {
-  //   setDesignerState(prev => {
-  //     const newEdges = new Map(prev.edges);
-  //     newEdges.delete(edgeId);
-  //     return { ...prev, edges: newEdges };
-  //   });
-  // }, []);
+  const handleEdgeDelete = useCallback((edgeId: string) => {
+    setDesignerState(prev => {
+      const newEdges = new Map(prev.edges);
+      newEdges.delete(edgeId);
+      
+      // Update selection to remove deleted edge
+      const newSelection = {
+        ...prev.selection,
+        edges: prev.selection.edges.filter(id => id !== edgeId)
+      };
+      
+      return { ...prev, edges: newEdges, selection: newSelection };
+    });
+  }, []);
 
   const handleSelectionChange = useCallback((selection: typeof designerState.selection) => {
     setDesignerState(prev => ({ ...prev, selection }));
   }, []);
 
+  // Delete selected items
+  const handleDeleteSelected = useCallback(() => {
+    // Delete selected nodes (and their connected edges)
+    designerState.selection.nodes.forEach(nodeId => {
+      handleNodeDelete(nodeId);
+    });
+    
+    // Delete selected edges
+    designerState.selection.edges.forEach(edgeId => {
+      handleEdgeDelete(edgeId);
+    });
+  }, [designerState.selection, handleNodeDelete, handleEdgeDelete]);
+
   // Fullscreen handlers
   const handleFullscreenToggle = useCallback(() => {
     setIsFullscreen(prev => !prev);
   }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if we're not in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        if (designerState.selection.nodes.length > 0 || designerState.selection.edges.length > 0) {
+          handleDeleteSelected();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [designerState.selection, handleDeleteSelected]);
 
   if (designerState.isLoading) {
     return (
@@ -296,8 +354,10 @@ const WorkflowDesignerPage: React.FC = () => {
           onNodeAdd={handleNodeAdd}
           onNodeUpdate={handleNodeUpdate}
           onNodeSelect={handleNodeSelect}
+          onNodeDelete={handleNodeDelete}
           onEdgeAdd={handleEdgeAdd}
           onEdgeSelect={handleEdgeSelect}
+          onEdgeDelete={handleEdgeDelete}
           onSelectionChange={handleSelectionChange}
           onFullscreenToggle={handleFullscreenToggle}
         />
@@ -448,8 +508,10 @@ const WorkflowDesignerPage: React.FC = () => {
           onNodeAdd={handleNodeAdd}
           onNodeUpdate={handleNodeUpdate}
           onNodeSelect={handleNodeSelect}
+          onNodeDelete={handleNodeDelete}
           onEdgeAdd={handleEdgeAdd}
           onEdgeSelect={handleEdgeSelect}
+          onEdgeDelete={handleEdgeDelete}
           onSelectionChange={handleSelectionChange}
           onFullscreenToggle={handleFullscreenToggle}
         />

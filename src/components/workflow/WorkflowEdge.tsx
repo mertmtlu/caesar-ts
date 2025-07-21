@@ -310,75 +310,90 @@ export const EdgeMarkerDefinitions: React.FC = () => (
     {/* Standard arrow */}
     <marker
       id="arrowhead-standard"
-      markerWidth="10"
-      markerHeight="7"
-      refX="9"
-      refY="3.5"
+      markerWidth="12"
+      markerHeight="8"
+      refX="11"
+      refY="4"
       orient="auto"
+      markerUnits="strokeWidth"
     >
       <polygon
-        points="0 0, 10 3.5, 0 7"
+        points="0 0, 12 4, 0 8"
         fill={COLORS.EDGE_DEFAULT}
+        stroke={COLORS.EDGE_DEFAULT}
+        strokeWidth="0.5"
       />
     </marker>
     
     {/* Conditional arrow */}
     <marker
       id="arrowhead-conditional"
-      markerWidth="10"
-      markerHeight="7"
-      refX="9"
-      refY="3.5"
+      markerWidth="12"
+      markerHeight="8"
+      refX="11"
+      refY="4"
       orient="auto"
+      markerUnits="strokeWidth"
     >
       <polygon
-        points="0 0, 10 3.5, 0 7"
+        points="0 0, 12 4, 0 8"
         fill="#f59e0b"
+        stroke="#f59e0b"
+        strokeWidth="0.5"
       />
     </marker>
     
     {/* Success arrow */}
     <marker
       id="arrowhead-success"
-      markerWidth="10"
-      markerHeight="7"
-      refX="9"
-      refY="3.5"
+      markerWidth="12"
+      markerHeight="8"
+      refX="11"
+      refY="4"
       orient="auto"
+      markerUnits="strokeWidth"
     >
       <polygon
-        points="0 0, 10 3.5, 0 7"
+        points="0 0, 12 4, 0 8"
         fill="#10b981"
+        stroke="#10b981"
+        strokeWidth="0.5"
       />
     </marker>
     
     {/* Error arrow */}
     <marker
       id="arrowhead-error"
-      markerWidth="10"
-      markerHeight="7"
-      refX="9"
-      refY="3.5"
+      markerWidth="12"
+      markerHeight="8"
+      refX="11"
+      refY="4"
       orient="auto"
+      markerUnits="strokeWidth"
     >
       <polygon
-        points="0 0, 10 3.5, 0 7"
+        points="0 0, 12 4, 0 8"
         fill="#ef4444"
+        stroke="#ef4444"
+        strokeWidth="0.5"
       />
     </marker>
     
     {/* Data arrow */}
     <marker
       id="arrowhead-data"
-      markerWidth="10"
-      markerHeight="7"
-      refX="9"
-      refY="3.5"
+      markerWidth="12"
+      markerHeight="8"
+      refX="11"
+      refY="4"
       orient="auto"
+      markerUnits="strokeWidth"
     >
       <polygon
-        points="0 0, 10 3.5, 0 7"
+        points="0 0, 12 4, 0 8"
         fill="#8b5cf6"
+        stroke="#8b5cf6"
+        strokeWidth="0.5"
       />
     </marker>
   </defs>

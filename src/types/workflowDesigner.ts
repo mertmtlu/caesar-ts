@@ -338,10 +338,28 @@ export const calculateEdgePath = (
   sourcePos: Position,
   targetPos: Position
 ): string => {
+  // sourcePos and targetPos are already the extended positions (20px from bumps)
+  // We need to draw: bump -> horizontal segment -> curve -> horizontal segment -> bump
+  
+  const horizontalLength = 20; // Length of horizontal segments
+  
+  // Actual bump positions (20px back from the extended positions)
+  const sourceBumpX = sourcePos.x - horizontalLength;
+  const targetBumpX = targetPos.x + horizontalLength;
+  
+  // Control points for smooth curve
   const dx = targetPos.x - sourcePos.x;
   const curveOffset = Math.min(Math.abs(dx) * 0.5, 100);
   
-  return `M ${sourcePos.x} ${sourcePos.y} C ${sourcePos.x + curveOffset} ${sourcePos.y} ${targetPos.x - curveOffset} ${targetPos.y} ${targetPos.x} ${targetPos.y}`;
+  // Create path: bump -> horizontal -> curve -> horizontal -> bump
+  return [
+    `M ${sourceBumpX} ${sourcePos.y}`,           // Start at source bump
+    `L ${sourcePos.x} ${sourcePos.y}`,           // Horizontal line to extended position
+    `C ${sourcePos.x + curveOffset} ${sourcePos.y}`, // Curve control point 1
+    `${targetPos.x - curveOffset} ${targetPos.y}`,   // Curve control point 2  
+    `${targetPos.x} ${targetPos.y}`,             // End curve at extended position
+    `L ${targetBumpX} ${targetPos.y}`            // Horizontal line to target bump
+  ].join(' ');
 };
 
 export const getBoundsFromNodes = (nodes: WorkflowDesignerNode[]): Bounds => {
