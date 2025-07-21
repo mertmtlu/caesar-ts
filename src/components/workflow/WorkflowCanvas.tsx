@@ -22,6 +22,7 @@ interface WorkflowCanvasProps {
   edges: Map<string, WorkflowDesignerEdge>;
   canvasState: CanvasState;
   selection: SelectionState;
+  isFullscreen?: boolean;
   
   // Event handlers
   onCanvasUpdate: (updates: Partial<CanvasState>) => void;
@@ -31,6 +32,7 @@ interface WorkflowCanvasProps {
   onEdgeAdd: (edge: WorkflowDesignerEdge) => void;
   onEdgeSelect: (edgeId: string, addToSelection?: boolean) => void;
   onSelectionChange: (selection: SelectionState) => void;
+  onFullscreenToggle?: () => void;
 }
 
 const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
@@ -38,6 +40,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   edges,
   canvasState,
   selection,
+  isFullscreen = false,
   onCanvasUpdate,
   onNodeAdd,
   onNodeUpdate,
@@ -45,6 +48,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onEdgeAdd,
   onEdgeSelect,
   onSelectionChange,
+  onFullscreenToggle,
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -578,8 +582,12 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     </defs>
   ) : null;
   
+  const containerClasses = isFullscreen 
+    ? "h-screen w-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900"
+    : "flex-1 flex flex-col overflow-hidden";
+
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className={containerClasses}>
       {/* Canvas Controls */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
         <div className="flex items-center space-x-6">
@@ -652,6 +660,25 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
               </svg>
             </button>
+            
+            {/* Fullscreen toggle */}
+            {onFullscreenToggle && (
+              <button
+                onClick={onFullscreenToggle}
+                className="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+              >
+                {isFullscreen ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>

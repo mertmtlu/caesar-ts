@@ -38,6 +38,9 @@ const WorkflowDesignerPage: React.FC = () => {
       warnings: [],
     },
   });
+  
+  // Fullscreen state
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const initializeDesigner = async () => {
@@ -256,10 +259,90 @@ const WorkflowDesignerPage: React.FC = () => {
     setDesignerState(prev => ({ ...prev, selection }));
   }, []);
 
+  // Fullscreen handlers
+  const handleFullscreenToggle = useCallback(() => {
+    setIsFullscreen(prev => !prev);
+  }, []);
+
   if (designerState.isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (isFullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 bg-gray-50 dark:bg-gray-900 flex">
+        {/* Sidebar - Node Library */}
+        <div className="w-[28rem] bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+          <WorkflowNodeToolbox 
+            onNodeAdd={(template, position) => {
+              const newNode = createNodeFromTemplate(template, position);
+              handleNodeAdd(newNode);
+            }}
+          />
+        </div>
+
+        {/* Main Canvas */}
+        <WorkflowCanvas
+          nodes={designerState.nodes}
+          edges={designerState.edges}
+          canvasState={designerState.canvas}
+          selection={designerState.selection}
+          isFullscreen={isFullscreen}
+          onCanvasUpdate={handleCanvasUpdate}
+          onNodeAdd={handleNodeAdd}
+          onNodeUpdate={handleNodeUpdate}
+          onNodeSelect={handleNodeSelect}
+          onEdgeAdd={handleEdgeAdd}
+          onEdgeSelect={handleEdgeSelect}
+          onSelectionChange={handleSelectionChange}
+          onFullscreenToggle={handleFullscreenToggle}
+        />
+
+        {/* Properties Panel */}
+        <div className="w-[28rem] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 p-4">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Properties</h2>
+          
+          {designerState.selection.nodes.length > 0 ? (
+            <div className="space-y-4">
+              {designerState.selection.nodes.map(nodeId => {
+                const node = designerState.nodes.get(nodeId);
+                if (!node) return null;
+                
+                return (
+                  <div key={nodeId}>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      {node.name}
+                    </h3>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {node.description || 'No description'}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
+                      <div>Language: {node.programInfo?.language}</div>
+                      <div>Type: {node.programInfo?.type}</div>
+                      <div>Status: {node.programInfo?.status}</div>
+                      <div>Position: x:{Math.round(node.position.x)}, y:{Math.round(node.position.y)}</div>
+                    </div>
+                  </div>
+                );
+              })}
+              
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Node Configuration</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">
+                  Node configuration options will be available here
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Select a node to view its properties
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -360,6 +443,7 @@ const WorkflowDesignerPage: React.FC = () => {
           edges={designerState.edges}
           canvasState={designerState.canvas}
           selection={designerState.selection}
+          isFullscreen={isFullscreen}
           onCanvasUpdate={handleCanvasUpdate}
           onNodeAdd={handleNodeAdd}
           onNodeUpdate={handleNodeUpdate}
@@ -367,6 +451,7 @@ const WorkflowDesignerPage: React.FC = () => {
           onEdgeAdd={handleEdgeAdd}
           onEdgeSelect={handleEdgeSelect}
           onSelectionChange={handleSelectionChange}
+          onFullscreenToggle={handleFullscreenToggle}
         />
 
         {/* Properties Panel */}
