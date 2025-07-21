@@ -113,6 +113,11 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     start: Position;
     end: Position;
   } | null>(null);
+  // Drag preview state for visual feedback without state updates
+  const [dragPreview, setDragPreview] = useState<{
+    previewNodes: Array<{ node: WorkflowDesignerNode; previewPosition: Position }>;
+    isDragging: boolean;
+  }>({ previewNodes: [], isDragging: false });
   // const [lastMousePos, setLastMousePos] = useState<Position>({ x: 0, y: 0 }); // Currently unused
   
   // Connection state
@@ -309,29 +314,27 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         break;
         
       case 'node':
-        // Update node positions with requestAnimationFrame for smooth dragging
-        const updateNodePositions = () => {
-          draggedNodes.forEach(nodeId => {
-            const node = nodes.get(nodeId);
-            const offset = dragOffsets.get(nodeId);
-            if (node && offset) {
-              let newPosition = {
-                x: worldPos.x - offset.x,
-                y: worldPos.y - offset.y,
-              };
-              
-              // Snap to grid if enabled
-              if (canvasState.showGrid) {
-                newPosition.x = Math.round(newPosition.x / canvasState.gridSize) * canvasState.gridSize;
-                newPosition.y = Math.round(newPosition.y / canvasState.gridSize) * canvasState.gridSize;
-              }
-              
-              onNodeUpdate(nodeId, { position: newPosition });
-            }
-          });
-        };
+        // Update preview nodes for visual feedback without state updates
+        const previewNodes = draggedNodes.map(nodeId => {
+          const node = nodes.get(nodeId);
+          const offset = dragOffsets.get(nodeId);
+          if (!node || !offset) return null;
+          
+          let previewPosition = {
+            x: worldPos.x - offset.x,
+            y: worldPos.y - offset.y,
+          };
+          
+          // Snap to grid if enabled
+          if (canvasState.showGrid) {
+            previewPosition.x = Math.round(previewPosition.x / canvasState.gridSize) * canvasState.gridSize;
+            previewPosition.y = Math.round(previewPosition.y / canvasState.gridSize) * canvasState.gridSize;
+          }
+          
+          return { node, previewPosition };
+        }).filter((item): item is { node: WorkflowDesignerNode; previewPosition: Position } => item !== null);
         
-        requestAnimationFrame(updateNodePositions);
+        setDragPreview({ previewNodes, isDragging: true });
         break;
     }
   }, [
@@ -351,6 +354,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     onNodeUpdate,
     nodes,
     setConnectionPreview,
+    dragPreview,
   ]);
   
   // Handle mouse up
@@ -394,13 +398,21 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       });
     }
     
+    // Update actual node positions when node dragging completes
+    if (dragMode === 'node' && dragPreview.previewNodes.length > 0) {
+      dragPreview.previewNodes.forEach(({ node, previewPosition }) => {
+        onNodeUpdate(node.id, { position: previewPosition });
+      });
+    }
+    
     // Reset drag state
     setIsDragging(false);
     setDragMode(null);
     setDraggedNodes([]);
     setDragOffsets(new Map());
     setSelectionBox(null);
-  }, [dragMode, selectionBox, nodes, onSelectionChange, connectionPreview]);
+    setDragPreview({ previewNodes: [], isDragging: false }); // Clear drag preview
+  }, [dragMode, selectionBox, nodes, onSelectionChange, connectionPreview, dragPreview, onNodeUpdate]);
   
   // Handle connection start
   const handleConnectionStart = useCallback((point: ConnectionPoint) => {
@@ -750,21 +762,65 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
               zIndex: 2,
             }}
           >
-            {Array.from(nodes.values()).map(node => (
-              <WorkflowNode
-                key={node.id}
-                node={node}
-                isSelected={selection.nodes.includes(node.id)}
-                isHighlighted={hoveredConnectionPoint?.nodeId === node.id}
-                scale={canvasState.zoom}
-                onNodeSelect={onNodeSelect}
-                onConnectionStart={handleConnectionStart}
-                onConnectionEnd={handleConnectionEnd}
-                onConnectionHover={handleConnectionHover}
-                showConnectionPoints={true}
-              />
-            ))}
+            {Array.from(nodes.values()).map(node => {
+              const isBeingDragged = dragPreview.isDragging && draggedNodes.includes(node.id);
+              
+              return (
+                <div
+                  key={node.id}
+                  className={isBeingDragged ? 'opacity-50' : ''}
+                >
+                  <WorkflowNode
+                    node={node}
+                    isSelected={selection.nodes.includes(node.id)}
+                    isHighlighted={hoveredConnectionPoint?.nodeId === node.id}
+                    scale={canvasState.zoom}
+                    onNodeSelect={onNodeSelect}
+                    onConnectionStart={handleConnectionStart}
+                    onConnectionEnd={handleConnectionEnd}
+                    onConnectionHover={handleConnectionHover}
+                    showConnectionPoints={!isBeingDragged}
+                  />
+                </div>
+              );
+            })}
           </div>
+          
+          {/* Drag Preview Layer - Ghost nodes showing future positions */}
+          {dragPreview.isDragging && dragPreview.previewNodes.length > 0 && (
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                transform: `translate(${canvasState.pan.x}px, ${canvasState.pan.y}px) scale(${canvasState.zoom})`,
+                transformOrigin: '0 0',
+                zIndex: 3, // Above normal nodes
+              }}
+            >
+              {dragPreview.previewNodes.map(({ node, previewPosition }) => (
+                <div
+                  key={`preview-${node.id}`}
+                  className="absolute opacity-70"
+                  style={{
+                    left: previewPosition.x,
+                    top: previewPosition.y,
+                    width: node.size.width,
+                    height: node.size.height,
+                  }}
+                >
+                  <div className="w-full h-full border-2 border-blue-400 border-dashed bg-blue-50 dark:bg-blue-900/30 rounded-lg shadow-lg">
+                    <div className="p-3">
+                      <div className="text-sm font-medium text-blue-700 dark:text-blue-300 truncate">
+                        {node.name}
+                      </div>
+                      <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                        x: {Math.round(previewPosition.x)}, y: {Math.round(previewPosition.y)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           
           {/* Empty state */}
           {nodes.size === 0 && (
