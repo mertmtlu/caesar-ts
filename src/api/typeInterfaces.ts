@@ -356,791 +356,6 @@ export interface IBooleanApiResponse {
     timestamp?: Date;
 }
 
-export interface IBsonBinaryData {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-    bytes?: string | undefined;
-    subType?: enums.BsonBinarySubType;
-}
-
-export interface IBsonDateTime {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    bsonType?: enums.BsonType;
-    isValidDateTime?: boolean;
-    millisecondsSinceEpoch?: number;
-}
-
-export interface IBsonElement {
-    name?: string | undefined;
-    value?: IBsonValue;
-}
-
-export interface IBsonJavaScript {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-    code?: string | undefined;
-}
-
-export interface IBsonJavaScriptWithScope {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    code?: string | undefined;
-    bsonType?: enums.BsonType;
-    scope?: IBsonElement[] | undefined;
-}
-
-export interface IBsonMaxKey {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-}
-
-export interface IBsonMinKey {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-}
-
-export interface IBsonNull {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-}
-
-export interface IBsonRegularExpression {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-    pattern?: string | undefined;
-    options?: string | undefined;
-}
-
-export interface IBsonSymbol {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-    name?: string | undefined;
-}
-
-export interface IBsonTimestamp {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-    value?: number;
-    increment?: number;
-    timestamp?: number;
-}
-
-export interface IBsonUndefined {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-    bsonType?: enums.BsonType;
-}
-
-export interface IBsonValue {
-    asBoolean?: boolean;
-    asBsonArray?: IBsonValue[] | undefined;
-    asBsonBinaryData?: IBsonBinaryData;
-    asBsonDateTime?: IBsonDateTime;
-    asBsonDocument?: IBsonElement[] | undefined;
-    asBsonJavaScript?: IBsonJavaScript;
-    asBsonJavaScriptWithScope?: IBsonJavaScriptWithScope;
-    asBsonMaxKey?: IBsonMaxKey;
-    asBsonMinKey?: IBsonMinKey;
-    asBsonNull?: IBsonNull;
-    asBsonRegularExpression?: IBsonRegularExpression;
-    asBsonSymbol?: IBsonSymbol;
-    asBsonTimestamp?: IBsonTimestamp;
-    asBsonUndefined?: IBsonUndefined;
-    asBsonValue?: IBsonValue;
-    asByteArray?: string | undefined;
-    asDecimal?: number;
-    asDecimal128?: IDecimal128;
-    asDouble?: number;
-    asGuid?: string;
-    asInt32?: number;
-    asInt64?: number;
-    asLocalTime?: Date;
-    asNullableBoolean?: boolean | undefined;
-    asNullableDecimal?: number | undefined;
-    asNullableDecimal128?: IDecimal128;
-    asNullableDouble?: number | undefined;
-    asNullableGuid?: string | undefined;
-    asNullableInt32?: number | undefined;
-    asNullableInt64?: number | undefined;
-    asNullableLocalTime?: Date | undefined;
-    asNullableObjectId?: IObjectId;
-    asNullableUniversalTime?: Date | undefined;
-    asObjectId?: IObjectId;
-    asRegex?: IRegex;
-    asString?: string | undefined;
-    asUniversalTime?: Date;
-    bsonType?: enums.BsonType;
-    isBoolean?: boolean;
-    isBsonArray?: boolean;
-    isBsonBinaryData?: boolean;
-    isBsonDateTime?: boolean;
-    isBsonDocument?: boolean;
-    isBsonJavaScript?: boolean;
-    isBsonJavaScriptWithScope?: boolean;
-    isBsonMaxKey?: boolean;
-    isBsonMinKey?: boolean;
-    isBsonNull?: boolean;
-    isBsonRegularExpression?: boolean;
-    isBsonSymbol?: boolean;
-    isBsonTimestamp?: boolean;
-    isBsonUndefined?: boolean;
-    isDecimal128?: boolean;
-    isDouble?: boolean;
-    isGuid?: boolean;
-    isInt32?: boolean;
-    isInt64?: boolean;
-    isNumeric?: boolean;
-    isObjectId?: boolean;
-    isString?: boolean;
-    isValidDateTime?: boolean;
-}
-
 export interface IBuildingBlockAddDto {
     blockId: string;
 }
@@ -1535,7 +750,7 @@ export interface ICreateFromTMDto {
     copyEarthquakeData?: boolean;
 }
 
-export interface IDataAttachment {
+export interface IDataAttachmentDto {
     attachmentId?: string | undefined;
     fileName?: string | undefined;
     contentType?: string | undefined;
@@ -1546,33 +761,33 @@ export interface IDataAttachment {
     createdAt?: Date;
 }
 
-export interface IDataContractMetadata {
+export interface IDataContractMetadataDto {
     contentType?: string | undefined;
     encoding?: string | undefined;
     size?: number;
     originalFormat?: string | undefined;
-    transformations?: IDataTransformation[] | undefined;
-    validationResults?: IDataValidationResult[] | undefined;
-    quality?: IDataQualityMetrics;
-    lineage?: IDataLineage;
-    customMetadata?: IBsonElement[] | undefined;
+    transformations?: IDataTransformationDto[] | undefined;
+    validationResults?: IDataValidationResultDto[] | undefined;
+    quality?: IDataQualityMetricsDto;
+    lineage?: IDataLineageDto;
+    customMetadata?: { [key: string]: any; } | undefined;
 }
 
-export interface IDataDependency {
+export interface IDataDependencyDto {
     nodeId?: string | undefined;
     outputName?: string | undefined;
     dependencyType?: enums.DependencyType;
     isOptional?: boolean;
 }
 
-export interface IDataLineage {
+export interface IDataLineageDto {
     sourceNodes?: string[] | undefined;
     transformationPath?: string[] | undefined;
-    dependencies?: IDataDependency[] | undefined;
-    originalSources?: IDataSource[] | undefined;
+    dependencies?: IDataDependencyDto[] | undefined;
+    originalSources?: IDataSourceDto[] | undefined;
 }
 
-export interface IDataQualityIssue {
+export interface IDataQualityIssueDto {
     type?: enums.DataQualityIssueType;
     severity?: enums.IssueSeverity;
     description?: string | undefined;
@@ -1580,7 +795,7 @@ export interface IDataQualityIssue {
     recommendation?: string | undefined;
 }
 
-export interface IDataQualityMetrics {
+export interface IDataQualityMetricsDto {
     completeness?: number;
     accuracy?: number;
     consistency?: number;
@@ -1588,10 +803,10 @@ export interface IDataQualityMetrics {
     timeliness?: number;
     uniqueness?: number;
     overallScore?: number;
-    issues?: IDataQualityIssue[] | undefined;
+    issues?: IDataQualityIssueDto[] | undefined;
 }
 
-export interface IDataSource {
+export interface IDataSourceDto {
     sourceId?: string | undefined;
     sourceType?: enums.DataSourceType;
     location?: string | undefined;
@@ -1599,29 +814,26 @@ export interface IDataSource {
     version?: string | undefined;
 }
 
-export interface IDataTransformation {
+export interface IDataTransformationDto {
     transformationId?: string | undefined;
     type?: enums.TransformationType;
     expression?: string | undefined;
     appliedAt?: Date;
     appliedBy?: string | undefined;
-    inputSchema?: IBsonElement[] | undefined;
-    outputSchema?: IBsonElement[] | undefined;
+    inputSchema?: { [key: string]: any; } | undefined;
+    outputSchema?: { [key: string]: any; } | undefined;
     success?: boolean;
     error?: string | undefined;
 }
 
-export interface IDataValidationResult {
+export interface IDataValidationResultDto {
     validationId?: string | undefined;
     isValid?: boolean;
     errors?: string[] | undefined;
     warnings?: string[] | undefined;
     validatedAt?: Date;
     validationType?: enums.ValidationType;
-    schemaUsed?: IBsonElement[] | undefined;
-}
-
-export interface IDecimal128 {
+    schemaUsed?: { [key: string]: any; } | undefined;
 }
 
 export interface IDeploymentHistoryDto {
@@ -1719,7 +931,7 @@ export interface IEdgeConditionDto {
     expression: string;
     conditionType?: enums.EdgeConditionType;
     evaluateOnSourceOutput?: boolean;
-    defaultValue?: IBsonValue;
+    defaultValue?: any | undefined;
     failureAction?: enums.EdgeFailureAction;
 }
 
@@ -1732,10 +944,10 @@ export interface IEdgePointDto {
 export interface IEdgeTransformationDto {
     transformationType?: enums.EdgeTransformationType;
     expression: string;
-    inputSchema?: IBsonElement[] | undefined;
-    outputSchema?: IBsonElement[] | undefined;
+    inputSchema?: { [key: string]: any; } | undefined;
+    outputSchema?: { [key: string]: any; } | undefined;
     customFunction?: string | undefined;
-    parameters?: IBsonElement[] | undefined;
+    parameters?: { [key: string]: any; } | undefined;
     validateSchema?: boolean;
 }
 
@@ -1776,7 +988,7 @@ export interface IEdgeValidationWarning {
     context?: { [key: string]: any; } | undefined;
 }
 
-export interface IEncryptionInfo {
+export interface IEncryptionInfoDto {
     algorithm?: string | undefined;
     keyId?: string | undefined;
     isEncrypted?: boolean;
@@ -2427,49 +1639,33 @@ export interface INodeConditionalExecutionDto {
     alternativeNodeId?: string | undefined;
 }
 
-export interface INodeExecution {
-    nodeId: string | undefined;
+export interface INodeExecutionResponseDto {
+    id?: string | undefined;
+    executionId?: string | undefined;
+    nodeId?: string | undefined;
     nodeName?: string | undefined;
-    programId?: IObjectId;
-    programExecutionId?: IObjectId;
-    startedAt?: Date | undefined;
+    programId?: string | undefined;
+    versionId?: string | undefined;
+    startedAt?: Date;
     completedAt?: Date | undefined;
-    status?: enums.NodeExecutionStatus;
-    inputData?: IBsonElement[] | undefined;
-    outputData?: IBsonElement[] | undefined;
-    error?: INodeExecutionError;
-    retryCount?: number;
-    maxRetries?: number;
-    resourceUsage?: INodeResourceUsage;
-    logs?: INodeExecutionLog[] | undefined;
-    metadata?: IBsonElement[] | undefined;
     duration?: string | undefined;
-    wasSkipped?: boolean;
+    status?: enums.NodeExecutionStatus;
+    exitCode?: number | undefined;
+    errorMessage?: string | undefined;
+    inputData?: { [key: string]: any; } | undefined;
+    outputData?: { [key: string]: any; } | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+    retryHistory?: string[] | undefined;
+    isSkipped?: boolean;
     skipReason?: string | undefined;
 }
 
-export interface INodeExecutionApiResponse {
+export interface INodeExecutionResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
-    data?: INodeExecution;
+    data?: INodeExecutionResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
-}
-
-export interface INodeExecutionError {
-    errorType?: enums.NodeErrorType;
-    message?: string | undefined;
-    exitCode?: number | undefined;
-    stackTrace?: string | undefined;
-    timestamp?: Date;
-    canRetry?: boolean;
-}
-
-export interface INodeExecutionLog {
-    timestamp?: Date;
-    level?: enums.LogLevel;
-    message?: string | undefined;
-    source?: string | undefined;
 }
 
 export interface INodeExecutionSettingsDto {
@@ -2484,7 +1680,7 @@ export interface INodeExecutionSettingsDto {
 
 export interface INodeInputConfigurationDto {
     inputMappings?: INodeInputMappingDto[] | undefined;
-    staticInputs?: IBsonElement[] | undefined;
+    staticInputs?: { [key: string]: any; } | undefined;
     userInputs?: INodeUserInputDto[] | undefined;
     validationRules?: INodeValidationRuleDto[] | undefined;
 }
@@ -2495,12 +1691,12 @@ export interface INodeInputMappingDto {
     sourceOutputName: string;
     transformation?: string | undefined;
     isOptional?: boolean;
-    defaultValue?: IBsonValue;
+    defaultValue?: any | undefined;
 }
 
 export interface INodeOutputConfigurationDto {
     outputMappings?: INodeOutputMappingDto[] | undefined;
-    outputSchema?: IBsonElement[] | undefined;
+    outputSchema?: { [key: string]: any; } | undefined;
     cacheResults?: boolean;
     cacheTtlMinutes?: number;
 }
@@ -2526,14 +1722,6 @@ export interface INodeResourceLimitsDto {
     maxDiskMb?: number;
 }
 
-export interface INodeResourceUsage {
-    cpuTimeSeconds?: number;
-    peakMemoryBytes?: number;
-    diskSpaceUsedBytes?: number;
-    processCount?: number;
-    outputSizeBytes?: number;
-}
-
 export interface INodeUIConfigurationDto {
     color?: string | undefined;
     icon?: string | undefined;
@@ -2548,8 +1736,8 @@ export interface INodeUserInputDto {
     placeholder?: string | undefined;
     isRequired?: boolean;
     options?: string[] | undefined;
-    defaultValue?: IBsonValue;
-    validation?: IBsonElement[] | undefined;
+    defaultValue?: any | undefined;
+    validation?: { [key: string]: any; } | undefined;
 }
 
 export interface INodeValidationError {
@@ -2572,7 +1760,7 @@ export interface INodeValidationResult {
 export interface INodeValidationRuleDto {
     field: string;
     rule: string;
-    value?: IBsonValue;
+    value?: any | undefined;
     message?: string | undefined;
 }
 
@@ -2622,11 +1810,6 @@ export interface INoiseMeasurementsForBuildings {
     switchyard?: number;
 }
 
-export interface IObjectId {
-    timestamp?: number;
-    creationTime?: Date;
-}
-
 export interface IPasswordResetResponseDto {
     success?: boolean;
     message?: string | undefined;
@@ -2663,7 +1846,7 @@ export interface IProgramComponentMappingDto {
     componentId?: string | undefined;
     componentName?: string | undefined;
     mappingName?: string | undefined;
-    mappingConfiguration?: IBsonElement[] | undefined;
+    mappingConfiguration?: { [key: string]: any; } | undefined;
     displayOrder?: number;
     isActive?: boolean;
     createdAt?: Date;
@@ -2956,12 +2139,6 @@ export interface IProjectValidationResultDtoApiResponse {
 export interface IRefreshTokenDto {
     accessToken: string;
     refreshToken: string;
-}
-
-export interface IRegex {
-    options?: enums.RegexOptions;
-    rightToLeft?: boolean;
-    matchTimeout?: string;
 }
 
 export interface IRegionCityUpdateDto {
@@ -3635,10 +2812,10 @@ export interface IStringStringListDictionaryApiResponse {
     timestamp?: Date;
 }
 
-export interface IStringWorkflowDataContractDictionaryApiResponse {
+export interface IStringWorkflowDataContractDtoDictionaryApiResponse {
     success?: boolean;
     message?: string | undefined;
-    data?: { [key: string]: IWorkflowDataContract; } | undefined;
+    data?: { [key: string]: IWorkflowDataContractDto; } | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -3966,7 +3143,7 @@ export interface IUiComponentCompatibilitySearchDto {
 
 export interface IUiComponentConfigDto {
     componentId?: string | undefined;
-    configuration?: any | undefined;
+    configuration?: { [key: string]: any; } | undefined;
     lastUpdated?: Date;
     updatedBy?: string | undefined;
 }
@@ -4001,8 +3178,8 @@ export interface IUiComponentDetailDto {
     createdAt?: Date;
     programId?: string | undefined;
     versionId?: string | undefined;
-    configuration?: any | undefined;
-    schema?: any | undefined;
+    configuration?: { [key: string]: any; } | undefined;
+    schema?: { [key: string]: any; } | undefined;
     status?: string | undefined;
     tags?: string[] | undefined;
     creatorName?: string | undefined;
@@ -4031,8 +3208,8 @@ export interface IUiComponentDto {
     createdAt?: Date;
     programId?: string | undefined;
     versionId?: string | undefined;
-    configuration?: any | undefined;
-    schema?: any | undefined;
+    configuration?: { [key: string]: any; } | undefined;
+    schema?: { [key: string]: any; } | undefined;
     status?: string | undefined;
     tags?: string[] | undefined;
 }
@@ -4091,7 +3268,7 @@ export interface IUiComponentListDtoPagedResponseApiResponse {
 export interface IUiComponentMappingDto {
     componentId: string;
     mappingName: string;
-    mappingConfiguration?: IBsonElement[] | undefined;
+    mappingConfiguration?: any | undefined;
     displayOrder?: number;
     isActive?: boolean;
 }
@@ -4118,7 +3295,7 @@ export interface IUiComponentRecommendationDtoListApiResponse {
 
 export interface IUiComponentSchemaDto {
     componentId?: string | undefined;
-    schema?: any | undefined;
+    schema?: { [key: string]: any; } | undefined;
     lastUpdated?: Date;
     updatedBy?: string | undefined;
     isValid?: boolean;
@@ -4748,32 +3925,32 @@ export interface IWorkflowCreateDto {
     settings?: IWorkflowSettingsDto;
     permissions?: IWorkflowPermissionsDto;
     tags?: string[] | undefined;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean;
     templateId?: string | undefined;
 }
 
-export interface IWorkflowDataContract {
+export interface IWorkflowDataContractDto {
     contractId?: string | undefined;
     sourceNodeId?: string | undefined;
     targetNodeId?: string | undefined;
     dataType?: enums.WorkflowDataType;
-    data?: IBsonElement[] | undefined;
-    metadata?: IDataContractMetadata;
-    schema?: IBsonElement[] | undefined;
+    data?: { [key: string]: any; } | undefined;
+    metadata?: IDataContractMetadataDto;
+    schema?: { [key: string]: any; } | undefined;
     version?: string | undefined;
     timestamp?: Date;
     expiresAt?: Date | undefined;
     checksum?: string | undefined;
     compression?: enums.CompressionType;
-    encryption?: IEncryptionInfo;
-    attachments?: IDataAttachment[] | undefined;
+    encryption?: IEncryptionInfoDto;
+    attachments?: IDataAttachmentDto[] | undefined;
 }
 
-export interface IWorkflowDataContractApiResponse {
+export interface IWorkflowDataContractDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
-    data?: IWorkflowDataContract;
+    data?: IWorkflowDataContractDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -4792,7 +3969,7 @@ export interface IWorkflowDetailDto {
     settings?: IWorkflowSettingsDto;
     permissions?: IWorkflowPermissionDto;
     tags?: string[] | undefined;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean;
     templateId?: string | undefined;
     lastExecutionId?: string | undefined;
@@ -4820,7 +3997,7 @@ export interface IWorkflowEdgeCreateDto {
     condition?: IEdgeConditionDto;
     transformation?: IEdgeTransformationDto;
     uiConfiguration?: IEdgeUIConfigurationDto;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isDisabled?: boolean;
 }
 
@@ -4834,7 +4011,7 @@ export interface IWorkflowEdgeDto {
     condition?: IEdgeConditionDto;
     transformation?: IEdgeTransformationDto;
     uiConfiguration?: IEdgeUIConfigurationDto;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isDisabled?: boolean;
     createdAt?: Date;
     updatedAt?: Date | undefined;
@@ -4850,44 +4027,13 @@ export interface IWorkflowEdgeUpdateDto {
     condition?: IEdgeConditionDto;
     transformation?: IEdgeTransformationDto;
     uiConfiguration?: IEdgeUIConfigurationDto;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isDisabled?: boolean | undefined;
 }
 
-export interface IWorkflowExecution {
-    _ID?: IObjectId;
-    workflowId: IObjectId;
-    workflowVersion?: number;
-    executionName?: string | undefined;
-    executedBy: string | undefined;
-    startedAt?: Date;
-    completedAt?: Date | undefined;
-    status?: enums.WorkflowExecutionStatus;
-    progress?: IWorkflowExecutionProgress;
-    nodeExecutions?: INodeExecution[] | undefined;
-    executionContext?: IWorkflowExecutionContext;
-    results?: IWorkflowExecutionResults;
-    error?: IWorkflowExecutionError;
-    metadata?: IBsonElement[] | undefined;
-    resourceUsage?: IWorkflowResourceUsage;
-    logs?: IWorkflowExecutionLog[] | undefined;
-    isRerun?: boolean;
-    parentExecutionId?: IObjectId;
-    triggerType?: enums.WorkflowTriggerType;
-    scheduleId?: IObjectId;
-}
-
-export interface IWorkflowExecutionApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: IWorkflowExecution;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-}
-
-export interface IWorkflowExecutionContext {
-    userInputs?: IBsonElement[] | undefined;
-    globalVariables?: IBsonElement[] | undefined;
+export interface IWorkflowExecutionContextDto {
+    userInputs?: { [key: string]: any; } | undefined;
+    globalVariables?: { [key: string]: any; } | undefined;
     environment?: { [key: string]: string; } | undefined;
     executionMode?: enums.WorkflowExecutionMode;
     debugMode?: boolean;
@@ -4896,38 +4042,21 @@ export interface IWorkflowExecutionContext {
     timeoutMinutes?: number;
 }
 
-export interface IWorkflowExecutionError {
-    errorType?: enums.WorkflowErrorType;
-    message?: string | undefined;
+export interface IWorkflowExecutionLogResponseDto {
+    id?: string | undefined;
+    executionId?: string | undefined;
     nodeId?: string | undefined;
-    stackTrace?: string | undefined;
-    innerError?: string | undefined;
+    level?: string | undefined;
+    message?: string | undefined;
     timestamp?: Date;
-    canRetry?: boolean;
-    retryCount?: number;
+    data?: { [key: string]: any; } | undefined;
+    exception?: string | undefined;
 }
 
-export interface IWorkflowExecutionListApiResponse {
+export interface IWorkflowExecutionLogResponseDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
-    data?: IWorkflowExecution[] | undefined;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-}
-
-export interface IWorkflowExecutionLog {
-    timestamp?: Date;
-    level?: enums.LogLevel;
-    message?: string | undefined;
-    nodeId?: string | undefined;
-    source?: string | undefined;
-    metadata?: IBsonElement[] | undefined;
-}
-
-export interface IWorkflowExecutionLogListApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: IWorkflowExecutionLog[] | undefined;
+    data?: IWorkflowExecutionLogResponseDto[] | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -5001,20 +4130,48 @@ export interface IWorkflowExecutionProgress {
 export interface IWorkflowExecutionRequest {
     workflowId: string | undefined;
     workflowVersionId?: string | undefined;
-    userId: string | undefined;
     executionName?: string | undefined;
-    executionContext?: IWorkflowExecutionContext;
+    executionContext?: IWorkflowExecutionContextDto;
     options?: IWorkflowExecutionOptions;
     metadata?: { [key: string]: any; } | undefined;
 }
 
-export interface IWorkflowExecutionResults {
-    finalOutputs?: IBsonElement[] | undefined;
-    intermediateResults?: { [key: string]: IBsonElement[]; } | undefined;
-    artifactsGenerated?: string[] | undefined;
-    summary?: string | undefined;
-    outputFiles?: IWorkflowOutputFile[] | undefined;
-    executionStatistics?: IWorkflowExecutionStatistics;
+export interface IWorkflowExecutionResponseDto {
+    id?: string | undefined;
+    workflowId?: string | undefined;
+    workflowName?: string | undefined;
+    workflowVersion?: number;
+    executionName?: string | undefined;
+    executedBy?: string | undefined;
+    executedByUsername?: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    duration?: string | undefined;
+    status?: enums.WorkflowExecutionStatus;
+    progress?: IWorkflowExecutionProgress;
+    triggerType?: enums.WorkflowTriggerType;
+    isRerun?: boolean;
+    parentExecutionId?: string | undefined;
+    errorMessage?: string | undefined;
+    nodeStatuses?: { [key: string]: enums.NodeExecutionStatus; } | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+    executionContext?: IWorkflowExecutionContextDto;
+}
+
+export interface IWorkflowExecutionResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IWorkflowExecutionResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IWorkflowExecutionResponseDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IWorkflowExecutionResponseDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
 }
 
 export interface IWorkflowExecutionRiskDto {
@@ -5028,19 +4185,24 @@ export interface IWorkflowExecutionRiskDto {
     probability?: number;
 }
 
-export interface IWorkflowExecutionStatistics {
+export interface IWorkflowExecutionStatisticsResponseDto {
+    totalNodes?: number;
+    completedNodes?: number;
+    failedNodes?: number;
+    skippedNodes?: number;
+    pendingNodes?: number;
+    runningNodes?: number;
+    completionPercentage?: number;
     totalExecutionTime?: string;
     averageNodeExecutionTime?: string;
-    slowestNode?: string | undefined;
-    fastestNode?: string | undefined;
-    totalRetries?: number;
-    parallelizationEfficiency?: number;
+    statusDistribution?: { [key: string]: number; } | undefined;
+    nodeExecutionTimes?: { [key: string]: string; } | undefined;
 }
 
-export interface IWorkflowExecutionStatisticsApiResponse {
+export interface IWorkflowExecutionStatisticsResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
-    data?: IWorkflowExecutionStatistics;
+    data?: IWorkflowExecutionStatisticsResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -5129,7 +4291,7 @@ export interface IWorkflowNodeCreateDto {
     executionSettings?: INodeExecutionSettingsDto;
     conditionalExecution?: INodeConditionalExecutionDto;
     uiConfiguration?: INodeUIConfigurationDto;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isDisabled?: boolean;
 }
 
@@ -5147,7 +4309,7 @@ export interface IWorkflowNodeDto {
     executionSettings?: INodeExecutionSettingsDto;
     conditionalExecution?: INodeConditionalExecutionDto;
     uiConfiguration?: INodeUIConfigurationDto;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isDisabled?: boolean;
     createdAt?: Date;
     updatedAt?: Date | undefined;
@@ -5166,7 +4328,7 @@ export interface IWorkflowNodeUpdateDto {
     executionSettings?: INodeExecutionSettingsDto;
     conditionalExecution?: INodeConditionalExecutionDto;
     uiConfiguration?: INodeUIConfigurationDto;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isDisabled?: boolean | undefined;
 }
 
@@ -5175,15 +4337,6 @@ export interface IWorkflowNotificationSettingsDto {
     notifyOnCompletion?: boolean;
     notifyOnFailure?: boolean;
     recipients?: string[] | undefined;
-}
-
-export interface IWorkflowOutputFile {
-    fileName?: string | undefined;
-    filePath?: string | undefined;
-    size?: number;
-    contentType?: string | undefined;
-    nodeId?: string | undefined;
-    createdAt?: Date;
 }
 
 export interface IWorkflowPermissionDto {
@@ -5214,14 +4367,6 @@ export interface IWorkflowPermissionsDto {
     allowedUsers?: string[] | undefined;
     allowedRoles?: string[] | undefined;
     permissions?: IWorkflowUserPermissionDto[] | undefined;
-}
-
-export interface IWorkflowResourceUsage {
-    totalCpuTimeSeconds?: number;
-    totalMemoryUsedBytes?: number;
-    totalDiskUsedBytes?: number;
-    peakConcurrentNodes?: number;
-    nodeResourceUsage?: { [key: string]: INodeResourceUsage; } | undefined;
 }
 
 export interface IWorkflowRetryPolicyDto {
@@ -5274,7 +4419,7 @@ export interface IWorkflowUpdateDto {
     settings?: IWorkflowSettingsDto;
     permissions?: IWorkflowPermissionsDto;
     tags?: string[] | undefined;
-    metadata?: IBsonElement[] | undefined;
+    metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean | undefined;
 }
 

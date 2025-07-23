@@ -784,7 +784,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
      * @param body (optional) 
      * @return OK
      */
-    workflows_Execute(id: string, body: types.WorkflowExecutionRequest | undefined): Promise<types.WorkflowExecutionApiResponse> {
+    workflows_Execute(id: string, body: types.WorkflowExecutionRequest | undefined): Promise<types.WorkflowExecutionResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/{id}/execute";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -807,14 +807,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_Execute(response: Response): Promise<types.WorkflowExecutionApiResponse> {
+    protected processWorkflows_Execute(response: Response): Promise<types.WorkflowExecutionResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowExecutionApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowExecutionResponseDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -822,14 +822,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowExecutionApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowExecutionResponseDtoApiResponse>(null as any);
     }
 
     /**
      * Get workflow execution status
      * @return OK
      */
-    workflows_GetExecutionStatus(executionId: string): Promise<types.WorkflowExecutionApiResponse> {
+    workflows_GetExecutionStatus(executionId: string): Promise<types.WorkflowExecutionResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -848,14 +848,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_GetExecutionStatus(response: Response): Promise<types.WorkflowExecutionApiResponse> {
+    protected processWorkflows_GetExecutionStatus(response: Response): Promise<types.WorkflowExecutionResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowExecutionApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowExecutionResponseDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -863,7 +863,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowExecutionApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowExecutionResponseDtoApiResponse>(null as any);
     }
 
     /**
@@ -911,7 +911,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
      * Resume a workflow execution
      * @return OK
      */
-    workflows_ResumeExecution(executionId: string): Promise<types.WorkflowExecutionApiResponse> {
+    workflows_ResumeExecution(executionId: string): Promise<types.WorkflowExecutionResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/resume";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -930,14 +930,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_ResumeExecution(response: Response): Promise<types.WorkflowExecutionApiResponse> {
+    protected processWorkflows_ResumeExecution(response: Response): Promise<types.WorkflowExecutionResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowExecutionApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowExecutionResponseDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -945,7 +945,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowExecutionApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowExecutionResponseDtoApiResponse>(null as any);
     }
 
     /**
@@ -993,7 +993,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
      * Get all node outputs from a workflow execution
      * @return OK
      */
-    workflows_GetExecutionOutputs(executionId: string): Promise<types.StringWorkflowDataContractDictionaryApiResponse> {
+    workflows_GetExecutionOutputs(executionId: string): Promise<types.StringWorkflowDataContractDtoDictionaryApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/outputs";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -1012,14 +1012,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_GetExecutionOutputs(response: Response): Promise<types.StringWorkflowDataContractDictionaryApiResponse> {
+    protected processWorkflows_GetExecutionOutputs(response: Response): Promise<types.StringWorkflowDataContractDtoDictionaryApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.StringWorkflowDataContractDictionaryApiResponse.fromJS(resultData200);
+            result200 = types.StringWorkflowDataContractDtoDictionaryApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1027,14 +1027,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.StringWorkflowDataContractDictionaryApiResponse>(null as any);
+        return Promise.resolve<types.StringWorkflowDataContractDtoDictionaryApiResponse>(null as any);
     }
 
     /**
      * Get specific node output from a workflow execution
      * @return OK
      */
-    workflows_GetNodeOutput(executionId: string, nodeId: string): Promise<types.WorkflowDataContractApiResponse> {
+    workflows_GetNodeOutput(executionId: string, nodeId: string): Promise<types.WorkflowDataContractDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/outputs/{nodeId}";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -1056,14 +1056,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_GetNodeOutput(response: Response): Promise<types.WorkflowDataContractApiResponse> {
+    protected processWorkflows_GetNodeOutput(response: Response): Promise<types.WorkflowDataContractDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowDataContractApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowDataContractDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1071,14 +1071,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowDataContractApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowDataContractDtoApiResponse>(null as any);
     }
 
     /**
      * Get execution statistics
      * @return OK
      */
-    workflows_GetExecutionStatistics(executionId: string): Promise<types.WorkflowExecutionStatisticsApiResponse> {
+    workflows_GetExecutionStatistics(executionId: string): Promise<types.WorkflowExecutionStatisticsResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/statistics";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -1097,14 +1097,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_GetExecutionStatistics(response: Response): Promise<types.WorkflowExecutionStatisticsApiResponse> {
+    protected processWorkflows_GetExecutionStatistics(response: Response): Promise<types.WorkflowExecutionStatisticsResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowExecutionStatisticsApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowExecutionStatisticsResponseDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1112,7 +1112,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowExecutionStatisticsApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowExecutionStatisticsResponseDtoApiResponse>(null as any);
     }
 
     /**
@@ -1121,7 +1121,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
      * @param take (optional) 
      * @return OK
      */
-    workflows_GetExecutionLogs(executionId: string, skip: number | undefined, take: number | undefined): Promise<types.WorkflowExecutionLogListApiResponse> {
+    workflows_GetExecutionLogs(executionId: string, skip: number | undefined, take: number | undefined): Promise<types.WorkflowExecutionLogResponseDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/logs?";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -1148,14 +1148,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_GetExecutionLogs(response: Response): Promise<types.WorkflowExecutionLogListApiResponse> {
+    protected processWorkflows_GetExecutionLogs(response: Response): Promise<types.WorkflowExecutionLogResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowExecutionLogListApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowExecutionLogResponseDtoListApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1163,7 +1163,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowExecutionLogListApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowExecutionLogResponseDtoListApiResponse>(null as any);
     }
 
     /**
@@ -1309,7 +1309,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
      * Execute a specific node in a workflow execution
      * @return OK
      */
-    workflows_ExecuteNode(executionId: string, nodeId: string): Promise<types.NodeExecutionApiResponse> {
+    workflows_ExecuteNode(executionId: string, nodeId: string): Promise<types.NodeExecutionResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/nodes/{nodeId}/execute";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -1331,14 +1331,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_ExecuteNode(response: Response): Promise<types.NodeExecutionApiResponse> {
+    protected processWorkflows_ExecuteNode(response: Response): Promise<types.NodeExecutionResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.NodeExecutionApiResponse.fromJS(resultData200);
+            result200 = types.NodeExecutionResponseDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1346,14 +1346,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.NodeExecutionApiResponse>(null as any);
+        return Promise.resolve<types.NodeExecutionResponseDtoApiResponse>(null as any);
     }
 
     /**
      * Retry a failed node in a workflow execution
      * @return OK
      */
-    workflows_RetryNode(executionId: string, nodeId: string): Promise<types.NodeExecutionApiResponse> {
+    workflows_RetryNode(executionId: string, nodeId: string): Promise<types.NodeExecutionResponseDtoApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/{executionId}/nodes/{nodeId}/retry";
         if (executionId === undefined || executionId === null)
             throw new Error("The parameter 'executionId' must be defined.");
@@ -1375,14 +1375,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_RetryNode(response: Response): Promise<types.NodeExecutionApiResponse> {
+    protected processWorkflows_RetryNode(response: Response): Promise<types.NodeExecutionResponseDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.NodeExecutionApiResponse.fromJS(resultData200);
+            result200 = types.NodeExecutionResponseDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1390,7 +1390,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.NodeExecutionApiResponse>(null as any);
+        return Promise.resolve<types.NodeExecutionResponseDtoApiResponse>(null as any);
     }
 
     /**
@@ -1672,7 +1672,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
      * Get all active executions
      * @return OK
      */
-    workflows_GetActiveExecutions(): Promise<types.WorkflowExecutionListApiResponse> {
+    workflows_GetActiveExecutions(): Promise<types.WorkflowExecutionResponseDtoListApiResponse> {
         let url_ = this.baseUrl + "/api/Workflows/executions/active";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1688,14 +1688,14 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
         });
     }
 
-    protected processWorkflows_GetActiveExecutions(response: Response): Promise<types.WorkflowExecutionListApiResponse> {
+    protected processWorkflows_GetActiveExecutions(response: Response): Promise<types.WorkflowExecutionResponseDtoListApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.WorkflowExecutionListApiResponse.fromJS(resultData200);
+            result200 = types.WorkflowExecutionResponseDtoListApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -1703,7 +1703,7 @@ export class WorkflowsClient implements interfaces.IWorkflowsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.WorkflowExecutionListApiResponse>(null as any);
+        return Promise.resolve<types.WorkflowExecutionResponseDtoListApiResponse>(null as any);
     }
 
     /**

@@ -8,44 +8,6 @@ export enum AppDeploymentType {
     _4 = 4,
 }
 
-export enum BsonBinarySubType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-    _6 = 6,
-    _7 = 7,
-    _8 = 8,
-    _9 = 9,
-    _128 = 128,
-}
-
-export enum BsonType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-    _6 = 6,
-    _7 = 7,
-    _8 = 8,
-    _9 = 9,
-    _10 = 10,
-    _11 = 11,
-    _13 = 13,
-    _14 = 14,
-    _15 = 15,
-    _16 = 16,
-    _17 = 17,
-    _18 = 18,
-    _19 = 19,
-    _127 = 127,
-    _255 = 255,
-}
-
 export enum BuildingType {
     _0 = 0,
     _1 = 1,
@@ -168,24 +130,6 @@ export enum Level {
     _3 = 3,
 }
 
-export enum LogLevel {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-}
-
-export enum NodeErrorType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-}
-
 export enum NodeExecutionStatus {
     _0 = 0,
     _1 = 1,
@@ -212,20 +156,6 @@ export enum PerimeterWallType {
     _0 = 0,
     _1 = 1,
     _2 = 2,
-}
-
-export enum RegexOptions {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _4 = 4,
-    _8 = 8,
-    _16 = 16,
-    _32 = 32,
-    _64 = 64,
-    _256 = 256,
-    _512 = 512,
-    _1024 = 1024,
 }
 
 export enum RiskLevel {
@@ -316,15 +246,6 @@ export enum WorkflowDataType {
 }
 
 export enum WorkflowEdgeType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-}
-
-export enum WorkflowErrorType {
     _0 = 0,
     _1 = 1,
     _2 = 2,

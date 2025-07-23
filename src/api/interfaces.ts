@@ -2508,13 +2508,13 @@ export interface IWorkflowsClient {
      * @param body (optional) 
      * @return OK
      */
-    workflows_Execute(id: string, body: types.IWorkflowExecutionRequest | undefined): Promise<types.IWorkflowExecutionApiResponse>;
+    workflows_Execute(id: string, body: types.IWorkflowExecutionRequest | undefined): Promise<types.IWorkflowExecutionResponseDtoApiResponse>;
 
     /**
      * Get workflow execution status
      * @return OK
      */
-    workflows_GetExecutionStatus(executionId: string): Promise<types.IWorkflowExecutionApiResponse>;
+    workflows_GetExecutionStatus(executionId: string): Promise<types.IWorkflowExecutionResponseDtoApiResponse>;
 
     /**
      * Pause a workflow execution
@@ -2526,7 +2526,7 @@ export interface IWorkflowsClient {
      * Resume a workflow execution
      * @return OK
      */
-    workflows_ResumeExecution(executionId: string): Promise<types.IWorkflowExecutionApiResponse>;
+    workflows_ResumeExecution(executionId: string): Promise<types.IWorkflowExecutionResponseDtoApiResponse>;
 
     /**
      * Cancel a workflow execution
@@ -2538,19 +2538,19 @@ export interface IWorkflowsClient {
      * Get all node outputs from a workflow execution
      * @return OK
      */
-    workflows_GetExecutionOutputs(executionId: string): Promise<types.IStringWorkflowDataContractDictionaryApiResponse>;
+    workflows_GetExecutionOutputs(executionId: string): Promise<types.IStringWorkflowDataContractDtoDictionaryApiResponse>;
 
     /**
      * Get specific node output from a workflow execution
      * @return OK
      */
-    workflows_GetNodeOutput(executionId: string, nodeId: string): Promise<types.IWorkflowDataContractApiResponse>;
+    workflows_GetNodeOutput(executionId: string, nodeId: string): Promise<types.IWorkflowDataContractDtoApiResponse>;
 
     /**
      * Get execution statistics
      * @return OK
      */
-    workflows_GetExecutionStatistics(executionId: string): Promise<types.IWorkflowExecutionStatisticsApiResponse>;
+    workflows_GetExecutionStatistics(executionId: string): Promise<types.IWorkflowExecutionStatisticsResponseDtoApiResponse>;
 
     /**
      * Get execution logs
@@ -2558,7 +2558,7 @@ export interface IWorkflowsClient {
      * @param take (optional) 
      * @return OK
      */
-    workflows_GetExecutionLogs(executionId: string, skip: number | undefined, take: number | undefined): Promise<types.IWorkflowExecutionLogListApiResponse>;
+    workflows_GetExecutionLogs(executionId: string, skip: number | undefined, take: number | undefined): Promise<types.IWorkflowExecutionLogResponseDtoListApiResponse>;
 
     /**
      * Add a node to a workflow
@@ -2584,13 +2584,13 @@ export interface IWorkflowsClient {
      * Execute a specific node in a workflow execution
      * @return OK
      */
-    workflows_ExecuteNode(executionId: string, nodeId: string): Promise<types.INodeExecutionApiResponse>;
+    workflows_ExecuteNode(executionId: string, nodeId: string): Promise<types.INodeExecutionResponseDtoApiResponse>;
 
     /**
      * Retry a failed node in a workflow execution
      * @return OK
      */
-    workflows_RetryNode(executionId: string, nodeId: string): Promise<types.INodeExecutionApiResponse>;
+    workflows_RetryNode(executionId: string, nodeId: string): Promise<types.INodeExecutionResponseDtoApiResponse>;
 
     /**
      * Skip a node in a workflow execution
@@ -2636,7 +2636,7 @@ export interface IWorkflowsClient {
      * Get all active executions
      * @return OK
      */
-    workflows_GetActiveExecutions(): Promise<types.IWorkflowExecutionListApiResponse>;
+    workflows_GetActiveExecutions(): Promise<types.IWorkflowExecutionResponseDtoListApiResponse>;
 
     /**
      * Get workflow permissions
