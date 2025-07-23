@@ -11,8 +11,11 @@ const WorkflowExecutionPage: React.FC = () => {
   
   const [execution, setExecution] = useState<WorkflowExecution | null>(null);
   const [logs, setLogs] = useState<WorkflowExecutionLog[]>([]);
+  const [nodeOutputs, setNodeOutputs] = useState<Record<string, any>>({});
+  const [selectedNodeOutput, setSelectedNodeOutput] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'logs' | 'outputs' | 'statistics'>('logs');
 
   useEffect(() => {
     if (executionId) {
@@ -28,9 +31,12 @@ const WorkflowExecutionPage: React.FC = () => {
     try {
       setError(null);
 
-      const [executionResponse, logsResponse] = await Promise.all([
+      console.log('Loading execution:', executionId);
+
+      const [executionResponse, logsResponse, outputsResponse] = await Promise.all([
         api.workflows.workflows_GetExecutionStatus(executionId),
-        api.workflows.workflows_GetExecutionLogs(executionId, 0, 100)
+        api.workflows.workflows_GetExecutionLogs(executionId, 0, 100),
+        api.workflows.workflows_GetExecutionOutputs(executionId)
       ]);
 
       if (executionResponse.success && executionResponse.data) {
@@ -42,6 +48,10 @@ const WorkflowExecutionPage: React.FC = () => {
       if (logsResponse.success && logsResponse.data) {
         const logs = Array.isArray(logsResponse.data) ? logsResponse.data.map(log => WorkflowExecutionLog.fromJS(log)) : [];
         setLogs(logs);
+      }
+
+      if (outputsResponse.success && outputsResponse.data) {
+        setNodeOutputs(outputsResponse.data || {});
       }
     } catch (error) {
       console.error('Failed to load execution:', error);
@@ -326,27 +336,174 @@ const WorkflowExecutionPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Execution Logs */}
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Execution Logs</h2>
-            
-            <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm h-96 overflow-y-auto">
-              {logs.length === 0 ? (
-                <div className="text-gray-500">No logs available</div>
-              ) : (
-                logs.map((log, index) => (
-                  <div key={index} className="mb-1">
-                    <span className="text-gray-500">
-                      [{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'Unknown'}]
-                    </span>
-                    <span className={`ml-2 ${getLogLevelColor(log.level?.toString() || 'info')}`}>
-                      {log.level?.toString()?.toUpperCase() || 'INFO'}
-                    </span>
-                    <span className="ml-2 text-green-400">
-                      {log.message || 'No message'}
-                    </span>
+          {/* Execution Details Tabs */}
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+            {/* Tab Navigation */}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <nav className="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                <button
+                  onClick={() => setActiveTab('logs')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'logs'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  Execution Logs
+                </button>
+                <button
+                  onClick={() => setActiveTab('outputs')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'outputs'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  Node Outputs ({Object.keys(nodeOutputs).length})
+                </button>
+                <button
+                  onClick={() => setActiveTab('statistics')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'statistics'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  Statistics
+                </button>
+              </nav>
+            </div>
+
+            {/* Tab Content */}
+            <div className="p-6">
+              {activeTab === 'logs' && (
+                <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm h-96 overflow-y-auto">
+                  {logs.length === 0 ? (
+                    <div className="text-gray-500">No logs available</div>
+                  ) : (
+                    logs.map((log, index) => (
+                      <div key={index} className="mb-1">
+                        <span className="text-gray-500">
+                          [{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'Unknown'}]
+                        </span>
+                        <span className={`ml-2 ${getLogLevelColor(log.level?.toString() || 'info')}`}>
+                          {log.level?.toString()?.toUpperCase() || 'INFO'}
+                        </span>
+                        <span className="ml-2 text-green-400">
+                          {log.message || 'No message'}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'outputs' && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-96">
+                  {/* Node List */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Select Node</h3>
+                    <div className="border border-gray-200 dark:border-gray-600 rounded-lg h-80 overflow-y-auto">
+                      {Object.keys(nodeOutputs).length === 0 ? (
+                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                          No node outputs available
+                        </div>
+                      ) : (
+                        Object.keys(nodeOutputs).map((nodeId) => (
+                          <button
+                            key={nodeId}
+                            onClick={() => setSelectedNodeOutput(nodeId)}
+                            className={`w-full text-left p-3 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                              selectedNodeOutput === nodeId ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700' : ''
+                            }`}
+                          >
+                            <div className="font-medium text-sm text-gray-900 dark:text-white">
+                              {nodeId}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Click to view output
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
                   </div>
-                ))
+
+                  {/* Output Content */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      Output {selectedNodeOutput ? `for ${selectedNodeOutput}` : ''}
+                    </h3>
+                    <div className="border border-gray-200 dark:border-gray-600 rounded-lg h-80 overflow-y-auto">
+                      {selectedNodeOutput && nodeOutputs[selectedNodeOutput] ? (
+                        <pre className="p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
+                          {JSON.stringify(nodeOutputs[selectedNodeOutput], null, 2)}
+                        </pre>
+                      ) : (
+                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                          {selectedNodeOutput ? 'No output data available' : 'Select a node to view its output'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'statistics' && (
+                <div className="space-y-4 h-96 overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Total Nodes</h4>
+                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        {execution?.nodeExecutions?.length || 0}
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Completed Nodes</h4>
+                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {execution?.nodeExecutions?.filter(n => n.status === 2).length || 0}
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Failed Nodes</h4>
+                      <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                        {execution?.nodeExecutions?.filter(n => n.status === 3).length || 0}
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Log Entries</h4>
+                      <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
+                        {logs.length}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {execution?.nodeExecutions && execution.nodeExecutions.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Node Execution Timeline</h4>
+                      <div className="space-y-2">
+                        {execution.nodeExecutions.map((nodeExec, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-3 h-3 rounded-full ${
+                                nodeExec.status === 2 ? 'bg-green-500' :
+                                nodeExec.status === 1 ? 'bg-blue-500' :
+                                nodeExec.status === 3 ? 'bg-red-500' :
+                                'bg-gray-400'
+                              }`}></div>
+                              <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                {nodeExec.nodeName || `Node ${index + 1}`}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {nodeExec.startedAt ? new Date(nodeExec.startedAt).toLocaleTimeString() : 'Not started'}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>

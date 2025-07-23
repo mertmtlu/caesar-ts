@@ -76,8 +76,90 @@ const WorkflowDesignerPage: React.FC = () => {
         const nodes = new Map<string, WorkflowDesignerNode>();
         const edges = new Map<string, WorkflowDesignerEdge>();
         
-        // TODO: Convert actual workflow data to designer format
-        // This would involve mapping WorkflowNodeDto to WorkflowDesignerNode
+        // Convert nodes from backend format to designer format
+        if (workflow.nodes) {
+          workflow.nodes.forEach(node => {
+            const designerNode: WorkflowDesignerNode = {
+              id: node.id || 'unknown',
+              name: node.name || 'Untitled Node',
+              description: node.description,
+              programId: node.programId || 'unknown',
+              programName: node.programName,
+              versionId: node.versionId,
+              nodeType: node.nodeType,
+              isDisabled: node.isDisabled || false,
+              createdAt: node.createdAt,
+              updatedAt: node.updatedAt,
+              position: node.position?.toJSON() || { x: 0, y: 0 },
+              size: { width: 200, height: 100 },
+              isSelected: false,
+              isHighlighted: false,
+              isDragging: false,
+              connectionPoints: [
+                {
+                  id: `${node.id}-input`,
+                  nodeId: node.id || 'unknown',
+                  type: 'input',
+                  dataType: 'any',
+                  position: { x: 0, y: 50 },
+                  isConnected: false,
+                  label: 'Input',
+                  required: true,
+                },
+                {
+                  id: `${node.id}-output`,
+                  nodeId: node.id || 'unknown',
+                  type: 'output',
+                  dataType: 'any',
+                  position: { x: 200, y: 50 },
+                  isConnected: false,
+                  label: 'Output',
+                  required: false,
+                },
+              ],
+              validationErrors: [],
+            };
+            nodes.set(node.id || 'unknown', designerNode);
+          });
+        }
+        
+        // Convert edges from backend format to designer format
+        if (workflow.edges) {
+          workflow.edges.forEach(edge => {
+            const sourceNode = nodes.get(edge.sourceNodeId || '');
+            const targetNode = nodes.get(edge.targetNodeId || '');
+            
+            if (sourceNode && targetNode) {
+              const designerEdge: WorkflowDesignerEdge = {
+                id: edge.id || 'unknown',
+                sourceNodeId: edge.sourceNodeId,
+                targetNodeId: edge.targetNodeId,
+                sourceOutputName: edge.sourceOutputName,
+                targetInputName: edge.targetInputName,
+                edgeType: edge.edgeType,
+                isDisabled: edge.isDisabled || false,
+                createdAt: edge.createdAt,
+                updatedAt: edge.updatedAt,
+                path: '',
+                isSelected: false,
+                isHighlighted: false,
+                validationErrors: [],
+                sourcePosition: { 
+                  x: sourceNode.position.x + sourceNode.size.width, 
+                  y: sourceNode.position.y + sourceNode.size.height / 2 
+                },
+                targetPosition: { 
+                  x: targetNode.position.x, 
+                  y: targetNode.position.y + targetNode.size.height / 2 
+                },
+                strokeWidth: 2,
+                strokeColor: '#6b7280',
+                isDashed: false,
+              };
+              edges.set(edge.id || 'unknown', designerEdge);
+            }
+          });
+        }
         
         setDesignerState(prev => ({
           ...prev,
@@ -112,7 +194,26 @@ const WorkflowDesignerPage: React.FC = () => {
         const response = await api.workflows.workflows_Update(workflowId, {
           name: designerState.workflow.name,
           description: designerState.workflow.description,
-          // TODO: Convert designer nodes/edges back to API format
+          nodes: Array.from(designerState.nodes.values()).map(node => ({
+            id: node.id,
+            name: node.name,
+            description: node.description,
+            programId: node.programId,
+            nodeType: node.nodeType,
+            position: node.position,
+            isDisabled: node.isDisabled,
+          })),
+          edges: Array.from(designerState.edges.values())
+            .filter(edge => edge.sourceNodeId && edge.targetNodeId)
+            .map(edge => ({
+              id: edge.id,
+              sourceNodeId: edge.sourceNodeId!,
+              targetNodeId: edge.targetNodeId!,
+              sourceOutputName: edge.sourceOutputName,
+              targetInputName: edge.targetInputName,
+              edgeType: edge.edgeType,
+              isDisabled: edge.isDisabled,
+            })),
         });
         if (response.success) {
           setDesignerState(prev => ({ ...prev, error: null }));
@@ -127,7 +228,26 @@ const WorkflowDesignerPage: React.FC = () => {
         const response = await api.workflows.workflows_Create({
           name: 'New Workflow',
           description: 'Created in designer',
-          // TODO: Convert designer nodes/edges to API format
+          nodes: Array.from(designerState.nodes.values()).map(node => ({
+            id: node.id,
+            name: node.name,
+            description: node.description,
+            programId: node.programId,
+            nodeType: node.nodeType,
+            position: node.position,
+            isDisabled: node.isDisabled,
+          })),
+          edges: Array.from(designerState.edges.values())
+            .filter(edge => edge.sourceNodeId && edge.targetNodeId)
+            .map(edge => ({
+              id: edge.id,
+              sourceNodeId: edge.sourceNodeId!,
+              targetNodeId: edge.targetNodeId!,
+              sourceOutputName: edge.sourceOutputName,
+              targetInputName: edge.targetInputName,
+              edgeType: edge.edgeType,
+              isDisabled: edge.isDisabled,
+            })),
         });
         if (response.success && response.data) {
           const newWorkflow = WorkflowDetailDto.fromJS(response.data);
@@ -297,6 +417,74 @@ const WorkflowDesignerPage: React.FC = () => {
     });
   }, [designerState.selection, handleNodeDelete, handleEdgeDelete]);
 
+  // Workflow validation
+  const handleValidateWorkflow = async () => {
+    if (!workflowId) {
+      setDesignerState(prev => ({
+        ...prev,
+        error: 'Please save the workflow first before validating'
+      }));
+      return;
+    }
+
+    try {
+      const response = await api.workflows.workflows_Validate(workflowId);
+      if (response.success && response.data) {
+        const validationResult = response.data;
+        setDesignerState(prev => ({
+          ...prev,
+          validationResults: {
+            isValid: validationResult.isValid || false,
+            errors: (validationResult.errors || []).map((err: any) => typeof err === 'string' ? err : err.message ?? JSON.stringify(err)),
+            warnings: (validationResult.warnings || []).map((warn: any) => typeof warn === 'string' ? warn : warn.message ?? JSON.stringify(warn)),
+          },
+          error: validationResult.isValid ? null : 'Workflow validation failed'
+        }));
+      } else {
+        setDesignerState(prev => ({
+          ...prev,
+          error: response.message || 'Failed to validate workflow'
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to validate workflow:', error);
+      setDesignerState(prev => ({
+        ...prev,
+        error: 'Failed to validate workflow. Please try again.'
+      }));
+    }
+  };
+
+  // Get execution plan
+  const handleGetExecutionPlan = async () => {
+    if (!workflowId) {
+      setDesignerState(prev => ({
+        ...prev,
+        error: 'Please save the workflow first before viewing execution plan'
+      }));
+      return;
+    }
+
+    try {
+      const response = await api.workflows.workflows_GetExecutionPlan(workflowId);
+      if (response.success && response.data) {
+        // TODO: Show execution plan in a modal or side panel
+        console.log('Execution plan:', response.data);
+      } else {
+        setDesignerState(prev => ({
+          ...prev,
+          error: response.message || 'Failed to get execution plan'
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to get execution plan:', error);
+      setDesignerState(prev => ({
+        ...prev,
+        error: 'Failed to get execution plan. Please try again.'
+      }));
+    }
+  };
+
   // Fullscreen handlers
   const handleFullscreenToggle = useCallback(() => {
     setIsFullscreen(prev => !prev);
@@ -398,8 +586,64 @@ const WorkflowDesignerPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Select a node to view its properties
+            <div className="space-y-4">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Select a node to view its properties
+              </div>
+              
+              {/* Workflow Validation Results */}
+              {(designerState.validationResults.errors.length > 0 || designerState.validationResults.warnings.length > 0) && (
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Validation Results</h3>
+                  
+                  {designerState.validationResults.errors.length > 0 && (
+                    <div className="mb-3">
+                      <h4 className="text-xs font-medium text-red-700 dark:text-red-400 mb-2">Errors</h4>
+                      <div className="space-y-2">
+                        {designerState.validationResults.errors.map((error, index) => (
+                          <div key={index} className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded">
+                            {error}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {designerState.validationResults.warnings.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-medium text-yellow-700 dark:text-yellow-400 mb-2">Warnings</h4>
+                      <div className="space-y-2">
+                        {designerState.validationResults.warnings.map((warning, index) => (
+                          <div key={index} className="text-xs text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded">
+                            {warning}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {designerState.validationResults.isValid && (
+                    <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 p-2 rounded">
+                      ✓ Workflow validation passed
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Workflow Statistics */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Workflow Statistics</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
+                    <div className="text-xl font-bold text-blue-600 dark:text-blue-400">{designerState.nodes.size}</div>
+                    <div className="text-xs text-blue-600 dark:text-blue-400">Nodes</div>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
+                    <div className="text-xl font-bold text-purple-600 dark:text-purple-400">{designerState.edges.size}</div>
+                    <div className="text-xs text-purple-600 dark:text-purple-400">Connections</div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -438,6 +682,32 @@ const WorkflowDesignerPage: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleValidateWorkflow}
+              leftIcon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              }
+            >
+              Validate
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleGetExecutionPlan}
+              leftIcon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              }
+            >
+              Preview Plan
+            </Button>
+            
             <Button
               variant="outline"
               size="sm"

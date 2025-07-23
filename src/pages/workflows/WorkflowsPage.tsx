@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import { SortDirection, WorkflowStatus } from '@/api/enums';
+import { WorkflowExecutionRequest, WorkflowPermissionDto } from '@/api/types';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ConfirmationModal } from '@/components/common/Modal';
+import WorkflowPermissionsModal from '@/components/workflow/WorkflowPermissionsModal';
+import WorkflowImportModal from '@/components/workflow/WorkflowImportModal';
+import WorkflowExportModal from '@/components/workflow/WorkflowExportModal';
 
 interface WorkflowListItem {
   id: string;
@@ -62,6 +66,13 @@ const WorkflowsPage: React.FC = () => {
   
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [workflowToDelete, setWorkflowToDelete] = useState<WorkflowToDelete | null>(null);
+  
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<WorkflowListItem | null>(null);
+  
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [workflowToExport, setWorkflowToExport] = useState<WorkflowListItem | null>(null);
 
   useEffect(() => {
     loadWorkflows();
@@ -101,6 +112,8 @@ const WorkflowsPage: React.FC = () => {
           sortDirection
         );
       }
+
+      console.log('Workflows response:', response);
 
       if (response.success && response.data) {
         const workflowItems = response.data.items?.map(workflow => ({
@@ -213,7 +226,25 @@ const WorkflowsPage: React.FC = () => {
 
   const handleExecuteWorkflow = async (workflowId: string) => {
     try {
-      const response = await api.workflows.workflows_Execute(workflowId, undefined);
+      const currentUser = localStorage.getItem('currentUser');
+      let userId = "userId";
+      if (currentUser) {
+        try {
+          const userObj = JSON.parse(currentUser);
+          userId = userObj.id || userId;
+        } catch (e) {
+          console.error('Failed to parse currentUser from localStorage:', e);
+        }
+      }
+    
+      const workflow = new WorkflowExecutionRequest({
+        workflowId: workflowId,
+        userId: userId
+      });
+
+      const response = await api.workflows.workflows_Execute(workflowId, workflow);
+
+      console.log('Execute workflow response:', response.data);
       if (response.success && response.data) {
         navigate(`/workflows/${workflowId}/execution/${response.data._ID}`);
       } else {
@@ -223,6 +254,28 @@ const WorkflowsPage: React.FC = () => {
       console.error('Failed to execute workflow:', error);
       setError('Failed to execute workflow. Please try again.');
     }
+  };
+
+  const handleShareWorkflow = (workflow: WorkflowListItem) => {
+    setSelectedWorkflow(workflow);
+    setShowPermissionsModal(true);
+  };
+
+  const handlePermissionsUpdated = (permissions: WorkflowPermissionDto) => {
+    // Optionally refresh the workflows list or update local state
+    console.log('Permissions updated:', permissions);
+  };
+
+  const handleImportSuccess = (importedWorkflow: any) => {
+    // Refresh the workflows list to show the newly imported workflow
+    loadWorkflows();
+    // Optionally navigate to the imported workflow
+    navigate(`/workflows/${importedWorkflow.id}`);
+  };
+
+  const handleExportWorkflow = (workflow: WorkflowListItem) => {
+    setWorkflowToExport(workflow);
+    setShowExportModal(true);
   };
 
   const getStatusColor = (status: WorkflowStatus): string => {
@@ -296,6 +349,19 @@ const WorkflowsPage: React.FC = () => {
           >
             Browse Templates
           </Button>
+          
+          <Button
+            variant="outline"
+            onClick={() => setShowImportModal(true)}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 7l3 3m0 0l3-3m-3 3V4" />
+              </svg>
+            }
+          >
+            Import
+          </Button>
+          
           <Button
             variant="primary"
             onClick={() => navigate('/workflows/designer')}
@@ -494,6 +560,40 @@ const WorkflowsPage: React.FC = () => {
                   </Button>
                   
                   <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShareWorkflow(workflow);
+                    }}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                      </svg>
+                    }
+                    title={`Share ${workflow.name}`}
+                  >
+                    Share
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleExportWorkflow(workflow);
+                    }}
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    }
+                    title={`Export ${workflow.name}`}
+                  >
+                    Export
+                  </Button>
+                  
+                  <Button
                     variant="danger"
                     size="sm"
                     onClick={(e) => {
@@ -634,6 +734,40 @@ const WorkflowsPage: React.FC = () => {
         variant="danger"
         loading={isDeleting}
       />
+      
+      {/* Permissions Modal */}
+      {selectedWorkflow && (
+        <WorkflowPermissionsModal
+          isOpen={showPermissionsModal}
+          onClose={() => {
+            setShowPermissionsModal(false);
+            setSelectedWorkflow(null);
+          }}
+          workflowId={selectedWorkflow.id}
+          workflowName={selectedWorkflow.name}
+          onPermissionsUpdated={handlePermissionsUpdated}
+        />
+      )}
+      
+      {/* Import Modal */}
+      <WorkflowImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onImportSuccess={handleImportSuccess}
+      />
+      
+      {/* Export Modal */}
+      {workflowToExport && (
+        <WorkflowExportModal
+          isOpen={showExportModal}
+          onClose={() => {
+            setShowExportModal(false);
+            setWorkflowToExport(null);
+          }}
+          workflowId={workflowToExport.id}
+          workflowName={workflowToExport.name}
+        />
+      )}
     </div>
   );
 };
