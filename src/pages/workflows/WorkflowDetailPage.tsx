@@ -71,25 +71,13 @@ const WorkflowDetailPage: React.FC = () => {
     if (!workflowId) return;
 
     try {
-      const currentUser = localStorage.getItem('currentUser');
-      let userId = "userId";
-      if (currentUser) {
-        try {
-          const userObj = JSON.parse(currentUser);
-          userId = userObj.id || userId;
-        } catch (e) {
-          console.error('Failed to parse currentUser from localStorage:', e);
-        }
-      }
-
       const workflow = new WorkflowExecutionRequest({
-        workflowId: workflowId,
-        userId: userId
+        workflowId: workflowId
       });
 
       const response = await api.workflows.workflows_Execute(workflowId, workflow);
       if (response.success && response.data) {
-        navigate(`/workflows/${workflowId}/execution/${response.data._ID}`);
+        navigate(`/workflows/${workflowId}/execution/${response.data.id}`);
       } else {
         setError(response.message || 'Failed to execute workflow');
       }

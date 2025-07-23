@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
-import { WorkflowExecution, WorkflowExecutionLog } from '@/api/types';
+import { WorkflowExecutionResponseDto, WorkflowExecutionLogResponseDto } from '@/api/types';
 import { WorkflowExecutionStatus } from '@/api/enums';
 import Button from '@/components/common/Button';
 
@@ -9,8 +9,8 @@ const WorkflowExecutionPage: React.FC = () => {
   const { workflowId, executionId } = useParams<{ workflowId: string; executionId: string }>();
   const navigate = useNavigate();
   
-  const [execution, setExecution] = useState<WorkflowExecution | null>(null);
-  const [logs, setLogs] = useState<WorkflowExecutionLog[]>([]);
+  const [execution, setExecution] = useState<WorkflowExecutionResponseDto | null>(null);
+  const [logs, setLogs] = useState<WorkflowExecutionLogResponseDto[]>([]);
   const [nodeOutputs, setNodeOutputs] = useState<Record<string, any>>({});
   const [selectedNodeOutput, setSelectedNodeOutput] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,13 +40,13 @@ const WorkflowExecutionPage: React.FC = () => {
       ]);
 
       if (executionResponse.success && executionResponse.data) {
-        setExecution(WorkflowExecution.fromJS(executionResponse.data));
+        setExecution(WorkflowExecutionResponseDto.fromJS(executionResponse.data));
       } else {
         setError(executionResponse.message || 'Failed to load execution details');
       }
 
       if (logsResponse.success && logsResponse.data) {
-        const logs = Array.isArray(logsResponse.data) ? logsResponse.data.map(log => WorkflowExecutionLog.fromJS(log)) : [];
+        const logs = Array.isArray(logsResponse.data) ? logsResponse.data.map(log => WorkflowExecutionLogResponseDto.fromJS(log)) : [];
         setLogs(logs);
       }
 
@@ -311,22 +311,22 @@ const WorkflowExecutionPage: React.FC = () => {
                 </div>
               </div>
 
-              {execution.nodeExecutions && execution.nodeExecutions.length > 0 && (
+              {execution.nodeStatuses && Object.keys(execution.nodeStatuses).length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white">Node Status</h3>
                   <div className="space-y-1">
-                    {execution.nodeExecutions.map((nodeExec, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                    {Object.entries(execution.nodeStatuses).map(([nodeId, status], index) => (
+                      <div key={nodeId} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                         <span className="text-sm text-gray-900 dark:text-white">
-                          {nodeExec.nodeName || `Node ${index + 1}`}
+                          {nodeId}
                         </span>
                         <span className={`text-xs px-2 py-1 rounded ${
-                          nodeExec.status === 2 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
-                          nodeExec.status === 1 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
-                          nodeExec.status === 3 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
+                          status === 2 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
+                          status === 1 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
+                          status === 3 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
                           'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
                         }`}>
-                          {nodeExec.status === 2 ? 'Completed' : nodeExec.status === 1 ? 'Running' : nodeExec.status === 3 ? 'Failed' : 'Pending'}
+                          {status === 2 ? 'Completed' : status === 1 ? 'Running' : status === 3 ? 'Failed' : 'Pending'}
                         </span>
                       </div>
                     ))}
@@ -455,19 +455,19 @@ const WorkflowExecutionPage: React.FC = () => {
                     <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Total Nodes</h4>
                       <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                        {execution?.nodeExecutions?.length || 0}
+                        {execution?.nodeStatuses ? Object.keys(execution.nodeStatuses).length : 0}
                       </div>
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Completed Nodes</h4>
                       <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                        {execution?.nodeExecutions?.filter(n => n.status === 2).length || 0}
+                        {execution?.nodeStatuses ? Object.values(execution.nodeStatuses).filter(status => status === 2).length : 0}
                       </div>
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Failed Nodes</h4>
                       <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                        {execution?.nodeExecutions?.filter(n => n.status === 3).length || 0}
+                        {execution?.nodeStatuses ? Object.values(execution.nodeStatuses).filter(status => status === 3).length : 0}
                       </div>
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
@@ -478,25 +478,25 @@ const WorkflowExecutionPage: React.FC = () => {
                     </div>
                   </div>
                   
-                  {execution?.nodeExecutions && execution.nodeExecutions.length > 0 && (
+                  {execution?.nodeStatuses && Object.keys(execution.nodeStatuses).length > 0 && (
                     <div className="mt-6">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Node Execution Timeline</h4>
                       <div className="space-y-2">
-                        {execution.nodeExecutions.map((nodeExec, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                        {Object.entries(execution.nodeStatuses).map(([nodeId, status], index) => (
+                          <div key={nodeId} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
                             <div className="flex items-center space-x-3">
                               <div className={`w-3 h-3 rounded-full ${
-                                nodeExec.status === 2 ? 'bg-green-500' :
-                                nodeExec.status === 1 ? 'bg-blue-500' :
-                                nodeExec.status === 3 ? 'bg-red-500' :
+                                status === 2 ? 'bg-green-500' :
+                                status === 1 ? 'bg-blue-500' :
+                                status === 3 ? 'bg-red-500' :
                                 'bg-gray-400'
                               }`}></div>
                               <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {nodeExec.nodeName || `Node ${index + 1}`}
+                                {nodeId}
                               </span>
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {nodeExec.startedAt ? new Date(nodeExec.startedAt).toLocaleTimeString() : 'Not started'}
+                              {status === 2 ? 'Completed' : status === 1 ? 'Running' : status === 3 ? 'Failed' : 'Pending'}
                             </div>
                           </div>
                         ))}
@@ -547,54 +547,17 @@ const WorkflowExecutionPage: React.FC = () => {
           </div>
 
           {/* Error Details */}
-          {execution.error && (
+          {execution.errorMessage && (
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Error Details</h2>
               <div className="space-y-2">
                 <div className="text-sm text-red-600 dark:text-red-400 font-medium">
-                  {execution.error.message}
+                  {execution.errorMessage}
                 </div>
-                {execution.error.stackTrace && (
-                  <div className="text-xs text-gray-600 dark:text-gray-400 font-mono bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                    {execution.error.stackTrace}
-                  </div>
-                )}
               </div>
             </div>
           )}
 
-          {/* Resource Usage */}
-          {execution.resourceUsage && (
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Resource Usage</h2>
-              <div className="space-y-3">
-                {(execution.resourceUsage as any).cpuUsagePercentage !== undefined && (
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">CPU Usage</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {(execution.resourceUsage as any).cpuUsagePercentage.toFixed(1)}%
-                    </span>
-                  </div>
-                )}
-                {(execution.resourceUsage as any).memoryUsageMB !== undefined && (
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Memory Usage</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {(execution.resourceUsage as any).memoryUsageMB.toFixed(1)} MB
-                    </span>
-                  </div>
-                )}
-                {(execution.resourceUsage as any).executionTimeMs !== undefined && (
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Duration</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {((execution.resourceUsage as any).executionTimeMs / 1000).toFixed(1)}s
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
