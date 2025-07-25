@@ -552,9 +552,13 @@ const ProjectsPage: React.FC = () => {
                 </span>
               </div>
 
-              {project.description && (
+              {project.description ? (
                 <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                   {project.description}
+                </p>
+              ) : (
+                <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                  No description available.
                 </p>
               )}
 
@@ -584,12 +588,12 @@ const ProjectsPage: React.FC = () => {
               </div>
 
               {/* Component Type Badge */}
-              {project.hasComponents && project.newestComponentType && (
+              {project.hasComponents && project.newestComponentType ? (
                 <div className="mt-3 flex items-center">
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
                     <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       {project.newestComponentType === 'input_form' && (
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       )}
                       {project.newestComponentType === 'visualization' && (
                         <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z M4 5a2 2 0 012-2v6a2 2 0 01-2 2 2 2 0 01-2-2V5z M16 7a2 2 0 11-4 0 2 2 0 014 0z M8 15a2 2 0 01-2-2V9a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2H8z" />
@@ -602,6 +606,15 @@ const ProjectsPage: React.FC = () => {
                       )}
                     </svg>
                     {project.newestComponentType.replace('_', ' ')}
+                  </span>
+                </div>
+              ): (
+                <div className="mt-3 flex items-center text-xs text-gray-500 dark:text-gray-400">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                    <svg className="w-4 h-4 mr-1 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    {"No components"}
                   </span>
                 </div>
               )}

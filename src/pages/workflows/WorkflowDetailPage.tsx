@@ -473,7 +473,7 @@ const WorkflowDetailPage: React.FC = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                          {statistics.successRate ? `${(statistics.successRate * 100).toFixed(1)}%` : '0%'}
+                          {statistics.successRate ? `${(statistics.successRate).toFixed(1)}%` : '0%'}
                         </div>
                         <div className="text-sm text-green-600 dark:text-green-400">Success Rate</div>
                       </div>
@@ -587,7 +587,7 @@ const WorkflowDetailPage: React.FC = () => {
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600 dark:text-gray-400">Success Rate</span>
                   <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                    {statistics.successRate ? `${(statistics.successRate * 100).toFixed(1)}%` : 'N/A'}
+                    {statistics.successRate ? `${(statistics.successRate).toFixed(1)}%` : 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between">
