@@ -3987,6 +3987,20 @@ export interface IWorkflowDetailDtoApiResponse {
     timestamp?: Date;
 }
 
+export interface IWorkflowEdgeBulkUpdateDto {
+    id?: string | undefined;
+    sourceNodeId?: string | undefined;
+    targetNodeId?: string | undefined;
+    sourceOutputName?: string | undefined;
+    targetInputName?: string | undefined;
+    edgeType?: enums.WorkflowEdgeType;
+    condition?: IEdgeConditionDto;
+    transformation?: IEdgeTransformationDto;
+    uiConfiguration?: IEdgeUIConfigurationDto;
+    metadata?: { [key: string]: any; } | undefined;
+    isDisabled?: boolean | undefined;
+}
+
 export interface IWorkflowEdgeCreateDto {
     id: string;
     sourceNodeId: string;
@@ -4278,6 +4292,23 @@ export interface IWorkflowListDtoPagedResponseApiResponse {
     timestamp?: Date;
 }
 
+export interface IWorkflowNodeBulkUpdateDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    programId?: string | undefined;
+    versionId?: string | undefined;
+    nodeType?: enums.WorkflowNodeType;
+    position?: INodePositionDto;
+    inputConfiguration?: INodeInputConfigurationDto;
+    outputConfiguration?: INodeOutputConfigurationDto;
+    executionSettings?: INodeExecutionSettingsDto;
+    conditionalExecution?: INodeConditionalExecutionDto;
+    uiConfiguration?: INodeUIConfigurationDto;
+    metadata?: { [key: string]: any; } | undefined;
+    isDisabled?: boolean | undefined;
+}
+
 export interface IWorkflowNodeCreateDto {
     id: string;
     name: string;
@@ -4414,8 +4445,8 @@ export interface IWorkflowUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     status?: enums.WorkflowStatus;
-    nodes?: IWorkflowNodeUpdateDto[] | undefined;
-    edges?: IWorkflowEdgeUpdateDto[] | undefined;
+    nodes?: IWorkflowNodeBulkUpdateDto[] | undefined;
+    edges?: IWorkflowEdgeBulkUpdateDto[] | undefined;
     settings?: IWorkflowSettingsDto;
     permissions?: IWorkflowPermissionsDto;
     tags?: string[] | undefined;

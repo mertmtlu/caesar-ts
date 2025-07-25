@@ -24286,6 +24286,80 @@ export class WorkflowDetailDtoApiResponse implements interfaces.IWorkflowDetailD
     }
 }
 
+export class WorkflowEdgeBulkUpdateDto implements interfaces.IWorkflowEdgeBulkUpdateDto {
+    id?: string | undefined;
+    sourceNodeId?: string | undefined;
+    targetNodeId?: string | undefined;
+    sourceOutputName?: string | undefined;
+    targetInputName?: string | undefined;
+    edgeType?: enums.WorkflowEdgeType;
+    condition?: EdgeConditionDto;
+    transformation?: EdgeTransformationDto;
+    uiConfiguration?: EdgeUIConfigurationDto;
+    metadata?: { [key: string]: any; } | undefined;
+    isDisabled?: boolean | undefined;
+
+    constructor(data?: interfaces.IWorkflowEdgeBulkUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.sourceNodeId = _data["sourceNodeId"];
+            this.targetNodeId = _data["targetNodeId"];
+            this.sourceOutputName = _data["sourceOutputName"];
+            this.targetInputName = _data["targetInputName"];
+            this.edgeType = _data["edgeType"];
+            this.condition = _data["condition"] ? EdgeConditionDto.fromJS(_data["condition"]) : <any>undefined;
+            this.transformation = _data["transformation"] ? EdgeTransformationDto.fromJS(_data["transformation"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? EdgeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+            this.isDisabled = _data["isDisabled"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowEdgeBulkUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowEdgeBulkUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sourceNodeId"] = this.sourceNodeId;
+        data["targetNodeId"] = this.targetNodeId;
+        data["sourceOutputName"] = this.sourceOutputName;
+        data["targetInputName"] = this.targetInputName;
+        data["edgeType"] = this.edgeType;
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
+        data["transformation"] = this.transformation ? this.transformation.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        data["isDisabled"] = this.isDisabled;
+        return data;
+    }
+}
+
 export class WorkflowEdgeCreateDto implements interfaces.IWorkflowEdgeCreateDto {
     id!: string;
     sourceNodeId!: string;
@@ -26035,6 +26109,89 @@ export class WorkflowListDtoPagedResponseApiResponse implements interfaces.IWork
     }
 }
 
+export class WorkflowNodeBulkUpdateDto implements interfaces.IWorkflowNodeBulkUpdateDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    programId?: string | undefined;
+    versionId?: string | undefined;
+    nodeType?: enums.WorkflowNodeType;
+    position?: NodePositionDto;
+    inputConfiguration?: NodeInputConfigurationDto;
+    outputConfiguration?: NodeOutputConfigurationDto;
+    executionSettings?: NodeExecutionSettingsDto;
+    conditionalExecution?: NodeConditionalExecutionDto;
+    uiConfiguration?: NodeUIConfigurationDto;
+    metadata?: { [key: string]: any; } | undefined;
+    isDisabled?: boolean | undefined;
+
+    constructor(data?: interfaces.IWorkflowNodeBulkUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.programId = _data["programId"];
+            this.versionId = _data["versionId"];
+            this.nodeType = _data["nodeType"];
+            this.position = _data["position"] ? NodePositionDto.fromJS(_data["position"]) : <any>undefined;
+            this.inputConfiguration = _data["inputConfiguration"] ? NodeInputConfigurationDto.fromJS(_data["inputConfiguration"]) : <any>undefined;
+            this.outputConfiguration = _data["outputConfiguration"] ? NodeOutputConfigurationDto.fromJS(_data["outputConfiguration"]) : <any>undefined;
+            this.executionSettings = _data["executionSettings"] ? NodeExecutionSettingsDto.fromJS(_data["executionSettings"]) : <any>undefined;
+            this.conditionalExecution = _data["conditionalExecution"] ? NodeConditionalExecutionDto.fromJS(_data["conditionalExecution"]) : <any>undefined;
+            this.uiConfiguration = _data["uiConfiguration"] ? NodeUIConfigurationDto.fromJS(_data["uiConfiguration"]) : <any>undefined;
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+            this.isDisabled = _data["isDisabled"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowNodeBulkUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowNodeBulkUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["programId"] = this.programId;
+        data["versionId"] = this.versionId;
+        data["nodeType"] = this.nodeType;
+        data["position"] = this.position ? this.position.toJSON() : <any>undefined;
+        data["inputConfiguration"] = this.inputConfiguration ? this.inputConfiguration.toJSON() : <any>undefined;
+        data["outputConfiguration"] = this.outputConfiguration ? this.outputConfiguration.toJSON() : <any>undefined;
+        data["executionSettings"] = this.executionSettings ? this.executionSettings.toJSON() : <any>undefined;
+        data["conditionalExecution"] = this.conditionalExecution ? this.conditionalExecution.toJSON() : <any>undefined;
+        data["uiConfiguration"] = this.uiConfiguration ? this.uiConfiguration.toJSON() : <any>undefined;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        data["isDisabled"] = this.isDisabled;
+        return data;
+    }
+}
+
 export class WorkflowNodeCreateDto implements interfaces.IWorkflowNodeCreateDto {
     id!: string;
     name!: string;
@@ -26879,8 +27036,8 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     status?: enums.WorkflowStatus;
-    nodes?: WorkflowNodeUpdateDto[] | undefined;
-    edges?: WorkflowEdgeUpdateDto[] | undefined;
+    nodes?: WorkflowNodeBulkUpdateDto[] | undefined;
+    edges?: WorkflowEdgeBulkUpdateDto[] | undefined;
     settings?: WorkflowSettingsDto;
     permissions?: WorkflowPermissionsDto;
     tags?: string[] | undefined;
@@ -26904,12 +27061,12 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
             if (Array.isArray(_data["nodes"])) {
                 this.nodes = [] as any;
                 for (let item of _data["nodes"])
-                    this.nodes!.push(WorkflowNodeUpdateDto.fromJS(item));
+                    this.nodes!.push(WorkflowNodeBulkUpdateDto.fromJS(item));
             }
             if (Array.isArray(_data["edges"])) {
                 this.edges = [] as any;
                 for (let item of _data["edges"])
-                    this.edges!.push(WorkflowEdgeUpdateDto.fromJS(item));
+                    this.edges!.push(WorkflowEdgeBulkUpdateDto.fromJS(item));
             }
             this.settings = _data["settings"] ? WorkflowSettingsDto.fromJS(_data["settings"]) : <any>undefined;
             this.permissions = _data["permissions"] ? WorkflowPermissionsDto.fromJS(_data["permissions"]) : <any>undefined;

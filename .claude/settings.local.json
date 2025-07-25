@@ -9,7 +9,8 @@
       "Bash(node:*)",
       "Bash(npx tsc:*)",
       "Bash(mkdir:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": []
   }
