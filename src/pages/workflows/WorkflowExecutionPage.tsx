@@ -131,6 +131,8 @@ const WorkflowExecutionPage: React.FC = () => {
   };
 
   const downloadFile = async (file: any) => {
+    if (!executionId) return;
+    
     try {
       // Extract file path - assuming file could be a string path or an object with fileName/path
       const filePath = typeof file === 'string' ? file : (file.path || file.fileName || file);
@@ -138,35 +140,61 @@ const WorkflowExecutionPage: React.FC = () => {
         ? filePath.split('/').pop() || 'download' 
         : (file.fileName || file.path?.split('/').pop() || 'download');
       
-      // Create a blob URL for the file download
-      const response = await fetch(`/api/files/download?path=${encodeURIComponent(filePath)}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to download file: ${response.statusText}`);
+      // Use the new workflow-specific download API endpoint
+      const response = await api.workflows.workflows_DownloadExecutionFile(executionId, filePath);
+      
+      if (!response.success || !response.data) {
+        throw new Error(response.message || 'Failed to download file');
       }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
       
-      // Create download link and trigger download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
+      // Get the file content from the response
+      const fileData = response.data;
       
-      // Cleanup
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      if (fileData.content) {
+        // Convert base64 to blob if the content is base64 encoded
+        const byteCharacters = atob(fileData.content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray]);
+        
+        const url = window.URL.createObjectURL(blob);
+        
+        // Create download link and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        throw new Error('No file content received from server');
+      }
       
     } catch (error) {
       console.error('Failed to download file:', error);
       alert(`Failed to download file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const downloadAllFiles = async () => {
+    if (!executionId) return;
+    
+    try {
+      // Use the new workflow-specific download all files API endpoint
+      await api.workflows.workflows_DownloadAllExecutionFiles(executionId);
+      
+      // The API endpoint handles the file download directly, 
+      // so we don't need to handle the response here
+      
+    } catch (error) {
+      console.error('Failed to download all files:', error);
+      alert(`Failed to download all files: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -298,7 +326,10 @@ const WorkflowExecutionPage: React.FC = () => {
     return null;
   }
 
-  const progress = (execution.progress as any)?.percentage || 0;
+  const progress = execution.progress?.percentComplete || 0;
+  
+  // Debug logging for progress (can be removed in production)
+  console.log('Execution progress data:', execution.progress);
   const isRunning = execution.status === WorkflowExecutionStatus._1;
   const isPaused = execution.status === WorkflowExecutionStatus._5;
   const isCompleted = execution.status === WorkflowExecutionStatus._2;
@@ -418,6 +449,20 @@ const WorkflowExecutionPage: React.FC = () => {
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
+                
+                {/* Additional Progress Details */}
+                {execution.progress && (
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    {execution.progress.totalNodes && (
+                      <span>
+                        {execution.progress.completedNodes || 0}/{execution.progress.totalNodes} nodes completed
+                      </span>
+                    )}
+                    {execution.progress.currentPhase && (
+                      <span>Phase: {execution.progress.currentPhase}</span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {execution.nodeStatuses && Object.keys(execution.nodeStatuses).length > 0 && (
@@ -508,10 +553,29 @@ const WorkflowExecutionPage: React.FC = () => {
               )}
 
               {activeTab === 'outputs' && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-96">
-                  {/* Node List */}
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Select Node</h3>
+                <div className="space-y-4">
+                  {/* Download All Files Button */}
+                  {Object.keys(nodeOutputs).length > 0 && (
+                    <div className="flex justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={downloadAllFiles}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        }
+                      >
+                        Download All Files
+                      </Button>
+                    </div>
+                  )}
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-96">
+                    {/* Node List */}
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Select Node</h3>
                     <div className="border border-gray-200 dark:border-gray-600 rounded-lg h-80 overflow-y-auto">
                       {Object.keys(nodeOutputs).length === 0 ? (
                         <div className="p-4 text-center text-gray-500 dark:text-gray-400">
@@ -660,6 +724,7 @@ const WorkflowExecutionPage: React.FC = () => {
                       </div>
                     )}
                   </div>
+                </div>
                 </div>
               )}
 
