@@ -4056,6 +4056,13 @@ export interface IWorkflowExecutionContextDto {
     timeoutMinutes?: number;
 }
 
+export interface IWorkflowExecutionFileBulkDownloadRequest {
+    filePaths?: string[] | undefined;
+    nodeIds?: string[] | undefined;
+    includeMetadata?: boolean;
+    compressionLevel?: string | undefined;
+}
+
 export interface IWorkflowExecutionLogResponseDto {
     id?: string | undefined;
     executionId?: string | undefined;
@@ -4225,6 +4232,7 @@ export interface IWorkflowExecutionSummaryDto {
     id?: string | undefined;
     executionName?: string | undefined;
     executedBy?: string | undefined;
+    executedByUserName?: string | undefined;
     startedAt?: Date;
     completedAt?: Date | undefined;
     duration?: string | undefined;

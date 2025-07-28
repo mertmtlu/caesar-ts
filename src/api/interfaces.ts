@@ -2561,6 +2561,25 @@ export interface IWorkflowsClient {
     workflows_GetExecutionLogs(executionId: string, skip: number | undefined, take: number | undefined): Promise<types.IWorkflowExecutionLogResponseDtoListApiResponse>;
 
     /**
+     * Download a specific output file from a workflow execution
+     * @return OK
+     */
+    workflows_DownloadExecutionFile(executionId: string, filePath: string): Promise<types.IVersionFileDetailDtoApiResponse>;
+
+    /**
+     * Download all output files from a workflow execution as a ZIP archive
+     * @return OK
+     */
+    workflows_DownloadAllExecutionFiles(executionId: string): Promise<void>;
+
+    /**
+     * Download selected output files from a workflow execution as a ZIP archive
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_BulkDownloadExecutionFiles(executionId: string, body: types.IWorkflowExecutionFileBulkDownloadRequest | undefined): Promise<void>;
+
+    /**
      * Add a node to a workflow
      * @param body (optional) 
      * @return OK

@@ -24677,6 +24677,63 @@ export class WorkflowExecutionContextDto implements interfaces.IWorkflowExecutio
     }
 }
 
+export class WorkflowExecutionFileBulkDownloadRequest implements interfaces.IWorkflowExecutionFileBulkDownloadRequest {
+    filePaths?: string[] | undefined;
+    nodeIds?: string[] | undefined;
+    includeMetadata?: boolean;
+    compressionLevel?: string | undefined;
+
+    constructor(data?: interfaces.IWorkflowExecutionFileBulkDownloadRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["filePaths"])) {
+                this.filePaths = [] as any;
+                for (let item of _data["filePaths"])
+                    this.filePaths!.push(item);
+            }
+            if (Array.isArray(_data["nodeIds"])) {
+                this.nodeIds = [] as any;
+                for (let item of _data["nodeIds"])
+                    this.nodeIds!.push(item);
+            }
+            this.includeMetadata = _data["includeMetadata"];
+            this.compressionLevel = _data["compressionLevel"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowExecutionFileBulkDownloadRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowExecutionFileBulkDownloadRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.filePaths)) {
+            data["filePaths"] = [];
+            for (let item of this.filePaths)
+                data["filePaths"].push(item);
+        }
+        if (Array.isArray(this.nodeIds)) {
+            data["nodeIds"] = [];
+            for (let item of this.nodeIds)
+                data["nodeIds"].push(item);
+        }
+        data["includeMetadata"] = this.includeMetadata;
+        data["compressionLevel"] = this.compressionLevel;
+        return data;
+    }
+}
+
 export class WorkflowExecutionLogResponseDto implements interfaces.IWorkflowExecutionLogResponseDto {
     id?: string | undefined;
     executionId?: string | undefined;
@@ -25708,6 +25765,7 @@ export class WorkflowExecutionSummaryDto implements interfaces.IWorkflowExecutio
     id?: string | undefined;
     executionName?: string | undefined;
     executedBy?: string | undefined;
+    executedByUserName?: string | undefined;
     startedAt?: Date;
     completedAt?: Date | undefined;
     duration?: string | undefined;
@@ -25733,6 +25791,7 @@ export class WorkflowExecutionSummaryDto implements interfaces.IWorkflowExecutio
             this.id = _data["id"];
             this.executionName = _data["executionName"];
             this.executedBy = _data["executedBy"];
+            this.executedByUserName = _data["executedByUserName"];
             this.startedAt = _data["startedAt"] ? new Date(_data["startedAt"].toString()) : <any>undefined;
             this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
             this.duration = _data["duration"];
@@ -25770,6 +25829,7 @@ export class WorkflowExecutionSummaryDto implements interfaces.IWorkflowExecutio
         data["id"] = this.id;
         data["executionName"] = this.executionName;
         data["executedBy"] = this.executedBy;
+        data["executedByUserName"] = this.executedByUserName;
         data["startedAt"] = this.startedAt ? this.startedAt.toISOString() : <any>undefined;
         data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
         data["duration"] = this.duration;

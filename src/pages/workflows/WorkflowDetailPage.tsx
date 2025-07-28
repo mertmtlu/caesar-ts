@@ -431,11 +431,10 @@ const WorkflowDetailPage: React.FC = () => {
                             }`}></div>
                             <div>
                               <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                {execution.executionName || `Execution ${execution.id?.slice(-8)}`}
+                                {execution.executionName || `Execution ${executionHistory.length - index}`}
                               </div>
                               <div className="text-xs text-gray-500 dark:text-gray-400">
-                                {execution.startedAt ? new Date(execution.startedAt).toLocaleString() : 'Unknown time'} • 
-                                {execution.executedBy || 'Unknown user'}
+                                {execution.startedAt ? new Date(execution.startedAt).toLocaleString() : 'Unknown time'} • {execution.executedByUserName || 'Unknown user'}
                               </div>
                             </div>
                           </div>

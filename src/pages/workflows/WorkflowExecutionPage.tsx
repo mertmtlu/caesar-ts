@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
-import { WorkflowExecutionResponseDto, WorkflowExecutionLogResponseDto } from '@/api/types';
+import { WorkflowExecutionResponseDto, WorkflowExecutionLogResponseDto, WorkflowDetailDto } from '@/api/types';
 import { WorkflowExecutionStatus } from '@/api/enums';
 import Button from '@/components/common/Button';
 
@@ -16,6 +16,10 @@ const WorkflowExecutionPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'logs' | 'outputs' | 'statistics'>('logs');
+  const [, setWorkflowDetails] = useState<WorkflowDetailDto | null>(null);
+  const [nodeNameMap, setNodeNameMap] = useState<Record<string, string>>({});
+  const [outputTab, setOutputTab] = useState<'stdout' | 'stderr' | 'files'>('stdout');
+  const [workflowDetailsCache] = useState<Map<string, WorkflowDetailDto>>(new Map());
 
   useEffect(() => {
     if (executionId) {
@@ -24,6 +28,54 @@ const WorkflowExecutionPage: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [executionId]);
+
+  useEffect(() => {
+    if (workflowId) {
+      loadWorkflowDetails();
+    }
+  }, [workflowId]);
+
+  const loadWorkflowDetails = async () => {
+    if (!workflowId) return;
+
+    // Check cache first
+    const cachedDetails = workflowDetailsCache.get(workflowId);
+    if (cachedDetails) {
+      setWorkflowDetails(cachedDetails);
+      createNodeNameMap(cachedDetails);
+      return;
+    }
+
+    try {
+      const response = await api.workflows.workflows_GetById(workflowId);
+      if (response.success && response.data) {
+        const details = WorkflowDetailDto.fromJS(response.data);
+        
+        // Cache the details
+        workflowDetailsCache.set(workflowId, details);
+        
+        setWorkflowDetails(details);
+        createNodeNameMap(details);
+      }
+    } catch (error) {
+      console.error('Failed to load workflow details:', error);
+      // Don't set error state as this is not critical for the execution page
+    }
+  };
+
+  const createNodeNameMap = (details: WorkflowDetailDto) => {
+    // Create node ID to name mapping
+    const nameMap: Record<string, string> = {};
+    if (details.nodes) {
+      details.nodes.forEach(node => {
+        if (node.id) {
+          // Use node name if available, otherwise use program name, otherwise fall back to ID
+          nameMap[node.id] = node.name || node.programName || node.id;
+        }
+      });
+    }
+    setNodeNameMap(nameMap);
+  };
 
   const loadExecution = async () => {
     if (!executionId) return;
@@ -58,6 +110,63 @@ const WorkflowExecutionPage: React.FC = () => {
       setError('Failed to load execution details. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getNodeDisplayName = (nodeId: string): string => {
+    return nodeNameMap[nodeId] || nodeId;
+  };
+
+  const getNodeOutputData = (nodeId: string) => {
+    const output = nodeOutputs[nodeId];
+    if (!output || !output.data) {
+      return { stdout: '', stderr: '', outputFiles: [] };
+    }
+    
+    return {
+      stdout: output.data.stdout || '',
+      stderr: output.data.stderr || '',
+      outputFiles: output.data.outputFiles || []
+    };
+  };
+
+  const downloadFile = async (file: any) => {
+    try {
+      // Extract file path - assuming file could be a string path or an object with fileName/path
+      const filePath = typeof file === 'string' ? file : (file.path || file.fileName || file);
+      const fileName = typeof file === 'string' 
+        ? filePath.split('/').pop() || 'download' 
+        : (file.fileName || file.path?.split('/').pop() || 'download');
+      
+      // Create a blob URL for the file download
+      const response = await fetch(`/api/files/download?path=${encodeURIComponent(filePath)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to download file: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create download link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      alert(`Failed to download file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -315,10 +424,10 @@ const WorkflowExecutionPage: React.FC = () => {
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white">Node Status</h3>
                   <div className="space-y-1">
-                    {Object.entries(execution.nodeStatuses).map(([nodeId, status], index) => (
+                    {Object.entries(execution.nodeStatuses).map(([nodeId, status]) => (
                       <div key={nodeId} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                         <span className="text-sm text-gray-900 dark:text-white">
-                          {nodeId}
+                          {getNodeDisplayName(nodeId)}
                         </span>
                         <span className={`text-xs px-2 py-1 rounded ${
                           status === 2 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
@@ -418,7 +527,7 @@ const WorkflowExecutionPage: React.FC = () => {
                             }`}
                           >
                             <div className="font-medium text-sm text-gray-900 dark:text-white">
-                              {nodeId}
+                              {getNodeDisplayName(nodeId)}
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-400">
                               Click to view output
@@ -432,19 +541,124 @@ const WorkflowExecutionPage: React.FC = () => {
                   {/* Output Content */}
                   <div className="space-y-2">
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                      Output {selectedNodeOutput ? `for ${selectedNodeOutput}` : ''}
+                      Output {selectedNodeOutput ? `for ${getNodeDisplayName(selectedNodeOutput)}` : ''}
                     </h3>
-                    <div className="border border-gray-200 dark:border-gray-600 rounded-lg h-80 overflow-y-auto">
-                      {selectedNodeOutput && nodeOutputs[selectedNodeOutput] ? (
-                        <pre className="p-4 text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
-                          {JSON.stringify(nodeOutputs[selectedNodeOutput], null, 2)}
-                        </pre>
-                      ) : (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    
+                    {selectedNodeOutput && nodeOutputs[selectedNodeOutput] ? (
+                      <div className="border border-gray-200 dark:border-gray-600 rounded-lg">
+                        {/* Output Tabs */}
+                        <div className="border-b border-gray-200 dark:border-gray-600">
+                          <nav className="-mb-px flex space-x-4 px-4" aria-label="Output tabs">
+                            <button
+                              onClick={() => setOutputTab('stdout')}
+                              className={`py-2 px-1 border-b-2 font-medium text-xs ${
+                                outputTab === 'stdout'
+                                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                              }`}
+                            >
+                              Standard Output
+                            </button>
+                            <button
+                              onClick={() => setOutputTab('stderr')}
+                              className={`py-2 px-1 border-b-2 font-medium text-xs ${
+                                outputTab === 'stderr'
+                                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                              }`}
+                            >
+                              Standard Error
+                            </button>
+                            <button
+                              onClick={() => setOutputTab('files')}
+                              className={`py-2 px-1 border-b-2 font-medium text-xs ${
+                                outputTab === 'files'
+                                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                              }`}
+                            >
+                              Output Files ({getNodeOutputData(selectedNodeOutput).outputFiles.length})
+                            </button>
+                          </nav>
+                        </div>
+                        
+                        {/* Output Tab Content */}
+                        <div className="h-64 overflow-y-auto">
+                          {outputTab === 'stdout' && (
+                            <div className="p-4">
+                              {getNodeOutputData(selectedNodeOutput).stdout ? (
+                                <pre className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
+                                  {getNodeOutputData(selectedNodeOutput).stdout}
+                                </pre>
+                              ) : (
+                                <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                                  No standard output available
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {outputTab === 'stderr' && (
+                            <div className="p-4">
+                              {getNodeOutputData(selectedNodeOutput).stderr ? (
+                                <pre className="text-sm text-red-600 dark:text-red-400 whitespace-pre-wrap font-mono">
+                                  {getNodeOutputData(selectedNodeOutput).stderr}
+                                </pre>
+                              ) : (
+                                <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                                  No error output available
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {outputTab === 'files' && (
+                            <div className="p-4">
+                              {getNodeOutputData(selectedNodeOutput).outputFiles.length > 0 ? (
+                                <div className="space-y-2">
+                                  {getNodeOutputData(selectedNodeOutput).outputFiles.map((file: any, fileIndex: number) => (
+                                    <div key={fileIndex} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                      <div className="flex items-center space-x-3">
+                                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <div>
+                                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                            {file.fileName}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => downloadFile(file)}
+                                        leftIcon={
+                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                          </svg>
+                                        }
+                                      >
+                                        Download
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                                  No output files available
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-200 dark:border-gray-600 rounded-lg h-80 flex items-center justify-center">
+                        <div className="text-center text-gray-500 dark:text-gray-400">
                           {selectedNodeOutput ? 'No output data available' : 'Select a node to view its output'}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -482,7 +696,7 @@ const WorkflowExecutionPage: React.FC = () => {
                     <div className="mt-6">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Node Execution Timeline</h4>
                       <div className="space-y-2">
-                        {Object.entries(execution.nodeStatuses).map(([nodeId, status], index) => (
+                        {Object.entries(execution.nodeStatuses).map(([nodeId, status]) => (
                           <div key={nodeId} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded">
                             <div className="flex items-center space-x-3">
                               <div className={`w-3 h-3 rounded-full ${
@@ -492,7 +706,7 @@ const WorkflowExecutionPage: React.FC = () => {
                                 'bg-gray-400'
                               }`}></div>
                               <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {nodeId}
+                                {getNodeDisplayName(nodeId)}
                               </span>
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -532,7 +746,7 @@ const WorkflowExecutionPage: React.FC = () => {
               <div>
                 <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Executed By</dt>
                 <dd className="text-sm text-gray-900 dark:text-white">
-                  {execution.executedBy || 'Unknown'}
+                  {execution.executedByUsername || execution.executedBy || 'Unknown'}
                 </dd>
               </div>
               {execution.workflowVersion && (
