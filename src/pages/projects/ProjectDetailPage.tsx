@@ -160,7 +160,6 @@ const ProjectDetailPage: React.FC = () => {
         })) || [];
 
         setVersions(versionData);
-        console.log('Loaded versions:', versionData);
         setTotalVersions(response.data.totalCount || 0);
       }
     } catch (error) {

@@ -465,7 +465,6 @@ const ComponentDesignerPage: React.FC = () => {
           componentData
         );
         
-        console.log('Creating new component');
         if (response.success) {
           navigate(`/projects/${projectId}/components`);
         } else {

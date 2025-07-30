@@ -10,7 +10,8 @@
       "Bash(npx tsc:*)",
       "Bash(mkdir:*)",
       "Bash(rm:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }

@@ -362,9 +362,6 @@ const EditorPage: React.FC = () => {
       return;
     }
 
-    // Debug: Log the attempted file path and current open files
-    console.log('Attempting to open:', filePath);
-
     try {
       const response = await api.files.files_GetVersionFile(project.id, version.id, filePath);
       if (response.success && response.data) {

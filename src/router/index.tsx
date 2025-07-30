@@ -174,7 +174,7 @@ export const router = createBrowserRouter([
 
       // Execution routes
       {
-        path: 'executions',
+        path: 'apps',
         element: (
           <ProtectedRoute>
             <DashboardLayout />

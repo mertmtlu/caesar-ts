@@ -184,10 +184,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       
       const response = await api.users.users_RevokeAllTokens(user.id!);
       
-      if (response.success) {
-        // Show success message or notification
-        console.log('All tokens revoked successfully');
-      } else {
+      if (!response.success) {
         setError(response.message || 'Failed to revoke tokens');
       }
     } catch (error) {

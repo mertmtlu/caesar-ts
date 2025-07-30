@@ -62,8 +62,6 @@ const UsersPage: React.FC = () => {
   // Available roles
   const [availableRoles, setAvailableRoles] = useState<string[]>([]);
 
-  console.log(availableRoles);
-  
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<UserToDelete | null>(null);

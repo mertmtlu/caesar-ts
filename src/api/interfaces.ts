@@ -1726,6 +1726,47 @@ export interface ITMsClient {
     tMs_GetHazardSummary(id: string): Promise<types.ITMHazardSummaryResponseDtoApiResponse>;
 }
 
+export interface IUIWorkflowClient {
+
+    /**
+     * Get pending UI interactions for the current user
+     * @return OK
+     */
+    uIWorkflow_GetPendingUIInteractions(): Promise<types.IUIInteractionSessionListApiResponse>;
+
+    /**
+     * Get a specific UI interaction session
+     * @return OK
+     */
+    uIWorkflow_GetUIInteractionSession(sessionId: string): Promise<types.IUIInteractionSessionApiResponse>;
+
+    /**
+     * Submit UI interaction data
+     * @param body (optional) 
+     * @return OK
+     */
+    uIWorkflow_SubmitUIInteraction(sessionId: string, body: types.IBsonElement[] | undefined): Promise<types.IUIInteractionResultApiResponse>;
+
+    /**
+     * Skip UI interaction (if allowed)
+     * @return OK
+     */
+    uIWorkflow_SkipUIInteraction(sessionId: string): Promise<types.IUIInteractionResultApiResponse>;
+
+    /**
+     * Cancel UI interaction
+     * @param body (optional) 
+     * @return OK
+     */
+    uIWorkflow_CancelUIInteraction(sessionId: string, body: types.ICancelUIInteractionRequest | undefined): Promise<types.IStringApiResponse>;
+
+    /**
+     * Get UI interaction status for a workflow execution
+     * @return OK
+     */
+    uIWorkflow_GetWorkflowUIInteractions(workflowId: string, executionId: string): Promise<types.IUIInteractionSessionListApiResponse>;
+}
+
 export interface IUiComponentsClient {
 
     /**

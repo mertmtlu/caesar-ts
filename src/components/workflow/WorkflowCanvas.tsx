@@ -560,8 +560,6 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   // Handle connection end
   const handleConnectionEnd = useCallback((targetPoint: ConnectionPoint) => {
     if (connectionPreview) {
-      console.log('Connecting:', connectionPreview.sourcePoint, 'to', targetPoint);
-      
       // Validation checks
       const sourcePoint = connectionPreview.sourcePoint;
       
@@ -636,8 +634,6 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       if (onEdgeAdd) {
         onEdgeAdd(newEdge);
       }
-      
-      console.log('Edge created:', newEdge);
     }
     
     // Clear connection preview

@@ -113,8 +113,6 @@ const WorkflowsPage: React.FC = () => {
         );
       }
 
-      console.log('Workflows response:', response);
-
       if (response.success && response.data) {
         const workflowItems = response.data.items?.map(workflow => ({
           id: workflow.id || '',
@@ -232,7 +230,6 @@ const WorkflowsPage: React.FC = () => {
 
       const response = await api.workflows.workflows_Execute(workflowId, workflow);
 
-      console.log('Execute workflow response:', response.data);
       if (response.success && response.data) {
         navigate(`/workflows/${workflowId}/execution/${response.data.id}`);
       } else {

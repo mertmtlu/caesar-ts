@@ -1,4 +1,4 @@
-// src/pages/executions/ExecutionsPage.tsx
+// src/pages/apps/ExecutionsPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '@/api/api';
@@ -468,22 +468,20 @@ const ExecutionsPage: React.FC = () => {
         })
       });
 
-      console.log('Executing program with request:', executionRequest);
-
       const response = await api.executions.executions_ExecuteProgram(
         executeModal.program.id,
         executionRequest
       );
 
       if (response.success) {
-        // Close modal and refresh executions
+        // Close modal and refresh apps
         setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null });
         setView('executions');
         loadRecentExecutions();
         
         // Navigate to execution detail if needed
         if (response.data?.id) {
-          navigate(`/executions/${response.data.id}`);
+          navigate(`/apps/${response.data.id}`);
         }
       } else {
         setError(response.message || 'Failed to execute program');

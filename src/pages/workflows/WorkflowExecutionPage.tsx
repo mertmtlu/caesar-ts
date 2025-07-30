@@ -83,8 +83,6 @@ const WorkflowExecutionPage: React.FC = () => {
     try {
       setError(null);
 
-      console.log('Loading execution:', executionId);
-
       const [executionResponse, logsResponse, outputsResponse] = await Promise.all([
         api.workflows.workflows_GetExecutionStatus(executionId),
         api.workflows.workflows_GetExecutionLogs(executionId, 0, 100),
@@ -328,8 +326,6 @@ const WorkflowExecutionPage: React.FC = () => {
 
   const progress = execution.progress?.percentComplete || 0;
   
-  // Debug logging for progress (can be removed in production)
-  console.log('Execution progress data:', execution.progress);
   const isRunning = execution.status === WorkflowExecutionStatus._1;
   const isPaused = execution.status === WorkflowExecutionStatus._5;
   const isCompleted = execution.status === WorkflowExecutionStatus._2;

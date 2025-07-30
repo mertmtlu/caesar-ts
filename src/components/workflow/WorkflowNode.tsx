@@ -121,7 +121,6 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
   const handleConnectionPointMouseDown = useCallback((e: React.MouseEvent, point: ConnectionPoint) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Connection point clicked:', point);
     
     // Calculate the actual position for the connection point
     const position = getConnectionPointPosition(point);
