@@ -84,6 +84,40 @@ const WorkflowDesignerPage: React.FC = () => {
         
         // Convert nodes from backend format to designer format
         if (workflow.nodes) {
+          // Get unique program IDs for batch UI component checking
+          const programIds = Array.from(new Set(
+            workflow.nodes
+              .filter(node => node.programId)
+              .map(node => node.programId!)
+          ));
+
+          // Create a map to store which programs have UI components
+          const programHasUiComponents = new Map<string, boolean>();
+
+          // Check UI components for all unique program IDs
+          await Promise.all(
+            programIds.map(async (programId) => {
+              try {
+                const response = await api.uiComponents.uiComponents_GetByProgram(
+                  programId,
+                  1, // pageNumber
+                  1, // pageSize - minimal since we just need to check existence
+                  'id', // sorting field
+                  undefined // sorting direction
+                );
+                programHasUiComponents.set(programId, 
+                  !!(response.success && response.data?.items && response.data.items.length > 0)
+                );
+              } catch (error) {
+                console.warn(`Failed to check UI components for program ${programId}:`, error);
+                programHasUiComponents.set(programId, false);
+              }
+            })
+          ).catch(() => {
+            console.warn('Some UI component checks failed, continuing...');
+          });
+
+          // Create nodes with UI component information
           workflow.nodes.forEach(node => {
             const designerNode: WorkflowDesignerNode = {
               id: node.id || 'unknown',
@@ -124,6 +158,7 @@ const WorkflowDesignerPage: React.FC = () => {
                 },
               ],
               validationErrors: [],
+              hasUiComponents: programHasUiComponents.get(node.programId || '') || false,
             };
             nodes.set(node.id || 'unknown', designerNode);
           });

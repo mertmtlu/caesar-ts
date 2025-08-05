@@ -74,6 +74,7 @@ export interface WorkflowDesignerNode {
   
   // Program metadata
   programInfo?: ProgramListDto;
+  hasUiComponents?: boolean;
 }
 
 // Enhanced workflow edge for designer
@@ -301,7 +302,7 @@ export const createNodeFromTemplate = (
   description: template.description,
   programId: template.programId,
   programName: template.programInfo.name,
-  nodeType: WorkflowNodeType._0, // Default to standard node
+  nodeType: WorkflowNodeType.Program, // Default to program node
   position,
   size: template.defaultSize,
   isSelected: false,

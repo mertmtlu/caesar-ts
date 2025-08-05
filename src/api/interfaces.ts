@@ -1729,42 +1729,53 @@ export interface ITMsClient {
 export interface IUIWorkflowClient {
 
     /**
-     * Get pending UI interactions for the current user
+     * Gets all pending UI interactions for the current user
      * @return OK
      */
-    uIWorkflow_GetPendingUIInteractions(): Promise<types.IUIInteractionSessionListApiResponse>;
+    uIWorkflow_GetPendingUIInteractions(): Promise<types.IUIInteractionSessionListApiResponseApiResponse>;
 
     /**
-     * Get a specific UI interaction session
+     * Gets all UI interactions for a specific workflow execution
+     * @param workflowId The workflow ID
+     * @param executionId The execution ID
      * @return OK
      */
-    uIWorkflow_GetUIInteractionSession(sessionId: string): Promise<types.IUIInteractionSessionApiResponse>;
+    uIWorkflow_GetWorkflowUIInteractions(workflowId: string, executionId: string): Promise<types.IUIInteractionSessionListApiResponseApiResponse>;
 
     /**
-     * Submit UI interaction data
+     * Gets details of a specific UI interaction
+     * @param interactionId The interaction ID
+     * @return OK
+     */
+    uIWorkflow_GetUIInteraction(interactionId: string): Promise<types.IUIInteractionDetailApiResponseApiResponse>;
+
+    /**
+     * Submits a response to a UI interaction
+     * @param interactionId The interaction ID
+     * @param body (optional) The submission request
+     * @return OK
+     */
+    uIWorkflow_SubmitUIInteraction(interactionId: string, body: types.IUIInteractionSubmissionRequest | undefined): Promise<types.IStringApiResponse>;
+
+    /**
+     * Cancels a UI interaction
+     * @param interactionId The interaction ID
      * @param body (optional) 
      * @return OK
      */
-    uIWorkflow_SubmitUIInteraction(sessionId: string, body: types.IBsonElement[] | undefined): Promise<types.IUIInteractionResultApiResponse>;
+    uIWorkflow_CancelUIInteraction(interactionId: string, body: types.ICancelUIInteractionRequest | undefined): Promise<types.IStringApiResponse>;
 
     /**
-     * Skip UI interaction (if allowed)
+     * Gets all active UI interactions (admin endpoint)
      * @return OK
      */
-    uIWorkflow_SkipUIInteraction(sessionId: string): Promise<types.IUIInteractionResultApiResponse>;
+    uIWorkflow_GetActiveUIInteractions(): Promise<types.IUIInteractionSessionListApiResponseApiResponse>;
 
     /**
-     * Cancel UI interaction
-     * @param body (optional) 
+     * Processes timed out interactions (admin endpoint)
      * @return OK
      */
-    uIWorkflow_CancelUIInteraction(sessionId: string, body: types.ICancelUIInteractionRequest | undefined): Promise<types.IStringApiResponse>;
-
-    /**
-     * Get UI interaction status for a workflow execution
-     * @return OK
-     */
-    uIWorkflow_GetWorkflowUIInteractions(workflowId: string, executionId: string): Promise<types.IUIInteractionSessionListApiResponse>;
+    uIWorkflow_ProcessTimedOutInteractions(): Promise<types.IStringApiResponse>;
 }
 
 export interface IUiComponentsClient {

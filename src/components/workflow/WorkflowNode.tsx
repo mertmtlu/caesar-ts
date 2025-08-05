@@ -45,7 +45,7 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
   // Get node type specific styling
   const getNodeTypeStyles = () => {
     switch (node.nodeType) {
-      case WorkflowNodeType._0: // Standard
+      case WorkflowNodeType.Program: // Program
         return {
           borderColor: COLORS.NODE_BORDER,
           backgroundColor: COLORS.NODE_BACKGROUND,
@@ -56,7 +56,7 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
             </svg>
           ),
         };
-      case WorkflowNodeType._1: // Start
+      case WorkflowNodeType.StartNode: // Start
         return {
           borderColor: 'border-green-500',
           backgroundColor: 'bg-green-50',
@@ -67,7 +67,7 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
             </svg>
           ),
         };
-      case WorkflowNodeType._2: // End
+      case WorkflowNodeType.EndNode: // End
         return {
           borderColor: 'border-red-500',
           backgroundColor: 'bg-red-50',
@@ -78,7 +78,7 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
             </svg>
           ),
         };
-      case WorkflowNodeType._3: // Condition
+      case WorkflowNodeType.DecisionNode: // Decision
         return {
           borderColor: 'border-yellow-500',
           backgroundColor: 'bg-yellow-50',
@@ -86,6 +86,50 @@ const WorkflowNode: React.FC<WorkflowNodeProps> = ({
           icon: (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          ),
+        };
+      case WorkflowNodeType.MergeNode: // Merge
+        return {
+          borderColor: 'border-purple-500',
+          backgroundColor: 'bg-purple-50',
+          iconColor: 'text-purple-500',
+          icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V8a2 2 0 11-4 0zM9 15a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 11-4 0z" />
+            </svg>
+          ),
+        };
+      case WorkflowNodeType.SubWorkflow: // SubWorkflow
+        return {
+          borderColor: 'border-indigo-500',
+          backgroundColor: 'bg-indigo-50',
+          iconColor: 'text-indigo-500',
+          icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+            </svg>
+          ),
+        };
+      case WorkflowNodeType.CustomFunction: // CustomFunction
+        return {
+          borderColor: 'border-orange-500',
+          backgroundColor: 'bg-orange-50',
+          iconColor: 'text-orange-500',
+          icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          ),
+        };
+      case WorkflowNodeType.UIInteraction: // UIInteraction
+        return {
+          borderColor: 'border-pink-500',
+          backgroundColor: 'bg-pink-50',
+          iconColor: 'text-pink-500',
+          icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21l4-7 4 7M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
           ),
         };
