@@ -18653,6 +18653,8 @@ export class UIInteractionSessionApiResponse implements interfaces.IUIInteractio
     createdAt!: Date;
     completedAt?: Date | undefined;
     metadata?: { [key: string]: any; } | undefined;
+    uiComponentId?: string | undefined;
+    uiComponentConfiguration?: { [key: string]: any; } | undefined;
 
     constructor(data?: interfaces.IUIInteractionSessionApiResponse) {
         if (data) {
@@ -18711,6 +18713,14 @@ export class UIInteractionSessionApiResponse implements interfaces.IUIInteractio
                         (<any>this.metadata)![key] = _data["metadata"][key];
                 }
             }
+            this.uiComponentId = _data["uiComponentId"];
+            if (_data["uiComponentConfiguration"]) {
+                this.uiComponentConfiguration = {} as any;
+                for (let key in _data["uiComponentConfiguration"]) {
+                    if (_data["uiComponentConfiguration"].hasOwnProperty(key))
+                        (<any>this.uiComponentConfiguration)![key] = _data["uiComponentConfiguration"][key];
+                }
+            }
         }
     }
 
@@ -18767,6 +18777,14 @@ export class UIInteractionSessionApiResponse implements interfaces.IUIInteractio
             for (let key in this.metadata) {
                 if (this.metadata.hasOwnProperty(key))
                     (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        data["uiComponentId"] = this.uiComponentId;
+        if (this.uiComponentConfiguration) {
+            data["uiComponentConfiguration"] = {};
+            for (let key in this.uiComponentConfiguration) {
+                if (this.uiComponentConfiguration.hasOwnProperty(key))
+                    (<any>data["uiComponentConfiguration"])[key] = (<any>this.uiComponentConfiguration)[key];
             }
         }
         return data;

@@ -19,6 +19,42 @@ export interface UIInteractionStatusChangedEvent {
   completedAt?: string;
 }
 
+// New interface for the enhanced payload event
+export interface UIInteractionWithPayloadEvent {
+  sessionId: string;
+  workflowId: string;
+  executionId: string;
+  nodeId: string;
+  status: string;
+  session: UIInteractionSession; // Complete session data included
+  uiComponent: Record<string, unknown>;
+  contextData: Record<string, unknown>;
+  timeoutAt: string;
+  createdAt: string;
+  timeout?: number;
+}
+
+// Session interface (matches the one from store)
+export interface UIInteractionSession {
+  sessionId: string;
+  workflowId: string;
+  executionId: string;
+  nodeId: string;
+  status: string;
+  interactionType: string;
+  title: string;
+  description?: string;
+  inputSchema: Record<string, unknown>;
+  inputData: Record<string, unknown>;
+  outputData?: Record<string, unknown>;
+  timeoutAt?: string;
+  createdAt: string;
+  completedAt?: string;
+  metadata: Record<string, unknown>;
+  uiComponentId?: string;
+  uiComponentConfiguration?: Record<string, unknown>;
+}
+
 type EventCallback<T> = (data: T) => void;
 
 // --- SignalRService Class with Extensive Logging ---
@@ -31,6 +67,7 @@ class SignalRService {
 
   // Event listeners
   private uiInteractionAvailableListeners: EventCallback<UIInteractionEvent>[] = [];
+  private uiInteractionWithPayloadListeners: EventCallback<UIInteractionWithPayloadEvent>[] = [];
   private uiInteractionStatusChangedListeners: EventCallback<UIInteractionStatusChangedEvent>[] = [];
   private connectionStateListeners: EventCallback<HubConnectionState>[] = [];
 
@@ -137,9 +174,23 @@ class SignalRService {
       return;
     }
 
+    // NEW: UI Interaction Created With Payload (Solution 1)
+    console.log('[SignalRService] 🎧 Listening for "UIInteractionCreatedWithPayload" event.');
+    this.connection.on('UIInteractionCreatedWithPayload', (data: UIInteractionWithPayloadEvent) => {
+      console.log('[SignalRService] 📦 Received UIInteractionCreatedWithPayload with complete session data:', data);
+      this.uiInteractionWithPayloadListeners.forEach(listener => {
+        try {
+          listener(data);
+        } catch (error) {
+          console.error('❌ Error in "UIInteractionCreatedWithPayload" listener:', error);
+        }
+      });
+    });
+
     // UI Interaction Available (legacy)
     console.log('[SignalRService] 🎧 Listening for "UIInteractionAvailable" event.');
     this.connection.on('UIInteractionAvailable', (data: UIInteractionEvent) => {
+      console.log('[SignalRService] 📨 Received legacy UIInteractionAvailable event:', data);
       this.uiInteractionAvailableListeners.forEach(listener => {
         try {
           listener(data);
@@ -152,6 +203,7 @@ class SignalRService {
     // UI Interaction Created (new)
     console.log('[SignalRService] 🎧 Listening for "UIInteractionCreated" event.');
     this.connection.on('UIInteractionCreated', (data: UIInteractionEvent) => {
+      console.log('[SignalRService] 📨 Received UIInteractionCreated event:', data);
       this.uiInteractionAvailableListeners.forEach(listener => {
         try {
           listener(data);
@@ -221,6 +273,19 @@ class SignalRService {
       if (index > -1) {
         console.log('[SignalRService] ➖ Removing a listener for UIInteractionAvailable/Created events.');
         this.uiInteractionAvailableListeners.splice(index, 1);
+      }
+    };
+  }
+
+  // NEW: Add subscription method for payload events
+  onUIInteractionWithPayload(callback: EventCallback<UIInteractionWithPayloadEvent>): () => void {
+    console.log('[SignalRService] ➕ Adding a listener for UIInteractionCreatedWithPayload events.');
+    this.uiInteractionWithPayloadListeners.push(callback);
+    return () => {
+      const index = this.uiInteractionWithPayloadListeners.indexOf(callback);
+      if (index > -1) {
+        console.log('[SignalRService] ➖ Removing a listener for UIInteractionCreatedWithPayload events.');
+        this.uiInteractionWithPayloadListeners.splice(index, 1);
       }
     };
   }

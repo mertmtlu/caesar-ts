@@ -3097,6 +3097,8 @@ export interface IUIInteractionSessionApiResponse {
     createdAt: Date;
     completedAt?: Date | undefined;
     metadata?: { [key: string]: any; } | undefined;
+    uiComponentId?: string | undefined;
+    uiComponentConfiguration?: { [key: string]: any; } | undefined;
 }
 
 export interface IUIInteractionSessionListApiResponse {

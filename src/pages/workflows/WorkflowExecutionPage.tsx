@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import { WorkflowExecutionResponseDto, WorkflowExecutionLogResponseDto, WorkflowDetailDto } from '@/api/types';
-import { WorkflowExecutionStatus, SortDirection } from '@/api/enums';
+import { WorkflowExecutionStatus } from '@/api/enums';
 import Button from '@/components/common/Button';
 import { UIInteractionModal, UIWorkflowNotifications } from '@/components/ui-workflow';
 import { useUIWorkflowStore, useUIWorkflowModal, useCurrentWorkflowPendingSessions } from '@/stores/uiWorkflowStore';
@@ -26,231 +26,6 @@ const WorkflowExecutionPage: React.FC = () => {
   const [outputTab, setOutputTab] = useState<'stdout' | 'stderr' | 'files'>('stdout');
   const [workflowDetailsCache] = useState<Map<string, WorkflowDetailDto>>(new Map());
 
-  // Helper function to load component configuration from executions page
-  const loadComponentConfiguration = async (programId: string, _versionId: string): Promise<any[] | null> => {
-    try {
-      // First, get the component list to find the component ID
-      const listResponse = await api.uiComponents.uiComponents_GetByProgram(
-        programId,
-        1,
-        10,
-        'CreatedDate',
-        SortDirection._1 // Get newest first
-      );
-
-      if (listResponse.success && listResponse.data?.items && listResponse.data.items.length > 0) {
-        // Find the first active component, or fall back to the newest
-        const activeComponent = listResponse.data.items.find(c => c.status === 'active');
-        const component = activeComponent || listResponse.data.items[0];
-        
-        // Try to get the component by ID to get full details
-        try {
-          if (!component.id) {
-            console.error('Component ID is missing');
-            return null;
-          }
-          
-          const detailResponse = await api.uiComponents.uiComponents_GetById(component.id);
-          
-          if (detailResponse.success && detailResponse.data) {
-            const fullComponent = detailResponse.data;
-            if (fullComponent.configuration) {
-              try {
-                let schema: any;
-                
-                // Check if configuration is already an object or a JSON string
-                if (typeof fullComponent.configuration === 'string') {
-                  schema = JSON.parse(fullComponent.configuration);
-                } else {
-                  schema = fullComponent.configuration;
-                }
-                return schema.elements || [];
-              } catch (error) {
-                console.error('Failed to process component configuration:', error);
-                console.error('Configuration data:', fullComponent.configuration);
-                return null;
-              }
-            }
-          }
-        } catch (detailError) {
-          console.error('Failed to fetch component details:', detailError);
-        }
-        
-        return null;
-      }
-      return null;
-    } catch (error) {
-      console.error('Failed to load component configuration:', error);
-      return null;
-    }
-  };
-
-  // Helper function to convert UIElement[] to UIInputField[]
-  const convertUIElementsToFields = (elements: any[]): any[] => {
-    return elements.map(element => {
-      // Convert ElementType to our field type
-      let fieldType = 'text';
-      switch (element.type) {
-        case 'text_input':
-          fieldType = 'text';
-          break;
-        case 'email_input':
-          fieldType = 'email';
-          break;
-        case 'number_input':
-          fieldType = 'number';
-          break;
-        case 'textarea':
-          fieldType = 'textarea';
-          break;
-        case 'dropdown':
-          fieldType = 'select';
-          break;
-        case 'checkbox':
-          fieldType = 'checkbox';
-          break;
-        default:
-          fieldType = 'text';
-      }
-
-      // Convert validation rules
-      let validation: any = {};
-      if (element.validation) {
-        element.validation.forEach((rule: any) => {
-          switch (rule.type) {
-            case 'minLength':
-              validation.minLength = rule.value;
-              break;
-            case 'maxLength':
-              validation.maxLength = rule.value;
-              break;
-            case 'pattern':
-              validation.pattern = rule.value;
-              break;
-          }
-        });
-      }
-
-      // Convert options for dropdown
-      let options = undefined;
-      if (element.options && Array.isArray(element.options)) {
-        options = element.options.map((opt: string) => ({ value: opt, label: opt }));
-      }
-
-      return {
-        name: element.name,
-        type: fieldType,
-        label: element.label,
-        required: element.required || false,
-        placeholder: element.placeholder,
-        defaultValue: element.defaultValue,
-        options: options,
-        validation: Object.keys(validation).length > 0 ? validation : undefined
-      };
-    });
-  };
-
-  // Function to enrich pending sessions with UI components from workflow nodes and programs
-  const enrichPendingSessionsWithUIComponents = async (sessions: any[]): Promise<any[]> => {
-    if (!workflowId || sessions.length === 0) return sessions;
-
-    try {
-      // Get workflow details if not cached
-      let workflowDetails = workflowDetailsCache.get(workflowId);
-      if (!workflowDetails) {
-        const response = await api.workflows.workflows_GetById(workflowId);
-        if (response.success && response.data) {
-          workflowDetails = WorkflowDetailDto.fromJS(response.data);
-          workflowDetailsCache.set(workflowId, workflowDetails);
-        }
-      }
-
-      if (!workflowDetails?.nodes) return sessions;
-
-      // Create a map of nodeId -> workflow node
-      const nodeMap = new Map();
-      workflowDetails.nodes.forEach(node => {
-        if (node.id) {
-          nodeMap.set(node.id, node);
-        }
-      });
-
-      // Enrich each session
-      const enrichedSessions = await Promise.all(
-        sessions.map(async (session) => {
-          // If session already has uiComponent, return as is
-          if (session.uiComponent) return session;
-
-          const workflowNode = nodeMap.get(session.nodeId);
-          if (!workflowNode?.programId) return session;
-
-          try {
-            // Fetch program details to get UI components
-            const programResponse = await api.programs.programs_GetById(workflowNode.programId);
-            if (programResponse.success && programResponse.data) {
-              const program = programResponse.data;
-              
-              // Look for UI components in the program
-              const uiComponents = (program as any).uiComponents || [];
-              if (uiComponents.length > 0) {
-                // Find the first active component, or fall back to the newest
-                const activeComponent = uiComponents.find((c: any) => c.status === 'active');
-                const component = activeComponent || uiComponents[0];
-                
-                // Get the component configuration to extract UIElements
-                const componentElements = await loadComponentConfiguration(workflowNode.programId, program.currentVersion || '');
-                
-                // Convert UIElement[] to UIInputField[]
-                const fields = componentElements ? convertUIElementsToFields(componentElements) : [];
-                
-                return {
-                  ...session,
-                  uiComponent: {
-                    id: component.id || 'unknown',
-                    name: component.name || program.name || 'UI Interaction',
-                    type: component.type || 'form',
-                    configuration: {
-                      title: component.name || program.name || 'UI Interaction',
-                      description: 'Please provide the required input to continue workflow execution.',
-                      fields: fields,
-                      submitLabel: 'Submit',
-                      cancelLabel: 'Cancel',
-                      allowSkip: false
-                    }
-                  }
-                };
-              }
-            }
-          } catch (error) {
-            console.error(`Failed to fetch program details for node ${session.nodeId}:`, error);
-          }
-
-          // If no UI components found, create a default one
-          return {
-            ...session,
-            uiComponent: {
-              id: 'default',
-              name: workflowNode.name || workflowNode.programName || 'UI Interaction',
-              type: 'form',
-              configuration: {
-                title: workflowNode.name || workflowNode.programName || 'UI Interaction',
-                description: 'Please provide the required input to continue workflow execution.',
-                fields: [],
-                submitLabel: 'Submit',
-                cancelLabel: 'Cancel',
-                allowSkip: false
-              }
-            }
-          };
-        })
-      );
-
-      return enrichedSessions;
-    } catch (error) {
-      console.error('Failed to enrich pending sessions:', error);
-      return sessions;
-    }
-  };
 
   // UI Workflow integration
   const {
@@ -262,25 +37,7 @@ const WorkflowExecutionPage: React.FC = () => {
   } = useUIWorkflowStore();
   
   const { isOpen: isModalOpen, activeSession, openModal, closeModal } = useUIWorkflowModal();
-  const basePendingSessions = useCurrentWorkflowPendingSessions();
-  const [enrichedPendingSessions, setEnrichedPendingSessions] = useState<any[]>([]);
-
-  // Enrich pending sessions when they change
-  useEffect(() => {
-    const enrichSessions = async () => {
-      if (basePendingSessions.length > 0) {
-        const enriched = await enrichPendingSessionsWithUIComponents(basePendingSessions);
-        setEnrichedPendingSessions(enriched);
-      } else {
-        setEnrichedPendingSessions([]);
-      }
-    };
-    
-    enrichSessions();
-  }, [basePendingSessions]);
-
-  // Use enriched sessions throughout the component
-  const pendingSessions = enrichedPendingSessions;
+  const pendingSessions = useCurrentWorkflowPendingSessions();
   
   // Initialize SignalR connection and UI workflow state
   useEffect(() => {
@@ -366,9 +123,44 @@ const WorkflowExecutionPage: React.FC = () => {
       const signalRService = createSignalRService(baseUrl, getToken);
       
       // Set up event listeners
-      const unsubscribeUIAvailable = signalRService.onUIInteractionAvailable((data) => {
+      // NEW: Listen for events with complete payload (Solution 1)
+      const unsubscribeWithPayload = signalRService.onUIInteractionWithPayload((event) => {
+        console.log('[WorkflowExecutionPage] 🎉 Received UI interaction with complete session data:', event);
+
+        // No need for API call - we have all the data!
+        // Convert the complete session data from the event
+        const session = {
+          ...event.session,
+          timeoutAt: new Date(event.session.timeoutAt || event.timeoutAt),
+          createdAt: new Date(event.session.createdAt || event.createdAt),
+          completedAt: event.session.completedAt ? new Date(event.session.completedAt) : undefined,
+          status: event.session.status as any || 'Pending' as const,
+          uiComponent: event.uiComponent,
+          contextData: event.contextData
+        };
+
+        console.log('[WorkflowExecutionPage] Created session from payload event:', session);
         
-        // Create session from SignalR event
+        addSession(session);
+        
+        // Show notification
+        addNotification({
+          type: 'info',
+          title: 'User Input Required',
+          message: `Workflow execution is paused waiting for input at node: ${nodeNameMap[event.nodeId] || event.nodeId}`,
+          autoHide: false
+        });
+        
+        // Auto-open modal for immediate attention
+        openModal(event.sessionId);
+      });
+
+      // FALLBACK: Keep legacy event handling for backward compatibility
+      const unsubscribeUIAvailable = signalRService.onUIInteractionAvailable((data) => {
+        console.log('[WorkflowExecutionPage] 📨 Received legacy UI interaction event, may need API call:', data);
+        console.log('[WorkflowExecutionPage] UI Component data:', data.uiComponent);
+        
+        // Legacy flow - create session from basic event data
         const session = {
           sessionId: data.sessionId,
           workflowId: data.workflowId,
@@ -376,10 +168,13 @@ const WorkflowExecutionPage: React.FC = () => {
           nodeId: data.nodeId,
           status: 'Pending' as const,
           uiComponent: data.uiComponent as any,
+          uiComponentId: (data as any).uiComponentId, // New field from backend
           contextData: data.contextData,
           timeoutAt: new Date(data.timeoutAt),
           createdAt: new Date()
         };
+        
+        console.log('[WorkflowExecutionPage] Created session from legacy event:', session);
         
         addSession(session);
         
@@ -423,11 +218,14 @@ const WorkflowExecutionPage: React.FC = () => {
       if (connected) {
         await signalRService.joinWorkflowGroup(workflowId);
         
-        // Load existing UI interactions for this workflow
+        // Load existing UI interactions for this workflow (only runs on page load)
+        // This is NOT the old fetch-on-demand pattern - this only loads pre-existing sessions
+        // New sessions will arrive via SignalR UIInteractionCreatedWithPayload events
         if (workflowId && executionId) {
           try {
             const response = await api.uiWorkflowClient.uIWorkflow_GetWorkflowUIInteractions(workflowId, executionId);
             if (response.success && response.data) {
+              console.log(`[WorkflowExecutionPage] 📋 Loading ${response.data['sessions']?.length || 0} existing UI interaction sessions`);
               response.data['sessions']?.forEach((sessionData: any) => {
                 const session = {
                   sessionId: sessionData.sessionId,
@@ -436,10 +234,12 @@ const WorkflowExecutionPage: React.FC = () => {
                   nodeId: sessionData.nodeId,
                   status: sessionData.status,
                   uiComponent: sessionData.uiComponent,
+                  uiComponentId: sessionData.uiComponentId, // New field from backend
                   contextData: sessionData.contextData,
                   timeoutAt: new Date(sessionData.timeoutAt),
                   createdAt: new Date(sessionData.createdAt),
-                  completedAt: sessionData.completedAt ? new Date(sessionData.completedAt) : undefined
+                  completedAt: sessionData.completedAt ? new Date(sessionData.completedAt) : undefined,
+                  uiComponentConfiguration: sessionData.uiComponentConfiguration || null
                 };
 
                 addSession(session);
@@ -452,11 +252,25 @@ const WorkflowExecutionPage: React.FC = () => {
         }
       }
       
-      // Store cleanup functions
+      // Store cleanup functions  
       return () => {
+        console.log(`[WorkflowExecutionPage] 🧹 Cleaning up for execution: ${executionId}`);
+        
+        // 1. Unsubscribe from SignalR events
+        unsubscribeWithPayload();
         unsubscribeUIAvailable();
         unsubscribeStatusChanged();
         unsubscribeConnectionState();
+        
+        // 2. Leave the workflow group
+        signalRService.leaveWorkflowGroup(workflowId);
+        
+        // 3. Clear execution-specific sessions from store (critical for multi-tab support)
+        if (executionId) {
+          useUIWorkflowStore.getState().clearSessionsForExecution(executionId);
+        }
+        
+        console.log(`[WorkflowExecutionPage] ✅ Cleanup completed for execution: ${executionId}`);
       };
       
     } catch (error) {
@@ -1286,8 +1100,8 @@ const WorkflowExecutionPage: React.FC = () => {
                               <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                 <p><span className="font-medium">Node:</span> {getNodeDisplayName(session.nodeId)}</p>
                                 <p><span className="font-medium">Type:</span> {session.uiComponent?.type || 'Unknown'}</p>
-                                {session.uiComponent.configuration?.description && (
-                                  <p className="mt-1">{session.uiComponent.configuration.description}</p>
+                                {session.uiComponent?.configuration?.description && (
+                                  <p className="mt-1">{session.uiComponent?.configuration?.description}</p>
                                 )}
                               </div>
                               

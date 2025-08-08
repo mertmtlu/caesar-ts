@@ -1758,6 +1758,14 @@ export interface IUIWorkflowClient {
     uIWorkflow_SubmitUIInteraction(interactionId: string, body: types.IUIInteractionSubmissionRequest | undefined): Promise<types.IStringApiResponse>;
 
     /**
+     * Completes a UI interaction and continues workflow execution
+     * @param interactionId The interaction ID
+     * @param body (optional) The output data from user interaction
+     * @return OK
+     */
+    uIWorkflow_CompleteUIInteraction(interactionId: string, body: { [key: string]: any; } | undefined): Promise<types.INodeExecutionResponseDtoApiResponse>;
+
+    /**
      * Cancels a UI interaction
      * @param interactionId The interaction ID
      * @param body (optional) 

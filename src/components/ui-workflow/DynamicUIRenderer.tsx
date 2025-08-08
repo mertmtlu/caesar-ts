@@ -1,7 +1,37 @@
 import React, { useState, useCallback } from 'react';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { UIInputField, UIComponentData } from '@/stores/uiWorkflowStore';
+// Legacy component - now replaced by ComponentForm
+interface UIInputField {
+  name: string;
+  type: 'text' | 'email' | 'number' | 'select' | 'checkbox' | 'textarea' | 'file';
+  label: string;
+  required?: boolean;
+  placeholder?: string;
+  defaultValue?: string | number | boolean;
+  options?: { value: string; label: string }[];
+  validation?: {
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+    pattern?: string;
+  };
+}
+
+interface UIComponentData {
+  id: string;
+  name: string;
+  type: string;
+  configuration: {
+    title?: string;
+    description?: string;
+    fields: UIInputField[];
+    submitLabel?: string;
+    cancelLabel?: string;
+    allowSkip?: boolean;
+  };
+}
 
 interface DynamicUIRendererProps {
   uiComponent?: UIComponentData;
@@ -29,9 +59,14 @@ const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
   const [formData, setFormData] = useState<Record<string, any>>(() => {
     // Initialize form data with default values
     const initialData: Record<string, any> = {};
-    uiComponent?.configuration?.fields?.forEach((field: any) => {
+    const fields = uiComponent?.configuration?.fields || [];
+    
+    console.log('[DynamicUIRenderer] Initializing form data for', fields.length, 'fields');
+    
+    fields.forEach((field: any) => {
       if (field.defaultValue !== undefined) {
         initialData[field.name] = field.defaultValue;
+        console.log(`[DynamicUIRenderer] Field ${field.name}: using default value`, field.defaultValue);
       } else {
         // Set appropriate empty values based on field type
         switch (field.type) {
@@ -47,8 +82,11 @@ const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
           default:
             initialData[field.name] = '';
         }
+        console.log(`[DynamicUIRenderer] Field ${field.name}: using empty value for type ${field.type}`);
       }
     });
+    
+    console.log('[DynamicUIRenderer] Initial form data:', initialData);
     return initialData;
   });
 
@@ -223,7 +261,7 @@ const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
               } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100`}
             >
               <option value="">Select {field.label}</option>
-              {field.options?.map(option => (
+              {field.options?.map((option: any) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -291,7 +329,7 @@ const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
     }
   };
 
-  // Fallback UI when uiComponent is undefined
+  // Fallback UI when uiComponent is undefined or malformed
   if (!uiComponent) {
     return (
       <div className={`space-y-6 ${className}`}>
@@ -303,6 +341,45 @@ const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
           <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
             Loading UI interaction form...
           </p>
+        </div>
+        
+        {/* Basic action buttons */}
+        <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if component configuration is missing or invalid
+  if (!uiComponent.configuration || !uiComponent.configuration.fields) {
+    console.warn('[DynamicUIRenderer] UI component configuration is missing or invalid:', uiComponent);
+    
+    return (
+      <div className={`space-y-6 ${className}`}>
+        <div className="text-center py-8">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+            <div className="flex items-center justify-center">
+              <svg className="w-8 h-8 text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <div>
+                <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  Configuration Error
+                </h3>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                  The UI component configuration is missing or invalid. Please contact your administrator.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Basic action buttons */}

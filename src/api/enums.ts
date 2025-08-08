@@ -139,6 +139,7 @@ export enum NodeExecutionStatus {
     _5 = 5,
     _6 = 6,
     _7 = 7,
+    _8 = 8,
 }
 
 export enum Operation {

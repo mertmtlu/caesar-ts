@@ -8,43 +8,14 @@ export interface UIInteractionSession {
   executionId: string;
   nodeId: string;
   status: 'Pending' | 'Active' | 'AwaitingInput' | 'Completed' | 'Cancelled' | 'TimedOut';
-  uiComponent: UIComponentData;
+  uiComponent?: any; // Optional fallback, mainly for backward compatibility
+  uiComponentId?: string; // Primary field for UI component ID from backend
   contextData: Record<string, unknown>;
   timeoutAt: Date;
   createdAt: Date;
   completedAt?: Date;
 }
 
-export interface UIComponentData {
-  id: string;
-  name: string;
-  type: string;
-  configuration: {
-    title?: string;
-    description?: string;
-    fields: UIInputField[];
-    submitLabel?: string;
-    cancelLabel?: string;
-    allowSkip?: boolean;
-  };
-}
-
-export interface UIInputField {
-  name: string;
-  type: 'text' | 'email' | 'number' | 'select' | 'checkbox' | 'textarea' | 'file';
-  label: string;
-  required?: boolean;
-  placeholder?: string;
-  defaultValue?: string | number | boolean;
-  options?: { value: string; label: string }[];
-  validation?: {
-    minLength?: number;
-    maxLength?: number;
-    min?: number;
-    max?: number;
-    pattern?: string;
-  };
-}
 
 export interface WorkflowUIInteractionState {
   // Connection state
@@ -76,6 +47,7 @@ export interface WorkflowUIInteractionState {
   updateSession: (sessionId: string, updates: Partial<UIInteractionSession>) => void;
   removeSession: (sessionId: string) => void;
   clearSessions: () => void;
+  clearSessionsForExecution: (executionId: string) => void;
   
   // Modal management
   openModal: (sessionId: string) => void;
@@ -234,6 +206,57 @@ export const useUIWorkflowStore = create<WorkflowUIInteractionState>((set, get) 
       activeSessions: [],
       activeSessionId: null,
       isModalOpen: false
+    });
+  },
+
+  // NEW: Clear sessions for a specific execution (multi-user safe)
+  clearSessionsForExecution: (executionId: string) => {
+    console.log(`🧹 [clearSessionsForExecution] Clearing all sessions for execution: ${executionId}`);
+    
+    set((state) => {
+      // Filter sessions to keep only those NOT matching the executionId
+      const filteredSessions: Record<string, UIInteractionSession> = {};
+      const sessionsToRemove: string[] = [];
+      
+      Object.entries(state.sessions).forEach(([sessionId, session]) => {
+        if (session.executionId === executionId) {
+          sessionsToRemove.push(sessionId);
+          console.log(`  ❌ Removing session: ${sessionId} (execution: ${session.executionId})`);
+        } else {
+          filteredSessions[sessionId] = session;
+          console.log(`  ✅ Keeping session: ${sessionId} (execution: ${session.executionId})`);
+        }
+      });
+
+      // Filter pending and active session arrays
+      const newPendingSessions = state.pendingSessions.filter(sessionId => 
+        !sessionsToRemove.includes(sessionId)
+      );
+      
+      const newActiveSessions = state.activeSessions.filter(sessionId => 
+        !sessionsToRemove.includes(sessionId)
+      );
+
+      // Close modal if it was showing a removed session
+      const newActiveSessionId = sessionsToRemove.includes(state.activeSessionId || '') 
+        ? null 
+        : state.activeSessionId;
+      
+      const newIsModalOpen = sessionsToRemove.includes(state.activeSessionId || '')
+        ? false 
+        : state.isModalOpen;
+
+      console.log(`  📊 Summary: Removed ${sessionsToRemove.length} sessions, kept ${Object.keys(filteredSessions).length} sessions`);
+      console.log(`  📋 Pending sessions: ${state.pendingSessions.length} -> ${newPendingSessions.length}`);
+      console.log(`  🎯 Active sessions: ${state.activeSessions.length} -> ${newActiveSessions.length}`);
+
+      return {
+        sessions: filteredSessions,
+        pendingSessions: newPendingSessions,
+        activeSessions: newActiveSessions,
+        activeSessionId: newActiveSessionId,
+        isModalOpen: newIsModalOpen
+      };
     });
   },
 
