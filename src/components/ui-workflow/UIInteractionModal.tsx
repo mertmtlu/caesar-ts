@@ -22,8 +22,44 @@ const UIInteractionModal: React.FC<UIInteractionModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [uiElements, setUIElements] = useState<UIElement[]>([]);
   const [isLoadingComponent, setIsLoadingComponent] = useState(false);
+  const [workflowName, setWorkflowName] = useState<string | null>(null);
+  const [nodeName, setNodeName] = useState<string | null>(null);
+  const [isLoadingContext, setIsLoadingContext] = useState(false);
   
   const { updateSession, addNotification } = useUIWorkflowStore();
+
+  // Fetch workflow and node names when session changes
+  useEffect(() => {
+    const fetchContextInfo = async () => {
+      if (!session) {
+        setWorkflowName(null);
+        setNodeName(null);
+        return;
+      }
+
+      try {
+        setIsLoadingContext(true);
+        
+        // Get workflow details to fetch workflow name and node names
+        const workflowResponse = await api.workflows.workflows_GetById(session.workflowId);
+        if (workflowResponse.success && workflowResponse.data) {
+          setWorkflowName(workflowResponse.data.name || null);
+          
+          // Find the specific node name from the workflow nodes
+          const targetNode = workflowResponse.data.nodes?.find(node => node.id === session.nodeId);
+          setNodeName(targetNode?.name || null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch workflow context:', error);
+        setWorkflowName(null);
+        setNodeName(null);
+      } finally {
+        setIsLoadingContext(false);
+      }
+    };
+
+    fetchContextInfo();
+  }, [session?.workflowId, session?.nodeId]);
 
   // Fetch UI component when session changes
   useEffect(() => {
@@ -111,9 +147,18 @@ const UIInteractionModal: React.FC<UIInteractionModalProps> = ({
   }, [session, isOpen, addNotification, onClose]);
 
   const formatTimeRemaining = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
+    const days = Math.floor(seconds / (24 * 60 * 60));
+    const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((seconds % (60 * 60)) / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+
+    if (days > 0) {
+      return `${days}d ${hours}h ${minutes}m`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m ${remainingSeconds}s`;
+    } else {
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
   };
 
   const handleSubmit = async (formData: Record<string, any>) => {
@@ -219,7 +264,7 @@ const UIInteractionModal: React.FC<UIInteractionModalProps> = ({
       onClose={onClose}
       title="User Input Required"
       size="lg"
-      className="max-w-4xl"
+      className="max-w-3xl"
     >
       <div className="space-y-6">
         {/* Session Info Header */}
@@ -300,20 +345,29 @@ const UIInteractionModal: React.FC<UIInteractionModalProps> = ({
 
         {/* Workflow Context Info */}
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div>
-              <span className="font-medium text-gray-900 dark:text-white">Workflow:</span>
-              <p className="text-gray-600 dark:text-gray-400">{session.workflowId}</p>
+          {isLoadingContext ? (
+            <div className="flex justify-center items-center py-4">
+              <svg className="w-4 h-4 animate-spin text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Loading context...</span>
             </div>
-            <div>
-              <span className="font-medium text-gray-900 dark:text-white">Execution:</span>
-              <p className="text-gray-600 dark:text-gray-400">{session.executionId}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-gray-900 dark:text-white">Workflow:</span>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {workflowName || 'Unknown Workflow'}
+                </p>
+              </div>
+              <div>
+                <span className="font-medium text-gray-900 dark:text-white">Node:</span>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {nodeName || 'Unknown Node'}
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="font-medium text-gray-900 dark:text-white">Node:</span>
-              <p className="text-gray-600 dark:text-gray-400">{session.nodeId}</p>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Loading indicator */}

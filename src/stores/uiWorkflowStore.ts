@@ -111,6 +111,13 @@ export const useUIWorkflowStore = create<WorkflowUIInteractionState>((set, get) 
     console.log('  📋 Current workflow context:', get().currentWorkflowId, get().currentExecutionId);
 
     set((state) => {
+      // Check if session already exists to prevent duplicates
+      const existingSession = state.sessions[session.sessionId];
+      if (existingSession) {
+        console.log('  🔄 [addSession] Session already exists, skipping duplicate:', session.sessionId);
+        return state; // Don't add duplicate session
+      }
+
       const newSessions = { ...state.sessions, [session.sessionId]: session };
       const newPendingSessions = [...state.pendingSessions];
 
@@ -340,24 +347,40 @@ export const useUIWorkflowStore = create<WorkflowUIInteractionState>((set, get) 
 
   // Notifications
   addNotification: (notification: Omit<UINotification, 'id' | 'timestamp'>) => {
-    const id = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const newNotification: UINotification = {
-      ...notification,
-      id,
-      timestamp: new Date()
-    };
+    set((state) => {
+      // Check if a notification for this interaction already exists
+      // Use title and message as unique identifiers to prevent duplicates
+      const existingNotification = state.notifications.find(n => 
+        n.title === notification.title && 
+        n.message === notification.message
+      );
+      
+      if (existingNotification) {
+        console.log('🔄 [addNotification] Duplicate notification prevented:', notification.title);
+        return state; // Don't add duplicate notification
+      }
 
-    set((state) => ({
-      notifications: [newNotification, ...state.notifications]
-    }));
+      const id = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newNotification: UINotification = {
+        ...notification,
+        id,
+        timestamp: new Date()
+      };
 
-    // Auto-hide notification if specified
-    if (newNotification.autoHide !== false) {
-      const duration = newNotification.duration || 5000;
-      setTimeout(() => {
-        get().removeNotification(id);
-      }, duration);
-    }
+      console.log('✅ [addNotification] Adding new notification:', newNotification.title);
+
+      // Auto-hide notification if specified
+      if (newNotification.autoHide !== false) {
+        const duration = newNotification.duration || 5000;
+        setTimeout(() => {
+          get().removeNotification(id);
+        }, duration);
+      }
+
+      return {
+        notifications: [newNotification, ...state.notifications]
+      };
+    });
   },
 
   removeNotification: (id: string) => {

@@ -81,9 +81,9 @@ const WorkflowDetailPage: React.FC = () => {
       } else {
         setError(response.message || 'Failed to execute workflow');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to execute workflow:', error);
-      setError('Failed to execute workflow. Please try again.');
+      setError((error as Error).message || 'Failed to execute workflow');
     }
   };
 
