@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
-import { WorkflowDetailDto, WorkflowStatisticsDto, WorkflowPermissionDto, WorkflowExecutionRequest } from '@/api/types';
+import { WorkflowDetailDto, WorkflowStatisticsDto, WorkflowPermissionDto, WorkflowExecutionRequest, WorkflowNameDescriptionUpdateDto } from '@/api/types';
 import { WorkflowStatus } from '@/api/enums';
 import Button from '@/components/common/Button';
 import WorkflowPermissionsModal from '@/components/workflow/WorkflowPermissionsModal';
@@ -20,6 +20,13 @@ const WorkflowDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'analytics'>('overview');
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  
+  // Editing states
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editingName, setEditingName] = useState('');
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editingDescription, setEditingDescription] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (workflowId) {
@@ -91,6 +98,75 @@ const WorkflowDetailPage: React.FC = () => {
     if (workflow) {
       setWorkflow(new WorkflowDetailDto({ ...workflow, permissions }));
     }
+  };
+
+  // Update workflow name and description
+  const handleUpdateWorkflowMetadata = async (name?: string, description?: string) => {
+    if (!workflowId || !workflow) return;
+
+    try {
+      setIsSaving(true);
+      setError(null);
+      
+      const response = await api.workflows.workflows_UpdateNameDescription(workflowId, new WorkflowNameDescriptionUpdateDto({
+        name: name,
+        description: description,
+      }));
+      
+      if (response.success && response.data) {
+        const updatedWorkflow = WorkflowDetailDto.fromJS(response.data);
+        setWorkflow(updatedWorkflow);
+      } else {
+        setError(response.message || 'Failed to update workflow');
+      }
+    } catch (error) {
+      console.error('Failed to update workflow:', error);
+      setError('Failed to update workflow. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Name editing handlers
+  const handleStartEditingName = () => {
+    setEditingName(workflow?.name || '');
+    setIsEditingName(true);
+  };
+
+  const handleSaveName = async () => {
+    const trimmedName = editingName.trim();
+    if (!trimmedName) {
+      setIsEditingName(false);
+      return;
+    }
+    
+    if (trimmedName !== workflow?.name) {
+      await handleUpdateWorkflowMetadata(trimmedName);
+    }
+    setIsEditingName(false);
+  };
+
+  const handleCancelEditingName = () => {
+    setEditingName('');
+    setIsEditingName(false);
+  };
+
+  // Description editing handlers
+  const handleStartEditingDescription = () => {
+    setEditingDescription(workflow?.description || '');
+    setIsEditingDescription(true);
+  };
+
+  const handleSaveDescription = async () => {
+    if (editingDescription !== workflow?.description) {
+      await handleUpdateWorkflowMetadata(undefined, editingDescription);
+    }
+    setIsEditingDescription(false);
+  };
+
+  const handleCancelEditingDescription = () => {
+    setEditingDescription('');
+    setIsEditingDescription(false);
   };
 
   const getStatusColor = (status: WorkflowStatus): string => {
@@ -174,9 +250,59 @@ const WorkflowDetailPage: React.FC = () => {
             Back
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {workflow.name}
-            </h1>
+            {isEditingName ? (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={editingName}
+                  onChange={(e) => setEditingName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSaveName();
+                    if (e.key === 'Escape') handleCancelEditingName();
+                  }}
+                  onBlur={handleSaveName}
+                  autoFocus
+                  disabled={isSaving}
+                  className="text-2xl font-bold bg-transparent border-b-2 border-blue-500 focus:outline-none text-gray-900 dark:text-white min-w-[300px]"
+                  placeholder="Workflow name"
+                />
+                <button
+                  onClick={handleSaveName}
+                  disabled={isSaving}
+                  className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                  title="Save name"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleCancelEditingName}
+                  disabled={isSaving}
+                  className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50"
+                  title="Cancel editing"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 group">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {workflow.name}
+                </h1>
+                <button
+                  onClick={handleStartEditingName}
+                  className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
+                  title="Edit workflow name"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              </div>
+            )}
             <div className="flex items-center space-x-4 mt-1">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 by {workflow.creator} • v{workflow.version}
@@ -332,12 +458,58 @@ const WorkflowDetailPage: React.FC = () => {
               {activeTab === 'overview' && (
                 <div className="space-y-6">
                   {/* Description */}
-                  {workflow.description && (
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Description</h3>
-                      <p className="text-gray-600 dark:text-gray-400">{workflow.description}</p>
-                    </div>
-                  )}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Description</h3>
+                    {isEditingDescription ? (
+                      <div className="space-y-2">
+                        <textarea
+                          value={editingDescription}
+                          onChange={(e) => setEditingDescription(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && e.metaKey) handleSaveDescription();
+                            if (e.key === 'Escape') handleCancelEditingDescription();
+                          }}
+                          autoFocus
+                          disabled={isSaving}
+                          className="w-full p-3 text-gray-600 dark:text-gray-400 bg-transparent border-2 border-blue-500 rounded-md focus:outline-none resize-none"
+                          placeholder="Workflow description"
+                          rows={3}
+                        />
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={handleSaveDescription}
+                            disabled={isSaving}
+                            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={handleCancelEditingDescription}
+                            disabled={isSaving}
+                            className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+                          >
+                            Cancel
+                          </button>
+                          <span className="text-xs text-gray-500">Press Cmd+Enter to save</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="group relative">
+                        <p className="text-gray-600 dark:text-gray-400 min-h-[1.5rem]">
+                          {workflow.description || 'No description provided'}
+                        </p>
+                        <button
+                          onClick={handleStartEditingDescription}
+                          className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
+                          title="Edit description"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Workflow Structure */}
                   <div>

@@ -2483,6 +2483,13 @@ export interface IWorkflowsClient {
     workflows_Delete(id: string): Promise<types.IBooleanApiResponse>;
 
     /**
+     * Update only the name and description of a workflow
+     * @param body (optional) 
+     * @return OK
+     */
+    workflows_UpdateNameDescription(id: string, body: types.IWorkflowNameDescriptionUpdateDto | undefined): Promise<types.IWorkflowDetailDtoApiResponse>;
+
+    /**
      * Get workflows by user
      * @param pageNumber (optional) 
      * @param pageSize (optional) 

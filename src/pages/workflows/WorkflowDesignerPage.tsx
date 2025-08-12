@@ -47,6 +47,10 @@ const WorkflowDesignerPage: React.FC = () => {
   const [editingName, setEditingName] = useState('');
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editingDescription, setEditingDescription] = useState('');
+  
+  // For new workflows, store name and description until workflow is created
+  const [newWorkflowName, setNewWorkflowName] = useState('New Workflow');
+  const [newWorkflowDescription, setNewWorkflowDescription] = useState('Created in designer');
 
   useEffect(() => {
     const initializeDesigner = async () => {
@@ -324,8 +328,8 @@ const WorkflowDesignerPage: React.FC = () => {
       } else {
         // Create new workflow
         const response = await api.workflows.workflows_Create({
-          name: editingName || 'New Workflow',
-          description: editingDescription || 'Created in designer',
+          name: newWorkflowName,
+          description: newWorkflowDescription,
           nodes: Array.from(designerState.nodes.values()).map(node => ({
             id: node.id,
             name: node.name,
@@ -590,13 +594,25 @@ const WorkflowDesignerPage: React.FC = () => {
 
   // Name editing handlers
   const handleStartEditingName = () => {
-    setEditingName(designerState.workflow?.name || '');
+    setEditingName(designerState.workflow?.name || newWorkflowName);
     setIsEditingName(true);
   };
 
   const handleSaveName = async () => {
-    if (editingName.trim() && editingName !== designerState.workflow?.name) {
-      await handleUpdateWorkflowMetadata(editingName.trim());
+    const trimmedName = editingName.trim();
+    if (!trimmedName) {
+      setIsEditingName(false);
+      return;
+    }
+    
+    if (designerState.workflow) {
+      // Existing workflow - update via API
+      if (trimmedName !== designerState.workflow.name) {
+        await handleUpdateWorkflowMetadata(trimmedName);
+      }
+    } else {
+      // New workflow - just store the name locally
+      setNewWorkflowName(trimmedName);
     }
     setIsEditingName(false);
   };
@@ -608,13 +624,19 @@ const WorkflowDesignerPage: React.FC = () => {
 
   // Description editing handlers
   const handleStartEditingDescription = () => {
-    setEditingDescription(designerState.workflow?.description || '');
+    setEditingDescription(designerState.workflow?.description || newWorkflowDescription);
     setIsEditingDescription(true);
   };
 
   const handleSaveDescription = async () => {
-    if (editingDescription !== designerState.workflow?.description) {
-      await handleUpdateWorkflowMetadata(undefined, editingDescription);
+    if (designerState.workflow) {
+      // Existing workflow - update via API
+      if (editingDescription !== designerState.workflow.description) {
+        await handleUpdateWorkflowMetadata(undefined, editingDescription);
+      }
+    } else {
+      // New workflow - just store the description locally
+      setNewWorkflowDescription(editingDescription);
     }
     setIsEditingDescription(false);
   };
@@ -842,19 +864,17 @@ const WorkflowDesignerPage: React.FC = () => {
                 ) : (
                   <div className="flex items-center space-x-2 group">
                     <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {designerState.workflow?.name || 'New Workflow'} - Designer
+                      {designerState.workflow?.name || newWorkflowName} - Designer
                     </h1>
-                    {designerState.workflow && (
-                      <button
-                        onClick={handleStartEditingName}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
-                        title="Edit workflow name"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                      </button>
-                    )}
+                    <button
+                      onClick={handleStartEditingName}
+                      className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
+                      title="Edit workflow name"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
                   </div>
                 )}
               </div>
@@ -897,24 +917,22 @@ const WorkflowDesignerPage: React.FC = () => {
                 ) : (
                   <div className="flex items-center space-x-2 group">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {designerState.workflow?.description || 'No description'}
+                      {designerState.workflow?.description || newWorkflowDescription}
                       {designerState.workflow && (
                         <span className="ml-2">
                           v{designerState.workflow.version} • {designerState.workflow.status}
                         </span>
                       )}
                     </p>
-                    {designerState.workflow && (
-                      <button
-                        onClick={handleStartEditingDescription}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
-                        title="Edit workflow description"
-                      >
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                      </button>
-                    )}
+                    <button
+                      onClick={handleStartEditingDescription}
+                      className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
+                      title="Edit workflow description"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
                   </div>
                 )}
               </div>

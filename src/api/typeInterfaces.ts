@@ -4366,6 +4366,11 @@ export interface IWorkflowListDtoPagedResponseApiResponse {
     timestamp?: Date;
 }
 
+export interface IWorkflowNameDescriptionUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+}
+
 export interface IWorkflowNodeBulkUpdateDto {
     id?: string | undefined;
     name?: string | undefined;
