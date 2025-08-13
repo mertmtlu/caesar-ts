@@ -11,6 +11,19 @@ import ProgramInfoModal from '@/components/editor/ProgramInfoModal';
 import * as monaco from 'monaco-editor';
 import { VersionFileCreateDto, VersionFileUpdateDto, VersionCommitDto, VersionFileChangeDto, VersionUpdateDto } from '@/api';
 
+// UTF-8 safe base64 encoding/decoding utilities
+const utf8ToBase64 = (str: string): string => {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode(parseInt(p1, 16));
+  }));
+};
+
+const base64ToUtf8 = (str: string): string => {
+  return decodeURIComponent(Array.prototype.map.call(atob(str), (c: string) => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+};
+
 // Monaco Editor (lazy loaded)
 let MonacoEditor: React.ComponentType<{
   height: string;
@@ -369,7 +382,7 @@ const EditorPage: React.FC = () => {
       const response = await api.files.files_GetVersionFile(project.id, version.id, filePath);
       if (response.success && response.data) {
         // The content is base64-encoded, so decode it
-        const content = response.data.content ? atob(response.data.content) : '';
+        const content = response.data.content ? base64ToUtf8(response.data.content) : '';
         const language = detectLanguage(filePath, project.language);
         
         const newFile: EditorFile = {
@@ -489,7 +502,7 @@ const EditorPage: React.FC = () => {
       } else {
         // For text files, encode as base64
         try {
-          content = btoa(file.content);
+          content = utf8ToBase64(file.content);
           contentType = file.language === 'json' ? 'application/json' : 
                        file.language === 'html' ? 'text/html' :
                        file.language === 'css' ? 'text/css' :
@@ -606,7 +619,7 @@ const EditorPage: React.FC = () => {
         } else {
           // For text files, encode as base64
           try {
-            content = btoa(file.content);
+            content = utf8ToBase64(file.content);
             contentType = file.language === 'json' ? 'application/json' : 
                          file.language === 'html' ? 'text/html' :
                          file.language === 'css' ? 'text/css' :
@@ -775,7 +788,7 @@ const EditorPage: React.FC = () => {
             contentType = 'application/octet-stream';
           }
         } else {
-          uploadContent = btoa(content);
+          uploadContent = utf8ToBase64(content);
           contentType = language === 'json' ? 'application/json' : 
                        language === 'html' ? 'text/html' :
                        language === 'css' ? 'text/css' :
@@ -1240,7 +1253,7 @@ if __name__ == "__main__":
             contentType = 'application/octet-stream';
           }
         } else {
-          content = btoa(openFile.content);
+          content = utf8ToBase64(openFile.content);
           contentType = openFile.language === 'json' ? 'application/json' : 
                        openFile.language === 'html' ? 'text/html' :
                        openFile.language === 'css' ? 'text/css' :
