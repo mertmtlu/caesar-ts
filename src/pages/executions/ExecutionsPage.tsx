@@ -5,7 +5,7 @@ import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { ExecutionResourceLimitsDto, ProgramExecutionRequestDto } from '@/api';
+import { ExecutionResourceLimitsDto, ProgramExecutionRequestDto, WorkflowExecutionRequest } from '@/api';
 import ComponentForm from '@/components/common/ComponentForm';
 import { UIElement, ComponentSchema } from '@/types/componentDesigner';
 
@@ -34,27 +34,45 @@ interface ComponentItem {
   createdDate: Date;
 }
 
+interface WorkflowItem {
+  id: string;
+  name: string;
+  description?: string;
+  status?: string | number;
+  version?: number;
+  nodeCount: number;
+  hasUIComponents?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 interface ExecutionItem {
   id: string;
-  programId: string;
-  programName: string;
+  programId?: string;
+  programName?: string;
+  workflowId?: string;
+  workflowName?: string;
   status: string;
   startedAt: Date;
   completedAt?: Date;
   userId: string;
   executionType: string;
+  itemType: 'program' | 'workflow'; // To distinguish between program and workflow executions
 }
 
 interface ExecuteModalState {
   isOpen: boolean;
   program: ProgramItem | null;
+  workflow: WorkflowItem | null;
   isExecuting: boolean;
   componentElements: UIElement[] | null;
+  executionType: 'program' | 'workflow';
 }
 
-interface ProgramMenuState {
+interface MenuState {
   isOpen: boolean;
-  programId: string | null;
+  itemId: string | null;
+  itemType: 'program' | 'workflow';
   position: { x: number; y: number };
 }
 
@@ -121,8 +139,98 @@ const getDesktopIcon = (program: ProgramItem): React.ReactNode => {
   return createIcon('bg-gray-500', 'text-white', 'APP', true, 'M13 2.05v2.02c4.39.54 7.5 4.53 6.96 8.92-.39 3.18-2.34 5.97-5.35 7.47l.7 1.87c4.3-1.92 7.07-6.23 6.58-10.94C21.24 6.25 17.57 2.05 13 2.05z');
 };
 
-const getStatusColor = (status: string): string => {
-  switch (status.toLowerCase()) {
+// Workflow desktop icons
+const getWorkflowIcon = (workflow: WorkflowItem): React.ReactNode => {
+  const { status, nodeCount, hasUIComponents } = workflow;
+  
+  // Create icon based on workflow properties
+  const createIcon = (bgColor: string, textColor: string, iconText: string, useBuiltInIcon?: boolean, builtInIconPath?: string) => (
+    <div className={`w-16 h-16 ${bgColor} rounded-lg flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer border-2 border-gray-200 dark:border-gray-600`}>
+      {useBuiltInIcon && builtInIconPath ? (
+        <svg className={`w-8 h-8 ${textColor}`} fill="currentColor" viewBox="0 0 24 24">
+          <path d={builtInIconPath} />
+        </svg>
+      ) : (
+        <div className={`${textColor} font-bold text-sm text-center`}>
+          <div>{iconText}</div>
+          {nodeCount > 0 && (
+            <div className="text-xs mt-1">{nodeCount} nodes</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Color based on status - handle both string and numeric status values
+  const statusString = typeof status === 'string' ? status : String(status || '');
+  const statusLower = statusString.toLowerCase();
+  
+  // Map numeric workflow status values to string equivalents
+  const getStatusName = (statusValue: string): string => {
+    switch (statusValue) {
+      case '0': return 'draft';
+      case '1': return 'active';
+      case '2': return 'published'; 
+      case '3': return 'archived';
+      case '4': return 'deleted';
+      default: return statusValue.toLowerCase();
+    }
+  };
+  
+  const mappedStatus = getStatusName(statusLower);
+  
+  if (mappedStatus === 'published' || mappedStatus === 'active') {
+    return createIcon('bg-green-500', 'text-white', 'WF', true, 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z M4 6h16v2H4zm4 5h8v6H8v-6z');
+  } else if (mappedStatus === 'draft') {
+    return createIcon('bg-yellow-500', 'text-white', 'WF', true, 'M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z M4 6h16v2H4zm4 5h8v6H8v-6z');
+  } else if (hasUIComponents) {
+    return createIcon('bg-blue-500', 'text-white', 'WF', true, 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10');
+  } else {
+    return createIcon('bg-purple-500', 'text-white', 'WF', true, 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z');
+  }
+};
+
+// Helper function to check if workflow can be executed
+const canExecuteWorkflow = (status?: string | number): boolean => {
+  const statusString = typeof status === 'string' ? status : String(status || '');
+  const statusLower = statusString.toLowerCase();
+  
+  // Map numeric workflow status values to string equivalents
+  const getStatusName = (statusValue: string): string => {
+    switch (statusValue) {
+      case '0': return 'draft';
+      case '1': return 'active';
+      case '2': return 'published'; 
+      case '3': return 'archived';
+      case '4': return 'deleted';
+      default: return statusValue.toLowerCase();
+    }
+  };
+  
+  const mappedStatus = getStatusName(statusLower);
+  return mappedStatus === 'published' || mappedStatus === 'active';
+};
+
+const getStatusColor = (status?: string | number): string => {
+  // Handle both string and numeric status values
+  const statusString = typeof status === 'string' ? status : String(status || '');
+  const statusLower = statusString.toLowerCase();
+  
+  // Map numeric workflow status values to string equivalents
+  const getStatusName = (statusValue: string): string => {
+    switch (statusValue) {
+      case '0': return 'draft';
+      case '1': return 'active';
+      case '2': return 'published'; 
+      case '3': return 'archived';
+      case '4': return 'deleted';
+      default: return statusValue.toLowerCase();
+    }
+  };
+  
+  const mappedStatus = getStatusName(statusLower);
+  
+  switch (mappedStatus) {
     case 'running':
       return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30';
     case 'completed':
@@ -155,37 +263,44 @@ const ExecutionsPage: React.FC = () => {
   
   // State management
   const [programs, setPrograms] = useState<ProgramItem[]>([]);
+  const [workflows, setWorkflows] = useState<WorkflowItem[]>([]);
   const [executions, setExecutions] = useState<ExecutionItem[]>([]);
   const [isLoadingPrograms, setIsLoadingPrograms] = useState(true);
+  const [isLoadingWorkflows, setIsLoadingWorkflows] = useState(true);
   const [isLoadingExecutions, setIsLoadingExecutions] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Desktop view state
-  const [view, setView] = useState<'desktop' | 'executions'>('desktop');
+  // View state with separate tabs
+  const [view, setView] = useState<'programs' | 'workflows' | 'executions'>('programs');
   
   // Search and filters
   const [searchTerm, setSearchTerm] = useState('');
   const [languageFilter, setLanguageFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
+  const [executionTypeFilter, setExecutionTypeFilter] = useState<'all' | 'programs' | 'workflows'>('all');
   
   // Execution modal
   const [executeModal, setExecuteModal] = useState<ExecuteModalState>({
     isOpen: false,
     program: null,
+    workflow: null,
     isExecuting: false,
-    componentElements: null
+    componentElements: null,
+    executionType: 'program'
   });
 
-  // Program menu state
-  const [programMenu, setProgramMenu] = useState<ProgramMenuState>({
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<MenuState>({
     isOpen: false,
-    programId: null,
+    itemId: null,
+    itemType: 'program',
     position: { x: 0, y: 0 }
   });
 
   // Load data on component mount
   useEffect(() => {
     loadPrograms();
+    loadWorkflows();
     loadRecentExecutions();
     
     // Check if there's a program to execute from URL params
@@ -199,16 +314,16 @@ const ExecutionsPage: React.FC = () => {
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (programMenu.isOpen) {
+      if (contextMenu.isOpen) {
         const target = event.target as HTMLElement;
         // Don't close if clicking on the menu itself
         if (!target.closest('[data-menu="context"]')) {
-          setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+          setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
         }
       }
     };
 
-    if (programMenu.isOpen) {
+    if (contextMenu.isOpen) {
       // Use a slight delay to prevent immediate closing
       const timer = setTimeout(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -223,7 +338,7 @@ const ExecutionsPage: React.FC = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [programMenu.isOpen]);
+  }, [contextMenu.isOpen]);
 
   const loadPrograms = async () => {
     try {
@@ -291,26 +406,144 @@ const ExecutionsPage: React.FC = () => {
     }
   };
 
+  const loadWorkflows = async () => {
+    try {
+      setIsLoadingWorkflows(true);
+      setError(null);
+
+      const response = await api.workflows.workflows_GetAll(
+        1,
+        100, // Load more workflows for desktop view
+        'Name',
+        SortDirection._0
+      );
+
+      if (response.success && response.data) {
+        const workflowItems: WorkflowItem[] = response.data.items?.map((workflow: any) => ({
+          id: workflow.id || '',
+          name: workflow.name || 'Untitled Workflow',
+          description: workflow.description,
+          status: workflow.status, // Keep original type (number or string)
+          version: workflow.version,
+          nodeCount: workflow.nodes?.length || 0,
+          hasUIComponents: false, // Will be populated by UI component check
+          createdAt: workflow.createdAt,
+          updatedAt: workflow.updatedAt
+        })) || [];
+
+        // Check for UI components in workflow nodes
+        const workflowsWithUIComponents = await Promise.all(
+          workflowItems.map(async (workflow) => {
+            try {
+              // Get workflow details to check nodes for UI components
+              const detailResponse = await api.workflows.workflows_GetById(workflow.id);
+              if (detailResponse.success && detailResponse.data && detailResponse.data.nodes) {
+                // Check if any node has UI components
+                const nodePromises = detailResponse.data.nodes.map(async (node) => {
+                  if (!node.programId) return false;
+                  try {
+                    const uiResponse = await api.uiComponents.uiComponents_GetByProgram(
+                      node.programId,
+                      1,
+                      1,
+                      'id',
+                      undefined
+                    );
+                    return !!(uiResponse.success && uiResponse.data?.items && uiResponse.data.items.length > 0);
+                  } catch {
+                    return false;
+                  }
+                });
+                
+                const hasUIResults = await Promise.all(nodePromises);
+                const hasUIComponents = hasUIResults.some(result => result);
+                
+                return {
+                  ...workflow,
+                  hasUIComponents
+                };
+              }
+              return workflow;
+            } catch {
+              return workflow;
+            }
+          })
+        );
+
+        setWorkflows(workflowsWithUIComponents);
+      } else {
+        setError(response.message || 'Failed to load workflows');
+      }
+    } catch (error) {
+      console.error('Failed to load workflows:', error);
+      setError('Failed to load workflows. Please try again.');
+    } finally {
+      setIsLoadingWorkflows(false);
+    }
+  };
+
   const loadRecentExecutions = async () => {
     try {
       setIsLoadingExecutions(true);
       
-      const response = await api.executions.executions_GetRecentExecutions(20);
+      // Load program executions
+      const programExecutionsResponse = await api.executions.executions_GetRecentExecutions(20);
       
-      if (response.success && response.data) {
-        const executionItems: ExecutionItem[] = response.data.map(execution => ({
+      // Load workflow executions from execution history
+      const workflowExecutions: ExecutionItem[] = [];
+      
+      // Get execution history for each workflow
+      for (const workflow of workflows) {
+        try {
+          const historyResponse = await api.workflows.workflows_GetExecutionHistory(workflow.id, 10);
+          if (historyResponse.success && historyResponse.data) {
+            const workflowExecs: ExecutionItem[] = historyResponse.data.map(execution => ({
+              id: execution.id || '',
+              programId: undefined,
+              programName: undefined,
+              workflowId: workflow.id,
+              workflowName: workflow.name,
+              status: String(execution.status || 'unknown'),
+              startedAt: execution.startedAt || new Date(),
+              completedAt: execution.completedAt,
+              userId: execution.executedBy || '',
+              executionType: 'workflow',
+              itemType: 'workflow'
+            }));
+            workflowExecutions.push(...workflowExecs);
+          }
+        } catch (error) {
+          console.error(`Failed to load execution history for workflow ${workflow.id}:`, error);
+        }
+      }
+      
+      const allExecutions: ExecutionItem[] = [];
+      
+      // Process program executions
+      if (programExecutionsResponse.success && programExecutionsResponse.data) {
+        const programExecutions: ExecutionItem[] = programExecutionsResponse.data.map(execution => ({
           id: execution.id || '',
           programId: execution.programId || '',
           programName: execution.programName || 'Unknown Program',
+          workflowId: undefined,
+          workflowName: undefined,
           status: execution.status || 'unknown',
           startedAt: execution.startedAt || new Date(),
           completedAt: execution.completedAt,
           userId: execution.userId || '',
-          executionType: execution.executionType || 'standard'
+          executionType: execution.executionType || 'standard',
+          itemType: 'program'
         }));
-        
-        setExecutions(executionItems);
+        allExecutions.push(...programExecutions);
       }
+      
+      // Add workflow executions to all executions
+      allExecutions.push(...workflowExecutions);
+      
+      // Sort all executions by start time (most recent first)
+      allExecutions.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+      
+      setExecutions(allExecutions);
     } catch (error) {
       console.error('Failed to load executions:', error);
     } finally {
@@ -351,10 +584,31 @@ const ExecutionsPage: React.FC = () => {
     }
   };
 
-  const handleQuickExecute = async (programId: string) => {
-    const program = programs.find(p => p.id === programId);
-    if (program && program.hasVersions) {
-      await handleExecuteProgram(program);
+  const handleQuickExecute = async (itemId: string, itemType?: 'program' | 'workflow') => {
+    if (!itemType) {
+      // Try to find in programs first, then workflows
+      const program = programs.find(p => p.id === itemId);
+      if (program) {
+        if (program.hasVersions) {
+          await handleExecuteProgram(program);
+        }
+        return;
+      }
+      
+      const workflow = workflows.find(w => w.id === itemId);
+      if (workflow) {
+        await handleExecuteWorkflow(workflow);
+      }
+    } else if (itemType === 'program') {
+      const program = programs.find(p => p.id === itemId);
+      if (program && program.hasVersions) {
+        await handleExecuteProgram(program);
+      }
+    } else if (itemType === 'workflow') {
+      const workflow = workflows.find(w => w.id === itemId);
+      if (workflow) {
+        await handleExecuteWorkflow(workflow);
+      }
     }
   };
 
@@ -432,19 +686,67 @@ const ExecutionsPage: React.FC = () => {
     setExecuteModal({
       isOpen: true,
       program,
+      workflow: null,
       isExecuting: false,
-      componentElements
+      componentElements,
+      executionType: 'program'
     });
   };
 
-  const handleMenuClick = (event: React.MouseEvent, programId: string) => {
+  const handleWorkflowDoubleClick = async (workflow: WorkflowItem) => {
+    // Execute workflow immediately on double-click and navigate to execution page
+    if (!canExecuteWorkflow(workflow.status)) {
+      setError('Cannot execute workflow: Workflow must be published');
+      return;
+    }
+
+    try {
+      const workflowExecutionRequest = new WorkflowExecutionRequest({
+        workflowId: workflow.id
+      });
+
+      const response = await api.workflows.workflows_Execute(
+        workflow.id,
+        workflowExecutionRequest
+      );
+
+      if (response.success && response.data?.id) {
+        // Navigate directly to the new execution
+        navigate(`/workflows/${workflow.id}/execution/${response.data.id}`);
+      } else {
+        setError(response.message || 'Failed to execute workflow');
+      }
+    } catch (error) {
+      console.error('Failed to execute workflow:', error);
+      setError('Failed to execute workflow. Please try again.');
+    }
+  };
+
+  const handleExecuteWorkflow = async (workflow: WorkflowItem) => {
+    if (!canExecuteWorkflow(workflow.status)) {
+      setError('Cannot execute workflow: Workflow must be published');
+      return;
+    }
+
+    setExecuteModal({
+      isOpen: true,
+      program: null,
+      workflow,
+      isExecuting: false,
+      componentElements: null,
+      executionType: 'workflow'
+    });
+  };
+
+  const handleMenuClick = (event: React.MouseEvent, itemId: string, itemType: 'program' | 'workflow') => {
     event.preventDefault();
     event.stopPropagation();
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     
-    setProgramMenu({
+    setContextMenu({
       isOpen: true,
-      programId,
+      itemId,
+      itemType,
       position: {
         x: rect.right + 8,
         y: rect.top
@@ -453,42 +755,69 @@ const ExecutionsPage: React.FC = () => {
   };
 
   const confirmExecution = async (parameters: Record<string, any> = {}) => {
-    if (!executeModal.program) return;
+    if (!executeModal.program && !executeModal.workflow) return;
     
     try {
       setExecuteModal(prev => ({ ...prev, isExecuting: true }));
       
-      const executionRequest = new ProgramExecutionRequestDto({
-        parameters: parameters,
-        environment: {},
-        resourceLimits: new ExecutionResourceLimitsDto({
-          maxMemoryMb: 512,
-          maxCpuPercentage: 50,
-          maxExecutionTimeMinutes: 30
-        })
-      });
+      if (executeModal.executionType === 'program' && executeModal.program) {
+        // Execute program
+        const executionRequest = new ProgramExecutionRequestDto({
+          parameters: parameters,
+          environment: {},
+          resourceLimits: new ExecutionResourceLimitsDto({
+            maxMemoryMb: 512,
+            maxCpuPercentage: 50,
+            maxExecutionTimeMinutes: 30
+          })
+        });
 
-      const response = await api.executions.executions_ExecuteProgram(
-        executeModal.program.id,
-        executionRequest
-      );
+        const response = await api.executions.executions_ExecuteProgram(
+          executeModal.program.id,
+          executionRequest
+        );
 
-      if (response.success) {
-        // Close modal and refresh apps
-        setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null });
-        setView('executions');
-        loadRecentExecutions();
-        
-        // Navigate to execution detail if needed
-        if (response.data?.id) {
-          navigate(`/apps/${response.data.id}`);
+        if (response.success) {
+          // Close modal and refresh executions
+          setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' });
+          setView('executions');
+          loadRecentExecutions();
+          
+          // Navigate to execution detail
+          if (response.data?.id) {
+            navigate(`/apps/${response.data.id}`);
+          }
+        } else {
+          setError(response.message || 'Failed to execute program');
         }
-      } else {
-        setError(response.message || 'Failed to execute program');
+      } else if (executeModal.executionType === 'workflow' && executeModal.workflow) {
+        // Execute workflow
+        const workflowExecutionRequest = new WorkflowExecutionRequest({
+          workflowId: executeModal.workflow.id
+        });
+
+        const response = await api.workflows.workflows_Execute(
+          executeModal.workflow.id,
+          workflowExecutionRequest
+        );
+
+        if (response.success) {
+          // Close modal and refresh executions
+          setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'workflow' });
+          setView('executions');
+          loadRecentExecutions();
+          
+          // Navigate to workflow execution detail
+          if (response.data?.id) {
+            navigate(`/workflows/${executeModal.workflow.id}/execution/${response.data.id}`);
+          }
+        } else {
+          setError(response.message || 'Failed to execute workflow');
+        }
       }
     } catch (error) {
-      console.error('Failed to execute program:', error);
-      setError('Failed to execute program. Please try again.');
+      console.error('Failed to execute:', error);
+      setError(`Failed to execute ${executeModal.executionType}. Please try again.`);
     } finally {
       setExecuteModal(prev => ({ ...prev, isExecuting: false }));
     }
@@ -508,7 +837,27 @@ const ExecutionsPage: React.FC = () => {
     return matchesSearch && matchesLanguage && matchesType;
   });
 
-  if (isLoadingPrograms && programs.length === 0) {
+  const filteredWorkflows = workflows.filter(workflow => {
+    const matchesSearch = !searchTerm || 
+      workflow.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      workflow.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesSearch;
+  });
+
+  const filteredExecutions = executions.filter(execution => {
+    const matchesSearch = !searchTerm || 
+      (execution.programName && execution.programName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (execution.workflowName && execution.workflowName.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesExecutionType = executionTypeFilter === 'all' ||
+      (executionTypeFilter === 'programs' && execution.itemType === 'program') ||
+      (executionTypeFilter === 'workflows' && execution.itemType === 'workflow');
+    
+    return matchesSearch && matchesExecutionType;
+  });
+
+  if ((isLoadingPrograms || isLoadingWorkflows) && programs.length === 0 && workflows.length === 0) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
@@ -530,24 +879,35 @@ const ExecutionsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Program Executions
+            Execution Center
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Run your programs with desktop interface
+            Run programs and workflows from a unified interface
           </p>
         </div>
         
         <div className="mt-4 sm:mt-0 flex space-x-2">
           <Button
-            variant={view === 'desktop' ? 'primary' : 'outline'}
-            onClick={() => setView('desktop')}
+            variant={view === 'programs' ? 'primary' : 'outline'}
+            onClick={() => setView('programs')}
             leftIcon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
               </svg>
             }
           >
-            Desktop View
+            Programs
+          </Button>
+          <Button
+            variant={view === 'workflows' ? 'primary' : 'outline'}
+            onClick={() => setView('workflows')}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            }
+          >
+            Workflows
           </Button>
           <Button
             variant={view === 'executions' ? 'primary' : 'outline'}
@@ -587,7 +947,7 @@ const ExecutionsPage: React.FC = () => {
         </div>
       )}
 
-      {view === 'desktop' && (
+      {view === 'programs' && (
         <>
           {/* Desktop Filters */}
           <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-4">
@@ -656,7 +1016,7 @@ const ExecutionsPage: React.FC = () => {
                     
                     {/* Three dots menu button */}
                     <button
-                      onClick={(e) => handleMenuClick(e, program.id)}
+                      onClick={(e) => handleMenuClick(e, program.id, 'program')}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50 dark:hover:bg-gray-700 z-10"
                     >
                       <svg className="w-3 h-3 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -762,123 +1122,294 @@ const ExecutionsPage: React.FC = () => {
         </>
       )}
 
-      {view === 'executions' && (
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Recent Executions</h2>
+      {view === 'workflows' && (
+        <>
+          {/* Workflow Filters */}
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Search workflows"
+                placeholder="Search by name or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                }
+              />
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Status Filter
+                </label>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="published">Published</option>
+                  <option value="active">Active</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+            </div>
           </div>
-          
-          <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {executions.map((execution) => (
-              <div key={execution.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+          {/* Workflow Icons Grid */}
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-6 min-h-96">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+              {filteredWorkflows.map((workflow) => (
+                <div
+                  key={workflow.id}
+                  className="flex flex-col items-center space-y-2 group relative"
+                  onDoubleClick={() => handleWorkflowDoubleClick(workflow)}
+                >
+                  <div className="relative">
+                    {getWorkflowIcon(workflow)}
+                    
+                    {/* Three dots menu button */}
+                    <button
+                      onClick={(e) => handleMenuClick(e, workflow.id, 'workflow')}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50 dark:hover:bg-gray-700 z-10"
+                    >
+                      <svg className="w-3 h-3 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                       </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {execution.programName}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatRelativeTime(execution.startedAt)}
-                      </p>
-                    </div>
+                    </button>
+                    
+                    {/* Status indicator */}
+                    {workflow.status === 'published' && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                    )}
+                    
+                    {workflow.status === 'draft' && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                    )}
+                    
+                    {/* UI Components indicator */}
+                    {workflow.hasUIComponents && (
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                   
-                  <div className="flex items-center space-x-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(execution.status)}`}>
-                      {execution.status}
-                    </span>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/apps/${execution.id}`)}
-                    >
-                      View Details
-                    </Button>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={workflow.name}>
+                      {workflow.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={`${workflow.nodeCount} nodes`}>
+                      {workflow.nodeCount} nodes
+                    </p>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          
-          {executions.length === 0 && !isLoadingExecutions && (
-            <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V5a2 2 0 012-2h2a2 2 0 012 2v8a2 2 0 01-2 2H9m0 0v2a2 2 0 002 2h2a2 2 0 002-2v-2M9 5v2a2 2 0 002 2h2a2 2 0 002-2V5" />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No executions yet</h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Start executing some programs to see the history here.
-              </p>
+              ))}
             </div>
-          )}
-        </div>
+            
+            {/* Empty State */}
+            {filteredWorkflows.length === 0 && !isLoadingWorkflows && (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No workflows found</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {searchTerm ? 'Try adjusting your search criteria.' : 'Create some workflows to see them here.'}
+                </p>
+                {!searchTerm && (
+                  <div className="mt-6">
+                    <Button
+                      variant="primary"
+                      onClick={() => navigate('/workflows/create')}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      }
+                    >
+                      Create Your First Workflow
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {view === 'executions' && (
+        <>
+          {/* Execution Filters */}
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Search executions"
+                placeholder="Search by name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                }
+              />
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Execution Type
+                </label>
+                <select
+                  value={executionTypeFilter}
+                  onChange={(e) => setExecutionTypeFilter(e.target.value as 'all' | 'programs' | 'workflows')}
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="all">All Executions</option>
+                  <option value="programs">Program Executions</option>
+                  <option value="workflows">Workflow Executions</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm shadow rounded-lg border border-gray-200/50 dark:border-gray-700/50">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white">Recent Executions</h2>
+            </div>
+            
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              {filteredExecutions.map((execution) => (
+                <div key={execution.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        {execution.itemType === 'program' ? (
+                          <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                          </svg>
+                        ) : (
+                          <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {execution.programName || execution.workflowName}
+                          </p>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${execution.itemType === 'program' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'}`}>
+                            {execution.itemType === 'program' ? 'Program' : 'Workflow'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {formatRelativeTime(execution.startedAt)}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(execution.status)}`}>
+                        {execution.status}
+                      </span>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (execution.itemType === 'program') {
+                            navigate(`/apps/${execution.id}`);
+                          } else {
+                            navigate(`/workflows/${execution.workflowId}/executions/${execution.id}`);
+                          }
+                        }}
+                      >
+                        View Details
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {filteredExecutions.length === 0 && !isLoadingExecutions && (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V5a2 2 0 012-2h2a2 2 0 012 2v8a2 2 0 01-2 2H9m0 0v2a2 2 0 002 2h2a2 2 0 002-2v-2M9 5v2a2 2 0 002 2h2a2 2 0 002-2V5" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No executions found</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {searchTerm || executionTypeFilter !== 'all' ? 'Try adjusting your search criteria.' : 'Start executing programs and workflows to see the history here.'}
+                </p>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* Global Context Menu */}
-      {programMenu.isOpen && (
+      {contextMenu.isOpen && (
         <div
           data-menu="context"
           className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50"
           style={{
-            left: `${programMenu.position.x}px`,
-            top: `${programMenu.position.y}px`
+            left: `${contextMenu.position.x}px`,
+            top: `${contextMenu.position.y}px`
           }}
         >
           {(() => {
-            const program = programs.find(p => p.id === programMenu.programId);
-            if (!program) return null;
-            
-            return (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleExecuteProgram(program);
-                    setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
-                  }}
-                  disabled={!program.hasVersions}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
-                  </svg>
-                  <span>Execute</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigate(`/projects/${program.id}`);
-                    setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
-                  }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>Details</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigate(`/editor/${program.id}`);
-                    setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
-                  }}
-                  disabled={!program.hasVersions}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                  <span>Edit Code</span>
+            if (contextMenu.itemType === 'program') {
+              const program = programs.find(p => p.id === contextMenu.itemId);
+              if (!program) return null;
+              
+              return (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleExecuteProgram(program);
+                      setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
+                    }}
+                    disabled={!program.hasVersions}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Execute Program</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/projects/${program.id}`);
+                      setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Program Details</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/editor/${program.id}`);
+                      setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
+                    }}
+                    disabled={!program.hasVersions}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    <span>Edit Code</span>
                 </button>
                 
                 {/* Component Options */}
@@ -890,7 +1421,7 @@ const ExecutionsPage: React.FC = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         handleExecuteProgram(program); // This will automatically use the component form
-                        setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                        setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
                       }}
                       disabled={program.newestComponent.status !== 'active'}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
@@ -905,7 +1436,7 @@ const ExecutionsPage: React.FC = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         navigate(`/projects/${program.id}/components`);
-                        setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                        setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
                       }}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
                     >
@@ -925,7 +1456,7 @@ const ExecutionsPage: React.FC = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         navigate(`/projects/${program.id}/components/create`);
-                        setProgramMenu({ isOpen: false, programId: null, position: { x: 0, y: 0 } });
+                        setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
                       }}
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
                     >
@@ -937,21 +1468,74 @@ const ExecutionsPage: React.FC = () => {
                   </>
                 )}
               </>
-            );
+              );
+            } else if (contextMenu.itemType === 'workflow') {
+              const workflow = workflows.find(w => w.id === contextMenu.itemId);
+              if (!workflow) return null;
+              
+              return (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleExecuteWorkflow(workflow);
+                      setContextMenu({ isOpen: false, itemId: null, itemType: 'workflow', position: { x: 0, y: 0 } });
+                    }}
+                    disabled={!canExecuteWorkflow(workflow.status)}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h6m2 5H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Execute Workflow</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/workflows/${workflow.id}`);
+                      setContextMenu({ isOpen: false, itemId: null, itemType: 'workflow', position: { x: 0, y: 0 } });
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Workflow Details</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/workflows/${workflow.id}/designer`);
+                      setContextMenu({ isOpen: false, itemId: null, itemType: 'workflow', position: { x: 0, y: 0 } });
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    <span>Edit Workflow</span>
+                  </button>
+                </>
+              );
+            }
+            return null;
           })()}
         </div>
       )}
 
-      {/* Execute Program Modal */}
+      {/* Execute Modal */}
       {executeModal.isOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white dark:bg-gray-800">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                Execute {executeModal.program?.name}
+                Execute {executeModal.program?.name || executeModal.workflow?.name}
               </h3>
               <button
-                onClick={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null })}
+                onClick={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                 disabled={executeModal.isExecuting}
               >
@@ -966,22 +1550,24 @@ const ExecutionsPage: React.FC = () => {
                 <ComponentForm
                   elements={executeModal.componentElements}
                   onSubmit={confirmExecution}
-                  onCancel={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null })}
+                  onCancel={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
                   isSubmitting={executeModal.isExecuting}
-                  title="Program Parameters"
+                  title={`${executeModal.executionType === 'program' ? 'Program' : 'Workflow'} Parameters`}
                 />
               ) : (
                 <div className="space-y-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {executeModal.program 
+                    {executeModal.executionType === 'program' && executeModal.program
                       ? `Are you sure you want to execute "${executeModal.program.name}"? This will start a new execution with the current version.`
-                      : 'Are you sure you want to execute this program?'
+                      : executeModal.executionType === 'workflow' && executeModal.workflow
+                      ? `Are you sure you want to execute "${executeModal.workflow.name}"? This will start a new workflow execution.`
+                      : `Are you sure you want to execute this ${executeModal.executionType}?`
                     }
                   </p>
                   <div className="flex items-center justify-end space-x-3">
                     <Button
                       variant="outline"
-                      onClick={() => setExecuteModal({ isOpen: false, program: null, isExecuting: false, componentElements: null })}
+                      onClick={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
                       disabled={executeModal.isExecuting}
                     >
                       Cancel
@@ -992,7 +1578,7 @@ const ExecutionsPage: React.FC = () => {
                       loading={executeModal.isExecuting}
                       disabled={executeModal.isExecuting}
                     >
-                      Execute Program
+                      Execute {executeModal.executionType === 'program' ? 'Program' : 'Workflow'}
                     </Button>
                   </div>
                 </div>
