@@ -254,7 +254,7 @@ const DashboardLayout: React.FC = () => {
                 {location.pathname.startsWith('/projects') && 'Projects'}
                 {location.pathname.startsWith('/workflows') && 'Workflows'}
                 {location.pathname.startsWith('/editor') && 'Code Editor'}
-                {location.pathname.startsWith('/executions') && 'Executions'}
+                {location.pathname.startsWith('/apps') && 'Apps'}
                 {location.pathname.startsWith('/settings') && 'Settings'}
                 {location.pathname.startsWith('/admin') && 'Administration'}
               </h1>

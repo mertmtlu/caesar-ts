@@ -450,7 +450,7 @@ const DashboardHome: React.FC = () => {
                 Recent Executions
               </h3>
               <Link
-                to="/executions"
+                to="/apps"
                 className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
               >
                 View all
@@ -464,7 +464,7 @@ const DashboardHome: React.FC = () => {
                   <div
                     key={execution.id}
                     className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/executions/${execution.id}`)}
+                    onClick={() => navigate(`/apps/${execution.id}`)}
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 dark:text-white truncate">

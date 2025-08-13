@@ -320,7 +320,7 @@ const ProjectsPage: React.FC = () => {
   const handleExecuteProject = async (projectId: string) => {
     try {
       // Navigate to executions page with quick execution for this project
-      navigate(`/executions?execute=${projectId}`);
+      navigate(`/apps?execute=${projectId}`);
     } catch (error) {
       console.error('Failed to execute project:', error);
       setError('Failed to execute project. Please try again.');

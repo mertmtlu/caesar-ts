@@ -796,7 +796,7 @@ const ExecutionsPage: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/executions/${execution.id}`)}
+                      onClick={() => navigate(`/apps/${execution.id}`)}
                     >
                       View Details
                     </Button>

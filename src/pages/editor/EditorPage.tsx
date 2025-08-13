@@ -6,6 +6,8 @@ import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
+import InfoButton from '@/components/editor/InfoButton';
+import ProgramInfoModal from '@/components/editor/ProgramInfoModal';
 import * as monaco from 'monaco-editor';
 import { VersionFileCreateDto, VersionFileUpdateDto, VersionCommitDto, VersionFileChangeDto, VersionUpdateDto } from '@/api';
 
@@ -96,6 +98,7 @@ const EditorPage: React.FC = () => {
   const [showCommitModal, setShowCommitModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
+  const [showProgramInfo, setShowProgramInfo] = useState(false);
   const [newFileName, setNewFileName] = useState('');
   const [newFolderName, setNewFolderName] = useState('');
   const [newItemName, setNewItemName] = useState('');
@@ -1642,6 +1645,12 @@ if __name__ == "__main__":
                     </Button>
                   </>
                 )}
+                
+                {/* Info Button - Available in both view and edit modes */}
+                <InfoButton 
+                  onClick={() => setShowProgramInfo(true)} 
+                  className="ml-2"
+                />
               </>
             )}
           </div>
@@ -2280,6 +2289,12 @@ if __name__ == "__main__":
           />
         </div>
       </Modal>
+
+      {/* Program Info Modal */}
+      <ProgramInfoModal
+        isOpen={showProgramInfo}
+        onClose={() => setShowProgramInfo(false)}
+      />
 
       {/* Context Menu */}
       {showContextMenu && (
