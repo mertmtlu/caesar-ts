@@ -425,7 +425,7 @@ const ExecutionsPage: React.FC = () => {
           description: workflow.description,
           status: workflow.status, // Keep original type (number or string)
           version: workflow.version,
-          nodeCount: workflow.nodes?.length || 0,
+          nodeCount: workflow.nodeCount || 0,
           hasUIComponents: false, // Will be populated by UI component check
           createdAt: workflow.createdAt,
           updatedAt: workflow.updatedAt
