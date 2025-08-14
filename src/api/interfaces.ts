@@ -884,6 +884,33 @@ export interface IExecutionsClient {
     executions_GetCleanupReport(): Promise<types.IExecutionCleanupReportDtoListApiResponse>;
 
     /**
+     * List all output files from an execution
+     * @return OK
+     */
+    executions_ListExecutionFiles(id: string): Promise<types.IExecutionFileListResponseDtoApiResponse>;
+
+    /**
+     * Download a specific output file from an execution
+     * @return OK
+     */
+    executions_DownloadExecutionFile(id: string, filePath: string): Promise<types.IVersionFileDetailDtoApiResponse>;
+
+    /**
+     * Download all output files from an execution as a ZIP archive
+     * @param includeMetadata (optional) 
+     * @param compressionLevel (optional) 
+     * @return OK
+     */
+    executions_DownloadAllExecutionFiles(id: string, includeMetadata: boolean | undefined, compressionLevel: string | undefined): Promise<void>;
+
+    /**
+     * Download selected output files from an execution as a ZIP archive
+     * @param body (optional) 
+     * @return OK
+     */
+    executions_BulkDownloadExecutionFiles(id: string, body: types.IBulkDownloadRequest | undefined): Promise<void>;
+
+    /**
      * Run security scan on program
      * @return OK
      */

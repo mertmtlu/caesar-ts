@@ -6607,6 +6607,165 @@ export class ExecutionEnvironmentUpdateDto implements interfaces.IExecutionEnvir
     }
 }
 
+export class ExecutionFileDto implements interfaces.IExecutionFileDto {
+    path?: string | undefined;
+    name?: string | undefined;
+    isDirectory?: boolean;
+    size?: number;
+    parentPath?: string | undefined;
+    children?: ExecutionFileDto[] | undefined;
+
+    constructor(data?: interfaces.IExecutionFileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.path = _data["path"];
+            this.name = _data["name"];
+            this.isDirectory = _data["isDirectory"];
+            this.size = _data["size"];
+            this.parentPath = _data["parentPath"];
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children!.push(ExecutionFileDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ExecutionFileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionFileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["path"] = this.path;
+        data["name"] = this.name;
+        data["isDirectory"] = this.isDirectory;
+        data["size"] = this.size;
+        data["parentPath"] = this.parentPath;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class ExecutionFileListResponseDto implements interfaces.IExecutionFileListResponseDto {
+    executionId?: string | undefined;
+    files?: ExecutionFileDto[] | undefined;
+    totalFiles?: number;
+    totalSize?: number;
+    lastModified?: Date | undefined;
+
+    constructor(data?: interfaces.IExecutionFileListResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.executionId = _data["executionId"];
+            if (Array.isArray(_data["files"])) {
+                this.files = [] as any;
+                for (let item of _data["files"])
+                    this.files!.push(ExecutionFileDto.fromJS(item));
+            }
+            this.totalFiles = _data["totalFiles"];
+            this.totalSize = _data["totalSize"];
+            this.lastModified = _data["lastModified"] ? new Date(_data["lastModified"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ExecutionFileListResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionFileListResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["executionId"] = this.executionId;
+        if (Array.isArray(this.files)) {
+            data["files"] = [];
+            for (let item of this.files)
+                data["files"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["totalFiles"] = this.totalFiles;
+        data["totalSize"] = this.totalSize;
+        data["lastModified"] = this.lastModified ? this.lastModified.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class ExecutionFileListResponseDtoApiResponse implements interfaces.IExecutionFileListResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: ExecutionFileListResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IExecutionFileListResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? ExecutionFileListResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ExecutionFileListResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionFileListResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class ExecutionListDto implements interfaces.IExecutionListDto {
     id?: string | undefined;
     programId?: string | undefined;

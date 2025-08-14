@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import Button from '@/components/common/Button';
+import ExecutionFileTree from '@/components/execution/ExecutionFileTree';
+import type { IExecutionFileDto } from '@/api/typeInterfaces';
 
 // Interfaces
 interface ExecutionDetail {
@@ -111,8 +113,10 @@ const ExecutionDetailPage: React.FC = () => {
   
   const [execution, setExecution] = useState<ExecutionDetail | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+  const [outputFiles, setOutputFiles] = useState<IExecutionFileDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
 
@@ -120,6 +124,7 @@ const ExecutionDetailPage: React.FC = () => {
     if (executionId) {
       loadExecutionDetail();
       loadLogs();
+      loadOutputFiles();
     }
   }, [executionId]);
 
@@ -253,6 +258,32 @@ const ExecutionDetailPage: React.FC = () => {
     }
   };
 
+  const loadOutputFiles = async () => {
+    if (!executionId) return;
+    
+    try {
+      setIsLoadingFiles(true);
+      setError(null);
+
+      // This will be called when API layer is updated
+      const response = await api.executions.executions_ListExecutionFiles(executionId);
+
+      if (response.success && response.data?.files) {
+        // Files are already in the correct format (IExecutionFileDto[])
+        setOutputFiles(response.data.files);
+      } else {
+        // Don't set error for missing files, just keep empty array
+        setOutputFiles([]);
+      }
+    } catch (error) {
+      console.error('Failed to load output files:', error);
+      // Don't set error for files since it's not critical
+      setOutputFiles([]);
+    } finally {
+      setIsLoadingFiles(false);
+    }
+  };
+
   const handleStopExecution = async () => {
     if (!executionId || !execution) return;
     
@@ -347,7 +378,10 @@ const ExecutionDetailPage: React.FC = () => {
           
           <Button
             variant="outline"
-            onClick={() => loadLogs(true)}
+            onClick={() => {
+              loadLogs(true);
+              loadOutputFiles();
+            }}
             leftIcon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -506,6 +540,26 @@ const ExecutionDetailPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Output Files */}
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white">Output Files</h2>
+          {isLoadingFiles && (
+            <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          )}
+        </div>
+        
+        <div className="p-6">
+          <ExecutionFileTree
+            executionId={executionId!}
+            files={outputFiles}
+            onError={(error) => setError(error)}
+          />
+        </div>
+      </div>
 
       {/* Execution Logs */}
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">

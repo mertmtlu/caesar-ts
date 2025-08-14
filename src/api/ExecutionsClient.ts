@@ -2314,6 +2314,180 @@ export class ExecutionsClient implements interfaces.IExecutionsClient {
     }
 
     /**
+     * List all output files from an execution
+     * @return OK
+     */
+    executions_ListExecutionFiles(id: string): Promise<types.ExecutionFileListResponseDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/Executions/{id}/files/list";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processExecutions_ListExecutionFiles(_response);
+        });
+    }
+
+    protected processExecutions_ListExecutionFiles(response: Response): Promise<types.ExecutionFileListResponseDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.ExecutionFileListResponseDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.ExecutionFileListResponseDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Download a specific output file from an execution
+     * @return OK
+     */
+    executions_DownloadExecutionFile(id: string, filePath: string): Promise<types.VersionFileDetailDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/Executions/{id}/files/download/{filePath}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (filePath === undefined || filePath === null)
+            throw new Error("The parameter 'filePath' must be defined.");
+        url_ = url_.replace("{filePath}", encodeURIComponent("" + filePath));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processExecutions_DownloadExecutionFile(_response);
+        });
+    }
+
+    protected processExecutions_DownloadExecutionFile(response: Response): Promise<types.VersionFileDetailDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.VersionFileDetailDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.VersionFileDetailDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Download all output files from an execution as a ZIP archive
+     * @param includeMetadata (optional) 
+     * @param compressionLevel (optional) 
+     * @return OK
+     */
+    executions_DownloadAllExecutionFiles(id: string, includeMetadata: boolean | undefined, compressionLevel: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Executions/{id}/files/download-all?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (includeMetadata === null)
+            throw new Error("The parameter 'includeMetadata' cannot be null.");
+        else if (includeMetadata !== undefined)
+            url_ += "includeMetadata=" + encodeURIComponent("" + includeMetadata) + "&";
+        if (compressionLevel === null)
+            throw new Error("The parameter 'compressionLevel' cannot be null.");
+        else if (compressionLevel !== undefined)
+            url_ += "compressionLevel=" + encodeURIComponent("" + compressionLevel) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processExecutions_DownloadAllExecutionFiles(_response);
+        });
+    }
+
+    protected processExecutions_DownloadAllExecutionFiles(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * Download selected output files from an execution as a ZIP archive
+     * @param body (optional) 
+     * @return OK
+     */
+    executions_BulkDownloadExecutionFiles(id: string, body: types.BulkDownloadRequest | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Executions/{id}/files/bulk-download";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processExecutions_BulkDownloadExecutionFiles(_response);
+        });
+    }
+
+    protected processExecutions_BulkDownloadExecutionFiles(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
      * Run security scan on program
      * @return OK
      */

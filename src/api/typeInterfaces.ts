@@ -1088,6 +1088,31 @@ export interface IExecutionEnvironmentUpdateDto {
     configuration?: { [key: string]: any; } | undefined;
 }
 
+export interface IExecutionFileDto {
+    path?: string | undefined;
+    name?: string | undefined;
+    isDirectory?: boolean;
+    size?: number;
+    parentPath?: string | undefined;
+    children?: IExecutionFileDto[] | undefined;
+}
+
+export interface IExecutionFileListResponseDto {
+    executionId?: string | undefined;
+    files?: IExecutionFileDto[] | undefined;
+    totalFiles?: number;
+    totalSize?: number;
+    lastModified?: Date | undefined;
+}
+
+export interface IExecutionFileListResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IExecutionFileListResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IExecutionListDto {
     id?: string | undefined;
     programId?: string | undefined;
