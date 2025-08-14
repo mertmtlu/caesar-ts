@@ -119,12 +119,13 @@ const ExecutionDetailPage: React.FC = () => {
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [filesHaveBeenFetched, setFilesHaveBeenFetched] = useState(false);
 
   useEffect(() => {
     if (executionId) {
+      setFilesHaveBeenFetched(false); // Reset file fetch status for new execution
       loadExecutionDetail();
       loadLogs();
-      loadOutputFiles();
     }
   }, [executionId]);
 
@@ -142,6 +143,18 @@ const ExecutionDetailPage: React.FC = () => {
       if (interval) clearInterval(interval);
     };
   }, [autoRefresh, execution?.status]);
+
+  // Load output files once after execution is complete
+  useEffect(() => {
+    // Check if execution is in a final state and files haven't been fetched yet
+    if (execution?.status && !filesHaveBeenFetched) {
+      const status = execution.status.toLowerCase();
+      if (status === 'completed' || status === 'failed') {
+        loadOutputFiles();
+        setFilesHaveBeenFetched(true);
+      }
+    }
+  }, [execution, filesHaveBeenFetched]);
 
   const loadExecutionDetail = async () => {
     if (!executionId) return;
@@ -380,7 +393,9 @@ const ExecutionDetailPage: React.FC = () => {
             variant="outline"
             onClick={() => {
               loadLogs(true);
-              loadOutputFiles();
+              if (filesHaveBeenFetched) {
+                loadOutputFiles();
+              }
             }}
             leftIcon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
