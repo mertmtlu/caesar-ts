@@ -198,7 +198,9 @@ const ProjectDetailPage: React.FC = () => {
 
       if (response.success && response.data) {
         // Navigate directly to editor with the new version
-        navigate(`/editor/${projectId}/${response.data.id}?mode=edit`);
+        navigate(`/editor/${projectId}/${response.data.id}`, {
+          state: { mode: 'edit' }
+        });
       } else {
         setError(response.message || 'Failed to create version');
       }
@@ -826,7 +828,9 @@ Add your project documentation here.`,
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/editor/${project.id}/${version.id}?mode=view`)}
+                      onClick={() => navigate(`/editor/${project.id}/${version.id}`, {
+                        state: { mode: 'view' }
+                      })}
                       leftIcon={
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -841,7 +845,9 @@ Add your project documentation here.`,
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/editor/${project.id}/${version.id}?mode=edit`)}
+                      onClick={() => navigate(`/editor/${project.id}/${version.id}`, {
+                        state: { mode: 'edit' }
+                      })}
                       leftIcon={
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />

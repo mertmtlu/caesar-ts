@@ -1400,7 +1400,9 @@ const ExecutionsPage: React.FC = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      navigate(`/editor/${program.id}`);
+                      navigate(`/editor/${program.id}`, {
+                        state: { mode: 'edit' }
+                      });
                       setContextMenu({ isOpen: false, itemId: null, itemType: 'program', position: { x: 0, y: 0 } });
                     }}
                     disabled={!program.hasVersions}

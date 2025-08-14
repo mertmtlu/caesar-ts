@@ -1,6 +1,6 @@
 // src/pages/editor/EditorPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
@@ -77,8 +77,10 @@ interface VersionInfo {
 const EditorPage: React.FC = () => {
   const { projectId, versionId } = useParams<{ projectId?: string; versionId?: string }>();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(window.location.search);
-  const mode = searchParams.get('mode') || 'edit'; // 'view' or 'edit'
+  const location = useLocation();
+  
+  // Get mode from location.state (hidden from URL) - defaults to 'edit'
+  const mode = (location.state as any)?.mode || 'edit';
 
   // State management
   const [project, setProject] = useState<ProjectInfo | null>(null);
@@ -126,6 +128,8 @@ const EditorPage: React.FC = () => {
   // Commit state
   const [commitMessage, setCommitMessage] = useState('');
   const [isCommitting, setIsCommitting] = useState(false);
+  
+  // Mode is now secure - cannot be manipulated via URL since it's in location.state
   
   // Mode state
   const isViewMode = mode === 'view';
@@ -901,6 +905,9 @@ const EditorPage: React.FC = () => {
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isViewMode) {
+      return;
+    }
     if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
     } else if (e.type === 'dragleave') {
@@ -912,6 +919,10 @@ const EditorPage: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
+    
+    if (isViewMode) {
+      return;
+    }
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFileUpload(e.dataTransfer.files);
@@ -1128,6 +1139,11 @@ if __name__ == "__main__":
     e.preventDefault();
     e.stopPropagation();
     
+    // Disable context menu completely in view mode
+    if (isViewMode) {
+      return;
+    }
+    
     setContextMenuPosition({ x: e.clientX, y: e.clientY });
     setContextMenuTarget(itemPath);
     setSelectedTreeItem(itemPath);
@@ -1166,6 +1182,11 @@ if __name__ == "__main__":
   const handleEmptySpaceContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Disable context menu completely in view mode
+    if (isViewMode) {
+      return;
+    }
     
     setContextMenuPosition({ x: e.clientX, y: e.clientY });
     setContextMenuTarget(null); // null indicates root level
@@ -1546,11 +1567,20 @@ if __name__ == "__main__":
             >
               Back to Project
             </Button>
-            <div className="text-sm">
+            <div className="text-sm flex items-center">
               <span className="font-medium text-gray-900 dark:text-white">{project?.name}</span>
               {version && (
                 <span className="text-gray-500 dark:text-gray-400 ml-2">
                   • Version {version.versionNumber}
+                </span>
+              )}
+              {isViewMode && (
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  View Only
                 </span>
               )}
             </div>
@@ -1558,19 +1588,8 @@ if __name__ == "__main__":
           
           <div className="flex items-center space-x-3">
             {isViewMode ? (
-              // View mode - only show edit version button
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => navigate(`/editor/${project?.id}/${version?.id}?mode=edit`)}
-                leftIcon={
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                }
-              >
-                Edit Version
-              </Button>
+              // View mode - no buttons available  
+              null
             ) : (
               // Edit mode
               <>
@@ -1703,26 +1722,28 @@ if __name__ == "__main__":
           <div className="flex-none p-3 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-900 dark:text-white">Explorer</span>
-              <div className="flex space-x-1">
-                <button
-                  onClick={() => setShowNewFileModal(true)}
-                  className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  title="New File"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setShowNewFolderModal(true)}
-                  className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  title="New Folder"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </button>
-              </div>
+              {!isViewMode && (
+                <div className="flex space-x-1">
+                  <button
+                    onClick={() => setShowNewFileModal(true)}
+                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    title="New File"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setShowNewFolderModal(true)}
+                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    title="New Folder"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1812,17 +1833,19 @@ if __name__ == "__main__":
                   >
                     <span className="truncate max-w-32">{file.path.split('/').pop()}</span>
                     {file.isModified && <span className="ml-1 text-blue-500">●</span>}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        closeFile(file.path);
-                      }}
-                      className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                    {!isViewMode && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          closeFile(file.path);
+                        }}
+                        className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -2191,14 +2214,14 @@ if __name__ == "__main__":
           {/* Drag and Drop Area */}
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              dragActive 
+              dragActive && !isViewMode
                 ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
                 : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
             }`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
+            onDragEnter={!isViewMode ? handleDrag : undefined}
+            onDragLeave={!isViewMode ? handleDrag : undefined}
+            onDragOver={!isViewMode ? handleDrag : undefined}
+            onDrop={!isViewMode ? handleDrop : undefined}
           >
             <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -2320,7 +2343,7 @@ if __name__ == "__main__":
           onClick={(e) => e.stopPropagation()}
         >
           {/* For empty space or directories - show New File and New Folder */}
-          {(!contextMenuTarget || (contextMenuTarget && findItemInTree(fileTree, contextMenuTarget)?.isDirectory)) && (
+          {!isViewMode && (!contextMenuTarget || (contextMenuTarget && findItemInTree(fileTree, contextMenuTarget)?.isDirectory)) && (
             <>
               <button
                 className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
@@ -2347,15 +2370,17 @@ if __name__ == "__main__":
           {/* For specific items - show Rename and Delete */}
           {contextMenuTarget && (
             <>
-              <button
-                className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
-                onClick={() => handleContextMenuAction('rename')}
-              >
-                <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Rename
-              </button>
+              {!isViewMode && (
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+                  onClick={() => handleContextMenuAction('rename')}
+                >
+                  <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Rename
+                </button>
+              )}
               
               {!isViewMode && (
                 <button
