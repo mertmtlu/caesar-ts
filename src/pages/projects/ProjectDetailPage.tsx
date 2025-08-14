@@ -837,6 +837,7 @@ Add your project documentation here.`,
                       View
                     </Button>
                     
+                    {canReview(version) && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -849,6 +850,7 @@ Add your project documentation here.`,
                     >
                       Edit
                     </Button>
+                    )}
                     
                     {canReview(version) && (
                       <Button
