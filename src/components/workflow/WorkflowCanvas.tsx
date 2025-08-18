@@ -539,11 +539,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           edge.targetNodeId === point.nodeId &&
           edge.sourceOutputName === sourcePoint.label &&
           edge.targetInputName === point.label
-        ) && // No duplicate connection
-        !Array.from(edges.values()).some(edge => 
-          edge.targetNodeId === point.nodeId &&
-          edge.targetInputName === point.label
-        ); // Input not already connected
+        ); // No duplicate connection (but multiple inputs to same node allowed)
       
       // Update cursor based on validity
       if (!isValidTarget) {
@@ -598,17 +594,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         return;
       }
       
-      // 5. Check if target input already has a connection (inputs can only have one connection)
-      const existingInputConnection = Array.from(edges.values()).find(edge => 
-        edge.targetNodeId === targetPoint.nodeId &&
-        edge.targetInputName === targetPoint.label
-      );
-      
-      if (existingInputConnection) {
-        console.warn('Input already has a connection');
-        setConnectionPreview(null);
-        return;
-      }
+      // Note: Removed restriction on multiple input connections - nodes can now accept multiple inputs
       
       // All validations passed - create new edge
       const newEdge: WorkflowDesignerEdge = {
