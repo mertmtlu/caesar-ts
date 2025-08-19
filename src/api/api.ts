@@ -100,6 +100,7 @@ export class ApiClient {
     private _versions!: interfaces.IVersionsClient;
     private _workflows!: interfaces.IWorkflowsClient;
     private _uiWorkflowClient!: interfaces.IUIWorkflowClient;
+    private _remoteAppsClient!: interfaces.IRemoteAppsClient;
 
     /**
      * Initialize API client with base URL and authentication handlers
@@ -144,6 +145,7 @@ export class ApiClient {
         this._versions = new clients.VersionsClient(this.baseUrl, this.http);
         this._workflows = new clients.WorkflowsClient(this.baseUrl, this.http);
         this._uiWorkflowClient = new clients.UIWorkflowClient(this.baseUrl, this.http);
+        this._remoteAppsClient = new clients.RemoteAppsClient(this.baseUrl, this.http);
     }
 
     /**
@@ -270,6 +272,13 @@ export class ApiClient {
      */
     get uiWorkflowClient(): interfaces.IUIWorkflowClient {
         return this._uiWorkflowClient;
+    }
+
+    /**
+     * Remote Apps operations
+     */
+    get remoteAppsClient(): interfaces.IRemoteAppsClient {
+        return this._remoteAppsClient;
     }
 
     /**

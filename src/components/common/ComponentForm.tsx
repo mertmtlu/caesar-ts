@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { UIElement, ValidationRule } from '@/types/componentDesigner';
 import Button from '@/components/common/Button';
+import FileInput, { FileData } from '@/components/ui-elements/FileInput';
 
 interface ComponentFormProps {
   elements: UIElement[];
@@ -25,6 +26,15 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
 
   // Handle form input changes
   const handleInputChange = (elementName: string, value: any) => {
+    // Debug logging for file inputs
+    if (elementName.includes('file') || (value && typeof value === 'object' && value.base64Content)) {
+      console.log('File input changed:', elementName, {
+        filename: value?.filename || value?.name,
+        hasContent: !!value?.base64Content,
+        contentLength: value?.base64Content?.length
+      });
+    }
+    
     setFormData(prev => ({ ...prev, [elementName]: value }));
     
     // Clear error for this field
@@ -67,9 +77,21 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         const value = formData[element.name];
         
         // Check required fields
-        if (element.required && (!value || (typeof value === 'string' && !value.trim()))) {
-          newErrors[element.name] = `${element.label} is required`;
-          return;
+        if (element.required) {
+          if (element.type === 'file_input') {
+            // For file inputs, check if files are selected
+            const hasFiles = value && (
+              (Array.isArray(value) && value.length > 0) ||
+              (!Array.isArray(value) && value)
+            );
+            if (!hasFiles) {
+              newErrors[element.name] = `${element.label} is required`;
+              return;
+            }
+          } else if (!value || (typeof value === 'string' && !value.trim())) {
+            newErrors[element.name] = `${element.label} is required`;
+            return;
+          }
         }
         
         // Check validation rules
@@ -98,6 +120,29 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         return typeof value === 'string' && value.length > (rule.value as number);
       case 'pattern':
         return typeof value === 'string' && !!rule.value && !new RegExp(rule.value as string).test(value);
+      case 'fileSize':
+        // For file inputs, validate file size
+        if (Array.isArray(value)) {
+          return value.some((fileData: FileData) => fileData.size > (rule.value as number));
+        } else if (value) {
+          return (value as FileData).size > (rule.value as number);
+        }
+        return false;
+      case 'fileType':
+        // For file inputs, validate file type
+        const allowedTypes = (rule.value as string).split(',');
+        if (Array.isArray(value)) {
+          return value.some((fileData: FileData) => !allowedTypes.includes(fileData.type));
+        } else if (value) {
+          return !allowedTypes.includes((value as FileData).type);
+        }
+        return false;
+      case 'fileCount':
+        // For file inputs, validate number of files
+        if (Array.isArray(value)) {
+          return value.length > (rule.value as number);
+        }
+        return false;
       default:
         return false;
     }
@@ -122,6 +167,31 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               tableData[propertyName] = cellValue;
             });
             parameters[element.name] = tableData;
+          } else if (element.type === 'file_input') {
+            // For file inputs, send filename and base64 content for program execution
+            const fileValue = formData[element.name];
+            console.log('Processing file input for execution:', element.name, fileValue);
+            if (fileValue) {
+              if (Array.isArray(fileValue)) {
+                parameters[element.name] = fileValue.map((fileData: FileData) => ({
+                  filename: fileData.filename || fileData.name,
+                  content: fileData.base64Content,
+                  fileSize: fileData.size,
+                  contentType: fileData.type
+                }));
+              } else {
+                const fileData = fileValue as FileData;
+                parameters[element.name] = {
+                  filename: fileData.filename || fileData.name,
+                  content: fileData.base64Content,
+                  fileSize: fileData.size,
+                  contentType: fileData.type
+                };
+              }
+              console.log('File parameters for execution:', parameters[element.name]);
+            } else {
+              parameters[element.name] = element.fileInputConfig?.multiple ? [] : null;
+            }
           } else {
             parameters[element.name] = formData[element.name] || element.defaultValue || '';
           }
@@ -429,6 +499,24 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
             )}
           </div>
+        );
+
+      case 'file_input':
+        return (
+          <FileInput
+            key={element.id}
+            config={element.fileInputConfig || {}}
+            value={value}
+            onChange={(files) => handleInputChange(element.name, files)}
+            disabled={element.disabled}
+            label={element.label}
+            placeholder={element.placeholder}
+            required={element.required}
+            hasError={hasError}
+            errorMessage={error}
+            helpText={element.helpText}
+            className="w-full"
+          />
         );
 
       default:

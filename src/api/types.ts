@@ -13981,6 +13981,587 @@ export class RegionUpdateDto implements interfaces.IRegionUpdateDto {
     }
 }
 
+export class RemoteAppAssignedUserDto implements interfaces.IRemoteAppAssignedUserDto {
+    userId!: string | undefined;
+    username?: string | undefined;
+    fullName?: string | undefined;
+    email?: string | undefined;
+
+    constructor(data?: interfaces.IRemoteAppAssignedUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.username = _data["username"];
+            this.fullName = _data["fullName"];
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppAssignedUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppAssignedUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["username"] = this.username;
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        return data;
+    }
+}
+
+export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
+    name!: string;
+    description?: string | undefined;
+    url!: string;
+    isPublic?: boolean;
+    assignedUserIds?: string[] | undefined;
+
+    constructor(data?: interfaces.IRemoteAppCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.url = _data["url"];
+            this.isPublic = _data["isPublic"];
+            if (Array.isArray(_data["assignedUserIds"])) {
+                this.assignedUserIds = [] as any;
+                for (let item of _data["assignedUserIds"])
+                    this.assignedUserIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): RemoteAppCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["url"] = this.url;
+        data["isPublic"] = this.isPublic;
+        if (Array.isArray(this.assignedUserIds)) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
+    id!: string | undefined;
+    name!: string | undefined;
+    description?: string | undefined;
+    url!: string | undefined;
+    isPublic?: boolean;
+    creator!: string | undefined;
+    creatorName?: string | undefined;
+    status?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    assignedUsers?: RemoteAppAssignedUserDto[] | undefined;
+
+    constructor(data?: interfaces.IRemoteAppDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.url = _data["url"];
+            this.isPublic = _data["isPublic"];
+            this.creator = _data["creator"];
+            this.creatorName = _data["creatorName"];
+            this.status = _data["status"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
+            if (Array.isArray(_data["assignedUsers"])) {
+                this.assignedUsers = [] as any;
+                for (let item of _data["assignedUsers"])
+                    this.assignedUsers!.push(RemoteAppAssignedUserDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): RemoteAppDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["url"] = this.url;
+        data["isPublic"] = this.isPublic;
+        data["creator"] = this.creator;
+        data["creatorName"] = this.creatorName;
+        data["status"] = this.status;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
+        if (Array.isArray(this.assignedUsers)) {
+            data["assignedUsers"] = [];
+            for (let item of this.assignedUsers)
+                data["assignedUsers"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class RemoteAppDetailDtoApiResponse implements interfaces.IRemoteAppDetailDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: RemoteAppDetailDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IRemoteAppDetailDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? RemoteAppDetailDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppDetailDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppDetailDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class RemoteAppDto implements interfaces.IRemoteAppDto {
+    id!: string | undefined;
+    name!: string | undefined;
+    description?: string | undefined;
+    url!: string | undefined;
+    isPublic?: boolean;
+    creator!: string | undefined;
+    status?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    assignedUserIds?: string[] | undefined;
+
+    constructor(data?: interfaces.IRemoteAppDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.url = _data["url"];
+            this.isPublic = _data["isPublic"];
+            this.creator = _data["creator"];
+            this.status = _data["status"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
+            if (Array.isArray(_data["assignedUserIds"])) {
+                this.assignedUserIds = [] as any;
+                for (let item of _data["assignedUserIds"])
+                    this.assignedUserIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): RemoteAppDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["url"] = this.url;
+        data["isPublic"] = this.isPublic;
+        data["creator"] = this.creator;
+        data["status"] = this.status;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
+        if (Array.isArray(this.assignedUserIds)) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export class RemoteAppDtoApiResponse implements interfaces.IRemoteAppDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: RemoteAppDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IRemoteAppDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? RemoteAppDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class RemoteAppListDto implements interfaces.IRemoteAppListDto {
+    id!: string | undefined;
+    name!: string | undefined;
+    description?: string | undefined;
+    url!: string | undefined;
+    isPublic?: boolean;
+    creator!: string | undefined;
+    status?: string | undefined;
+    createdAt?: Date;
+
+    constructor(data?: interfaces.IRemoteAppListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.url = _data["url"];
+            this.isPublic = _data["isPublic"];
+            this.creator = _data["creator"];
+            this.status = _data["status"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["url"] = this.url;
+        data["isPublic"] = this.isPublic;
+        data["creator"] = this.creator;
+        data["status"] = this.status;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class RemoteAppListDtoPagedResponse implements interfaces.IRemoteAppListDtoPagedResponse {
+    items?: RemoteAppListDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    readonly hasPreviousPage?: boolean;
+    readonly hasNextPage?: boolean;
+
+    constructor(data?: interfaces.IRemoteAppListDtoPagedResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(RemoteAppListDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.pageSize = _data["pageSize"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            (<any>this).hasPreviousPage = _data["hasPreviousPage"];
+            (<any>this).hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppListDtoPagedResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppListDtoPagedResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["pageSize"] = this.pageSize;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export class RemoteAppListDtoPagedResponseApiResponse implements interfaces.IRemoteAppListDtoPagedResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: RemoteAppListDtoPagedResponse;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IRemoteAppListDtoPagedResponseApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? RemoteAppListDtoPagedResponse.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppListDtoPagedResponseApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppListDtoPagedResponseApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    url?: string | undefined;
+    isPublic?: boolean | undefined;
+    assignedUserIds?: string[] | undefined;
+
+    constructor(data?: interfaces.IRemoteAppUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.url = _data["url"];
+            this.isPublic = _data["isPublic"];
+            if (Array.isArray(_data["assignedUserIds"])) {
+                this.assignedUserIds = [] as any;
+                for (let item of _data["assignedUserIds"])
+                    this.assignedUserIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): RemoteAppUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["url"] = this.url;
+        data["isPublic"] = this.isPublic;
+        if (Array.isArray(this.assignedUserIds)) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export class RemoteAppUserAssignmentDto implements interfaces.IRemoteAppUserAssignmentDto {
+    userId!: string;
+
+    constructor(data?: interfaces.IRemoteAppUserAssignmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppUserAssignmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppUserAssignmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data;
+    }
+}
+
 export class RequestAssignmentDto implements interfaces.IRequestAssignmentDto {
     assignedTo!: string;
     assignmentNotes?: string | undefined;

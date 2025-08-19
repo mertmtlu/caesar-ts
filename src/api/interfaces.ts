@@ -1306,6 +1306,114 @@ export interface IRegionsClient {
     regions_GetRegionsInCity(city: string): Promise<types.IRegionSummaryResponseDtoListApiResponse>;
 }
 
+export interface IRemoteAppsClient {
+
+    /**
+     * Get all remote apps with pagination
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetAll(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
+
+    /**
+     * Create new remote app
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_Create(body: types.IRemoteAppCreateDto | undefined): Promise<types.IRemoteAppDtoApiResponse>;
+
+    /**
+     * Get remote app by ID with full details
+     * @return OK
+     */
+    remoteApps_GetById(id: string): Promise<types.IRemoteAppDetailDtoApiResponse>;
+
+    /**
+     * Update remote app
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_Update(id: string, body: types.IRemoteAppUpdateDto | undefined): Promise<types.IRemoteAppDtoApiResponse>;
+
+    /**
+     * Delete remote app
+     * @return OK
+     */
+    remoteApps_Delete(id: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Get remote apps by creator
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetByCreator(creatorId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
+
+    /**
+     * Get remote apps by status (active, inactive, etc.)
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetByStatus(status: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
+
+    /**
+     * Get remote apps accessible to current user (public apps + assigned private apps)
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetUserAccessibleApps(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
+
+    /**
+     * Get public remote apps
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetPublicApps(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
+
+    /**
+     * Assign user to remote app
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_AssignUser(id: string, body: types.IRemoteAppUserAssignmentDto | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Unassign user from remote app
+     * @return OK
+     */
+    remoteApps_UnassignUser(id: string, userId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Check if user is assigned to remote app
+     * @return OK
+     */
+    remoteApps_IsUserAssigned(id: string, userId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Update remote app status (active, inactive, maintenance)
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_UpdateStatus(id: string, body: string | undefined): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Validate remote app name uniqueness
+     * @param excludeId (optional) 
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_ValidateNameUnique(excludeId: string | undefined, body: string | undefined): Promise<types.IBooleanApiResponse>;
+}
+
 export interface IRequestsClient {
 
     /**

@@ -2286,6 +2286,105 @@ export interface IRegionUpdateDto {
     headquarters?: string | undefined;
 }
 
+export interface IRemoteAppAssignedUserDto {
+    userId: string | undefined;
+    username?: string | undefined;
+    fullName?: string | undefined;
+    email?: string | undefined;
+}
+
+export interface IRemoteAppCreateDto {
+    name: string;
+    description?: string | undefined;
+    url: string;
+    isPublic?: boolean;
+    assignedUserIds?: string[] | undefined;
+}
+
+export interface IRemoteAppDetailDto {
+    id: string | undefined;
+    name: string | undefined;
+    description?: string | undefined;
+    url: string | undefined;
+    isPublic?: boolean;
+    creator: string | undefined;
+    creatorName?: string | undefined;
+    status?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    assignedUsers?: IRemoteAppAssignedUserDto[] | undefined;
+}
+
+export interface IRemoteAppDetailDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IRemoteAppDetailDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IRemoteAppDto {
+    id: string | undefined;
+    name: string | undefined;
+    description?: string | undefined;
+    url: string | undefined;
+    isPublic?: boolean;
+    creator: string | undefined;
+    status?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    assignedUserIds?: string[] | undefined;
+}
+
+export interface IRemoteAppDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IRemoteAppDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IRemoteAppListDto {
+    id: string | undefined;
+    name: string | undefined;
+    description?: string | undefined;
+    url: string | undefined;
+    isPublic?: boolean;
+    creator: string | undefined;
+    status?: string | undefined;
+    createdAt?: Date;
+}
+
+export interface IRemoteAppListDtoPagedResponse {
+    items?: IRemoteAppListDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export interface IRemoteAppListDtoPagedResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IRemoteAppListDtoPagedResponse;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IRemoteAppUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    url?: string | undefined;
+    isPublic?: boolean | undefined;
+    assignedUserIds?: string[] | undefined;
+}
+
+export interface IRemoteAppUserAssignmentDto {
+    userId: string;
+}
+
 export interface IRequestAssignmentDto {
     assignedTo: string;
     assignmentNotes?: string | undefined;

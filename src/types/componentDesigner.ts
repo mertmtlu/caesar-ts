@@ -11,9 +11,10 @@ export type ElementType =
   | 'date_picker'
   | 'email_input'
   | 'password_input'
+  | 'file_input'
   | 'table';
 
-export type ValidationRuleType = 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
+export type ValidationRuleType = 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom' | 'fileSize' | 'fileType' | 'fileCount';
 
 export interface ValidationRule {
   type: ValidationRuleType;
@@ -66,6 +67,15 @@ export interface Size {
   height: number;
 }
 
+export interface FileInputConfig {
+  acceptedFileTypes?: string[]; // e.g., ['.pdf', '.jpg', '.png'] or ['image/*', 'application/pdf']
+  maxFileSize?: number; // in bytes
+  multiple?: boolean;
+  dragAndDrop?: boolean;
+  showPreview?: boolean;
+  uploadOnSelect?: boolean; // Whether to upload immediately on file selection
+}
+
 export interface UIElement {
   id: string;
   type: ElementType;
@@ -83,6 +93,8 @@ export interface UIElement {
   helpText?: string;
   // Table-specific properties
   tableConfig?: TableConfig;
+  // File input-specific properties
+  fileInputConfig?: FileInputConfig;
 }
 
 export interface LayoutConfig {
@@ -281,6 +293,28 @@ export const ELEMENT_TEMPLATES: ElementTemplate[] = [
       placeholder: 'Enter email address...',
       required: false,
       size: { width: 250, height: 40 }
+    }
+  },
+  {
+    id: 'file_input',
+    name: 'File Input',
+    type: 'file_input',
+    icon: '📁',
+    description: 'File upload input with drag and drop support',
+    defaultProps: {
+      label: 'File Upload',
+      name: 'file_input',
+      placeholder: 'Select or drop files here...',
+      required: false,
+      size: { width: 300, height: 80 },
+      fileInputConfig: {
+        maxFileSize: 10 * 1024 * 1024, // 10MB
+        multiple: false,
+        dragAndDrop: true,
+        showPreview: true,
+        uploadOnSelect: false,
+        acceptedFileTypes: ['*/*'] // Accept all file types by default
+      }
     }
   },
   {

@@ -44,6 +44,15 @@ const navigationItems = [
     )
   },
   {
+    name: 'Remote Apps',
+    href: '/remoteapps',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 0L9 21m0-18l3 3m-3-3l3 3" />
+      </svg>
+    )
+  },
+  {
     name: 'Settings',
     href: '/settings',
     icon: (

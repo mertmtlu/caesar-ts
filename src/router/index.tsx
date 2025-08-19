@@ -43,6 +43,11 @@ import WorkflowExecutionPage from '@/pages/workflows/WorkflowExecutionPage';
 // import SettingsPage from '@/pages/settings/SettingsPage';
 // import ProfilePage from '@/pages/settings/ProfilePage';
 
+// RemoteApps Pages
+import RemoteAppsPage from '@/pages/remoteapps/RemoteAppsPage';
+import CreateRemoteAppPage from '@/pages/remoteapps/CreateRemoteAppPage';
+import EditRemoteAppPage from '@/pages/remoteapps/EditRemoteAppPage';
+
 // Admin Pages
 import UsersPage from '@/pages/admin/UsersPage';
 import ProgramPermissionsPage from '@/pages/admin/ProgramPermissionsPage';
@@ -243,6 +248,30 @@ export const router = createBrowserRouter([
       //     }
       //   ]
       // },
+
+      // Remote Apps routes
+      {
+        path: 'remoteapps',
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <RemoteAppsPage />
+          },
+          {
+            path: 'create',
+            element: <CreateRemoteAppPage />
+          },
+          {
+            path: ':appId/edit',
+            element: <EditRemoteAppPage />
+          }
+        ]
+      },
 
       // Admin routes (protected by admin role)
       {

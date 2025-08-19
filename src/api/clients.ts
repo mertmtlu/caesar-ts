@@ -16,6 +16,7 @@ import {UsersClient, UserClientAssignmentDto} from './UsersClient'
 import {VersionsClient} from './VersionsClient'
 import { WorkflowsClient } from './WorkflowsClient'
 import {UIWorkflowClient} from './UIWorkflowClient'
+import { RemoteAppsClient } from './RemoteAppsClient'
 
 export {
     AlternativeTMsClient,
@@ -36,5 +37,6 @@ export {
     VersionsClient,
     UserClientAssignmentDto,
     WorkflowsClient,
-    UIWorkflowClient
+    UIWorkflowClient,
+    RemoteAppsClient
 }

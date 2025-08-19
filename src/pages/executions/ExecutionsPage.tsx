@@ -69,10 +69,21 @@ interface ExecuteModalState {
   executionType: 'program' | 'workflow';
 }
 
+interface RemoteAppItem {
+  id: string;
+  name: string;
+  description?: string;
+  url: string;
+  status: string;
+  isPublic: boolean;
+  creator: string;
+  createdAt: Date;
+}
+
 interface MenuState {
   isOpen: boolean;
   itemId: string | null;
-  itemType: 'program' | 'workflow';
+  itemType: 'program' | 'workflow' | 'remoteapp';
   position: { x: number; y: number };
 }
 
@@ -190,6 +201,46 @@ const getWorkflowIcon = (workflow: WorkflowItem): React.ReactNode => {
   }
 };
 
+// Remote app icon generation
+const getRemoteAppIcon = (app: RemoteAppItem): React.ReactNode => {
+  // Create distinctive icons for remote apps
+  const getStatusColor = () => {
+    switch (app.status.toLowerCase()) {
+      case 'active':
+        return 'bg-green-500';
+      case 'maintenance':
+        return 'bg-yellow-500';
+      case 'inactive':
+        return 'bg-red-500';
+      default:
+        return 'bg-blue-500';
+    }
+  };
+
+  return (
+    <div className={`w-16 h-16 ${getStatusColor()} rounded-lg flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer border-2 border-gray-200 dark:border-gray-600 relative`}>
+      {/* Globe/External link icon for remote apps */}
+      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+      </svg>
+      
+      {/* Public/Private indicator */}
+      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+        {app.isPublic ? (
+          <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+          </svg>
+        ) : (
+          <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
+          </svg>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Helper function to check if workflow can be executed
 const canExecuteWorkflow = (status?: string | number): boolean => {
   const statusString = typeof status === 'string' ? status : String(status || '');
@@ -264,14 +315,16 @@ const ExecutionsPage: React.FC = () => {
   // State management
   const [programs, setPrograms] = useState<ProgramItem[]>([]);
   const [workflows, setWorkflows] = useState<WorkflowItem[]>([]);
+  const [remoteApps, setRemoteApps] = useState<RemoteAppItem[]>([]);
   const [executions, setExecutions] = useState<ExecutionItem[]>([]);
   const [isLoadingPrograms, setIsLoadingPrograms] = useState(true);
   const [isLoadingWorkflows, setIsLoadingWorkflows] = useState(true);
+  const [isLoadingRemoteApps, setIsLoadingRemoteApps] = useState(true);
   const [isLoadingExecutions, setIsLoadingExecutions] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   // View state with separate tabs
-  const [view, setView] = useState<'programs' | 'workflows' | 'executions'>('programs');
+  const [view, setView] = useState<'programs' | 'workflows' | 'remoteapps' | 'executions'>('programs');
   
   // Search and filters
   const [searchTerm, setSearchTerm] = useState('');
@@ -301,6 +354,7 @@ const ExecutionsPage: React.FC = () => {
   useEffect(() => {
     loadPrograms();
     loadWorkflows();
+    loadRemoteApps();
     loadRecentExecutions();
     
     // Check if there's a program to execute from URL params
@@ -479,6 +533,42 @@ const ExecutionsPage: React.FC = () => {
       setError('Failed to load workflows. Please try again.');
     } finally {
       setIsLoadingWorkflows(false);
+    }
+  };
+
+  const loadRemoteApps = async () => {
+    try {
+      setIsLoadingRemoteApps(true);
+      setError(null);
+
+      const response = await api.remoteAppsClient.remoteApps_GetUserAccessibleApps(
+        1,
+        100, // Load more remote apps for desktop view
+        'Name',
+        SortDirection._0
+      );
+
+      if (response.success && response.data) {
+        const remoteAppItems: RemoteAppItem[] = response.data.items?.map(app => ({
+          id: app.id || '',
+          name: app.name || 'Untitled App',
+          description: app.description,
+          url: app.url || '',
+          status: app.status || 'active',
+          isPublic: app.isPublic || false,
+          creator: app.creator || '',
+          createdAt: app.createdAt || new Date()
+        })) || [];
+
+        setRemoteApps(remoteAppItems);
+      } else {
+        setError(response.message || 'Failed to load remote apps');
+      }
+    } catch (error) {
+      console.error('Failed to load remote apps:', error);
+      setError('Failed to load remote apps. Please try again.');
+    } finally {
+      setIsLoadingRemoteApps(false);
     }
   };
 
@@ -722,6 +812,13 @@ const ExecutionsPage: React.FC = () => {
     }
   };
 
+  const handleRemoteAppDoubleClick = (app: RemoteAppItem) => {
+    // Open remote app URL in new window/tab
+    if (app.url) {
+      window.open(app.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   const handleExecuteWorkflow = async (workflow: WorkflowItem) => {
     if (!canExecuteWorkflow(workflow.status)) {
       setError('Cannot execute workflow: Workflow must be published');
@@ -738,7 +835,7 @@ const ExecutionsPage: React.FC = () => {
     });
   };
 
-  const handleMenuClick = (event: React.MouseEvent, itemId: string, itemType: 'program' | 'workflow') => {
+  const handleMenuClick = (event: React.MouseEvent, itemId: string, itemType: 'program' | 'workflow' | 'remoteapp') => {
     event.preventDefault();
     event.stopPropagation();
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
@@ -845,6 +942,14 @@ const ExecutionsPage: React.FC = () => {
     return matchesSearch;
   });
 
+  const filteredRemoteApps = remoteApps.filter(app => {
+    const matchesSearch = !searchTerm || 
+      app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesSearch;
+  });
+
   const filteredExecutions = executions.filter(execution => {
     const matchesSearch = !searchTerm || 
       (execution.programName && execution.programName.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -857,7 +962,7 @@ const ExecutionsPage: React.FC = () => {
     return matchesSearch && matchesExecutionType;
   });
 
-  if ((isLoadingPrograms || isLoadingWorkflows) && programs.length === 0 && workflows.length === 0) {
+  if ((isLoadingPrograms || isLoadingWorkflows || isLoadingRemoteApps) && programs.length === 0 && workflows.length === 0 && remoteApps.length === 0) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
@@ -909,6 +1014,22 @@ const ExecutionsPage: React.FC = () => {
               <span>Workflows</span>
               <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 py-0.5 px-2 rounded-full text-xs">
                 {filteredWorkflows.length}
+              </span>
+            </button>
+            <button
+              onClick={() => setView('remoteapps')}
+              className={`${
+                view === 'remoteapps'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 0L9 21m0-18l3 3m-3-3l3 3" />
+              </svg>
+              <span>Remote Apps</span>
+              <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 py-0.5 px-2 rounded-full text-xs">
+                {filteredRemoteApps.length}
               </span>
             </button>
             <button
@@ -1154,6 +1275,76 @@ const ExecutionsPage: React.FC = () => {
                       }
                     >
                       Create Your First Workflow
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {view === 'remoteapps' && (
+        <>
+          {/* Remote Apps Icons Grid */}
+          <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-6 min-h-96">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+              {filteredRemoteApps.map((app) => (
+                <div
+                  key={app.id}
+                  className="flex flex-col items-center space-y-2 group relative"
+                  onDoubleClick={() => handleRemoteAppDoubleClick(app)}
+                >
+                  <div className="relative">
+                    {getRemoteAppIcon(app)}
+                    
+                    {/* Three dots menu button */}
+                    <button
+                      onClick={(e) => handleMenuClick(e, app.id, 'remoteapp')}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50 dark:hover:bg-gray-700 z-10"
+                    >
+                      <svg className="w-3 h-3 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                      </svg>
+                    </button>
+                    
+                    {/* Status indicator (already included in the icon) */}
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={app.name}>
+                      {app.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={app.isPublic ? 'Public' : 'Private'}>
+                      {app.isPublic ? 'Public' : 'Private'}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Empty State */}
+            {filteredRemoteApps.length === 0 && !isLoadingRemoteApps && (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 0L9 21m0-18l3 3m-3-3l3 3" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No remote apps found</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {searchTerm ? 'Try adjusting your search criteria.' : 'Create some remote apps to see them here.'}
+                </p>
+                {!searchTerm && (
+                  <div className="mt-6">
+                    <Button
+                      variant="primary"
+                      onClick={() => navigate('/remoteapps/create')}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      }
+                    >
+                      Create Your First Remote App
                     </Button>
                   </div>
                 )}
