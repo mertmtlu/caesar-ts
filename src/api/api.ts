@@ -101,6 +101,7 @@ export class ApiClient {
     private _workflows!: interfaces.IWorkflowsClient;
     private _uiWorkflowClient!: interfaces.IUIWorkflowClient;
     private _remoteAppsClient!: interfaces.IRemoteAppsClient;
+    private _iconsClient!: interfaces.IIconsClient;
 
     /**
      * Initialize API client with base URL and authentication handlers
@@ -146,6 +147,7 @@ export class ApiClient {
         this._workflows = new clients.WorkflowsClient(this.baseUrl, this.http);
         this._uiWorkflowClient = new clients.UIWorkflowClient(this.baseUrl, this.http);
         this._remoteAppsClient = new clients.RemoteAppsClient(this.baseUrl, this.http);
+        this._iconsClient = new clients.IconsClient(this.baseUrl, this.http);
     }
 
     /**
@@ -279,6 +281,13 @@ export class ApiClient {
      */
     get remoteAppsClient(): interfaces.IRemoteAppsClient {
         return this._remoteAppsClient;
+    }
+
+    /**
+     * Icons management operations
+     */
+    get iconsClient(): interfaces.IIconsClient {
+        return this._iconsClient;
     }
 
     /**

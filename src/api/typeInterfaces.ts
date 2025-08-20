@@ -1572,6 +1572,96 @@ export interface IHealthCheckResultDto {
     message?: string | undefined;
 }
 
+export interface IIconBatchRequestDto {
+    iconIds: string[];
+}
+
+export interface IIconCreateDto {
+    name: string;
+    description?: string | undefined;
+    iconData: string;
+    format: string;
+    entityType: enums.IconEntityType;
+    entityId: string;
+    metadata?: { [key: string]: any; } | undefined;
+}
+
+export interface IIconEntityBatchRequestDto {
+    entityType: enums.IconEntityType;
+    entityIds: string[];
+}
+
+export interface IIconResponseDto {
+    id: string | undefined;
+    name: string | undefined;
+    description?: string | undefined;
+    iconData: string | undefined;
+    format: string | undefined;
+    size?: number;
+    entityType: enums.IconEntityType;
+    entityId: string | undefined;
+    creator: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+}
+
+export interface IIconResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IIconResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IIconResponseDtoIEnumerableApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IIconResponseDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IIconStatsResponseDto {
+    entityType: enums.IconEntityType;
+    totalCount?: number;
+}
+
+export interface IIconStatsResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IIconStatsResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IIconUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    iconData?: string | undefined;
+    format?: string | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+}
+
+export interface IIconValidationRequestDto {
+    entityType: enums.IconEntityType;
+    entityId: string;
+    excludeIconId?: string | undefined;
+}
+
+export interface IIconValidationResponseDto {
+    isValid?: boolean;
+    message: string | undefined;
+}
+
+export interface IIconValidationResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IIconValidationResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IInt32ApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -1837,6 +1927,14 @@ export interface INoiseMeasurementsForBuildings {
     control?: number;
     security?: number;
     switchyard?: number;
+}
+
+export interface IObjectApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: any | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
 }
 
 export interface IPasswordResetResponseDto {

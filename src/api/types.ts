@@ -9467,6 +9467,614 @@ export class HealthCheckResultDto implements interfaces.IHealthCheckResultDto {
     }
 }
 
+export class IconBatchRequestDto implements interfaces.IIconBatchRequestDto {
+    iconIds!: string[];
+
+    constructor(data?: interfaces.IIconBatchRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.iconIds = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["iconIds"])) {
+                this.iconIds = [] as any;
+                for (let item of _data["iconIds"])
+                    this.iconIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): IconBatchRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconBatchRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.iconIds)) {
+            data["iconIds"] = [];
+            for (let item of this.iconIds)
+                data["iconIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export class IconCreateDto implements interfaces.IIconCreateDto {
+    name!: string;
+    description?: string | undefined;
+    iconData!: string;
+    format!: string;
+    entityType!: enums.IconEntityType;
+    entityId!: string;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IIconCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.iconData = _data["iconData"];
+            this.format = _data["format"];
+            this.entityType = _data["entityType"];
+            this.entityId = _data["entityId"];
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): IconCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["iconData"] = this.iconData;
+        data["format"] = this.format;
+        data["entityType"] = this.entityType;
+        data["entityId"] = this.entityId;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class IconEntityBatchRequestDto implements interfaces.IIconEntityBatchRequestDto {
+    entityType!: enums.IconEntityType;
+    entityIds!: string[];
+
+    constructor(data?: interfaces.IIconEntityBatchRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.entityIds = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.entityType = _data["entityType"];
+            if (Array.isArray(_data["entityIds"])) {
+                this.entityIds = [] as any;
+                for (let item of _data["entityIds"])
+                    this.entityIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): IconEntityBatchRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconEntityBatchRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["entityType"] = this.entityType;
+        if (Array.isArray(this.entityIds)) {
+            data["entityIds"] = [];
+            for (let item of this.entityIds)
+                data["entityIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export class IconResponseDto implements interfaces.IIconResponseDto {
+    id!: string | undefined;
+    name!: string | undefined;
+    description?: string | undefined;
+    iconData!: string | undefined;
+    format!: string | undefined;
+    size?: number;
+    entityType!: enums.IconEntityType;
+    entityId!: string | undefined;
+    creator!: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IIconResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.iconData = _data["iconData"];
+            this.format = _data["format"];
+            this.size = _data["size"];
+            this.entityType = _data["entityType"];
+            this.entityId = _data["entityId"];
+            this.creator = _data["creator"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): IconResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["iconData"] = this.iconData;
+        data["format"] = this.format;
+        data["size"] = this.size;
+        data["entityType"] = this.entityType;
+        data["entityId"] = this.entityId;
+        data["creator"] = this.creator;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class IconResponseDtoApiResponse implements interfaces.IIconResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IconResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IIconResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? IconResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): IconResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class IconResponseDtoIEnumerableApiResponse implements interfaces.IIconResponseDtoIEnumerableApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IconResponseDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IIconResponseDtoIEnumerableApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(IconResponseDto.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): IconResponseDtoIEnumerableApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconResponseDtoIEnumerableApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class IconStatsResponseDto implements interfaces.IIconStatsResponseDto {
+    entityType!: enums.IconEntityType;
+    totalCount?: number;
+
+    constructor(data?: interfaces.IIconStatsResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.entityType = _data["entityType"];
+            this.totalCount = _data["totalCount"];
+        }
+    }
+
+    static fromJS(data: any): IconStatsResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconStatsResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["entityType"] = this.entityType;
+        data["totalCount"] = this.totalCount;
+        return data;
+    }
+}
+
+export class IconStatsResponseDtoApiResponse implements interfaces.IIconStatsResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IconStatsResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IIconStatsResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? IconStatsResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): IconStatsResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconStatsResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class IconUpdateDto implements interfaces.IIconUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    iconData?: string | undefined;
+    format?: string | undefined;
+    metadata?: { [key: string]: any; } | undefined;
+
+    constructor(data?: interfaces.IIconUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.iconData = _data["iconData"];
+            this.format = _data["format"];
+            if (_data["metadata"]) {
+                this.metadata = {} as any;
+                for (let key in _data["metadata"]) {
+                    if (_data["metadata"].hasOwnProperty(key))
+                        (<any>this.metadata)![key] = _data["metadata"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): IconUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["iconData"] = this.iconData;
+        data["format"] = this.format;
+        if (this.metadata) {
+            data["metadata"] = {};
+            for (let key in this.metadata) {
+                if (this.metadata.hasOwnProperty(key))
+                    (<any>data["metadata"])[key] = (<any>this.metadata)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export class IconValidationRequestDto implements interfaces.IIconValidationRequestDto {
+    entityType!: enums.IconEntityType;
+    entityId!: string;
+    excludeIconId?: string | undefined;
+
+    constructor(data?: interfaces.IIconValidationRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.entityType = _data["entityType"];
+            this.entityId = _data["entityId"];
+            this.excludeIconId = _data["excludeIconId"];
+        }
+    }
+
+    static fromJS(data: any): IconValidationRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconValidationRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["entityType"] = this.entityType;
+        data["entityId"] = this.entityId;
+        data["excludeIconId"] = this.excludeIconId;
+        return data;
+    }
+}
+
+export class IconValidationResponseDto implements interfaces.IIconValidationResponseDto {
+    isValid?: boolean;
+    message!: string | undefined;
+
+    constructor(data?: interfaces.IIconValidationResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isValid = _data["isValid"];
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): IconValidationResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconValidationResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isValid"] = this.isValid;
+        data["message"] = this.message;
+        return data;
+    }
+}
+
+export class IconValidationResponseDtoApiResponse implements interfaces.IIconValidationResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IconValidationResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IIconValidationResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? IconValidationResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): IconValidationResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new IconValidationResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class Int32ApiResponse implements interfaces.IInt32ApiResponse {
     success?: boolean;
     message?: string | undefined;
@@ -11251,6 +11859,58 @@ export class NoiseMeasurementsForBuildings implements interfaces.INoiseMeasureme
         data["Control"] = this.control;
         data["Security"] = this.security;
         data["Switchyard"] = this.switchyard;
+        return data;
+    }
+}
+
+export class ObjectApiResponse implements interfaces.IObjectApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: any | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IObjectApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"];
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ObjectApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ObjectApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
         return data;
     }
 }

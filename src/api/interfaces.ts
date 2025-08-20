@@ -1032,6 +1032,74 @@ export interface IFilesClient {
     files_BulkDeleteFiles(programId: string, versionId: string, body: string[] | undefined): Promise<types.IBulkOperationResultApiResponse>;
 }
 
+export interface IIconsClient {
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    icons_CreateIcon(body: types.IIconCreateDto | undefined): Promise<types.IIconResponseDtoApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_GetIcon(id: string): Promise<types.IIconResponseDtoApiResponse>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    icons_UpdateIcon(id: string, body: types.IIconUpdateDto | undefined): Promise<types.IIconResponseDtoApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_DeleteIcon(id: string): Promise<types.IObjectApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_GetIconByEntity(entityType: enums.IconEntityType, entityId: string): Promise<types.IIconResponseDtoApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_DeleteIconByEntity(entityType: enums.IconEntityType, entityId: string): Promise<types.IObjectApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_GetIconsByType(entityType: enums.IconEntityType): Promise<types.IIconResponseDtoIEnumerableApiResponse>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    icons_GetIconsBatch(body: types.IIconBatchRequestDto | undefined): Promise<types.IIconResponseDtoIEnumerableApiResponse>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    icons_GetIconsByEntityIds(body: types.IIconEntityBatchRequestDto | undefined): Promise<types.IIconResponseDtoIEnumerableApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_GetUserIcons(): Promise<types.IIconResponseDtoIEnumerableApiResponse>;
+
+    /**
+     * @return OK
+     */
+    icons_GetIconStats(entityType: enums.IconEntityType): Promise<types.IIconStatsResponseDtoApiResponse>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    icons_ValidateIconConstraints(body: types.IIconValidationRequestDto | undefined): Promise<types.IIconValidationResponseDtoApiResponse>;
+}
+
 export interface IProgramsClient {
 
     /**
