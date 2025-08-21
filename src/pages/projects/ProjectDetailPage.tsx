@@ -7,6 +7,23 @@ import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
 import { VersionCreateDto, VersionFileCreateDto, VersionReviewSubmissionDto } from '@/api';
 import ProgramUserAssignmentModal from '@/components/admin/ProgramUserAssignmentModal';
+import IconDisplay from '@/components/icons/IconDisplay';
+import IconUploader from '@/components/icons/IconUploader';
+import { IconEntityType } from '@/api/enums';
+
+const mimeTypeToFormat = (mimeType: string): string => {
+  const formatMap: Record<string, string> = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg',
+    'image/gif': 'gif',
+    'image/svg+xml': 'svg',
+    'image/webp': 'webp',
+    'image/x-icon': 'ico',
+    'image/vnd.microsoft.icon': 'ico'
+  };
+  return formatMap[mimeType] || mimeType.split('/')[1] || 'png';
+};
 
 // Interfaces
 interface ProjectDetail {
@@ -84,11 +101,20 @@ const ProjectDetailPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(20);
   const [totalVersions, setTotalVersions] = useState(0);
+  
+  // Icon management state
+  const [iconData, setIconData] = useState<string | null>(null);
+  const [iconId, setIconId] = useState<string | null>(null);
+  const [showIconModal, setShowIconModal] = useState(false);
+  const [isUploadingIcon, setIsUploadingIcon] = useState(false);
+  const [iconError, setIconError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (projectId) {
       loadProjectDetails();
       loadVersions();
+      loadProjectIcon();
     }
   }, [projectId, currentPage]);
 
@@ -510,6 +536,114 @@ Add your project documentation here.`,
     return 'Recently';
   };
 
+  const loadProjectIcon = async () => {
+    if (!projectId) return;
+    
+    try {
+      const response = await api.iconsClient.icons_GetIconByEntity(
+        IconEntityType.Program,
+        projectId
+      );
+
+      if (response.success && response.data?.iconData) {
+        // Ensure we're storing a string, not an object
+        const iconDataString = typeof response.data.iconData === 'string' ? response.data.iconData : String(response.data.iconData);
+        setIconData(iconDataString);
+        setIconId(response.data.id || null);
+      } else {
+        setIconData(null);
+        setIconId(null);
+      }
+    } catch (error) {
+      console.error('Failed to load project icon:', error);
+      setIconData(null);
+    }
+  };
+
+  const handleIconUpload = async (file: File, dataUrl: string) => {
+    if (!projectId) return;
+
+    try {
+      setIsUploadingIcon(true);
+      setIconError(null);
+
+      const base64 = dataUrl.split(',')[1];
+      
+      const iconCreateDto = {
+        name: file.name,
+        iconData: base64,
+        format: mimeTypeToFormat(file.type),
+        entityType: IconEntityType.Program,
+        entityId: projectId,
+        description: `Icon for project ${project?.name || projectId}`
+      };
+
+      let response;
+      if (iconData && iconId) {
+        const iconUpdateDto = {
+          name: file.name,
+          iconData: base64,
+          format: mimeTypeToFormat(file.type),
+          description: `Icon for project ${project?.name || projectId}`
+        };
+        response = await api.iconsClient.icons_UpdateIcon(iconId, iconUpdateDto);
+      } else {
+        response = await api.iconsClient.icons_CreateIcon(iconCreateDto);
+      }
+
+      if (response.success) {
+        // If iconData is returned, use it; otherwise reload the icon
+        if (response.data?.iconData) {
+          setIconData(response.data.iconData);
+          setIconId(response.data.id || null);
+        } else {
+          // Reload the icon from the server
+          await loadProjectIcon();
+        }
+        
+        setShowIconModal(false);
+        setIconError(null); // Clear any previous errors
+      } else {
+        throw new Error(response.message || 'Failed to upload icon');
+      }
+    } catch (error) {
+      console.error('Failed to upload icon:', error);
+      setIconError(error instanceof Error ? error.message : 'Failed to upload icon');
+    } finally {
+      setIsUploadingIcon(false);
+    }
+  };
+
+  const handleIconDelete = async () => {
+    if (!projectId || !iconData) return;
+
+    try {
+      setIsUploadingIcon(true);
+      setIconError(null);
+
+      const response = await api.iconsClient.icons_DeleteIconByEntity(
+        IconEntityType.Program,
+        projectId
+      );
+
+      if (response.success) {
+        setIconData(null);
+        setShowIconModal(false);
+      } else {
+        throw new Error(response.message || 'Failed to delete icon');
+      }
+    } catch (error) {
+      console.error('Failed to delete icon:', error);
+      setIconError(error instanceof Error ? error.message : 'Failed to delete icon');
+    } finally {
+      setIsUploadingIcon(false);
+    }
+  };
+
+  const handleUploadError = (error: string) => {
+    setIconError(error);
+  };
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -582,13 +716,33 @@ Add your project documentation here.`,
           >
             Back to Projects
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {project.name}
-            </h1>
-            <p className="mt-1 text-gray-600 dark:text-gray-400">
-              {project.language} • {project.type} • Created {formatRelativeTime(project.createdAt)}
-            </p>
+          <div className="flex items-center space-x-3">
+            {/* Project Icon with hover edit */}
+            <div 
+              className="relative group cursor-pointer" 
+              onClick={() => setShowIconModal(true)}
+            >
+              <IconDisplay
+                iconData={iconData}
+                size="xl"
+                entityType="program"
+              />
+              {/* Hover edit overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </div>
+            </div>
+            
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {project.name}
+              </h1>
+              <p className="mt-1 text-gray-600 dark:text-gray-400">
+                {project.language} • {project.type} • Created {formatRelativeTime(project.createdAt)}
+              </p>
+            </div>
           </div>
         </div>
         
@@ -738,6 +892,7 @@ Add your project documentation here.`,
           </div>
         </div>
       </div>
+
 
       {/* Versions Section */}
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
@@ -1057,6 +1212,85 @@ Add your project documentation here.`,
         programId={projectId || null}
         onPermissionsUpdated={loadProjectDetails}
       />
+
+      {/* Icon Management Modal */}
+      <Modal
+        isOpen={showIconModal}
+        onClose={() => {
+          setShowIconModal(false);
+          setIconError(null);
+        }}
+        title="Manage Project Icon"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Current Icon Display */}
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <IconDisplay
+                iconData={iconData}
+                size="xl"
+                entityType="program"
+              />
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {iconData ? 'Current project icon' : 'No custom icon set'}
+            </p>
+          </div>
+
+          {/* Error Display */}
+          {iconError && (
+            <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3">
+              <p className="text-sm text-red-800 dark:text-red-200">{iconError}</p>
+            </div>
+          )}
+
+          {/* Icon Uploader */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+              {iconData ? 'Replace Icon' : 'Upload Icon'}
+            </h3>
+            <IconUploader
+              onIconSelect={handleIconUpload}
+              onError={handleUploadError}
+              isLoading={isUploadingIcon}
+              maxSizeKB={512}
+              acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+            {iconData && (
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={handleIconDelete}
+                disabled={isUploadingIcon}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                }
+              >
+                Remove Icon
+              </Button>
+            )}
+            <div className="flex space-x-3 ml-auto">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowIconModal(false);
+                  setIconError(null);
+                }}
+                disabled={isUploadingIcon}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

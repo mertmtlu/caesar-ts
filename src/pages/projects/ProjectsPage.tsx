@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
-import { SortDirection } from '@/api/enums';
+import { SortDirection, IconEntityType } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ConfirmationModal } from '@/components/common/Modal';
 import { ProgramSearchDto } from '@/api';
+import IconDisplay from '@/components/icons/IconDisplay';
 
 // Interfaces
 interface ProjectListItem {
@@ -23,6 +24,7 @@ interface ProjectListItem {
   componentCount?: number;
   hasComponents?: boolean;
   newestComponentType?: string;
+  iconData?: string | null;
 }
 
 interface ProjectToDelete {
@@ -70,6 +72,9 @@ const ProjectsPage: React.FC = () => {
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<ProjectToDelete | null>(null);
+  
+  // Icons state
+  const [icons, setIcons] = useState<Map<string, string>>(new Map());
 
   // Load projects
   useEffect(() => {
@@ -188,6 +193,9 @@ const ProjectsPage: React.FC = () => {
         setProjects(projectsWithVersionsAndComponents);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
+        
+        // Load icons for all projects
+        await loadProjectIcons(projectsWithVersionsAndComponents);
       } else {
         setError(response.message || 'Failed to load projects');
       }
@@ -267,12 +275,46 @@ const ProjectsPage: React.FC = () => {
         setProjects(projectsWithVersionsAndComponents);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
+        
+        // Load icons for all projects
+        await loadProjectIcons(projectsWithVersionsAndComponents);
       }
     } catch (error) {
       console.error('Failed to search projects:', error);
       setError('Failed to search projects. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadProjectIcons = async (projectItems: ProjectListItem[]) => {
+    if (projectItems.length === 0) return;
+    
+    try {
+      // Create batch request with entity IDs
+      const entityIds = projectItems.map(project => project.id);
+      
+      const iconBatchRequest = {
+        entityType: IconEntityType.Program,
+        entityIds: entityIds
+      };
+
+      const iconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(iconBatchRequest);
+      
+      if (iconsResponse.success && iconsResponse.data) {
+        const newIcons = new Map<string, string>();
+        iconsResponse.data.forEach(icon => {
+          if (icon.entityId && icon.iconData) {
+            // Ensure we're storing a string, not an object
+            const iconDataString = typeof icon.iconData === 'string' ? icon.iconData : String(icon.iconData);
+            newIcons.set(icon.entityId, iconDataString);
+          }
+        });
+        setIcons(newIcons);
+      }
+    } catch (error) {
+      console.error('Failed to load project icons:', error);
+      // Don't show error to user for icons, just log it
     }
   };
 
@@ -536,7 +578,11 @@ const ProjectsPage: React.FC = () => {
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   <div className="flex-shrink-0">
-                    {getLanguageIcon(project.language)}
+                    <IconDisplay
+                      iconData={icons.get(project.id)}
+                      size="lg"
+                      entityType="program"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">

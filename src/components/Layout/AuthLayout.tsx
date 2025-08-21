@@ -53,7 +53,7 @@ const AuthLayout: React.FC = () => {
             </div>
           </div>
           <h2 className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-            Collaborative Programming Platform
+            One Ring to Rule Them All
           </h2>
         </div>
 

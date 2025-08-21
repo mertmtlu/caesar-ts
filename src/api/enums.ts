@@ -120,6 +120,9 @@ export enum IconEntityType {
     _0 = 0,
     _1 = 1,
     _2 = 2,
+    Program = 0,
+    Workflow = 1,
+    RemoteApp = 2,
 }
 
 export enum IssueSeverity {

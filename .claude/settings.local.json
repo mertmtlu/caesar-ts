@@ -11,7 +11,9 @@
       "Bash(mkdir:*)",
       "Bash(rm:*)",
       "Bash(npx eslint:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(sed:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

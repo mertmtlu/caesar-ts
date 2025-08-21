@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
-import { SortDirection, WorkflowStatus } from '@/api/enums';
+import { SortDirection, WorkflowStatus, IconEntityType } from '@/api/enums';
 import { WorkflowExecutionRequest, WorkflowPermissionDto } from '@/api/types';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -9,6 +9,7 @@ import { ConfirmationModal } from '@/components/common/Modal';
 import WorkflowPermissionsModal from '@/components/workflow/WorkflowPermissionsModal';
 import WorkflowImportModal from '@/components/workflow/WorkflowImportModal';
 import WorkflowExportModal from '@/components/workflow/WorkflowExportModal';
+import IconDisplay from '@/components/icons/IconDisplay';
 
 interface WorkflowListItem {
   id: string;
@@ -25,6 +26,7 @@ interface WorkflowListItem {
   lastExecutionId?: string;
   averageExecutionTime?: string;
   isTemplate: boolean;
+  iconData?: string | null;
 }
 
 interface WorkflowToDelete {
@@ -73,6 +75,9 @@ const WorkflowsPage: React.FC = () => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [workflowToExport, setWorkflowToExport] = useState<WorkflowListItem | null>(null);
+  
+  // Icons state
+  const [icons, setIcons] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     loadWorkflows();
@@ -134,6 +139,9 @@ const WorkflowsPage: React.FC = () => {
         setWorkflows(workflowItems);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
+        
+        // Load icons for all workflows
+        await loadWorkflowIcons(workflowItems);
       } else {
         setError(response.message || 'Failed to load workflows');
       }
@@ -179,12 +187,44 @@ const WorkflowsPage: React.FC = () => {
         setWorkflows(workflowItems);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
+        
+        // Load icons for all workflows
+        await loadWorkflowIcons(workflowItems);
       }
     } catch (error) {
       console.error('Failed to search workflows:', error);
       setError('Failed to search workflows. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadWorkflowIcons = async (workflowItems: WorkflowListItem[]) => {
+    if (workflowItems.length === 0) return;
+    
+    try {
+      // Create batch request with entity IDs
+      const entityIds = workflowItems.map(workflow => workflow.id);
+      
+      const iconBatchRequest = {
+        entityType: IconEntityType.Workflow,
+        entityIds: entityIds
+      };
+
+      const iconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(iconBatchRequest);
+      
+      if (iconsResponse.success && iconsResponse.data) {
+        const newIcons = new Map<string, string>();
+        iconsResponse.data.forEach(icon => {
+          if (icon.entityId && icon.iconData) {
+            newIcons.set(icon.entityId, icon.iconData);
+          }
+        });
+        setIcons(newIcons);
+      }
+    } catch (error) {
+      console.error('Failed to load workflow icons:', error);
+      // Don't show error to user for icons, just log it
     }
   };
 
@@ -450,11 +490,11 @@ const WorkflowsPage: React.FC = () => {
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   <div className="flex-shrink-0">
-                    <div className="w-6 h-6 rounded bg-purple-500 flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5z M5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z M11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5z M11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                      </svg>
-                    </div>
+                    <IconDisplay
+                      iconData={icons.get(workflow.id)}
+                      size="md"
+                      entityType="workflow"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">

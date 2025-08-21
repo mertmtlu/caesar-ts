@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
-import { SortDirection } from '@/api/enums';
+import { SortDirection, IconEntityType } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ConfirmationModal } from '@/components/common/Modal';
+import IconDisplay from '@/components/icons/IconDisplay';
 
 // Interfaces
 interface RemoteAppListItem {
@@ -17,6 +18,7 @@ interface RemoteAppListItem {
   isPublic: boolean;
   creator: string;
   createdAt: Date;
+  iconData?: string | null;
 }
 
 interface RemoteAppToDelete {
@@ -63,6 +65,9 @@ const RemoteAppsPage: React.FC = () => {
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appToDelete, setAppToDelete] = useState<RemoteAppToDelete | null>(null);
+  
+  // Icons state
+  const [icons, setIcons] = useState<Map<string, string>>(new Map());
 
   // Load remote apps
   useEffect(() => {
@@ -125,6 +130,9 @@ const RemoteAppsPage: React.FC = () => {
         setRemoteApps(appItems);
         setTotalCount(response.data.totalCount || appItems.length);
         setTotalPages(response.data.totalPages || Math.ceil(appItems.length / pageSize));
+        
+        // Load icons for all apps
+        await loadAppIcons(appItems);
       } else {
         setError(response.message || 'Failed to load remote apps');
       }
@@ -133,6 +141,37 @@ const RemoteAppsPage: React.FC = () => {
       setError('Failed to load remote apps. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadAppIcons = async (appItems: RemoteAppListItem[]) => {
+    if (appItems.length === 0) return;
+    
+    try {
+      // Create batch request with entity IDs
+      const entityIds = appItems.map(app => app.id);
+      
+      const iconBatchRequest = {
+        entityType: IconEntityType.RemoteApp,
+        entityIds: entityIds
+      };
+
+      const iconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(iconBatchRequest);
+      
+      if (iconsResponse.success && iconsResponse.data) {
+        const newIcons = new Map<string, string>();
+        iconsResponse.data.forEach(icon => {
+          if (icon.entityId && icon.iconData) {
+            // Ensure we're storing a string, not an object
+            const iconDataString = typeof icon.iconData === 'string' ? icon.iconData : String(icon.iconData);
+            newIcons.set(icon.entityId, iconDataString);
+          }
+        });
+        setIcons(newIcons);
+      }
+    } catch (error) {
+      console.error('Failed to load app icons:', error);
+      // Don't show error to user for icons, just log it
     }
   };
 
@@ -360,11 +399,11 @@ const RemoteAppsPage: React.FC = () => {
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                      </svg>
-                    </div>
+                    <IconDisplay
+                      iconData={icons.get(app.id)}
+                      size="lg"
+                      entityType="remoteapp"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">

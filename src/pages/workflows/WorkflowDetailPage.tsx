@@ -2,10 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/api';
 import { WorkflowDetailDto, WorkflowStatisticsDto, WorkflowPermissionDto, WorkflowExecutionRequest, WorkflowNameDescriptionUpdateDto } from '@/api/types';
-import { WorkflowStatus } from '@/api/enums';
+import { WorkflowStatus, IconEntityType } from '@/api/enums';
 import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import WorkflowPermissionsModal from '@/components/workflow/WorkflowPermissionsModal';
 import WorkflowExportModal from '@/components/workflow/WorkflowExportModal';
+import IconDisplay from '@/components/icons/IconDisplay';
+import IconUploader from '@/components/icons/IconUploader';
+
+const mimeTypeToFormat = (mimeType: string): string => {
+  const formatMap: Record<string, string> = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg',
+    'image/gif': 'gif',
+    'image/svg+xml': 'svg',
+    'image/webp': 'webp',
+    'image/x-icon': 'ico',
+    'image/vnd.microsoft.icon': 'ico'
+  };
+  return formatMap[mimeType] || mimeType.split('/')[1] || 'png';
+};
 
 const WorkflowDetailPage: React.FC = () => {
   const { workflowId } = useParams<{ workflowId: string }>();
@@ -27,10 +44,18 @@ const WorkflowDetailPage: React.FC = () => {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editingDescription, setEditingDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Icon management state
+  const [iconData, setIconData] = useState<string | null>(null);
+  const [iconId, setIconId] = useState<string | null>(null);
+  const [showIconModal, setShowIconModal] = useState(false);
+  const [isUploadingIcon, setIsUploadingIcon] = useState(false);
+  const [iconError, setIconError] = useState<string | null>(null);
 
   useEffect(() => {
     if (workflowId) {
       loadWorkflowDetails();
+      loadWorkflowIcon();
     }
   }, [workflowId]);
 
@@ -182,6 +207,111 @@ const WorkflowDetailPage: React.FC = () => {
     }
   };
 
+  const loadWorkflowIcon = async () => {
+    if (!workflowId) return;
+    
+    try {
+      const response = await api.iconsClient.icons_GetIconByEntity(
+        IconEntityType.Workflow,
+        workflowId
+      );
+
+      if (response.success && response.data?.iconData) {
+        setIconData(response.data.iconData);
+        setIconId(response.data.id || null);
+      } else {
+        setIconData(null);
+        setIconId(null);
+      }
+    } catch (error) {
+      console.error('Failed to load workflow icon:', error);
+      setIconData(null);
+    }
+  };
+
+  const handleIconUpload = async (file: File, dataUrl: string) => {
+    if (!workflowId) return;
+
+    try {
+      setIsUploadingIcon(true);
+      setIconError(null);
+
+      const base64 = dataUrl.split(',')[1];
+      
+      const iconCreateDto = {
+        name: file.name,
+        iconData: base64,
+        format: mimeTypeToFormat(file.type),
+        entityType: IconEntityType.Workflow,
+        entityId: workflowId,
+        description: `Icon for workflow ${workflow?.name || workflowId}`
+      };
+
+      let response;
+      if (iconData && iconId) {
+        const iconUpdateDto = {
+          name: file.name,
+          iconData: base64,
+          format: mimeTypeToFormat(file.type),
+          description: `Icon for workflow ${workflow?.name || workflowId}`
+        };
+        response = await api.iconsClient.icons_UpdateIcon(iconId, iconUpdateDto);
+      } else {
+        response = await api.iconsClient.icons_CreateIcon(iconCreateDto);
+      }
+
+      if (response.success) {
+        // If iconData is returned, use it; otherwise reload the icon
+        if (response.data?.iconData) {
+          setIconData(response.data.iconData);
+          setIconId(response.data.id || null);
+        } else {
+          // Reload the icon from the server
+          await loadWorkflowIcon();
+        }
+        setShowIconModal(false);
+        setIconError(null); // Clear any previous errors
+      } else {
+        throw new Error(response.message || 'Failed to upload icon');
+      }
+    } catch (error) {
+      console.error('Failed to upload icon:', error);
+      setIconError(error instanceof Error ? error.message : 'Failed to upload icon');
+    } finally {
+      setIsUploadingIcon(false);
+    }
+  };
+
+  const handleIconDelete = async () => {
+    if (!workflowId || !iconData) return;
+
+    try {
+      setIsUploadingIcon(true);
+      setIconError(null);
+
+      const response = await api.iconsClient.icons_DeleteIconByEntity(
+        IconEntityType.Workflow,
+        workflowId
+      );
+
+      if (response.success) {
+        setIconData(null);
+        setShowIconModal(false);
+      } else {
+        throw new Error(response.message || 'Failed to delete icon');
+      }
+    } catch (error) {
+      console.error('Failed to delete icon:', error);
+      setIconError(error instanceof Error ? error.message : 'Failed to delete icon');
+    } finally {
+      setIsUploadingIcon(false);
+    }
+  };
+
+  const handleUploadError = (error: string) => {
+    setIconError(error);
+  };
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -249,49 +379,68 @@ const WorkflowDetailPage: React.FC = () => {
           >
             Back
           </Button>
-          <div>
-            {isEditingName ? (
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  value={editingName}
-                  onChange={(e) => setEditingName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSaveName();
-                    if (e.key === 'Escape') handleCancelEditingName();
-                  }}
-                  onBlur={handleSaveName}
-                  autoFocus
-                  disabled={isSaving}
-                  className="text-2xl font-bold bg-transparent border-b-2 border-blue-500 focus:outline-none text-gray-900 dark:text-white min-w-[300px]"
-                  placeholder="Workflow name"
-                />
-                <button
-                  onClick={handleSaveName}
-                  disabled={isSaving}
-                  className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
-                  title="Save name"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={handleCancelEditingName}
-                  disabled={isSaving}
-                  className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50"
-                  title="Cancel editing"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+          <div className="flex items-center space-x-3">
+            {/* Workflow Icon with hover edit */}
+            <div 
+              className="relative group cursor-pointer" 
+              onClick={() => setShowIconModal(true)}
+            >
+              <IconDisplay
+                iconData={iconData}
+                size="xl"
+                entityType="workflow"
+              />
+              {/* Hover edit overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
               </div>
-            ) : (
-              <div className="flex items-center space-x-2 group">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {workflow.name}
-                </h1>
+            </div>
+            
+            <div>
+              {isEditingName ? (
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveName();
+                      if (e.key === 'Escape') handleCancelEditingName();
+                    }}
+                    onBlur={handleSaveName}
+                    autoFocus
+                    disabled={isSaving}
+                    className="text-2xl font-bold bg-transparent border-b-2 border-blue-500 focus:outline-none text-gray-900 dark:text-white min-w-[300px]"
+                    placeholder="Workflow name"
+                  />
+                  <button
+                    onClick={handleSaveName}
+                    disabled={isSaving}
+                    className="p-1 text-green-600 hover:text-green-700 disabled:opacity-50"
+                    title="Save name"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleCancelEditingName}
+                    disabled={isSaving}
+                    className="p-1 text-red-600 hover:text-red-700 disabled:opacity-50"
+                    title="Cancel editing"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2 group">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {workflow.name}
+                  </h1>
                 <button
                   onClick={handleStartEditingName}
                   className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-opacity"
@@ -303,18 +452,19 @@ const WorkflowDetailPage: React.FC = () => {
                 </button>
               </div>
             )}
-            <div className="flex items-center space-x-4 mt-1">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                by {workflow.creator} • v{workflow.version}
-              </span>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(workflow.status!)}`}>
-                {workflow.status}
-              </span>
-              {workflow.isTemplate && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                  Template
+              <div className="flex items-center space-x-4 mt-1">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  by {workflow.creator} • v{workflow.version}
                 </span>
-              )}
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(workflow.status!)}`}>
+                  {workflow.status}
+                </span>
+                {workflow.isTemplate && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                    Template
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -847,6 +997,85 @@ const WorkflowDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Icon Management Modal */}
+      <Modal
+        isOpen={showIconModal}
+        onClose={() => {
+          setShowIconModal(false);
+          setIconError(null);
+        }}
+        title="Manage Workflow Icon"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Current Icon Display */}
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <IconDisplay
+                iconData={iconData}
+                size="xl"
+                entityType="workflow"
+              />
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {iconData ? 'Current workflow icon' : 'No custom icon set'}
+            </p>
+          </div>
+
+          {/* Error Display */}
+          {iconError && (
+            <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3">
+              <p className="text-sm text-red-800 dark:text-red-200">{iconError}</p>
+            </div>
+          )}
+
+          {/* Icon Uploader */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+              {iconData ? 'Replace Icon' : 'Upload Icon'}
+            </h3>
+            <IconUploader
+              onIconSelect={handleIconUpload}
+              onError={handleUploadError}
+              isLoading={isUploadingIcon}
+              maxSizeKB={512}
+              acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+            {iconData && (
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={handleIconDelete}
+                disabled={isUploadingIcon}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                }
+              >
+                Remove Icon
+              </Button>
+            )}
+            <div className="flex space-x-3 ml-auto">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowIconModal(false);
+                  setIconError(null);
+                }}
+                disabled={isUploadingIcon}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
       
       {/* Permissions Modal */}
       {workflow && (

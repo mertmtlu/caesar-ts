@@ -4,7 +4,25 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '@/api/api';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import Modal from '@/components/common/Modal';
 import { RemoteAppUpdateDto, RemoteAppDetailDto } from '@/api';
+import IconDisplay from '@/components/icons/IconDisplay';
+import IconUploader from '@/components/icons/IconUploader';
+import { IconEntityType } from '@/api/enums';
+
+const mimeTypeToFormat = (mimeType: string): string => {
+  const formatMap: Record<string, string> = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg',
+    'image/gif': 'gif',
+    'image/svg+xml': 'svg',
+    'image/webp': 'webp',
+    'image/x-icon': 'ico',
+    'image/vnd.microsoft.icon': 'ico'
+  };
+  return formatMap[mimeType] || mimeType.split('/')[1] || 'png';
+};
 
 const EditRemoteAppPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,11 +44,22 @@ const EditRemoteAppPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  
+  // Icon state
+  const [iconData, setIconData] = useState<string | null>(null);
+  const [iconId, setIconId] = useState<string | null>(null);
+  const [iconFile, setIconFile] = useState<File | null>(null);
+  const [iconDataUrl, setIconDataUrl] = useState<string | null>(null);
+  const [isLoadingIcon, setIsLoadingIcon] = useState(false);
+  const [isUploadingIcon, setIsUploadingIcon] = useState(false);
+  const [iconError, setIconError] = useState<string | null>(null);
+  const [showIconModal, setShowIconModal] = useState(false);
 
   // Load app data
   useEffect(() => {
     if (appId) {
       loadApp();
+      loadIcon();
     }
   }, [appId]);
 
@@ -129,6 +158,123 @@ const EditRemoteAppPage: React.FC = () => {
     }
   };
 
+  const loadIcon = async () => {
+    if (!appId) return;
+    
+    try {
+      setIsLoadingIcon(true);
+      setIconError(null);
+      
+      const response = await api.iconsClient.icons_GetIconByEntity(
+        IconEntityType.RemoteApp,
+        appId
+      );
+
+      if (response.success && response.data?.iconData) {
+        setIconData(response.data.iconData);
+        setIconId(response.data.id || null);
+      } else {
+        setIconData(null);
+        setIconId(null);
+      }
+    } catch (error) {
+      console.error('Failed to load icon:', error);
+      // Don't show error to user for 404 - it just means no icon exists
+      // Only show errors for actual problems (network issues, etc.)
+      setIconData(null);
+      setIconError(null); // Don't show UI error for missing icons
+    } finally {
+      setIsLoadingIcon(false);
+    }
+  };
+
+  const handleIconUpload = async (file: File, dataUrl: string) => {
+    if (!appId) return;
+    
+    try {
+      setIsUploadingIcon(true);
+      setIconError(null);
+
+      const base64 = dataUrl.split(',')[1];
+      
+      let response;
+      if (iconData && iconId) {
+        // Update existing icon
+        const iconUpdateDto = {
+          name: file.name,
+          iconData: base64,
+          format: mimeTypeToFormat(file.type),
+          description: `Icon for remote app ${appId}`
+        };
+        response = await api.iconsClient.icons_UpdateIcon(iconId, iconUpdateDto);
+      } else {
+        // Create new icon
+        const iconCreateDto = {
+          name: file.name,
+          iconData: base64,
+          format: mimeTypeToFormat(file.type),
+          entityType: IconEntityType.RemoteApp,
+          entityId: appId,
+          description: `Icon for remote app ${appId}`
+        };
+        response = await api.iconsClient.icons_CreateIcon(iconCreateDto);
+      }
+
+      if (response.success) {
+        // If iconData is returned, use it; otherwise reload the icon
+        if (response.data?.iconData) {
+          setIconData(response.data.iconData);
+          setIconId(response.data.id || null);
+        } else {
+          // Reload the icon from the server
+          await loadIcon();
+        }
+        setIconFile(null);
+        setIconDataUrl(null);
+        setIconError(null); // Clear any previous errors
+        setShowIconModal(false); // Close modal on success
+      } else {
+        throw new Error(response.message || 'Failed to upload icon');
+      }
+    } catch (error) {
+      console.error('Failed to upload icon:', error);
+      setIconError(error instanceof Error ? error.message : 'Failed to upload icon');
+    } finally {
+      setIsUploadingIcon(false);
+    }
+  };
+
+  const handleIconDelete = async () => {
+    if (!iconData || !appId) return;
+
+    try {
+      setIsLoadingIcon(true);
+      setIconError(null);
+
+      const response = await api.iconsClient.icons_DeleteIconByEntity(
+        IconEntityType.RemoteApp,
+        appId
+      );
+
+      if (response.success) {
+        setIconData(null);
+        setIconId(null);
+        setShowIconModal(false);
+      } else {
+        throw new Error(response.message || 'Failed to delete icon');
+      }
+    } catch (error) {
+      console.error('Failed to delete icon:', error);
+      setIconError(error instanceof Error ? error.message : 'Failed to delete icon');
+    } finally {
+      setIsLoadingIcon(false);
+    }
+  };
+
+  const handleIconError = (error: string) => {
+    setIconError(error);
+  };
+
   if (isLoadingApp) {
     return (
       <div className="p-6 max-w-2xl mx-auto">
@@ -175,8 +321,8 @@ const EditRemoteAppPage: React.FC = () => {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center space-x-4 mb-8">
+      {/* Back Button */}
+      <div className="flex items-center space-x-4 mb-6">
         <Button
           variant="ghost"
           size="sm"
@@ -189,6 +335,56 @@ const EditRemoteAppPage: React.FC = () => {
         >
           Back to App Details
         </Button>
+      </div>
+
+      {/* Header with Icon and Name */}
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
+        <div className="p-6">
+          <div className="flex items-center space-x-4">
+            {/* Remote App Icon with hover edit */}
+            <div 
+              className="relative group cursor-pointer" 
+              onClick={() => setShowIconModal(true)}
+            >
+              <IconDisplay
+                iconData={iconData}
+                size="xl"
+                entityType="remoteapp"
+              />
+              {/* Hover edit overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </div>
+            </div>
+            
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {app.name}
+              </h1>
+              <div className="flex items-center space-x-4 mt-1">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Remote Application
+                </span>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  app.status === 'active' 
+                    ? 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30'
+                    : app.status === 'inactive'
+                    ? 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30'
+                    : 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30'
+                }`}>
+                  {app.status}
+                </span>
+                {app.isPublic && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                    Public
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
@@ -315,24 +511,6 @@ const EditRemoteAppPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Status Display */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Current Status
-            </label>
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              app.status === 'active' 
-                ? 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30'
-                : app.status === 'inactive'
-                ? 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30'
-                : 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30'
-            }`}>
-              {app.status}
-            </span>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Status can be changed in the app management section
-            </p>
-          </div>
 
           {/* Form Actions */}
           <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-600">
@@ -363,6 +541,72 @@ const EditRemoteAppPage: React.FC = () => {
           </div>
         </form>
       </div>
+
+      {/* Icon Management Modal */}
+      <Modal
+        isOpen={showIconModal}
+        onClose={() => {
+          setShowIconModal(false);
+          setIconError(null);
+        }}
+        title="Manage App Icon"
+      >
+        <div className="space-y-6">
+          {/* Current Icon Display */}
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <IconDisplay
+                iconData={iconData}
+                size="xl"
+                entityType="remoteapp"
+              />
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {iconData ? 'Current app icon' : 'No custom icon set'}
+            </p>
+          </div>
+
+          {/* Error Display */}
+          {iconError && (
+            <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3">
+              <p className="text-sm text-red-800 dark:text-red-200">{iconError}</p>
+            </div>
+          )}
+
+          {/* Icon Uploader */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+              {iconData ? 'Replace Icon' : 'Upload Icon'}
+            </h3>
+            <IconUploader
+              onIconSelect={handleIconUpload}
+              onError={handleIconError}
+              isLoading={isUploadingIcon}
+              maxSizeKB={512}
+              acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
+            />
+          </div>
+
+          {/* Delete Icon Button */}
+          {iconData && (
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={handleIconDelete}
+                disabled={isLoadingIcon || isUploadingIcon}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                }
+              >
+                {isLoadingIcon ? 'Deleting...' : 'Delete Icon'}
+              </Button>
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };

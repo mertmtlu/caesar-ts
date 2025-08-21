@@ -5,6 +5,23 @@ import { api } from '@/api/api';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { RemoteAppCreateDto } from '@/api';
+import IconDisplay from '@/components/icons/IconDisplay';
+import IconUploader from '@/components/icons/IconUploader';
+import { IconEntityType } from '@/api/enums';
+
+const mimeTypeToFormat = (mimeType: string): string => {
+  const formatMap: Record<string, string> = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg',
+    'image/gif': 'gif',
+    'image/svg+xml': 'svg',
+    'image/webp': 'webp',
+    'image/x-icon': 'ico',
+    'image/vnd.microsoft.icon': 'ico'
+  };
+  return formatMap[mimeType] || mimeType.split('/')[1] || 'png';
+};
 
 const CreateRemoteAppPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +38,11 @@ const CreateRemoteAppPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  
+  // Icon state
+  const [iconFile, setIconFile] = useState<File | null>(null);
+  const [iconDataUrl, setIconDataUrl] = useState<string | null>(null);
+  const [iconError, setIconError] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
@@ -66,8 +88,27 @@ const CreateRemoteAppPage: React.FC = () => {
       const response = await api.remoteAppsClient.remoteApps_Create(createDto);
 
       if (response.success && response.data) {
-        // Redirect to the new remote app's detail page
-        navigate(`/remoteapps/${response.data.id}`);
+        // Upload icon if provided
+        if (iconFile && iconDataUrl && response.data.id) {
+          try {
+            const base64 = iconDataUrl.split(',')[1];
+            const iconCreateDto = {
+              name: iconFile.name,
+              iconData: base64,
+              format: mimeTypeToFormat(iconFile.type),
+              entityType: IconEntityType.RemoteApp,
+              entityId: response.data.id,
+              description: `Icon for remote app ${response.data.id}`
+            };
+            await api.iconsClient.icons_CreateIcon(iconCreateDto);
+          } catch (iconError) {
+            console.error('Failed to upload icon:', iconError);
+            // Don't fail the whole creation for icon upload failure
+          }
+        }
+        
+        // Redirect to the remote apps list page
+        navigate('/remoteapps');
       } else {
         setError(response.message || 'Failed to create remote app');
       }
@@ -86,6 +127,24 @@ const CreateRemoteAppPage: React.FC = () => {
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: '' }));
     }
+  };
+
+  const handleIconUpload = (file: File, dataUrl: string) => {
+    setIconFile(file);
+    setIconDataUrl(dataUrl);
+    setIconError(null);
+  };
+
+  const handleIconError = (error: string) => {
+    setIconError(error);
+    setIconFile(null);
+    setIconDataUrl(null);
+  };
+
+  const clearIcon = () => {
+    setIconFile(null);
+    setIconDataUrl(null);
+    setIconError(null);
   };
 
   return (
@@ -226,6 +285,59 @@ const CreateRemoteAppPage: React.FC = () => {
                     Anyone with access to the system can use this app
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Icon Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              App Icon
+            </label>
+            
+            {iconError && (
+              <div className="mb-3 rounded-md bg-red-50 dark:bg-red-900/20 p-3">
+                <p className="text-sm text-red-800 dark:text-red-200">{iconError}</p>
+              </div>
+            )}
+            
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <IconDisplay
+                  iconData={iconDataUrl}
+                  size="lg"
+                  entityType="remoteapp"
+                />
+              </div>
+              
+              <div className="flex-1 space-y-2">
+                <IconUploader
+                  onIconSelect={handleIconUpload}
+                  onError={handleIconError}
+                  isLoading={false}
+                  maxSizeKB={512}
+                  acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
+                />
+                
+                {iconFile && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {iconFile.name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearIcon}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+                
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Upload a custom icon for your remote app (optional)
+                </p>
               </div>
             </div>
           </div>
