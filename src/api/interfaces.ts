@@ -1421,6 +1421,16 @@ export interface IRemoteAppsClient {
     remoteApps_GetByCreator(creatorId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
 
     /**
+     * Get remote apps by creator
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetByCurrentUser(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
+
+
+    /**
      * Get remote apps by status (active, inactive, etc.)
      * @param pageNumber (optional) 
      * @param pageSize (optional) 

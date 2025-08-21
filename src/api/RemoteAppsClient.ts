@@ -304,6 +304,64 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
     }
 
     /**
+     * Get remote apps by creator
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param sorting_Direction (optional) 
+     * @return OK
+     */
+    remoteApps_GetByCurrentUser(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RemoteAppListDtoPagedResponseApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/by-current-user?";
+
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        if (sorting_Field === undefined || sorting_Field === null)
+            throw new Error("The parameter 'sorting_Field' must be defined and cannot be null.");
+        else
+            url_ += "Sorting.Field=" + encodeURIComponent("" + sorting_Field) + "&";
+        if (sorting_Direction === null)
+            throw new Error("The parameter 'sorting_Direction' cannot be null.");
+        else if (sorting_Direction !== undefined)
+            url_ += "Sorting.Direction=" + encodeURIComponent("" + sorting_Direction) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_GetByCreator(_response);
+        });
+    }
+
+    protected processRemoteApps_GetByCurrentUser(response: Response): Promise<types.RemoteAppListDtoPagedResponseApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.RemoteAppListDtoPagedResponseApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.RemoteAppListDtoPagedResponseApiResponse>(null as any);
+    }
+
+    /**
      * Get remote apps by status (active, inactive, etc.)
      * @param pageNumber (optional) 
      * @param pageSize (optional) 

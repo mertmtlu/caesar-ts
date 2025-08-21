@@ -320,86 +320,112 @@ const EditRemoteAppPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      {/* Back Button */}
-      <div className="flex items-center space-x-4 mb-6">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(`/remoteapps/${appId}`)}
-          leftIcon={
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          }
-        >
-          Back to App Details
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>
+        
+        {/* Content */}
+        <div className="relative px-6 py-8">
+          <div className="max-w-4xl mx-auto">
+            {/* Breadcrumb */}
+            <nav className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+              <button 
+                onClick={() => navigate('/remoteapps')}
+                className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center space-x-1"
+              >
+                <span>Remote Apps</span>
+              </button>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <button 
+                onClick={() => navigate(`/remoteapps/${appId}`)}
+                className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              >
+                <span>{app.name}</span>
+              </button>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <span className="text-gray-900 dark:text-gray-100 font-medium">Edit</span>
+            </nav>
 
-      {/* Header with Icon and Name */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
-        <div className="p-6">
-          <div className="flex items-center space-x-4">
-            {/* Remote App Icon with hover edit */}
-            <div 
-              className="relative group cursor-pointer" 
-              onClick={() => setShowIconModal(true)}
-            >
-              <IconDisplay
-                iconData={iconData}
-                size="xl"
-                entityType="remoteapp"
-              />
-              {/* Hover edit overlay */}
-              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
+            {/* Hero Content */}
+            <div className="flex items-start space-x-6">
+              {/* App Icon */}
+              <div 
+                className="relative group cursor-pointer transform transition-all duration-300 hover:scale-105" 
+                onClick={() => setShowIconModal(true)}
+              >
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-2xl bg-white dark:bg-gray-800 shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 flex items-center justify-center overflow-hidden">
+                    <IconDisplay
+                      iconData={iconData}
+                      size="xl"
+                      entityType="remoteapp"
+                    />
+                  </div>
+                  {/* Hover edit overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </div>
+                </div>
+                {/* Glow effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
               </div>
-            </div>
-            
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {app.name}
-              </h1>
-              <div className="flex items-center space-x-4 mt-1">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Remote Application
-                </span>
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  app.status === 'active' 
-                    ? 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30'
-                    : app.status === 'inactive'
-                    ? 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30'
-                    : 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30'
-                }`}>
-                  {app.status}
-                </span>
-                {app.isPublic && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                    Public
+
+              {/* App Details */}
+              <div className="flex-1 min-w-0">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-2">
+                  Edit {app.name}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+                  Update your remote application settings and configuration
+                </p>
+                
+                {/* Status Badges */}
+                <div className="flex items-center space-x-3">
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm border ${
+                    app.status === 'active' 
+                      ? 'text-emerald-700 bg-emerald-100/80 dark:text-emerald-300 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800'
+                      : app.status === 'inactive'
+                      ? 'text-red-700 bg-red-100/80 dark:text-red-300 dark:bg-red-900/30 border-red-200 dark:border-red-800'
+                      : 'text-amber-700 bg-amber-100/80 dark:text-amber-300 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800'
+                  }`}>
+                    <div className={`w-2 h-2 rounded-full mr-2 ${
+                      app.status === 'active' ? 'bg-emerald-500' : app.status === 'inactive' ? 'bg-red-500' : 'bg-amber-500'
+                    }`}></div>
+                    {app.status}
                   </span>
-                )}
+                  {app.isPublic && (
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-blue-700 bg-blue-100/80 dark:text-blue-300 dark:bg-blue-900/30 backdrop-blur-sm border border-blue-200 dark:border-blue-800">
+                      <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Public
+                    </span>
+                  )}
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 bg-gray-100/80 dark:text-gray-400 dark:bg-gray-800/30 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+                    <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Remote App
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Edit Remote App
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Update your remote application settings
-          </p>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="mx-6 mt-4 rounded-md bg-red-50 dark:bg-red-900/20 p-4">
+      {/* Error Message */}
+      {error && (
+        <div className="mx-auto max-w-4xl px-6 mb-6">
+          <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -411,7 +437,12 @@ const EditRemoteAppPage: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 pb-12">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Name Field */}
@@ -608,6 +639,7 @@ const EditRemoteAppPage: React.FC = () => {
         </div>
       </Modal>
     </div>
+  </div>
   );
 };
 

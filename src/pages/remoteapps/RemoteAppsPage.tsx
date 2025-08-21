@@ -88,7 +88,7 @@ const RemoteAppsPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const response = await api.remoteAppsClient.remoteApps_GetUserAccessibleApps(
+      const response = await api.remoteAppsClient.remoteApps_GetByCurrentUser(
         currentPage,
         pageSize,
         sortField,
