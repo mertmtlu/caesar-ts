@@ -47,6 +47,7 @@ import WorkflowExecutionPage from '@/pages/workflows/WorkflowExecutionPage';
 import RemoteAppsPage from '@/pages/remoteapps/RemoteAppsPage';
 import CreateRemoteAppPage from '@/pages/remoteapps/CreateRemoteAppPage';
 import EditRemoteAppPage from '@/pages/remoteapps/EditRemoteAppPage';
+import RemoteAppDetailPage from '@/pages/remoteapps/RemoteAppDetailPage';
 
 // Admin Pages
 import UsersPage from '@/pages/admin/UsersPage';
@@ -265,6 +266,10 @@ export const router = createBrowserRouter([
           {
             path: 'create',
             element: <CreateRemoteAppPage />
+          },
+          {
+            path: ':appId',
+            element: <RemoteAppDetailPage />
           },
           {
             path: ':appId/edit',
