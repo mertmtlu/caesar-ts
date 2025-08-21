@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '@/api/api';
-import { SortDirection } from '@/api/enums';
+import { SortDirection, IconEntityType } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ExecutionResourceLimitsDto, ProgramExecutionRequestDto, WorkflowExecutionRequest } from '@/api';
 import ComponentForm from '@/components/common/ComponentForm';
 import { UIElement, ComponentSchema } from '@/types/componentDesigner';
+import IconDisplay from '@/components/icons/IconDisplay';
 
 // Interfaces
 interface ProgramItem {
@@ -88,7 +89,21 @@ interface MenuState {
 }
 
 // Desktop icons configuration for different program types and languages
-const getDesktopIcon = (program: ProgramItem): React.ReactNode => {
+const getDesktopIcon = (program: ProgramItem, iconData?: string): React.ReactNode => {
+  // If we have custom icon data, use IconDisplay with custom styling
+  if (iconData) {
+    return (
+      <div className="w-16 h-16 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer border-2 border-gray-200 dark:border-gray-600 overflow-hidden">
+        <IconDisplay
+          iconData={iconData}
+          entityType="program"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  // Fallback to generated icons for programs without custom icons
   const { language, type } = program;
   const lang = language.toLowerCase();
   const programType = type.toLowerCase();
@@ -151,7 +166,21 @@ const getDesktopIcon = (program: ProgramItem): React.ReactNode => {
 };
 
 // Workflow desktop icons
-const getWorkflowIcon = (workflow: WorkflowItem): React.ReactNode => {
+const getWorkflowIcon = (workflow: WorkflowItem, iconData?: string): React.ReactNode => {
+  // If we have custom icon data, use IconDisplay with custom styling
+  if (iconData) {
+    return (
+      <div className="w-16 h-16 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer border-2 border-gray-200 dark:border-gray-600 overflow-hidden">
+        <IconDisplay
+          iconData={iconData}
+          entityType="workflow"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  // Fallback to generated icons for workflows without custom icons
   const { status, nodeCount, hasUIComponents } = workflow;
   
   // Create icon based on workflow properties
@@ -202,8 +231,34 @@ const getWorkflowIcon = (workflow: WorkflowItem): React.ReactNode => {
 };
 
 // Remote app icon generation
-const getRemoteAppIcon = (app: RemoteAppItem): React.ReactNode => {
-  // Create distinctive icons for remote apps
+const getRemoteAppIcon = (app: RemoteAppItem, iconData?: string): React.ReactNode => {
+  // If we have custom icon data, use IconDisplay with custom styling
+  if (iconData) {
+    return (
+      <div className="w-16 h-16 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer border-2 border-gray-200 dark:border-gray-600 overflow-hidden relative">
+        <IconDisplay
+          iconData={iconData}
+          entityType="remoteapp"
+          className="w-full h-full object-cover"
+        />
+        {/* Public/Private indicator overlay for custom icons */}
+        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+          {app.isPublic ? (
+            <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+              <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+            </svg>
+          ) : (
+            <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
+            </svg>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback to generated icons for remote apps without custom icons
   const getStatusColor = () => {
     switch (app.status.toLowerCase()) {
       case 'active':
@@ -322,6 +377,11 @@ const ExecutionsPage: React.FC = () => {
   const [isLoadingRemoteApps, setIsLoadingRemoteApps] = useState(true);
   const [isLoadingExecutions, setIsLoadingExecutions] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Icons state
+  const [programIcons, setProgramIcons] = useState<Map<string, string>>(new Map());
+  const [workflowIcons, setWorkflowIcons] = useState<Map<string, string>>(new Map());
+  const [remoteAppIcons, setRemoteAppIcons] = useState<Map<string, string>>(new Map());
   
   // View state with separate tabs
   const [view, setView] = useState<'programs' | 'workflows' | 'remoteapps' | 'executions'>('programs');
@@ -449,6 +509,9 @@ const ExecutionsPage: React.FC = () => {
         );
 
         setPrograms(programsWithVersionsAndComponents);
+        
+        // Load icons for all programs
+        await loadProgramIcons(programsWithVersionsAndComponents);
       } else {
         setError(response.message || 'Failed to load programs');
       }
@@ -525,6 +588,9 @@ const ExecutionsPage: React.FC = () => {
         );
 
         setWorkflows(workflowsWithUIComponents);
+        
+        // Load icons for all workflows
+        await loadWorkflowIcons(workflowsWithUIComponents);
       } else {
         setError(response.message || 'Failed to load workflows');
       }
@@ -561,6 +627,9 @@ const ExecutionsPage: React.FC = () => {
         })) || [];
 
         setRemoteApps(remoteAppItems);
+        
+        // Load icons for all remote apps
+        await loadRemoteAppIcons(remoteAppItems);
       } else {
         setError(response.message || 'Failed to load remote apps');
       }
@@ -569,6 +638,93 @@ const ExecutionsPage: React.FC = () => {
       setError('Failed to load remote apps. Please try again.');
     } finally {
       setIsLoadingRemoteApps(false);
+    }
+  };
+
+  const loadProgramIcons = async (programItems: ProgramItem[]) => {
+    if (programItems.length === 0) return;
+    
+    try {
+      // Create batch request with entity IDs
+      const entityIds = programItems.map(program => program.id);
+      
+      const iconBatchRequest = {
+        entityType: IconEntityType.Program,
+        entityIds: entityIds
+      };
+
+      const iconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(iconBatchRequest);
+      
+      if (iconsResponse.success && iconsResponse.data) {
+        const newIcons = new Map<string, string>();
+        iconsResponse.data.forEach(icon => {
+          if (icon.entityId && icon.iconData) {
+            newIcons.set(icon.entityId, icon.iconData);
+          }
+        });
+        setProgramIcons(newIcons);
+      }
+    } catch (error) {
+      console.error('Failed to load program icons:', error);
+      // Don't show error to user for icons, just log it
+    }
+  };
+
+  const loadWorkflowIcons = async (workflowItems: WorkflowItem[]) => {
+    if (workflowItems.length === 0) return;
+    
+    try {
+      // Create batch request with entity IDs
+      const entityIds = workflowItems.map(workflow => workflow.id);
+      
+      const iconBatchRequest = {
+        entityType: IconEntityType.Workflow,
+        entityIds: entityIds
+      };
+
+      const iconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(iconBatchRequest);
+      
+      if (iconsResponse.success && iconsResponse.data) {
+        const newIcons = new Map<string, string>();
+        iconsResponse.data.forEach(icon => {
+          if (icon.entityId && icon.iconData) {
+            newIcons.set(icon.entityId, icon.iconData);
+          }
+        });
+        setWorkflowIcons(newIcons);
+      }
+    } catch (error) {
+      console.error('Failed to load workflow icons:', error);
+      // Don't show error to user for icons, just log it
+    }
+  };
+
+  const loadRemoteAppIcons = async (remoteAppItems: RemoteAppItem[]) => {
+    if (remoteAppItems.length === 0) return;
+    
+    try {
+      // Create batch request with entity IDs
+      const entityIds = remoteAppItems.map(app => app.id);
+      
+      const iconBatchRequest = {
+        entityType: IconEntityType.RemoteApp,
+        entityIds: entityIds
+      };
+
+      const iconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(iconBatchRequest);
+      
+      if (iconsResponse.success && iconsResponse.data) {
+        const newIcons = new Map<string, string>();
+        iconsResponse.data.forEach(icon => {
+          if (icon.entityId && icon.iconData) {
+            newIcons.set(icon.entityId, icon.iconData);
+          }
+        });
+        setRemoteAppIcons(newIcons);
+      }
+    } catch (error) {
+      console.error('Failed to load remote app icons:', error);
+      // Don't show error to user for icons, just log it
     }
   };
 
@@ -1088,7 +1244,7 @@ const ExecutionsPage: React.FC = () => {
                   onDoubleClick={() => handleExecuteProgram(program)}
                 >
                   <div className="relative">
-                    {getDesktopIcon(program)}
+                    {getDesktopIcon(program, programIcons.get(program.id))}
                     
                     {/* Three dots menu button */}
                     <button
@@ -1210,7 +1366,7 @@ const ExecutionsPage: React.FC = () => {
                   onDoubleClick={() => handleWorkflowDoubleClick(workflow)}
                 >
                   <div className="relative">
-                    {getWorkflowIcon(workflow)}
+                    {getWorkflowIcon(workflow, workflowIcons.get(workflow.id))}
                     
                     {/* Three dots menu button */}
                     <button
@@ -1296,7 +1452,7 @@ const ExecutionsPage: React.FC = () => {
                   onDoubleClick={() => handleRemoteAppDoubleClick(app)}
                 >
                   <div className="relative">
-                    {getRemoteAppIcon(app)}
+                    {getRemoteAppIcon(app, remoteAppIcons.get(app.id))}
                     
                     {/* Three dots menu button */}
                     <button

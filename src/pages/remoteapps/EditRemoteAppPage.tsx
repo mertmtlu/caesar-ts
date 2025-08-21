@@ -444,133 +444,269 @@ const EditRemoteAppPage: React.FC = () => {
       <div className="max-w-4xl mx-auto px-6 pb-12">
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Name Field */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Name *
-            </label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Enter app name"
-              value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              errorMessage={validationErrors.name}
-              className="w-full"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left Column - Basic Info */}
+              <div className="space-y-8">
+                {/* Basic Information Card */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-blue-200/50 dark:border-gray-700/50">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mr-3">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    Basic Information
+                  </h3>
+                  
+                  <div className="space-y-6">
+                    {/* Name Field */}
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        App Name *
+                      </label>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Enter a descriptive name for your app"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        errorMessage={validationErrors.name}
+                        className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                        }
+                      />
+                    </div>
 
-          {/* URL Field */}
-          <div>
-            <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              URL *
-            </label>
-            <Input
-              id="url"
-              type="url"
-              placeholder="https://example.com"
-              value={formData.url}
-              onChange={(e) => handleInputChange('url', e.target.value)}
-              errorMessage={validationErrors.url}
-              className="w-full"
-              leftIcon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-              }
-            />
-          </div>
+                    {/* URL Field */}
+                    <div>
+                      <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Application URL *
+                      </label>
+                      <Input
+                        id="url"
+                        type="url"
+                        placeholder="https://your-app-domain.com"
+                        value={formData.url}
+                        onChange={(e) => handleInputChange('url', e.target.value)}
+                        errorMessage={validationErrors.url}
+                        className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                        }
+                      />
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        The complete URL where users can access your application
+                      </p>
+                    </div>
 
-          {/* Description Field */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Description
-            </label>
-            <textarea
-              id="description"
-              rows={3}
-              placeholder="Enter app description (optional)"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 resize-none"
-            />
-          </div>
-
-          {/* Visibility Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Visibility
-            </label>
-            <div className="space-y-3">
-              <div className="flex items-start">
-                <input
-                  id="private"
-                  name="visibility"
-                  type="radio"
-                  checked={!formData.isPublic}
-                  onChange={() => handleInputChange('isPublic', false)}
-                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                />
-                <div className="ml-3">
-                  <label htmlFor="private" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Private
-                  </label>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Only you and assigned users can access this app
-                  </p>
+                    {/* Description Field */}
+                    <div>
+                      <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        id="description"
+                        rows={4}
+                        placeholder="Describe what this application does and how it helps your team..."
+                        value={formData.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        className="block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 resize-none"
+                      />
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Optional: Help users understand the purpose of this application
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start">
-                <input
-                  id="public"
-                  name="visibility"
-                  type="radio"
-                  checked={formData.isPublic}
-                  onChange={() => handleInputChange('isPublic', true)}
-                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                />
-                <div className="ml-3">
-                  <label htmlFor="public" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Public
-                  </label>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Anyone with access to the system can use this app
-                  </p>
+
+              {/* Right Column - Configuration */}
+              <div className="space-y-8">
+                {/* Visibility Settings Card */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-green-200/50 dark:border-gray-700/50">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mr-3">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </div>
+                    Access Control
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      Choose who can access this remote application
+                    </p>
+                    
+                    <div className="space-y-4">
+                      {/* Private Option */}
+                      <label className={`relative flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        !formData.isPublic 
+                          ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' 
+                          : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}>
+                        <input
+                          id="private"
+                          name="visibility"
+                          type="radio"
+                          checked={!formData.isPublic}
+                          onChange={() => handleInputChange('isPublic', false)}
+                          className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mt-0.5"
+                        />
+                        <div className="ml-3 flex-1">
+                          <div className="flex items-center space-x-2">
+                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">Private</span>
+                          </div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            Only you and specifically assigned users can access this application. Provides maximum control over access.
+                          </p>
+                        </div>
+                      </label>
+
+                      {/* Public Option */}
+                      <label className={`relative flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        formData.isPublic 
+                          ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' 
+                          : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}>
+                        <input
+                          id="public"
+                          name="visibility"
+                          type="radio"
+                          checked={formData.isPublic}
+                          onChange={() => handleInputChange('isPublic', true)}
+                          className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mt-0.5"
+                        />
+                        <div className="ml-3 flex-1">
+                          <div className="flex items-center space-x-2">
+                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">Public</span>
+                          </div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            Anyone with access to the system can discover and use this application. Great for team-wide tools.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions Preview */}
+                <div className="bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-purple-200/50 dark:border-gray-700/50">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-3">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    Quick Actions
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => window.open(formData.url || app.url, '_blank')}
+                      disabled={!formData.url && !app.url}
+                      className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      }
+                    >
+                      Test Application URL
+                    </Button>
+                    
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => navigate(`/remoteapps/${appId}`)}
+                      className="w-full"
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      }
+                    >
+                      Preview App Details
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-
-          {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-600">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate(`/remoteapps/${appId}`)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isSubmitting}
-              leftIcon={
-                isSubmitting ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
+            {/* Form Actions */}
+            <div className="flex items-center justify-between pt-8 mt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => navigate(`/remoteapps/${appId}`)}
+                disabled={isSubmitting}
+                leftIcon={
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                )
-              }
-            >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
-        </form>
+                }
+              >
+                Cancel Changes
+              </Button>
+              
+              <div className="flex space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    if (app) {
+                      setFormData({
+                        name: app.name || '',
+                        description: app.description || '',
+                        url: app.url || '',
+                        isPublic: app.isPublic || false,
+                      });
+                      setValidationErrors({});
+                    }
+                  }}
+                  disabled={isSubmitting}
+                >
+                  Reset Form
+                </Button>
+                
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={isSubmitting}
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  leftIcon={
+                    isSubmitting ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )
+                  }
+                >
+                  {isSubmitting ? 'Saving Changes...' : 'Save Changes'}
+                </Button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
 
       {/* Icon Management Modal */}
@@ -586,11 +722,15 @@ const EditRemoteAppPage: React.FC = () => {
           {/* Current Icon Display */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <IconDisplay
-                iconData={iconData}
-                size="xl"
-                entityType="remoteapp"
-              />
+              <div className="relative">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center overflow-hidden shadow-lg ring-1 ring-gray-200 dark:ring-gray-600">
+                  <IconDisplay
+                    iconData={iconData}
+                    size="xl"
+                    entityType="remoteapp"
+                  />
+                </div>
+              </div>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {iconData ? 'Current app icon' : 'No custom icon set'}
@@ -599,15 +739,25 @@ const EditRemoteAppPage: React.FC = () => {
 
           {/* Error Display */}
           {iconError && (
-            <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3">
-              <p className="text-sm text-red-800 dark:text-red-200">{iconError}</p>
+            <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+              <div className="flex">
+                <svg className="h-5 w-5 text-red-400 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <p className="text-sm text-red-800 dark:text-red-200">{iconError}</p>
+              </div>
             </div>
           )}
 
           {/* Icon Uploader */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-              {iconData ? 'Replace Icon' : 'Upload Icon'}
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 rounded-xl p-6 border border-gray-200/50 dark:border-gray-700/50">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center mr-2">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              {iconData ? 'Replace Icon' : 'Upload New Icon'}
             </h3>
             <IconUploader
               onIconSelect={handleIconUpload}
@@ -616,30 +766,37 @@ const EditRemoteAppPage: React.FC = () => {
               maxSizeKB={512}
               acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']}
             />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Upload PNG, JPG, or SVG files up to 512KB. Square images work best.
+            </p>
           </div>
 
           {/* Delete Icon Button */}
           {iconData && (
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+            <div className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
               <Button
                 variant="danger"
                 size="sm"
                 onClick={handleIconDelete}
                 disabled={isLoadingIcon || isUploadingIcon}
+                className="hover:shadow-lg transition-shadow"
                 leftIcon={
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
+                  isLoadingIcon ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  )
                 }
               >
-                {isLoadingIcon ? 'Deleting...' : 'Delete Icon'}
+                {isLoadingIcon ? 'Deleting...' : 'Remove Icon'}
               </Button>
             </div>
           )}
         </div>
       </Modal>
     </div>
-  </div>
   );
 };
 
