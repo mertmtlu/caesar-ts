@@ -1187,13 +1187,13 @@ export interface IProgramsClient {
     programs_GetByLanguage(language: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IProgramListDtoPagedResponseApiResponse>;
 
     /**
-     * Get programs accessible to current user based on permissions
+     * Get programs accessible to current user based on permissions with aggregated data
      * @param pageNumber (optional) 
      * @param pageSize (optional) 
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    programs_GetUserAccessiblePrograms(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IProgramListDtoPagedResponseApiResponse>;
+    programs_GetUserAccessiblePrograms(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IProgramSummaryDtoPagedResponseApiResponse>;
 
     /**
      * Get programs accessible to a group
@@ -1421,14 +1421,13 @@ export interface IRemoteAppsClient {
     remoteApps_GetByCreator(creatorId: string, pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
 
     /**
-     * Get remote apps by creator
+     * Get remote apps by current user
      * @param pageNumber (optional) 
      * @param pageSize (optional) 
      * @param sorting_Direction (optional) 
      * @return OK
      */
     remoteApps_GetByCurrentUser(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
-
 
     /**
      * Get remote apps by status (active, inactive, etc.)

@@ -6,6 +6,7 @@ import { SortDirection, IconEntityType } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ExecutionResourceLimitsDto, ProgramExecutionRequestDto, WorkflowExecutionRequest } from '@/api';
+import { IVersionInfoDto } from '@/api/typeInterfaces';
 import ComponentForm from '@/components/common/ComponentForm';
 import { UIElement, ComponentSchema } from '@/types/componentDesigner';
 import IconDisplay from '@/components/icons/IconDisplay';
@@ -18,11 +19,14 @@ interface ProgramItem {
   language: string;
   type: string;
   status: string;
+  versionCount: number;
   hasVersions: boolean;
-  currentVersion?: string;
+  currentVersion?: IVersionInfoDto;
   icon?: string;
   newestComponent?: ComponentItem | null;
-  hasComponents?: boolean;
+  componentCount: number;
+  hasComponents: boolean;
+  newestComponentType?: string;
 }
 
 interface ComponentItem {
@@ -474,44 +478,27 @@ const ExecutionsPage: React.FC = () => {
           language: program.language || 'Unknown',
           type: program.type || 'Unknown',
           status: program.status || 'unknown',
-          hasVersions: false, // Will be populated by version check
+          versionCount: program.versionCount || 0,
+          hasVersions: program.hasVersions || false,
           currentVersion: program.currentVersion,
-          newestComponent: null, // Will be populated by component check
-          hasComponents: false // Will be populated by component check
+          newestComponent: program.newestComponentType ? {
+            id: '',
+            name: 'Latest Component',
+            type: program.newestComponentType,
+            status: 'active',
+            programId: program.id || '',
+            versionId: program.currentVersion?.id || '',
+            createdDate: new Date()
+          } : null,
+          componentCount: program.componentCount || 0,
+          hasComponents: program.hasComponents || false,
+          newestComponentType: program.newestComponentType
         })) || [];
 
-        // Check versions and components for each program
-        const programsWithVersionsAndComponents = await Promise.all(
-          programItems.map(async (program) => {
-            try {
-              // Load versions
-              const versionsResponse = await api.versions.versions_GetByProgram(program.id, 1, 1, 'CreatedDate', SortDirection._1);
-              const versionCount = versionsResponse.data?.totalCount || 0;
-              
-              // Load newest component
-              const newestComponent = await loadNewestComponent(program.id);
-              
-              return {
-                ...program,
-                hasVersions: versionCount > 0,
-                newestComponent,
-                hasComponents: newestComponent !== null
-              };
-            } catch {
-              return { 
-                ...program, 
-                hasVersions: false,
-                newestComponent: null,
-                hasComponents: false
-              };
-            }
-          })
-        );
-
-        setPrograms(programsWithVersionsAndComponents);
+        setPrograms(programItems);
         
         // Load icons for all programs
-        await loadProgramIcons(programsWithVersionsAndComponents);
+        await loadProgramIcons(programItems);
       } else {
         setError(response.message || 'Failed to load programs');
       }
@@ -797,38 +784,6 @@ const ExecutionsPage: React.FC = () => {
     }
   };
 
-  const loadNewestComponent = async (programId: string): Promise<ComponentItem | null> => {
-    try {
-      const response = await api.uiComponents.uiComponents_GetByProgram(
-        programId,
-        1, // pageNumber
-        10, // pageSize - get more to find active components
-        'CreatedDate', // sort by creation date
-        SortDirection._1 // descending order to get newest first
-      );
-
-      if (response.success && response.data?.items && response.data.items.length > 0) {
-        
-        // Find the first active component, or fall back to the newest
-        const activeComponent = response.data.items.find(c => c.status === 'active');
-        const component = activeComponent || response.data.items[0];
-        
-        return {
-          id: component.id || '',
-          name: component.name || 'Untitled Component',
-          type: component.type || 'unknown',
-          status: component.status || 'draft',
-          programId: component.programId || programId,
-          versionId: component.versionId || '',
-          createdDate: component.createdAt || new Date()
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error(`Failed to load components for program ${programId}:`, error);
-      return null;
-    }
-  };
 
   const handleQuickExecute = async (itemId: string, itemType?: 'program' | 'workflow') => {
     if (!itemType) {

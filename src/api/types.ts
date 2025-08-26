@@ -13331,6 +13331,184 @@ export class ProgramStatsDto implements interfaces.IProgramStatsDto {
     }
 }
 
+export class ProgramSummaryDto implements interfaces.IProgramSummaryDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    language?: string | undefined;
+    type?: string | undefined;
+    createdAt?: Date;
+    status?: string | undefined;
+    currentVersion?: VersionInfoDto;
+    versionCount?: number;
+    readonly hasVersions?: boolean;
+    componentCount?: number;
+    readonly hasComponents?: boolean;
+    newestComponentType?: string | undefined;
+
+    constructor(data?: interfaces.IProgramSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.language = _data["language"];
+            this.type = _data["type"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.currentVersion = _data["currentVersion"] ? VersionInfoDto.fromJS(_data["currentVersion"]) : <any>undefined;
+            this.versionCount = _data["versionCount"];
+            (<any>this).hasVersions = _data["hasVersions"];
+            this.componentCount = _data["componentCount"];
+            (<any>this).hasComponents = _data["hasComponents"];
+            this.newestComponentType = _data["newestComponentType"];
+        }
+    }
+
+    static fromJS(data: any): ProgramSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProgramSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["language"] = this.language;
+        data["type"] = this.type;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["currentVersion"] = this.currentVersion ? this.currentVersion.toJSON() : <any>undefined;
+        data["versionCount"] = this.versionCount;
+        data["hasVersions"] = this.hasVersions;
+        data["componentCount"] = this.componentCount;
+        data["hasComponents"] = this.hasComponents;
+        data["newestComponentType"] = this.newestComponentType;
+        return data;
+    }
+}
+
+export class ProgramSummaryDtoPagedResponse implements interfaces.IProgramSummaryDtoPagedResponse {
+    items?: ProgramSummaryDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    readonly hasPreviousPage?: boolean;
+    readonly hasNextPage?: boolean;
+
+    constructor(data?: interfaces.IProgramSummaryDtoPagedResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ProgramSummaryDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.pageSize = _data["pageSize"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            (<any>this).hasPreviousPage = _data["hasPreviousPage"];
+            (<any>this).hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): ProgramSummaryDtoPagedResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProgramSummaryDtoPagedResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["pageSize"] = this.pageSize;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export class ProgramSummaryDtoPagedResponseApiResponse implements interfaces.IProgramSummaryDtoPagedResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: ProgramSummaryDtoPagedResponse;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IProgramSummaryDtoPagedResponseApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? ProgramSummaryDtoPagedResponse.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ProgramSummaryDtoPagedResponseApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProgramSummaryDtoPagedResponseApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class ProgramUpdateDto implements interfaces.IProgramUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
@@ -24745,6 +24923,50 @@ export class VersionFileUpdateDto implements interfaces.IVersionFileUpdateDto {
         data["content"] = this.content;
         data["contentType"] = this.contentType;
         data["fileType"] = this.fileType;
+        return data;
+    }
+}
+
+export class VersionInfoDto implements interfaces.IVersionInfoDto {
+    id?: string | undefined;
+    versionNumber?: number;
+    createdAt?: Date;
+    status?: string | undefined;
+    createdBy?: string | undefined;
+
+    constructor(data?: interfaces.IVersionInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.versionNumber = _data["versionNumber"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.createdBy = _data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): VersionInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new VersionInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["versionNumber"] = this.versionNumber;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["createdBy"] = this.createdBy;
         return data;
     }
 }

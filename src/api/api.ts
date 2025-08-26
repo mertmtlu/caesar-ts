@@ -331,5 +331,12 @@ export function createApiClient(
     return new ApiClient(baseUrl, getToken, refreshToken, onTokenExpired);
 }
 
+function getDynamicApiBaseUrl(): string {
+    const backendPort = 5090;
+    // window.location.protocol will be "http:" or "https:"
+    // window.location.hostname will be "localhost", "192.168.1.10", etc.
+    return `${window.location.protocol}//${window.location.hostname}:${backendPort}`;
+}
+
 // Export default instance that will be configured later
-export const api = createApiClient('http://144.122.103.206:5090');
+export const api = createApiClient(getDynamicApiBaseUrl());

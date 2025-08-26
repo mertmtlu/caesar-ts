@@ -120,9 +120,10 @@ export enum IconEntityType {
     _0 = 0,
     _1 = 1,
     _2 = 2,
+
     Program = 0,
     Workflow = 1,
-    RemoteApp = 2,
+    RemoteApp = 2
 }
 
 export enum IssueSeverity {
@@ -289,6 +290,15 @@ export enum WorkflowNodeType {
     _4 = 4,
     _5 = 5,
     _6 = 6,
+
+    Program = 0,
+    StartNode = 1,
+    EndNode = 2,
+    DecisionNode = 3,
+    MergeNode = 4,
+    SubWorkflow = 5,
+    CustomFunction = 6,
+    UIInteraction = 7,
 }
 
 export enum WorkflowPermissionType {

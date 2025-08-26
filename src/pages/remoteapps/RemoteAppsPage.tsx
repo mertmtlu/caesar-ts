@@ -152,7 +152,7 @@ const RemoteAppsPage: React.FC = () => {
       const entityIds = appItems.map(app => app.id);
       
       const iconBatchRequest = {
-        entityType: IconEntityType.RemoteApp,
+        entityType: IconEntityType._2,
         entityIds: entityIds
       };
 

@@ -2184,6 +2184,40 @@ export interface IProgramStatsDto {
     lastUpdate?: Date | undefined;
 }
 
+export interface IProgramSummaryDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    language?: string | undefined;
+    type?: string | undefined;
+    createdAt?: Date;
+    status?: string | undefined;
+    currentVersion?: IVersionInfoDto;
+    versionCount?: number;
+    hasVersions?: boolean;
+    componentCount?: number;
+    hasComponents?: boolean;
+    newestComponentType?: string | undefined;
+}
+
+export interface IProgramSummaryDtoPagedResponse {
+    items?: IProgramSummaryDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export interface IProgramSummaryDtoPagedResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IProgramSummaryDtoPagedResponse;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IProgramUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
@@ -4039,6 +4073,14 @@ export interface IVersionFileUpdateDto {
     content: string;
     contentType?: string | undefined;
     fileType?: string | undefined;
+}
+
+export interface IVersionInfoDto {
+    id?: string | undefined;
+    versionNumber?: number;
+    createdAt?: Date;
+    status?: string | undefined;
+    createdBy?: string | undefined;
 }
 
 export interface IVersionListDto {

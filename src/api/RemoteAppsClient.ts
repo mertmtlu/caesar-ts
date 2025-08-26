@@ -304,7 +304,7 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
     }
 
     /**
-     * Get remote apps by creator
+     * Get remote apps by current user
      * @param pageNumber (optional) 
      * @param pageSize (optional) 
      * @param sorting_Direction (optional) 
@@ -312,7 +312,6 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
      */
     remoteApps_GetByCurrentUser(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.RemoteAppListDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/RemoteApps/by-current-user?";
-
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
         else if (pageNumber !== undefined)
@@ -339,7 +338,7 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRemoteApps_GetByCreator(_response);
+            return this.processRemoteApps_GetByCurrentUser(_response);
         });
     }
 

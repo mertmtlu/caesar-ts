@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ConfirmationModal } from '@/components/common/Modal';
 import { ProgramSearchDto } from '@/api';
+import { IVersionInfoDto } from '@/api/typeInterfaces';
 import IconDisplay from '@/components/icons/IconDisplay';
 
 // Interfaces
@@ -20,9 +21,9 @@ interface ProjectListItem {
   status: string;
   versionCount: number;
   hasVersions: boolean;
-  currentVersion?: string;
-  componentCount?: number;
-  hasComponents?: boolean;
+  currentVersion?: IVersionInfoDto;
+  componentCount: number;
+  hasComponents: boolean;
   newestComponentType?: string;
   iconData?: string | null;
 }
@@ -94,41 +95,6 @@ const ProjectsPage: React.FC = () => {
     return () => clearTimeout(delayedSearch);
   }, [searchTerm]);
 
-  const loadComponentInfo = async (projectId: string) => {
-    try {
-      const response = await api.uiComponents.uiComponents_GetByProgram(
-        projectId,
-        1, // pageNumber
-        1, // pageSize - only need count and newest
-        'CreatedDate', // sort by creation date
-        SortDirection._1 // descending to get newest first
-      );
-
-      if (response.success && response.data) {
-        const totalCount = response.data.totalCount || 0;
-        const newestComponent = response.data.items?.[0];
-        
-        return {
-          componentCount: totalCount,
-          hasComponents: totalCount > 0,
-          newestComponentType: newestComponent?.type || undefined
-        };
-      }
-      
-      return {
-        componentCount: 0,
-        hasComponents: false,
-        newestComponentType: undefined
-      };
-    } catch (error) {
-      console.error(`Failed to load component info for project ${projectId}:`, error);
-      return {
-        componentCount: 0,
-        hasComponents: false,
-        newestComponentType: undefined
-      };
-    }
-  };
 
   const loadProjects = async () => {
     try {
@@ -151,51 +117,20 @@ const ProjectsPage: React.FC = () => {
           type: project.type || 'Unknown',
           createdAt: project.createdAt || new Date(),
           status: project.status || 'unknown',
-          versionCount: 0, // Will be populated by version check
-          hasVersions: false, // Will be populated by version check
+          versionCount: project.versionCount || 0,
+          hasVersions: project.hasVersions || false,
           currentVersion: project.currentVersion,
-          componentCount: 0, // Will be populated by component check
-          hasComponents: false, // Will be populated by component check
-          newestComponentType: undefined // Will be populated by component check
+          componentCount: project.componentCount || 0,
+          hasComponents: project.hasComponents || false,
+          newestComponentType: project.newestComponentType
         })) || [];
 
-        // Check versions and components for each project
-        const projectsWithVersionsAndComponents = await Promise.all(
-          projectItems.map(async (project) => {
-            try {
-              // Load versions and components in parallel
-              const [versionsResponse, componentInfo] = await Promise.all([
-                api.versions.versions_GetByProgram(project.id, 1, 1, 'CreatedDate', SortDirection._1),
-                loadComponentInfo(project.id)
-              ]);
-              
-              const versionCount = versionsResponse.data?.totalCount || 0;
-              
-              return {
-                ...project,
-                versionCount,
-                hasVersions: versionCount > 0,
-                ...componentInfo
-              };
-            } catch {
-              return { 
-                ...project, 
-                versionCount: 0, 
-                hasVersions: false,
-                componentCount: 0,
-                hasComponents: false,
-                newestComponentType: undefined
-              };
-            }
-          })
-        );
-
-        setProjects(projectsWithVersionsAndComponents);
+        setProjects(projectItems);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
         
         // Load icons for all projects
-        await loadProjectIcons(projectsWithVersionsAndComponents);
+        await loadProjectIcons(projectItems);
       } else {
         setError(response.message || 'Failed to load projects');
       }
@@ -233,51 +168,20 @@ const ProjectsPage: React.FC = () => {
           type: project.type || 'Unknown',
           createdAt: project.createdAt || new Date(),
           status: project.status || 'unknown',
-          versionCount: 0, // Will be populated by version check
-          hasVersions: false, // Will be populated by version check
-          currentVersion: project.currentVersion,
-          componentCount: 0, // Will be populated by component check
-          hasComponents: false, // Will be populated by component check
-          newestComponentType: undefined // Will be populated by component check
+          versionCount: 0, // Search endpoint doesn't have rich data yet
+          hasVersions: false, // Search endpoint doesn't have rich data yet
+          currentVersion: undefined, // Search endpoint doesn't have rich data yet
+          componentCount: 0, // Search endpoint doesn't have rich data yet
+          hasComponents: false, // Search endpoint doesn't have rich data yet
+          newestComponentType: undefined // Search endpoint doesn't have rich data yet
         })) || [];
 
-        // Check versions and components for search results
-        const projectsWithVersionsAndComponents = await Promise.all(
-          projectItems.map(async (project) => {
-            try {
-              // Load versions and components in parallel
-              const [versionsResponse, componentInfo] = await Promise.all([
-                api.versions.versions_GetByProgram(project.id, 1, 1, 'CreatedDate', SortDirection._1),
-                loadComponentInfo(project.id)
-              ]);
-              
-              const versionCount = versionsResponse.data?.totalCount || 0;
-              
-              return {
-                ...project,
-                versionCount,
-                hasVersions: versionCount > 0,
-                ...componentInfo
-              };
-            } catch {
-              return { 
-                ...project, 
-                versionCount: 0, 
-                hasVersions: false,
-                componentCount: 0,
-                hasComponents: false,
-                newestComponentType: undefined
-              };
-            }
-          })
-        );
-
-        setProjects(projectsWithVersionsAndComponents);
+        setProjects(projectItems);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
         
         // Load icons for all projects
-        await loadProjectIcons(projectsWithVersionsAndComponents);
+        await loadProjectIcons(projectItems);
       }
     } catch (error) {
       console.error('Failed to search projects:', error);

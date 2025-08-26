@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
+import { IVersionInfoDto } from '@/api/typeInterfaces';
 import Button from '@/components/common/Button';
 
 // Interface for dashboard data
@@ -22,7 +23,7 @@ interface ProjectSummary {
   language: string;
   type: string;
   createdAt: Date;
-  currentVersion?: string;
+  currentVersion?: IVersionInfoDto;
   status: string;
 }
 

@@ -549,13 +549,13 @@ export class ProgramsClient implements interfaces.IProgramsClient {
     }
 
     /**
-     * Get programs accessible to current user based on permissions
+     * Get programs accessible to current user based on permissions with aggregated data
      * @param pageNumber (optional) 
      * @param pageSize (optional) 
      * @param sorting_Direction (optional) 
      * @return OK
      */
-    programs_GetUserAccessiblePrograms(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.ProgramListDtoPagedResponseApiResponse> {
+    programs_GetUserAccessiblePrograms(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.ProgramSummaryDtoPagedResponseApiResponse> {
         let url_ = this.baseUrl + "/api/Programs/user-accessible?";
         if (pageNumber === null)
             throw new Error("The parameter 'pageNumber' cannot be null.");
@@ -587,14 +587,14 @@ export class ProgramsClient implements interfaces.IProgramsClient {
         });
     }
 
-    protected processPrograms_GetUserAccessiblePrograms(response: Response): Promise<types.ProgramListDtoPagedResponseApiResponse> {
+    protected processPrograms_GetUserAccessiblePrograms(response: Response): Promise<types.ProgramSummaryDtoPagedResponseApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.ProgramListDtoPagedResponseApiResponse.fromJS(resultData200);
+            result200 = types.ProgramSummaryDtoPagedResponseApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -602,7 +602,7 @@ export class ProgramsClient implements interfaces.IProgramsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.ProgramListDtoPagedResponseApiResponse>(null as any);
+        return Promise.resolve<types.ProgramSummaryDtoPagedResponseApiResponse>(null as any);
     }
 
     /**
