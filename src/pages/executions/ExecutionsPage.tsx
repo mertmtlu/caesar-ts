@@ -1198,7 +1198,7 @@ const ExecutionsPage: React.FC = () => {
                   className="flex flex-col items-center space-y-2 group relative"
                   onDoubleClick={() => handleExecuteProgram(program)}
                 >
-                  <div className="relative">
+                  <div className="relative" title={program.description || program.name}>
                     {getDesktopIcon(program, programIcons.get(program.id))}
                     
                     {/* Three dots menu button */}
@@ -1320,7 +1320,7 @@ const ExecutionsPage: React.FC = () => {
                   className="flex flex-col items-center space-y-2 group relative"
                   onDoubleClick={() => handleWorkflowDoubleClick(workflow)}
                 >
-                  <div className="relative">
+                  <div className="relative" title={workflow.description || workflow.name}>
                     {getWorkflowIcon(workflow, workflowIcons.get(workflow.id))}
                     
                     {/* Three dots menu button */}
@@ -1406,7 +1406,7 @@ const ExecutionsPage: React.FC = () => {
                   className="flex flex-col items-center space-y-2 group relative"
                   onDoubleClick={() => handleRemoteAppDoubleClick(app)}
                 >
-                  <div className="relative">
+                  <div className="relative" title={app.description || app.name}>
                     {getRemoteAppIcon(app, remoteAppIcons.get(app.id))}
                     
                     {/* Three dots menu button */}

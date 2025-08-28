@@ -97,6 +97,7 @@ const EditorPage: React.FC = () => {
   // UI State
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [selectedTreeItem, setSelectedTreeItem] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   
@@ -140,6 +141,8 @@ const EditorPage: React.FC = () => {
   const resizeRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const editorChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const cursorPositionRef = useRef<{[filePath: string]: monaco.IPosition}>({});
+  const isContentSyncingRef = useRef<boolean>(false);
 
   // Load Monaco Editor dynamically
   useEffect(() => {
@@ -174,8 +177,10 @@ const EditorPage: React.FC = () => {
     }
     
     if (hasUnsavedChanges) {
-      autoSaveTimerRef.current = setTimeout(() => {
-        saveAllFiles();
+      autoSaveTimerRef.current = setTimeout(async () => {
+        setIsAutoSaving(true);
+        await saveAllFiles();
+        setIsAutoSaving(false);
       }, 30000); // Auto-save after 30 seconds of inactivity
     }
 
@@ -578,10 +583,39 @@ const EditorPage: React.FC = () => {
   };
 
   const saveAllFiles = async () => {
+    // Save current cursor position and selection before saving
+    let savedPosition: monaco.IPosition | null = null;
+    let savedSelection: monaco.ISelection | null = null;
+    
+    if (editorRef.current && activeFileData) {
+      savedPosition = editorRef.current.getPosition();
+      savedSelection = editorRef.current.getSelection();
+      if (savedPosition) {
+        cursorPositionRef.current[activeFileData.path] = savedPosition;
+      }
+    }
+
+    // Prevent cursor position tracking during save operations
+    isContentSyncingRef.current = true;
+
     const modifiedFiles = openFiles.filter(f => f.isModified);
     for (const file of modifiedFiles) {
       await saveFile(file.path);
     }
+
+    // Re-enable cursor tracking and restore position
+    isContentSyncingRef.current = false;
+    
+    // Restore cursor position and selection after a brief delay
+    setTimeout(() => {
+      if (editorRef.current && savedPosition) {
+        editorRef.current.setPosition(savedPosition);
+        if (savedSelection) {
+          editorRef.current.setSelection(savedSelection);
+        }
+        editorRef.current.focus();
+      }
+    }, 50);
   };
 
   const commitChanges = async () => {
@@ -1411,7 +1445,7 @@ if __name__ == "__main__":
   };
 
   const handleEditorChange = (value: string | undefined, filePath: string) => {
-    if (value === undefined) return;
+    if (value === undefined || isContentSyncingRef.current) return;
 
     // Clear any existing timeout to debounce rapid changes during initialization
     if (editorChangeTimeoutRef.current) {
@@ -1516,6 +1550,7 @@ if __name__ == "__main__":
 
   const activeFileData = activeFile ? openFiles.find(f => f.path === activeFile) : null;
 
+
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -1610,24 +1645,15 @@ if __name__ == "__main__":
                   </Button>
                 )}
 
-                {/* Commit Changes button for editing existing versions */}
-                {isEditingExistingVersion && openFiles.some(f => f.isModified || f.isNew) && (
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => {
-                      setCommitMessage('');
-                      setShowCommitModal(true);
-                    }}
-                    leftIcon={
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    }
-                  >
-                    Commit Changes
-                  </Button>
+                {/* Autosave indicator */}
+                {isAutoSaving && (
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                    <div className="animate-spin rounded-full h-3 w-3 border-b border-gray-600 dark:border-gray-400 mr-2"></div>
+                    Auto-saving...
+                  </div>
                 )}
+
+                {/* Commit Changes button for editing existing versions */}
 
                 {/* Edit Commit Message button for non-approved versions */}
                 {version && version.status === 'pending' && (
@@ -1650,19 +1676,6 @@ if __name__ == "__main__":
                 
                 {!isViewMode && (
                   <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowNewFileModal(true)}
-                      leftIcon={
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                      }
-                    >
-                      New File
-                    </Button>
-                    
                     <Button
                       variant="outline"
                       size="sm"
@@ -1832,7 +1845,18 @@ if __name__ == "__main__":
                     }}
                   >
                     <span className="truncate max-w-32">{file.path.split('/').pop()}</span>
-                    {file.isModified && <span className="ml-1 text-blue-500">●</span>}
+                    {/* Save status indicator */}
+                    {(isSaving || isAutoSaving) && activeFile === file.path ? (
+                      <div className="ml-1 flex items-center" title={isSaving ? "Saving..." : "Auto-saving..."}>
+                        <div className={`animate-spin rounded-full h-2 w-2 border ${
+                          isSaving ? 'border-blue-500' : 'border-green-500'
+                        } border-t-transparent`}></div>
+                      </div>
+                    ) : file.isModified ? (
+                      <span className="ml-1 text-orange-500" title="Unsaved changes">●</span>
+                    ) : file.isNew ? (
+                      <span className="ml-1 text-blue-500" title="New file">●</span>
+                    ) : null}
                     {!isViewMode && (
                       <button
                         onClick={(e) => {
@@ -1886,10 +1910,10 @@ if __name__ == "__main__":
                 </div>
               ) : (
                 <MonacoEditor
-                  key={activeFileData.path} // Force re-render when switching files
+                  key={activeFileData.path}
                   height="100%"
                   language={activeFileData.language}
-                  value={activeFileData.content}
+                  value=""
                   onChange={(value: string | undefined) => handleEditorChange(value, activeFileData.path)}
                   theme="vs-dark"
                   options={{
@@ -1906,6 +1930,27 @@ if __name__ == "__main__":
                   onMount={(editor: monaco.editor.IStandaloneCodeEditor) => {
                     editorRef.current = editor;
                     
+                    // Set initial content for the file
+                    isContentSyncingRef.current = true;
+                    editor.setValue(activeFileData?.content || '');
+                    
+                    // Restore cursor position if available
+                    const savedPosition = cursorPositionRef.current[activeFileData?.path || ''];
+                    if (savedPosition) {
+                      editor.setPosition(savedPosition);
+                    }
+                    
+                    isContentSyncingRef.current = false;
+                    
+                    // Track cursor position changes (but not during content sync)
+                    editor.onDidChangeCursorPosition(() => {
+                      if (activeFileData && !isContentSyncingRef.current) {
+                        const position = editor.getPosition();
+                        if (position) {
+                          cursorPositionRef.current[activeFileData.path] = position;
+                        }
+                      }
+                    });
                     
                     // Mark editor as initialized after a short delay to avoid initial change events
                     setTimeout(() => {
@@ -1919,9 +1964,7 @@ if __name__ == "__main__":
                     // Add keyboard shortcuts
                     if (typeof monaco !== 'undefined') {
                       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-                        if (activeFileData) {
-                          saveFile(activeFileData.path);
-                        }
+                        saveAllFiles();
                       });
                     }
                   }}
