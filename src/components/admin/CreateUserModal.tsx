@@ -18,7 +18,7 @@ interface CreateUserForm {
   lastName: string;
   password: string;
   confirmPassword: string;
-  roles: string[];
+  role: string;
 }
 
 const CreateUserModal: React.FC<CreateUserModalProps> = ({
@@ -33,7 +33,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     lastName: '',
     password: '',
     confirmPassword: '',
-    roles: []
+    role: ''
   });
   
   const [errors, setErrors] = useState<{[key: string]: string}>({});
@@ -66,7 +66,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       lastName: '',
       password: '',
       confirmPassword: '',
-      roles: []
+      role: ''
     });
     setErrors({});
   };
@@ -107,8 +107,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     }
 
     // Role validation
-    if (form.roles.length === 0) {
-      newErrors.roles = 'At least one role must be selected';
+    if (!form.role) {
+      newErrors.role = 'A role must be selected';
     }
 
     setErrors(newErrors);
@@ -137,14 +137,14 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       const response = await api.users.users_Create(registerDto);
 
       if (response.success && response.data) {
-        // If user was created successfully and roles are selected, update roles
-        if (form.roles.length > 0) {
+        // If user was created successfully and role is selected, update role
+        if (form.role) {
           try {
             await api.users.users_UpdateRoles(response.data.id!, {
-              roles: form.roles
+              role: form.role
             } as any);
           } catch (roleError) {
-            console.error('Failed to assign roles:', roleError);
+            console.error('Failed to assign role:', roleError);
             // Don't fail the entire creation if role assignment fails
           }
         }
@@ -179,17 +179,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     }
   };
 
-  const handleRoleChange = (role: string, checked: boolean) => {
+  const handleRoleChange = (role: string) => {
     setForm(prev => ({
       ...prev,
-      roles: checked 
-        ? [...prev.roles, role]
-        : prev.roles.filter(r => r !== role)
+      role: role
     }));
     
     // Clear role error when user selects a role
-    if (errors.roles) {
-      setErrors(prev => ({ ...prev, roles: '' }));
+    if (errors.role) {
+      setErrors(prev => ({ ...prev, role: '' }));
     }
   };
 
@@ -198,11 +196,17 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     if (roleLower === 'admin') {
       return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
     }
-    if (roleLower === 'user') {
+    if (roleLower === 'externaldev') {
+      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    }
+    if (roleLower === 'internaldev') {
       return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
     }
-    if (roleLower === 'manager') {
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    if (roleLower === 'externaluser') {
+      return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+    }
+    if (roleLower === 'internaluser') {
+      return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
     }
     return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
   };
@@ -308,37 +312,31 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         {/* Role Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Roles* {errors.roles && <span className="text-red-500">({errors.roles})</span>}
+            Role* {errors.role && <span className="text-red-500">({errors.role})</span>}
           </label>
-          <div className="space-y-2">
+          <select
+            value={form.role}
+            onChange={(e) => handleRoleChange(e.target.value)}
+            className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">Select a role</option>
             {availableRoles.map(role => (
-              <label key={role} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={form.roles.includes(role)}
-                  onChange={(e) => handleRoleChange(role, e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-900 dark:text-white">{role}</span>
-              </label>
+              <option key={role} value={role}>{role}</option>
             ))}
-          </div>
+          </select>
           
-          {/* Selected Roles Preview */}
-          {form.roles.length > 0 && (
+          {/* Selected Role Preview */}
+          {form.role && (
             <div className="mt-3">
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Selected roles:
+                Selected role:
               </p>
               <div className="flex flex-wrap gap-2">
-                {form.roles.map(role => (
-                  <span
-                    key={role}
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(role)}`}
-                  >
-                    {role}
-                  </span>
-                ))}
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(form.role)}`}
+                >
+                  {form.role}
+                </span>
               </div>
             </div>
           )}

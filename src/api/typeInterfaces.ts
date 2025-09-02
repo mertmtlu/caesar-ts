@@ -1995,6 +1995,7 @@ export interface IProgramCreateDto {
     mainFile?: string | undefined;
     uiType: string;
     uiConfiguration?: any | undefined;
+    isPublic?: boolean;
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
 }
@@ -2049,6 +2050,7 @@ export interface IProgramDetailDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
+    isPublic?: boolean;
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
     permissions?: IProgramPermissionDto[] | undefined;
@@ -2078,6 +2080,7 @@ export interface IProgramDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
+    isPublic?: boolean;
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
 }
@@ -2123,6 +2126,7 @@ export interface IProgramListDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
+    isPublic?: boolean;
     deploymentType?: enums.AppDeploymentType;
     deploymentStatus?: string | undefined;
 }
@@ -2171,6 +2175,7 @@ export interface IProgramSearchDto {
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
     tags?: string[] | undefined;
+    isPublic?: boolean | undefined;
     deploymentType?: enums.AppDeploymentType;
 }
 
@@ -2192,6 +2197,7 @@ export interface IProgramSummaryDto {
     type?: string | undefined;
     createdAt?: Date;
     status?: string | undefined;
+    isPublic?: boolean;
     currentVersion?: IVersionInfoDto;
     versionCount?: number;
     hasVersions?: boolean;
@@ -2226,6 +2232,7 @@ export interface IProgramUpdateDto {
     mainFile?: string | undefined;
     uiType?: string | undefined;
     uiConfiguration?: any | undefined;
+    isPublic?: boolean | undefined;
     metadata?: any | undefined;
     deploymentInfo?: IAppDeploymentInfo;
 }
@@ -3709,7 +3716,7 @@ export interface IUserDetailDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
     createdDate?: Date;
@@ -3734,7 +3741,7 @@ export interface IUserDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
     createdDate?: Date;
@@ -3753,7 +3760,7 @@ export interface IUserListDto {
     email?: string | undefined;
     username?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
 }
@@ -3807,7 +3814,7 @@ export interface IUserProfileDto {
     id?: string | undefined;
     username?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     createdDate?: Date;
     lastLoginDate?: Date | undefined;
 }
@@ -3830,7 +3837,7 @@ export interface IUserRegisterDto {
 }
 
 export interface IUserRoleUpdateDto {
-    roles: string[];
+    role: string;
 }
 
 export interface IUserSearchDto {
@@ -3838,7 +3845,7 @@ export interface IUserSearchDto {
     username?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean | undefined;
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
@@ -4257,6 +4264,7 @@ export interface IWorkflowCreateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean;
+    isPublic?: boolean;
     templateId?: string | undefined;
 }
 
@@ -4305,6 +4313,7 @@ export interface IWorkflowDetailDto {
     lastExecutionId?: string | undefined;
     executionCount?: number;
     averageExecutionTime?: string | undefined;
+    isPublic?: boolean;
     complexityMetrics?: IWorkflowComplexityMetrics;
     validationResult?: IWorkflowValidationResult;
 }
@@ -4795,6 +4804,7 @@ export interface IWorkflowUpdateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean | undefined;
+    isPublic?: boolean | undefined;
 }
 
 export interface IWorkflowUserPermissionDto {

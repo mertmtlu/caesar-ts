@@ -12,6 +12,7 @@ interface CreateProjectForm {
   language: string;
   type: string;
   uiType: string;
+  isPublic: boolean;
 }
 
 const CreateProjectPage: React.FC = () => {
@@ -23,7 +24,8 @@ const CreateProjectPage: React.FC = () => {
     description: '',
     language: 'javascript',
     type: 'web',
-    uiType: 'standard'
+    uiType: 'standard',
+    isPublic: false
   });
   
   // UI state
@@ -60,7 +62,7 @@ const CreateProjectPage: React.FC = () => {
     { value: 'angular', label: 'Angular', description: 'Angular interface' }
   ];
 
-  const handleInputChange = (field: keyof CreateProjectForm, value: string) => {
+  const handleInputChange = (field: keyof CreateProjectForm, value: string | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (error) setError(null);
@@ -101,6 +103,7 @@ const CreateProjectPage: React.FC = () => {
         type: form.type,
         language: form.language,
         uiType: form.uiType,
+        isPublic: form.isPublic,
         mainFile: getMainFile(form.language, form.type),
         uiConfiguration: {},
         metadata: {
@@ -289,6 +292,57 @@ const CreateProjectPage: React.FC = () => {
                     </div>
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Visibility Setting */}
+            <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                    Project Visibility
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {form.isPublic 
+                      ? 'This project will be visible to all authenticated users'
+                      : 'This project will only be visible to you and users you explicitly grant access to'
+                    }
+                  </p>
+                </div>
+                <div className="ml-4">
+                  <button
+                    type="button"
+                    onClick={() => handleInputChange('isPublic', !form.isPublic)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      form.isPublic 
+                        ? 'bg-blue-600' 
+                        : 'bg-gray-200 dark:bg-gray-700'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform ${
+                        form.isPublic ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center space-x-2">
+                {form.isPublic ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Public Project
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Private Project
+                  </span>
+                )}
               </div>
             </div>
 

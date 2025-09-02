@@ -58,6 +58,7 @@ import ProgramPermissionsPage from '@/pages/admin/ProgramPermissionsPage';
 // Protected Route Component (to be created)
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import AdminRoute from '@/components/auth/AdminRoute';
+import RoleBasedRoute from '@/components/auth/RoleBasedRoute';
 
 export const router = createBrowserRouter([
   {
@@ -68,10 +69,10 @@ export const router = createBrowserRouter([
       </AuthProvider>
     ),
     children: [
-      // Redirect root to dashboard
+      // Redirect root to apps (accessible to all roles)
       {
         index: true,
-        element: <Navigate to="/dashboard" replace />
+        element: <Navigate to="/apps" replace />
       },
       
       // Authentication routes
@@ -102,9 +103,9 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: (
-          <ProtectedRoute>
+          <RoleBasedRoute allowedRoles={['Admin', 'InternalUser', 'InternalDev', 'ExternalDev']}>
             <DashboardLayout />
-          </ProtectedRoute>
+          </RoleBasedRoute>
         ),
         children: [
           {
@@ -118,9 +119,9 @@ export const router = createBrowserRouter([
       {
         path: 'projects',
         element: (
-          <ProtectedRoute>
+          <RoleBasedRoute allowedRoles={['Admin', 'InternalUser', 'InternalDev', 'ExternalDev']}>
             <DashboardLayout />
-          </ProtectedRoute>
+          </RoleBasedRoute>
         ),
         children: [
           {
@@ -178,13 +179,13 @@ export const router = createBrowserRouter([
         ]
       },
 
-      // Execution routes
+      // Execution routes - accessible to all authenticated users
       {
         path: 'apps',
         element: (
-          <ProtectedRoute>
+          <RoleBasedRoute allowedRoles={['Admin', 'InternalUser', 'InternalDev', 'ExternalDev', 'ExternalUser']}>
             <DashboardLayout />
-          </ProtectedRoute>
+          </RoleBasedRoute>
         ),
         children: [
           {
@@ -202,9 +203,9 @@ export const router = createBrowserRouter([
       {
         path: 'workflows',
         element: (
-          <ProtectedRoute>
+          <RoleBasedRoute allowedRoles={['Admin', 'InternalUser', 'InternalDev', 'ExternalDev']}>
             <DashboardLayout />
-          </ProtectedRoute>
+          </RoleBasedRoute>
         ),
         children: [
           {
@@ -254,9 +255,9 @@ export const router = createBrowserRouter([
       {
         path: 'remoteapps',
         element: (
-          <ProtectedRoute>
+          <RoleBasedRoute allowedRoles={['Admin', 'InternalUser', 'InternalDev', 'ExternalDev']}>
             <DashboardLayout />
-          </ProtectedRoute>
+          </RoleBasedRoute>
         ),
         children: [
           {
@@ -306,10 +307,10 @@ export const router = createBrowserRouter([
         ]
       },
 
-      // Catch-all route
+      // Catch-all route - redirect based on user role
       {
         path: '*',
-        element: <Navigate to="/dashboard" replace />
+        element: <Navigate to="/apps" replace />
       }
     ]
   }

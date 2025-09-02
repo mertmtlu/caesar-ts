@@ -1,18 +1,20 @@
-// src/components/auth/AdminRoute.tsx
+// src/components/auth/RoleBasedRoute.tsx
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
-interface AdminRouteProps {
+interface RoleBasedRouteProps {
   children: React.ReactNode;
+  allowedRoles: string[];
   fallbackPath?: string;
 }
 
-const AdminRoute: React.FC<AdminRouteProps> = ({ 
+const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({ 
   children, 
-  fallbackPath = '/dashboard'
+  allowedRoles,
+  fallbackPath = '/apps' // Default fallback to Apps page which all roles can access
 }) => {
-  const { isAuthenticated, isLoading, user, isAdmin } = useAuth();
+  const { isAuthenticated, isLoading, user, hasRole } = useAuth();
   const location = useLocation();
 
   // Show loading spinner while authentication status is being determined
@@ -21,7 +23,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Verifying admin access...</p>
+          <p className="text-gray-600 dark:text-gray-400">Verifying access...</p>
         </div>
       </div>
     );
@@ -69,8 +71,10 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
     );
   }
 
-  // Check if user has admin privileges
-  if (!isAdmin) {
+  // Check if user has any of the allowed roles
+  const hasAllowedRole = allowedRoles.some(role => hasRole(role));
+
+  if (!hasAllowedRole) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="max-w-md w-full mx-auto p-6">
@@ -81,17 +85,17 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
               </svg>
             </div>
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Administrator Access Required
+              Access Restricted
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              You need administrator privileges to access this area of the application.
+              You don't have permission to access this page with your current role.
             </p>
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                <strong>Current user:</strong> {user?.fullName || user?.username || 'Unknown'}
+                <strong>Your role:</strong> {user?.role || 'No role assigned'}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                <strong>Role:</strong> {user?.role || 'No role assigned'}
+                <strong>Required roles:</strong> {allowedRoles.join(', ')}
               </p>
             </div>
             <div className="space-y-2">
@@ -105,12 +109,12 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
                 onClick={() => window.location.href = fallbackPath}
                 className="w-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-md transition-colors"
               >
-                Return to Dashboard
+                Go to Apps
               </button>
             </div>
             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                If you believe you should have admin access, please contact your system administrator.
+                If you believe you should have access to this page, please contact your administrator.
               </p>
             </div>
           </div>
@@ -119,8 +123,8 @@ const AdminRoute: React.FC<AdminRouteProps> = ({
     );
   }
 
-  // User is authenticated and has admin privileges, render children
+  // User has required role, render children
   return <>{children}</>;
 };
 
-export default AdminRoute;
+export default RoleBasedRoute;

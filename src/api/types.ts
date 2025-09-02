@@ -12232,6 +12232,7 @@ export class ProgramCreateDto implements interfaces.IProgramCreateDto {
     mainFile?: string | undefined;
     uiType!: string;
     uiConfiguration?: any | undefined;
+    isPublic?: boolean;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
 
@@ -12253,6 +12254,7 @@ export class ProgramCreateDto implements interfaces.IProgramCreateDto {
             this.mainFile = _data["mainFile"];
             this.uiType = _data["uiType"];
             this.uiConfiguration = _data["uiConfiguration"];
+            this.isPublic = _data["isPublic"];
             this.metadata = _data["metadata"];
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
@@ -12274,6 +12276,7 @@ export class ProgramCreateDto implements interfaces.IProgramCreateDto {
         data["mainFile"] = this.mainFile;
         data["uiType"] = this.uiType;
         data["uiConfiguration"] = this.uiConfiguration;
+        data["isPublic"] = this.isPublic;
         data["metadata"] = this.metadata;
         data["deploymentInfo"] = this.deploymentInfo ? this.deploymentInfo.toJSON() : <any>undefined;
         return data;
@@ -12536,6 +12539,7 @@ export class ProgramDetailDto implements interfaces.IProgramDetailDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
+    isPublic?: boolean;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
     permissions?: ProgramPermissionDto[] | undefined;
@@ -12566,6 +12570,7 @@ export class ProgramDetailDto implements interfaces.IProgramDetailDto {
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.currentVersion = _data["currentVersion"];
+            this.isPublic = _data["isPublic"];
             this.metadata = _data["metadata"];
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
             if (Array.isArray(_data["permissions"])) {
@@ -12604,6 +12609,7 @@ export class ProgramDetailDto implements interfaces.IProgramDetailDto {
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["currentVersion"] = this.currentVersion;
+        data["isPublic"] = this.isPublic;
         data["metadata"] = this.metadata;
         data["deploymentInfo"] = this.deploymentInfo ? this.deploymentInfo.toJSON() : <any>undefined;
         if (Array.isArray(this.permissions)) {
@@ -12687,6 +12693,7 @@ export class ProgramDto implements interfaces.IProgramDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
+    isPublic?: boolean;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
 
@@ -12713,6 +12720,7 @@ export class ProgramDto implements interfaces.IProgramDto {
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.currentVersion = _data["currentVersion"];
+            this.isPublic = _data["isPublic"];
             this.metadata = _data["metadata"];
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
@@ -12739,6 +12747,7 @@ export class ProgramDto implements interfaces.IProgramDto {
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["currentVersion"] = this.currentVersion;
+        data["isPublic"] = this.isPublic;
         data["metadata"] = this.metadata;
         data["deploymentInfo"] = this.deploymentInfo ? this.deploymentInfo.toJSON() : <any>undefined;
         return data;
@@ -12946,6 +12955,7 @@ export class ProgramListDto implements interfaces.IProgramListDto {
     createdAt?: Date;
     status?: string | undefined;
     currentVersion?: string | undefined;
+    isPublic?: boolean;
     deploymentType?: enums.AppDeploymentType;
     deploymentStatus?: string | undefined;
 
@@ -12970,6 +12980,7 @@ export class ProgramListDto implements interfaces.IProgramListDto {
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.currentVersion = _data["currentVersion"];
+            this.isPublic = _data["isPublic"];
             this.deploymentType = _data["deploymentType"];
             this.deploymentStatus = _data["deploymentStatus"];
         }
@@ -12994,6 +13005,7 @@ export class ProgramListDto implements interfaces.IProgramListDto {
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["currentVersion"] = this.currentVersion;
+        data["isPublic"] = this.isPublic;
         data["deploymentType"] = this.deploymentType;
         data["deploymentStatus"] = this.deploymentStatus;
         return data;
@@ -13222,6 +13234,7 @@ export class ProgramSearchDto implements interfaces.IProgramSearchDto {
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
     tags?: string[] | undefined;
+    isPublic?: boolean | undefined;
     deploymentType?: enums.AppDeploymentType;
 
     constructor(data?: interfaces.IProgramSearchDto) {
@@ -13249,6 +13262,7 @@ export class ProgramSearchDto implements interfaces.IProgramSearchDto {
                 for (let item of _data["tags"])
                     this.tags!.push(item);
             }
+            this.isPublic = _data["isPublic"];
             this.deploymentType = _data["deploymentType"];
         }
     }
@@ -13276,6 +13290,7 @@ export class ProgramSearchDto implements interfaces.IProgramSearchDto {
             for (let item of this.tags)
                 data["tags"].push(item);
         }
+        data["isPublic"] = this.isPublic;
         data["deploymentType"] = this.deploymentType;
         return data;
     }
@@ -13339,6 +13354,7 @@ export class ProgramSummaryDto implements interfaces.IProgramSummaryDto {
     type?: string | undefined;
     createdAt?: Date;
     status?: string | undefined;
+    isPublic?: boolean;
     currentVersion?: VersionInfoDto;
     versionCount?: number;
     readonly hasVersions?: boolean;
@@ -13364,6 +13380,7 @@ export class ProgramSummaryDto implements interfaces.IProgramSummaryDto {
             this.type = _data["type"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.status = _data["status"];
+            this.isPublic = _data["isPublic"];
             this.currentVersion = _data["currentVersion"] ? VersionInfoDto.fromJS(_data["currentVersion"]) : <any>undefined;
             this.versionCount = _data["versionCount"];
             (<any>this).hasVersions = _data["hasVersions"];
@@ -13389,6 +13406,7 @@ export class ProgramSummaryDto implements interfaces.IProgramSummaryDto {
         data["type"] = this.type;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["status"] = this.status;
+        data["isPublic"] = this.isPublic;
         data["currentVersion"] = this.currentVersion ? this.currentVersion.toJSON() : <any>undefined;
         data["versionCount"] = this.versionCount;
         data["hasVersions"] = this.hasVersions;
@@ -13517,6 +13535,7 @@ export class ProgramUpdateDto implements interfaces.IProgramUpdateDto {
     mainFile?: string | undefined;
     uiType?: string | undefined;
     uiConfiguration?: any | undefined;
+    isPublic?: boolean | undefined;
     metadata?: any | undefined;
     deploymentInfo?: AppDeploymentInfo;
 
@@ -13538,6 +13557,7 @@ export class ProgramUpdateDto implements interfaces.IProgramUpdateDto {
             this.mainFile = _data["mainFile"];
             this.uiType = _data["uiType"];
             this.uiConfiguration = _data["uiConfiguration"];
+            this.isPublic = _data["isPublic"];
             this.metadata = _data["metadata"];
             this.deploymentInfo = _data["deploymentInfo"] ? AppDeploymentInfo.fromJS(_data["deploymentInfo"]) : <any>undefined;
         }
@@ -13559,6 +13579,7 @@ export class ProgramUpdateDto implements interfaces.IProgramUpdateDto {
         data["mainFile"] = this.mainFile;
         data["uiType"] = this.uiType;
         data["uiConfiguration"] = this.uiConfiguration;
+        data["isPublic"] = this.isPublic;
         data["metadata"] = this.metadata;
         data["deploymentInfo"] = this.deploymentInfo ? this.deploymentInfo.toJSON() : <any>undefined;
         return data;
@@ -22595,7 +22616,7 @@ export class UserDetailDto implements interfaces.IUserDetailDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
     createdDate?: Date;
@@ -22621,11 +22642,7 @@ export class UserDetailDto implements interfaces.IUserDetailDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.fullName = _data["fullName"];
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
+            this.role = _data["role"];
             this.isActive = _data["isActive"];
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
             this.createdDate = _data["createdDate"] ? new Date(_data["createdDate"].toString()) : <any>undefined;
@@ -22663,11 +22680,7 @@ export class UserDetailDto implements interfaces.IUserDetailDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["fullName"] = this.fullName;
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
+        data["role"] = this.role;
         data["isActive"] = this.isActive;
         data["lastLoginDate"] = this.lastLoginDate ? this.lastLoginDate.toISOString() : <any>undefined;
         data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
@@ -22750,7 +22763,7 @@ export class UserDto implements interfaces.IUserDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
     createdDate?: Date;
@@ -22772,11 +22785,7 @@ export class UserDto implements interfaces.IUserDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.fullName = _data["fullName"];
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
+            this.role = _data["role"];
             this.isActive = _data["isActive"];
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
             this.createdDate = _data["createdDate"] ? new Date(_data["createdDate"].toString()) : <any>undefined;
@@ -22798,11 +22807,7 @@ export class UserDto implements interfaces.IUserDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["fullName"] = this.fullName;
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
+        data["role"] = this.role;
         data["isActive"] = this.isActive;
         data["lastLoginDate"] = this.lastLoginDate ? this.lastLoginDate.toISOString() : <any>undefined;
         data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
@@ -22867,7 +22872,7 @@ export class UserListDto implements interfaces.IUserListDto {
     email?: string | undefined;
     username?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean;
     lastLoginDate?: Date | undefined;
 
@@ -22886,11 +22891,7 @@ export class UserListDto implements interfaces.IUserListDto {
             this.email = _data["email"];
             this.username = _data["username"];
             this.fullName = _data["fullName"];
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
+            this.role = _data["role"];
             this.isActive = _data["isActive"];
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
         }
@@ -22909,11 +22910,7 @@ export class UserListDto implements interfaces.IUserListDto {
         data["email"] = this.email;
         data["username"] = this.username;
         data["fullName"] = this.fullName;
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
+        data["role"] = this.role;
         data["isActive"] = this.isActive;
         data["lastLoginDate"] = this.lastLoginDate ? this.lastLoginDate.toISOString() : <any>undefined;
         return data;
@@ -23226,7 +23223,7 @@ export class UserProfileDto implements interfaces.IUserProfileDto {
     id?: string | undefined;
     username?: string | undefined;
     fullName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     createdDate?: Date;
     lastLoginDate?: Date | undefined;
 
@@ -23244,11 +23241,7 @@ export class UserProfileDto implements interfaces.IUserProfileDto {
             this.id = _data["id"];
             this.username = _data["username"];
             this.fullName = _data["fullName"];
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
+            this.role = _data["role"];
             this.createdDate = _data["createdDate"] ? new Date(_data["createdDate"].toString()) : <any>undefined;
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
         }
@@ -23266,11 +23259,7 @@ export class UserProfileDto implements interfaces.IUserProfileDto {
         data["id"] = this.id;
         data["username"] = this.username;
         data["fullName"] = this.fullName;
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
+        data["role"] = this.role;
         data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
         data["lastLoginDate"] = this.lastLoginDate ? this.lastLoginDate.toISOString() : <any>undefined;
         return data;
@@ -23377,7 +23366,7 @@ export class UserRegisterDto implements interfaces.IUserRegisterDto {
 }
 
 export class UserRoleUpdateDto implements interfaces.IUserRoleUpdateDto {
-    roles!: string[];
+    role!: string;
 
     constructor(data?: interfaces.IUserRoleUpdateDto) {
         if (data) {
@@ -23386,18 +23375,11 @@ export class UserRoleUpdateDto implements interfaces.IUserRoleUpdateDto {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.roles = [];
-        }
     }
 
     init(_data?: any) {
         if (_data) {
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
+            this.role = _data["role"];
         }
     }
 
@@ -23410,11 +23392,7 @@ export class UserRoleUpdateDto implements interfaces.IUserRoleUpdateDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
+        data["role"] = this.role;
         return data;
     }
 }
@@ -23424,7 +23402,7 @@ export class UserSearchDto implements interfaces.IUserSearchDto {
     username?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    roles?: string[] | undefined;
+    role?: string | undefined;
     isActive?: boolean | undefined;
     createdFrom?: Date | undefined;
     createdTo?: Date | undefined;
@@ -23446,11 +23424,7 @@ export class UserSearchDto implements interfaces.IUserSearchDto {
             this.username = _data["username"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
+            this.role = _data["role"];
             this.isActive = _data["isActive"];
             this.createdFrom = _data["createdFrom"] ? new Date(_data["createdFrom"].toString()) : <any>undefined;
             this.createdTo = _data["createdTo"] ? new Date(_data["createdTo"].toString()) : <any>undefined;
@@ -23472,11 +23446,7 @@ export class UserSearchDto implements interfaces.IUserSearchDto {
         data["username"] = this.username;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
+        data["role"] = this.role;
         data["isActive"] = this.isActive;
         data["createdFrom"] = this.createdFrom ? this.createdFrom.toISOString() : <any>undefined;
         data["createdTo"] = this.createdTo ? this.createdTo.toISOString() : <any>undefined;
@@ -25955,6 +25925,7 @@ export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean;
+    isPublic?: boolean;
     templateId?: string | undefined;
 
     constructor(data?: interfaces.IWorkflowCreateDto) {
@@ -25996,6 +25967,7 @@ export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
                 }
             }
             this.isTemplate = _data["isTemplate"];
+            this.isPublic = _data["isPublic"];
             this.templateId = _data["templateId"];
         }
     }
@@ -26037,6 +26009,7 @@ export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
             }
         }
         data["isTemplate"] = this.isTemplate;
+        data["isPublic"] = this.isPublic;
         data["templateId"] = this.templateId;
         return data;
     }
@@ -26217,6 +26190,7 @@ export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
     lastExecutionId?: string | undefined;
     executionCount?: number;
     averageExecutionTime?: string | undefined;
+    isPublic?: boolean;
     complexityMetrics?: WorkflowComplexityMetrics;
     validationResult?: WorkflowValidationResult;
 
@@ -26268,6 +26242,7 @@ export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
             this.lastExecutionId = _data["lastExecutionId"];
             this.executionCount = _data["executionCount"];
             this.averageExecutionTime = _data["averageExecutionTime"];
+            this.isPublic = _data["isPublic"];
             this.complexityMetrics = _data["complexityMetrics"] ? WorkflowComplexityMetrics.fromJS(_data["complexityMetrics"]) : <any>undefined;
             this.validationResult = _data["validationResult"] ? WorkflowValidationResult.fromJS(_data["validationResult"]) : <any>undefined;
         }
@@ -26319,6 +26294,7 @@ export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
         data["lastExecutionId"] = this.lastExecutionId;
         data["executionCount"] = this.executionCount;
         data["averageExecutionTime"] = this.averageExecutionTime;
+        data["isPublic"] = this.isPublic;
         data["complexityMetrics"] = this.complexityMetrics ? this.complexityMetrics.toJSON() : <any>undefined;
         data["validationResult"] = this.validationResult ? this.validationResult.toJSON() : <any>undefined;
         return data;
@@ -29229,6 +29205,7 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean | undefined;
+    isPublic?: boolean | undefined;
 
     constructor(data?: interfaces.IWorkflowUpdateDto) {
         if (data) {
@@ -29269,6 +29246,7 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
                 }
             }
             this.isTemplate = _data["isTemplate"];
+            this.isPublic = _data["isPublic"];
         }
     }
 
@@ -29309,6 +29287,7 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
             }
         }
         data["isTemplate"] = this.isTemplate;
+        data["isPublic"] = this.isPublic;
         return data;
     }
 }

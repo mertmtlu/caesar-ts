@@ -5,7 +5,7 @@ import { api } from '@/api/api';
 import { SortDirection } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
-import { VersionCreateDto, VersionFileCreateDto, VersionReviewSubmissionDto } from '@/api';
+import { VersionCreateDto, VersionFileCreateDto, VersionReviewSubmissionDto, ProgramUpdateDto } from '@/api';
 import ProgramUserAssignmentModal from '@/components/admin/ProgramUserAssignmentModal';
 import IconDisplay from '@/components/icons/IconDisplay';
 import IconUploader from '@/components/icons/IconUploader';
@@ -38,6 +38,7 @@ interface ProjectDetail {
   currentVersion?: string;
   mainFile?: string;
   uiType: string;
+  isPublic: boolean;
   deploymentInfo?: any;
   permissions?: any[];
   stats?: {
@@ -109,6 +110,9 @@ const ProjectDetailPage: React.FC = () => {
   const [isUploadingIcon, setIsUploadingIcon] = useState(false);
   const [iconError, setIconError] = useState<string | null>(null);
 
+  // Visibility management state
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+
 
   useEffect(() => {
     if (projectId) {
@@ -141,6 +145,7 @@ const ProjectDetailPage: React.FC = () => {
           currentVersion: data.currentVersion,
           mainFile: data.mainFile,
           uiType: data.uiType || 'standard',
+          isPublic: data.isPublic || false,
           deploymentInfo: data.deploymentInfo,
           permissions: data.permissions,
           stats: data.stats
@@ -644,6 +649,39 @@ Add your project documentation here.`,
     setIconError(error);
   };
 
+  const toggleVisibility = async () => {
+    if (!project || !projectId) return;
+
+    try {
+      setIsUpdatingVisibility(true);
+      setError(null);
+
+      const updateDto = new ProgramUpdateDto({
+        name: project.name,
+        description: project.description,
+        language: project.language,
+        type: project.type,
+        uiType: project.uiType,
+        isPublic: !project.isPublic,
+        mainFile: project.mainFile
+      });
+
+      const response = await api.programs.programs_Update(projectId, updateDto);
+
+      if (response.success) {
+        // Update local state
+        setProject(prev => prev ? { ...prev, isPublic: !prev.isPublic } : null);
+      } else {
+        setError(response.message || 'Failed to update project visibility');
+      }
+    } catch (error) {
+      console.error('Failed to update visibility:', error);
+      setError('Failed to update project visibility. Please try again.');
+    } finally {
+      setIsUpdatingVisibility(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -893,6 +931,166 @@ Add your project documentation here.`,
         </div>
       </div>
 
+      {/* Project Visibility Section */}
+      <div className="border border-gray-200 dark:border-gray-600 rounded-xl p-6 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-800/80 shadow-sm">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
+                project.isPublic 
+                  ? 'bg-emerald-100 dark:bg-emerald-900/30' 
+                  : 'bg-gray-100 dark:bg-gray-700'
+              }`}>
+                {project.isPublic ? (
+                  <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-3">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Project Visibility
+                  </h2>
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    project.isPublic 
+                      ? 'bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800' 
+                      : 'bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                  }`}>
+                    {project.isPublic ? 'Public & Discoverable' : 'Private & Restricted'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
+                  {project.isPublic 
+                    ? 'Anyone with access to the platform can discover and view this project'
+                    : 'Only you and users you explicitly grant permissions can access this project'
+                  }
+                </p>
+              </div>
+            </div>
+            
+            {/* Benefits/Features list */}
+            <div className="mt-5 pl-15">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+                {project.isPublic ? 'Public Project Benefits' : 'Private Project Benefits'}
+              </h3>
+              <ul className={`text-sm space-y-2 ${
+                project.isPublic 
+                  ? 'text-emerald-600 dark:text-emerald-400' 
+                  : 'text-gray-600 dark:text-gray-400'
+              }`}>
+                {project.isPublic ? (
+                  <>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Appears in public project listings and search results</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Accessible to all authenticated platform users</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Enables broader collaboration and feedback opportunities</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Increased visibility for showcasing your work</span>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Hidden from public project listings and search</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Access controlled exclusively through permissions</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Enhanced security and privacy protection</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Perfect for internal or sensitive projects</span>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </div>
+          </div>
+          
+          {/* Toggle Switch */}
+          <div className="flex flex-col items-end space-y-4 ml-8">
+            <button
+              type="button"
+              onClick={toggleVisibility}
+              disabled={isUpdatingVisibility}
+              className={`group relative inline-flex h-8 w-14 items-center rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 ${
+                project.isPublic 
+                  ? 'bg-emerald-500 focus:ring-emerald-500 shadow-emerald-200/50 dark:shadow-emerald-900/30' 
+                  : 'bg-gray-300 focus:ring-gray-400 shadow-gray-200/50 dark:bg-gray-600 dark:shadow-gray-800/30'
+              } shadow-lg`}
+            >
+              <span
+                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 ring-0 ${
+                  project.isPublic ? 'translate-x-7' : 'translate-x-1'
+                } ${isUpdatingVisibility ? 'animate-pulse' : ''}`}
+              />
+            </button>
+            
+            {/* Action button */}
+            <div className="text-right space-y-1">
+              <button
+                onClick={toggleVisibility}
+                disabled={isUpdatingVisibility}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border disabled:opacity-50 disabled:cursor-not-allowed ${
+                  project.isPublic 
+                    ? 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700' 
+                    : 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-900/30 dark:border-emerald-700 dark:hover:bg-emerald-900/50'
+                }`}
+              >
+                {isUpdatingVisibility ? (
+                  <span className="inline-flex items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Updating...
+                  </span>
+                ) : (
+                  project.isPublic ? 'Make Private' : 'Make Public'
+                )}
+              </button>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Changes take effect immediately
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Versions Section */}
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">

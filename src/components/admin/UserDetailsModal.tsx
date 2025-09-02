@@ -36,7 +36,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   });
   
   // Role management
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedRole, setSelectedRole] = useState<string>('');
   
   // Program assignment modal
   const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
@@ -55,7 +55,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         lastName: user.lastName || '',
         email: user.email || ''
       });
-      setSelectedRoles([...(user.roles || [])]);
+      setSelectedRole(user.role || '');
     }
   }, [user]);
 
@@ -131,7 +131,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       setError(null);
       
       const roleUpdateDto = new UserRoleUpdateDto({
-        roles: selectedRoles
+        role: selectedRole
       });
       
       const response = await api.users.users_UpdateRoles(user.id!, roleUpdateDto);
@@ -211,11 +211,17 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
     if (roleLower === 'admin') {
       return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
     }
-    if (roleLower === 'user') {
+    if (roleLower === 'externaldev') {
+      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    }
+    if (roleLower === 'internaldev') {
       return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
     }
-    if (roleLower === 'manager') {
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+    if (roleLower === 'externaluser') {
+      return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+    }
+    if (roleLower === 'internaluser') {
+      return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
     }
     return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
   };
@@ -272,7 +278,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                         {user.fullName}
                       </h3>
-                      {user.roles?.includes('admin') && (
+                      {user.role === 'Admin' && (
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
                           <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -437,47 +443,37 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
               
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {user.roles?.map(role => (
+                  {user.role && (
                     <span
-                      key={role}
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(role)}`}
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}
                     >
-                      {role}
+                      {user.role}
                     </span>
-                  ))}
+                  )}
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Update Roles
+                    Update Role
                   </label>
-                  <div className="space-y-2">
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 mb-2"
+                  >
+                    <option value="">Select Role</option>
                     {availableRoles.map(role => (
-                      <label key={role} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedRoles.includes(role)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedRoles(prev => [...prev, role]);
-                            } else {
-                              setSelectedRoles(prev => prev.filter(r => r !== role));
-                            }
-                          }}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="ml-2 text-sm text-gray-900 dark:text-white">{role}</span>
-                      </label>
+                      <option key={role} value={role}>{role}</option>
                     ))}
-                  </div>
+                  </select>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleSaveRoles}
-                    disabled={isSaving}
+                    disabled={isSaving || !selectedRole}
                     className="mt-2"
                   >
-                    Update Roles
+                    Update Role
                   </Button>
                 </div>
               </div>

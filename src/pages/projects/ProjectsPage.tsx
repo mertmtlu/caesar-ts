@@ -26,6 +26,7 @@ interface ProjectListItem {
   hasComponents: boolean;
   newestComponentType?: string;
   iconData?: string | null;
+  isPublic: boolean;
 }
 
 interface ProjectToDelete {
@@ -109,22 +110,28 @@ const ProjectsPage: React.FC = () => {
       );
 
       if (response.success && response.data) {
-        const projectItems = response.data.items?.map(project => ({
-          id: project.id || '',
-          name: project.name || 'Untitled Project',
-          description: project.description,
-          language: project.language || 'Unknown',
-          type: project.type || 'Unknown',
-          createdAt: project.createdAt || new Date(),
-          status: project.status || 'unknown',
-          versionCount: project.versionCount || 0,
-          hasVersions: project.hasVersions || false,
-          currentVersion: project.currentVersion,
-          componentCount: project.componentCount || 0,
-          hasComponents: project.hasComponents || false,
-          newestComponentType: project.newestComponentType
-        })) || [];
+        console.log('Raw API response data:', response.data.items);
+        const projectItems = response.data.items?.map(project => {
+          console.log('Project data:', project.name, 'isPublic:', project.isPublic);
+          return {
+            id: project.id || '',
+            name: project.name || 'Untitled Project',
+            description: project.description,
+            language: project.language || 'Unknown',
+            type: project.type || 'Unknown',
+            createdAt: project.createdAt || new Date(),
+            status: project.status || 'unknown',
+            versionCount: project.versionCount || 0,
+            hasVersions: project.hasVersions || false,
+            currentVersion: project.currentVersion,
+            componentCount: project.componentCount || 0,
+            hasComponents: project.hasComponents || false,
+            newestComponentType: project.newestComponentType,
+            isPublic: project.isPublic || false
+          };
+        }) || [];
 
+        console.log('Final projectItems array:', projectItems.map(p => ({ name: p.name, isPublic: p.isPublic })));
         setProjects(projectItems);
         setTotalCount(response.data.totalCount || 0);
         setTotalPages(response.data.totalPages || 0);
@@ -173,7 +180,8 @@ const ProjectsPage: React.FC = () => {
           currentVersion: undefined, // Search endpoint doesn't have rich data yet
           componentCount: 0, // Search endpoint doesn't have rich data yet
           hasComponents: false, // Search endpoint doesn't have rich data yet
-          newestComponentType: undefined // Search endpoint doesn't have rich data yet
+          newestComponentType: undefined, // Search endpoint doesn't have rich data yet
+          isPublic: project.isPublic || false
         })) || [];
 
         setProjects(projectItems);
@@ -489,18 +497,37 @@ const ProjectsPage: React.FC = () => {
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">
-                      {project.name}
-                    </h3>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">
+                        {project.name}
+                      </h3>
+                    </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {project.language} • {project.type}
                     </p>
                   </div>
                 </div>
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                {/* <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
                   {project.status}
-                </span>
+                </span> */}
+                {project.isPublic ? (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700/50 shadow-sm" title="Public project - discoverable by all authenticated users">
+                    <svg className="w-3 h-3 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="font-medium">Public</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200 dark:bg-gray-800/70 dark:text-gray-300 dark:border-gray-600/50 shadow-sm" title="Private project - restricted access only">
+                    <svg className="w-3 h-3 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span className="font-medium">Private</span>
+                  </span>
+                )}
+                
               </div>
+              
 
               {project.description ? (
                 <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">

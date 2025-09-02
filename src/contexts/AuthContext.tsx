@@ -11,7 +11,7 @@ interface User {
   firstName?: string;
   lastName?: string;
   fullName?: string;
-  roles?: string[];
+  role?: string;
   isActive?: boolean;
   lastLoginDate?: Date;
   createdDate?: Date;
@@ -184,13 +184,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const hasRole = (role: string): boolean => {
-    if (!user?.roles) return false;
-    return user.roles.some(userRole => 
-      userRole.toLowerCase() === role.toLowerCase()
-    );
+    if (!user?.role) return false;
+    return user.role.toLowerCase() === role.toLowerCase();
   };
 
-  const isAdmin = hasRole('admin') || hasRole('administrator');
+  const isAdmin = hasRole('Admin');
   const isAuthenticated = !!user && !!localStorage.getItem('accessToken');
 
   const value: AuthContextType = {
