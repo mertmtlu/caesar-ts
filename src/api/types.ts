@@ -9323,6 +9323,383 @@ export class FloodHazardResponseDto implements interfaces.IFloodHazardResponseDt
     }
 }
 
+export class GroupCreateDto implements interfaces.IGroupCreateDto {
+    name!: string;
+    description?: string | undefined;
+    memberIds?: string[] | undefined;
+    metadata?: any | undefined;
+
+    constructor(data?: interfaces.IGroupCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            if (Array.isArray(_data["memberIds"])) {
+                this.memberIds = [] as any;
+                for (let item of _data["memberIds"])
+                    this.memberIds!.push(item);
+            }
+            this.metadata = _data["metadata"];
+        }
+    }
+
+    static fromJS(data: any): GroupCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        if (Array.isArray(this.memberIds)) {
+            data["memberIds"] = [];
+            for (let item of this.memberIds)
+                data["memberIds"].push(item);
+        }
+        data["metadata"] = this.metadata;
+        return data;
+    }
+}
+
+export class GroupDto implements interfaces.IGroupDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    createdBy?: string | undefined;
+    createdByName?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    isActive?: boolean;
+    memberCount?: number;
+    members?: GroupMemberDto[] | undefined;
+    metadata?: any | undefined;
+
+    constructor(data?: interfaces.IGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.createdBy = _data["createdBy"];
+            this.createdByName = _data["createdByName"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
+            this.isActive = _data["isActive"];
+            this.memberCount = _data["memberCount"];
+            if (Array.isArray(_data["members"])) {
+                this.members = [] as any;
+                for (let item of _data["members"])
+                    this.members!.push(GroupMemberDto.fromJS(item));
+            }
+            this.metadata = _data["metadata"];
+        }
+    }
+
+    static fromJS(data: any): GroupDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["createdBy"] = this.createdBy;
+        data["createdByName"] = this.createdByName;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["memberCount"] = this.memberCount;
+        if (Array.isArray(this.members)) {
+            data["members"] = [];
+            for (let item of this.members)
+                data["members"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["metadata"] = this.metadata;
+        return data;
+    }
+}
+
+export class GroupListDto implements interfaces.IGroupListDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    createdBy?: string | undefined;
+    createdByName?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    isActive?: boolean;
+    memberCount?: number;
+
+    constructor(data?: interfaces.IGroupListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.createdBy = _data["createdBy"];
+            this.createdByName = _data["createdByName"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
+            this.isActive = _data["isActive"];
+            this.memberCount = _data["memberCount"];
+        }
+    }
+
+    static fromJS(data: any): GroupListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["createdBy"] = this.createdBy;
+        data["createdByName"] = this.createdByName;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["memberCount"] = this.memberCount;
+        return data;
+    }
+}
+
+export class GroupListDtoPagedResponse implements interfaces.IGroupListDtoPagedResponse {
+    items?: GroupListDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    readonly hasPreviousPage?: boolean;
+    readonly hasNextPage?: boolean;
+
+    constructor(data?: interfaces.IGroupListDtoPagedResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(GroupListDto.fromJS(item));
+            }
+            this.pageNumber = _data["pageNumber"];
+            this.pageSize = _data["pageSize"];
+            this.totalPages = _data["totalPages"];
+            this.totalCount = _data["totalCount"];
+            (<any>this).hasPreviousPage = _data["hasPreviousPage"];
+            (<any>this).hasNextPage = _data["hasNextPage"];
+        }
+    }
+
+    static fromJS(data: any): GroupListDtoPagedResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupListDtoPagedResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["pageNumber"] = this.pageNumber;
+        data["pageSize"] = this.pageSize;
+        data["totalPages"] = this.totalPages;
+        data["totalCount"] = this.totalCount;
+        data["hasPreviousPage"] = this.hasPreviousPage;
+        data["hasNextPage"] = this.hasNextPage;
+        return data;
+    }
+}
+
+export class GroupMemberDto implements interfaces.IGroupMemberDto {
+    userId?: string | undefined;
+    username?: string | undefined;
+    fullName?: string | undefined;
+    email?: string | undefined;
+    joinedAt?: Date;
+    isActive?: boolean;
+
+    constructor(data?: interfaces.IGroupMemberDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.username = _data["username"];
+            this.fullName = _data["fullName"];
+            this.email = _data["email"];
+            this.joinedAt = _data["joinedAt"] ? new Date(_data["joinedAt"].toString()) : <any>undefined;
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): GroupMemberDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupMemberDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["username"] = this.username;
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["joinedAt"] = this.joinedAt ? this.joinedAt.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export class GroupSearchDto implements interfaces.IGroupSearchDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    createdBy?: string | undefined;
+    isActive?: boolean | undefined;
+    createdAfter?: Date | undefined;
+    createdBefore?: Date | undefined;
+    hasMembers?: boolean | undefined;
+    minMemberCount?: number | undefined;
+    maxMemberCount?: number | undefined;
+
+    constructor(data?: interfaces.IGroupSearchDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.createdBy = _data["createdBy"];
+            this.isActive = _data["isActive"];
+            this.createdAfter = _data["createdAfter"] ? new Date(_data["createdAfter"].toString()) : <any>undefined;
+            this.createdBefore = _data["createdBefore"] ? new Date(_data["createdBefore"].toString()) : <any>undefined;
+            this.hasMembers = _data["hasMembers"];
+            this.minMemberCount = _data["minMemberCount"];
+            this.maxMemberCount = _data["maxMemberCount"];
+        }
+    }
+
+    static fromJS(data: any): GroupSearchDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupSearchDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["createdBy"] = this.createdBy;
+        data["isActive"] = this.isActive;
+        data["createdAfter"] = this.createdAfter ? this.createdAfter.toISOString() : <any>undefined;
+        data["createdBefore"] = this.createdBefore ? this.createdBefore.toISOString() : <any>undefined;
+        data["hasMembers"] = this.hasMembers;
+        data["minMemberCount"] = this.minMemberCount;
+        data["maxMemberCount"] = this.maxMemberCount;
+        return data;
+    }
+}
+
+export class GroupUpdateDto implements interfaces.IGroupUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    isActive?: boolean | undefined;
+    metadata?: any | undefined;
+
+    constructor(data?: interfaces.IGroupUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.isActive = _data["isActive"];
+            this.metadata = _data["metadata"];
+        }
+    }
+
+    static fromJS(data: any): GroupUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GroupUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["isActive"] = this.isActive;
+        data["metadata"] = this.metadata;
+        return data;
+    }
+}
+
 export class HazardResponseDto implements interfaces.IHazardResponseDto {
     score?: number;
     level?: string | undefined;

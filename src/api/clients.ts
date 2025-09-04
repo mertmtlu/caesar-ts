@@ -18,6 +18,7 @@ import { WorkflowsClient } from './WorkflowsClient'
 import {UIWorkflowClient} from './UIWorkflowClient'
 import { RemoteAppsClient } from './RemoteAppsClient'
 import { IconsClient } from './IconsClient'
+import { GroupsClient } from './GroupsClient'
 
 export {
     AlternativeTMsClient,
@@ -40,5 +41,6 @@ export {
     WorkflowsClient,
     UIWorkflowClient,
     RemoteAppsClient,
-    IconsClient
+    IconsClient,
+    GroupsClient
 }

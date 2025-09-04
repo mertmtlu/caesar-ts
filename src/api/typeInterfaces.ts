@@ -1544,6 +1544,77 @@ export interface IFloodHazardResponseDto {
     extremeEventCondition?: string | undefined;
 }
 
+export interface IGroupCreateDto {
+    name: string;
+    description?: string | undefined;
+    memberIds?: string[] | undefined;
+    metadata?: any | undefined;
+}
+
+export interface IGroupDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    createdBy?: string | undefined;
+    createdByName?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    isActive?: boolean;
+    memberCount?: number;
+    members?: IGroupMemberDto[] | undefined;
+    metadata?: any | undefined;
+}
+
+export interface IGroupListDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    createdBy?: string | undefined;
+    createdByName?: string | undefined;
+    createdAt?: Date;
+    modifiedAt?: Date | undefined;
+    isActive?: boolean;
+    memberCount?: number;
+}
+
+export interface IGroupListDtoPagedResponse {
+    items?: IGroupListDto[] | undefined;
+    pageNumber?: number;
+    pageSize?: number;
+    totalPages?: number;
+    totalCount?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+export interface IGroupMemberDto {
+    userId?: string | undefined;
+    username?: string | undefined;
+    fullName?: string | undefined;
+    email?: string | undefined;
+    joinedAt?: Date;
+    isActive?: boolean;
+}
+
+export interface IGroupSearchDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    createdBy?: string | undefined;
+    isActive?: boolean | undefined;
+    createdAfter?: Date | undefined;
+    createdBefore?: Date | undefined;
+    hasMembers?: boolean | undefined;
+    minMemberCount?: number | undefined;
+    maxMemberCount?: number | undefined;
+}
+
+export interface IGroupUpdateDto {
+    name?: string | undefined;
+    description?: string | undefined;
+    isActive?: boolean | undefined;
+    metadata?: any | undefined;
+}
+
 export interface IHazardResponseDto {
     score?: number;
     level?: string | undefined;

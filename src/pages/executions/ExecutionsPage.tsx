@@ -1754,64 +1754,67 @@ const ExecutionsPage: React.FC = () => {
 
       {/* Execute Modal */}
       {executeModal.isOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white dark:bg-gray-800">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                Execute {executeModal.program?.name || executeModal.workflow?.name}
+        <div className="fixed inset-0 bg-gray-700 bg-opacity-70 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+          <div className="relative p-8 border w-full max-w-4xl shadow-2xl rounded-2xl bg-white dark:bg-gray-900">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          Execute {executeModal.program?.name || executeModal.workflow?.name}
               </h3>
               <button
-                onClick={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                disabled={executeModal.isExecuting}
+          onClick={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
+          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          disabled={executeModal.isExecuting}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
               </button>
             </div>
             
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-[36rem] overflow-y-auto">
               {executeModal.componentElements && executeModal.componentElements.length > 0 ? (
-                <ComponentForm
-                  elements={executeModal.componentElements}
-                  onSubmit={confirmExecution}
-                  onCancel={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
-                  isSubmitting={executeModal.isExecuting}
-                  title={`${executeModal.executionType === 'program' ? 'Program' : 'Workflow'} Parameters`}
-                />
+          <ComponentForm
+            elements={executeModal.componentElements}
+            onSubmit={confirmExecution}
+            onCancel={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
+            isSubmitting={executeModal.isExecuting}
+            title={`${executeModal.executionType === 'program' ? 'Program' : 'Workflow'} Parameters`}
+          />
               ) : (
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {executeModal.executionType === 'program' && executeModal.program
-                      ? `Are you sure you want to execute "${executeModal.program.name}"? This will start a new execution with the current version.`
-                      : executeModal.executionType === 'workflow' && executeModal.workflow
-                      ? `Are you sure you want to execute "${executeModal.workflow.name}"? This will start a new workflow execution.`
-                      : `Are you sure you want to execute this ${executeModal.executionType}?`
-                    }
-                  </p>
-                  <div className="flex items-center justify-end space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
-                      disabled={executeModal.isExecuting}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="primary"
-                      onClick={() => confirmExecution()}
-                      loading={executeModal.isExecuting}
-                      disabled={executeModal.isExecuting}
-                    >
-                      Execute {executeModal.executionType === 'program' ? 'Program' : 'Workflow'}
-                    </Button>
-                  </div>
-                </div>
+          <div className="space-y-6">
+            <p className="text-lg text-gray-700 dark:text-gray-300">
+              {executeModal.executionType === 'program' && executeModal.program
+                ? `Are you sure you want to execute "${executeModal.program.name}"? This will start a new execution with the current version.`
+                : executeModal.executionType === 'workflow' && executeModal.workflow
+                ? `Are you sure you want to execute "${executeModal.workflow.name}"? This will start a new workflow execution.`
+                : `Are you sure you want to execute this ${executeModal.executionType}?`
+              }
+            </p>
+            <div className="flex items-center justify-end space-x-4">
+              <Button
+                variant="outline"
+                onClick={() => setExecuteModal({ isOpen: false, program: null, workflow: null, isExecuting: false, componentElements: null, executionType: 'program' })}
+                disabled={executeModal.isExecuting}
+                size="lg"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => confirmExecution()}
+                loading={executeModal.isExecuting}
+                disabled={executeModal.isExecuting}
+                size="lg"
+              >
+                Execute {executeModal.executionType === 'program' ? 'Program' : 'Workflow'}
+              </Button>
+            </div>
+          </div>
               )}
             </div>
           </div>
         </div>
+                
       )}
     </div>
   );

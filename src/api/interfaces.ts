@@ -1032,6 +1032,100 @@ export interface IFilesClient {
     files_BulkDeleteFiles(programId: string, versionId: string, body: string[] | undefined): Promise<types.IBulkOperationResultApiResponse>;
 }
 
+export interface IGroupsClient {
+
+    /**
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @return OK
+     */
+    groups_GetAll(pageNumber: number | undefined, pageSize: number | undefined): Promise<types.IGroupListDtoPagedResponse>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_Create(body: types.IGroupCreateDto | undefined): Promise<types.IGroupDto>;
+
+    /**
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_Search(pageNumber: number | undefined, pageSize: number | undefined, body: types.IGroupSearchDto | undefined): Promise<types.IGroupListDtoPagedResponse>;
+
+    /**
+     * @return OK
+     */
+    groups_GetById(id: string): Promise<types.IGroupDto>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_Update(id: string, body: types.IGroupUpdateDto | undefined): Promise<types.IGroupDto>;
+
+    /**
+     * @return OK
+     */
+    groups_Delete(id: string): Promise<void>;
+
+    /**
+     * @return OK
+     */
+    groups_GetActive(): Promise<types.IGroupListDto[]>;
+
+    /**
+     * @return OK
+     */
+    groups_GetByCreator(creatorId: string): Promise<types.IGroupListDto[]>;
+
+    /**
+     * @return OK
+     */
+    groups_GetUserGroups(userId: string): Promise<types.IGroupListDto[]>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_UpdateStatus(id: string, body: boolean | undefined): Promise<void>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_AddMember(id: string, body: string | undefined): Promise<void>;
+
+    /**
+     * @return OK
+     */
+    groups_GetMembers(id: string): Promise<types.IGroupMemberDto[]>;
+
+    /**
+     * @return OK
+     */
+    groups_RemoveMember(id: string, userId: string): Promise<void>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_AddMembers(id: string, body: string[] | undefined): Promise<void>;
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    groups_RemoveMembers(id: string, body: string[] | undefined): Promise<void>;
+
+    /**
+     * @return OK
+     */
+    groups_CheckMembership(id: string, userId: string): Promise<boolean>;
+}
+
 export interface IIconsClient {
 
     /**

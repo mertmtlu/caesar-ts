@@ -4,6 +4,77 @@ import { UIElement, ValidationRule } from '@/types/componentDesigner';
 import Button from '@/components/common/Button';
 import FileInput, { FileData } from '@/components/ui-elements/FileInput';
 
+// --- ADDED FOR MAP SUPPORT ---
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Fix for default marker icon issue with modern bundlers.
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
+type Point = { lat: number; lng: number };
+
+// Reusable InteractiveMap component (could be moved to its own file)
+const InteractiveMap: React.FC<{
+  element: UIElement;
+  value: Point[];
+  onChange: (newValue: Point[]) => void;
+}> = ({ element, value, onChange }) => {
+  const { mapConfig } = element;
+  if (!mapConfig) return <div>Map configuration is missing.</div>;
+  
+  const center: [number, number] = [mapConfig.defaultCenter.lat, mapConfig.defaultCenter.lng];
+
+  const MapEventsHandler = () => {
+    useMapEvents({
+      click(e) {
+        if (element.disabled) return;
+        const newPoint = { lat: e.latlng.lat, lng: e.latlng.lng };
+        let newPoints = [];
+
+        if (mapConfig.selectionMode === 'single') {
+          newPoints = [newPoint];
+        } else {
+          newPoints = [...(value || []), newPoint];
+          if (mapConfig.maxPoints && newPoints.length > mapConfig.maxPoints) {
+            newPoints.shift();
+          }
+        }
+        onChange(newPoints);
+      },
+    });
+    return null;
+  };
+
+  return (
+    <MapContainer
+      center={center}
+      zoom={mapConfig.defaultZoom}
+      scrollWheelZoom={true}
+      style={{ height: '100%', width: '100%', borderRadius: 'inherit' }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MapEventsHandler />
+      {(value || []).map((point, index) => (
+        <Marker key={index} position={[point.lat, point.lng]} />
+      ))}
+    </MapContainer>
+  );
+};
+// --- END OF ADDED MAP SUPPORT ---
+
+
 interface ComponentFormProps {
   elements: UIElement[];
   onSubmit: (formData: Record<string, any>) => void;
@@ -39,7 +110,11 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
     
     // Clear error for this field
     if (errors[elementName]) {
-      setErrors(prev => ({ ...prev, [elementName]: '' }));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[elementName];
+        return newErrors;
+      });
     }
   };
 
@@ -78,20 +153,22 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         
         // Check required fields
         if (element.required) {
-          if (element.type === 'file_input') {
-            // For file inputs, check if files are selected
-            const hasFiles = value && (
-              (Array.isArray(value) && value.length > 0) ||
-              (!Array.isArray(value) && value)
-            );
-            if (!hasFiles) {
-              newErrors[element.name] = `${element.label} is required`;
-              return;
+            let isMissing = false;
+            if (element.type === 'file_input') {
+                const hasFiles = value && ((Array.isArray(value) && value.length > 0) || (!Array.isArray(value) && value));
+                if (!hasFiles) isMissing = true;
+            } else if (element.type === 'map_input') { // ADDED: Validation for map
+                if (!value || !Array.isArray(value) || value.length === 0) {
+                    isMissing = true;
+                }
+            } else if (!value || (typeof value === 'string' && !value.trim())) {
+                isMissing = true;
             }
-          } else if (!value || (typeof value === 'string' && !value.trim())) {
-            newErrors[element.name] = `${element.label} is required`;
-            return;
-          }
+
+            if (isMissing) {
+                newErrors[element.name] = `${element.label} is required`;
+                return;
+            }
         }
         
         // Check validation rules
@@ -113,6 +190,8 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
   const validateRule = (rule: ValidationRule, value: any): boolean => {
     switch (rule.type) {
       case 'required':
+        // ADDED: Check for map input array
+        if(Array.isArray(value)) return value.length === 0;
         return !value || (typeof value === 'string' && !value.trim());
       case 'minLength':
         return typeof value === 'string' && value.length < (rule.value as number);
@@ -121,7 +200,6 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
       case 'pattern':
         return typeof value === 'string' && !!rule.value && !new RegExp(rule.value as string).test(value);
       case 'fileSize':
-        // For file inputs, validate file size
         if (Array.isArray(value)) {
           return value.some((fileData: FileData) => fileData.size > (rule.value as number));
         } else if (value) {
@@ -129,7 +207,6 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         }
         return false;
       case 'fileType':
-        // For file inputs, validate file type
         const allowedTypes = (rule.value as string).split(',');
         if (Array.isArray(value)) {
           return value.some((fileData: FileData) => !allowedTypes.includes(fileData.type));
@@ -138,7 +215,6 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         }
         return false;
       case 'fileCount':
-        // For file inputs, validate number of files
         if (Array.isArray(value)) {
           return value.length > (rule.value as number);
         }
@@ -153,12 +229,10 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
     e.preventDefault();
     
     if (validateForm()) {
-      // Convert form data to program parameters
       const parameters: Record<string, any> = {};
       elements.forEach(element => {
         if (element.type !== 'button' && element.type !== 'label') {
           if (element.type === 'table') {
-            // For table elements, collect all cell values into a structured object
             const tableData: Record<string, any> = {};
             element.tableConfig?.cells?.forEach(cellConfig => {
               const cellKey = `${element.name}_${cellConfig.cellId}`;
@@ -168,7 +242,6 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
             });
             parameters[element.name] = tableData;
           } else if (element.type === 'file_input') {
-            // For file inputs, send filename and base64 content for program execution
             const fileValue = formData[element.name];
             console.log('Processing file input for execution:', element.name, fileValue);
             if (fileValue) {
@@ -192,6 +265,8 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
             } else {
               parameters[element.name] = element.fileInputConfig?.multiple ? [] : null;
             }
+          } else if (element.type === 'map_input') { // ADDED: Submission logic for map
+            parameters[element.name] = formData[element.name] || [];
           } else {
             parameters[element.name] = formData[element.name] || element.defaultValue || '';
           }
@@ -204,11 +279,10 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
 
   // Render individual element
   const renderElement = (element: UIElement) => {
-    const value = formData[element.name] || element.defaultValue || '';
+    const value = formData[element.name] || element.defaultValue || (element.type === 'map_input' ? [] : '');
     const error = errors[element.name];
     const hasError = !!error;
 
-    // Apply custom styling
     const customStyle: React.CSSProperties = {
       backgroundColor: element.styling?.backgroundColor,
       color: element.styling?.textColor,
@@ -244,9 +318,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               style={customStyle}
             />
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -267,9 +339,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               style={customStyle}
             />
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -290,9 +360,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               style={customStyle}
             />
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -313,9 +381,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               style={customStyle}
             />
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -336,9 +402,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               style={customStyle}
             />
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -359,9 +423,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               </span>
             </label>
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -387,9 +449,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               ))}
             </select>
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -409,9 +469,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               style={customStyle}
             />
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -421,9 +479,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300" style={customStyle}>
               {element.label}
             </label>
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -480,11 +536,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
                                   {cellValue || cellConfig?.cellId}
                                 </div>
                               )}
-                              {hasCellError && (
-                                <div className="text-xs text-red-600">
-                                  {cellError}
-                                </div>
-                              )}
+                              {hasCellError && <div className="text-xs text-red-600">{cellError}</div>}
                             </div>
                           </td>
                         );
@@ -495,9 +547,7 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               </table>
             </div>
             {hasError && <p className="text-sm text-red-600">{error}</p>}
-            {element.helpText && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>
-            )}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400">{element.helpText}</p>}
           </div>
         );
 
@@ -519,12 +569,43 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
           />
         );
 
+      case 'map_input':
+        return (
+          <div key={element.id} className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {element.label}
+              {element.required && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            <div className={`w-full h-80 flex flex-col border rounded-md overflow-hidden ${hasError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}>
+              <div className="flex-1">
+                <InteractiveMap
+                  element={element}
+                  value={value || []}
+                  onChange={(newValue) => handleInputChange(element.name, newValue)}
+                />
+              </div>
+              <div className="p-2 text-xs bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 max-h-20 overflow-y-auto">
+                {(value || []).length > 0 ? (
+                  value.map((p: Point, i: number) => (
+                    <div key={i}>
+                      Point {i + 1}: {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
+                    </div>
+                  ))
+                ) : (
+                  'Click on the map to select points.'
+                )}
+              </div>
+            </div>
+            {hasError && <p className="text-sm text-red-600 mt-1">{error}</p>}
+            {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{element.helpText}</p>}
+          </div>
+        );
+
       default:
         return null;
     }
   };
 
-  // Filter out buttons and labels for form fields
   const formElements = elements.filter(element => 
     element.type !== 'button' && element.type !== 'label'
   );
@@ -542,15 +623,11 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
           </div>
         )}
 
-        {/* Render labels first */}
         {labelElements.map(renderElement)}
-
-        {/* Render form elements */}
         <div className="space-y-4">
           {formElements.map(renderElement)}
         </div>
 
-        {/* Action buttons */}
         <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
           {onCancel && (
             <Button

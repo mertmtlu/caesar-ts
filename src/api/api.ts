@@ -102,6 +102,7 @@ export class ApiClient {
     private _uiWorkflowClient!: interfaces.IUIWorkflowClient;
     private _remoteAppsClient!: interfaces.IRemoteAppsClient;
     private _iconsClient!: interfaces.IIconsClient;
+    private _groupsClient!: interfaces.IGroupsClient;
 
     /**
      * Initialize API client with base URL and authentication handlers
@@ -148,6 +149,7 @@ export class ApiClient {
         this._uiWorkflowClient = new clients.UIWorkflowClient(this.baseUrl, this.http);
         this._remoteAppsClient = new clients.RemoteAppsClient(this.baseUrl, this.http);
         this._iconsClient = new clients.IconsClient(this.baseUrl, this.http);
+        this._groupsClient = new clients.GroupsClient(this.baseUrl, this.http);
     }
 
     /**
@@ -288,6 +290,13 @@ export class ApiClient {
      */
     get iconsClient(): interfaces.IIconsClient {
         return this._iconsClient;
+    }
+
+    /**
+     * Groups management operations
+     */
+    get groupsClient(): interfaces.IGroupsClient {
+        return this._groupsClient;
     }
 
     /**

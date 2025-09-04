@@ -12,7 +12,8 @@ export type ElementType =
   | 'email_input'
   | 'password_input'
   | 'file_input'
-  | 'table';
+  | 'table'
+  | 'map_input'; // Added map_input
 
 export type ValidationRuleType = 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom' | 'fileSize' | 'fileType' | 'fileCount';
 
@@ -76,6 +77,19 @@ export interface FileInputConfig {
   uploadOnSelect?: boolean; // Whether to upload immediately on file selection
 }
 
+// Added MapConfig interface for the new element
+export interface MapConfig {
+  provider: 'osm' | 'google';
+  selectionMode: 'single' | 'multiple';
+  defaultCenter: {
+    lat: number;
+    lng: number;
+  };
+  defaultZoom: number;
+  maxPoints?: number; // Only for multiple selection mode
+  showSearch: boolean;
+}
+
 export interface UIElement {
   id: string;
   type: ElementType;
@@ -95,6 +109,8 @@ export interface UIElement {
   tableConfig?: TableConfig;
   // File input-specific properties
   fileInputConfig?: FileInputConfig;
+  // Map input-specific properties
+  mapConfig?: MapConfig;
 }
 
 export interface LayoutConfig {
@@ -329,6 +345,26 @@ export const ELEMENT_TEMPLATES: ElementTemplate[] = [
       required: false,
       size: { width: 400, height: 200 },
       tableConfig: createDefaultTableConfig(3, 3)
+    }
+  },
+  {
+    id: 'map_input',
+    name: 'Map Input',
+    type: 'map_input',
+    icon: '🗺️',
+    description: 'Interactive map for selecting points',
+    defaultProps: {
+      label: 'Location Picker',
+      name: 'location_picker',
+      required: false,
+      size: { width: 400, height: 300 },
+      mapConfig: {
+        provider: 'osm',
+        selectionMode: 'single',
+        defaultCenter: { lat: 39.9334, lng: 32.8597 }, // Centered on Ankara, Turkey
+        defaultZoom: 5, // Zoomed out to see the country
+        showSearch: true,
+      }
     }
   }
 ];
