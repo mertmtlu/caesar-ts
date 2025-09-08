@@ -1755,7 +1755,7 @@ const ExecutionsPage: React.FC = () => {
       {/* Execute Modal */}
       {executeModal.isOpen && (
         <div className="fixed inset-0 bg-gray-700 bg-opacity-70 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-          <div className="relative p-8 border w-full max-w-4xl shadow-2xl rounded-2xl bg-white dark:bg-gray-900">
+          <div className="relative p-8 border w-full max-w-6xl shadow-2xl rounded-2xl bg-white dark:bg-gray-900">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
           Execute {executeModal.program?.name || executeModal.workflow?.name}
@@ -1771,7 +1771,7 @@ const ExecutionsPage: React.FC = () => {
               </button>
             </div>
             
-            <div className="max-h-[36rem] overflow-y-auto">
+            <div className="max-h-[44rem] overflow-y-auto">
               {executeModal.componentElements && executeModal.componentElements.length > 0 ? (
           <ComponentForm
             elements={executeModal.componentElements}

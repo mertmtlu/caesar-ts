@@ -4,75 +4,8 @@ import { UIElement, ValidationRule } from '@/types/componentDesigner';
 import Button from '@/components/common/Button';
 import FileInput, { FileData } from '@/components/ui-elements/FileInput';
 
-// --- ADDED FOR MAP SUPPORT ---
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-// Fix for default marker icon issue with modern bundlers.
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-type Point = { lat: number; lng: number };
-
-// Reusable InteractiveMap component (could be moved to its own file)
-const InteractiveMap: React.FC<{
-  element: UIElement;
-  value: Point[];
-  onChange: (newValue: Point[]) => void;
-}> = ({ element, value, onChange }) => {
-  const { mapConfig } = element;
-  if (!mapConfig) return <div>Map configuration is missing.</div>;
-  
-  const center: [number, number] = [mapConfig.defaultCenter.lat, mapConfig.defaultCenter.lng];
-
-  const MapEventsHandler = () => {
-    useMapEvents({
-      click(e) {
-        if (element.disabled) return;
-        const newPoint = { lat: e.latlng.lat, lng: e.latlng.lng };
-        let newPoints = [];
-
-        if (mapConfig.selectionMode === 'single') {
-          newPoints = [newPoint];
-        } else {
-          newPoints = [...(value || []), newPoint];
-          if (mapConfig.maxPoints && newPoints.length > mapConfig.maxPoints) {
-            newPoints.shift();
-          }
-        }
-        onChange(newPoints);
-      },
-    });
-    return null;
-  };
-
-  return (
-    <MapContainer
-      center={center}
-      zoom={mapConfig.defaultZoom}
-      scrollWheelZoom={true}
-      style={{ height: '100%', width: '100%', borderRadius: 'inherit' }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <MapEventsHandler />
-      {(value || []).map((point, index) => (
-        <Marker key={index} position={[point.lat, point.lng]} />
-      ))}
-    </MapContainer>
-  );
-};
-// --- END OF ADDED MAP SUPPORT ---
+// --- MAP SUPPORT ---
+import InteractiveMap from '@/components/ui-elements/InteractiveMap';
 
 
 interface ComponentFormProps {
@@ -266,7 +199,15 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               parameters[element.name] = element.fileInputConfig?.multiple ? [] : null;
             }
           } else if (element.type === 'map_input') { // ADDED: Submission logic for map
-            parameters[element.name] = formData[element.name] || [];
+            const mapData = formData[element.name] || [];
+            // Transform NamedPoint[] to {"name": {lat, lng}} format
+            const transformedData: Record<string, {lat: number, lng: number}> = {};
+            mapData.forEach((point: any) => {
+              if (point && point.name && point.lat !== undefined && point.lng !== undefined) {
+                transformedData[point.name] = { lat: point.lat, lng: point.lng };
+              }
+            });
+            parameters[element.name] = transformedData;
           } else {
             parameters[element.name] = formData[element.name] || element.defaultValue || '';
           }
@@ -576,25 +517,12 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
               {element.label}
               {element.required && <span className="text-red-500 ml-1">*</span>}
             </label>
-            <div className={`w-full h-80 flex flex-col border rounded-md overflow-hidden ${hasError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}>
-              <div className="flex-1">
-                <InteractiveMap
-                  element={element}
-                  value={value || []}
-                  onChange={(newValue) => handleInputChange(element.name, newValue)}
-                />
-              </div>
-              <div className="p-2 text-xs bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 max-h-20 overflow-y-auto">
-                {(value || []).length > 0 ? (
-                  value.map((p: Point, i: number) => (
-                    <div key={i}>
-                      Point {i + 1}: {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
-                    </div>
-                  ))
-                ) : (
-                  'Click on the map to select points.'
-                )}
-              </div>
+            <div className={`w-full h-96 border rounded-md overflow-hidden ${hasError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}>
+              <InteractiveMap
+                element={element}
+                value={value || []}
+                onChange={(newValue) => handleInputChange(element.name, newValue)}
+              />
             </div>
             {hasError && <p className="text-sm text-red-600 mt-1">{error}</p>}
             {element.helpText && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{element.helpText}</p>}

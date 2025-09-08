@@ -2,79 +2,7 @@
 import React, { useState } from 'react';
 import { UIElement, LayoutConfig, ValidationRule } from '@/types/componentDesigner';
 import Button from '@/components/common/Button';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-
-// --- CHANGE: Import image assets directly using ES Modules ---
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-// Fix for default marker icon issue with modern bundlers.
-// This ensures the marker icons are loaded correctly.
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-
-// --- CHANGE: Use imported variables instead of require ---
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-
-type Point = { lat: number; lng: number };
-
-// A new component to handle map interactions logic
-const InteractiveMap: React.FC<{
-  element: UIElement;
-  value: Point[];
-  onChange: (newValue: Point[]) => void;
-}> = ({ element, value, onChange }) => {
-  const { mapConfig } = element;
-  if (!mapConfig) return <div>Map configuration is missing.</div>;
-  
-  const center: [number, number] = [mapConfig.defaultCenter.lat, mapConfig.defaultCenter.lng];
-
-  const MapEventsHandler = () => {
-    useMapEvents({
-      click(e) {
-        if (element.disabled) return;
-        const newPoint = { lat: e.latlng.lat, lng: e.latlng.lng };
-        let newPoints = [];
-
-        if (mapConfig.selectionMode === 'single') {
-          newPoints = [newPoint];
-        } else {
-          newPoints = [...(value || []), newPoint]; // Ensure value is an array
-          if (mapConfig.maxPoints && newPoints.length > mapConfig.maxPoints) {
-            newPoints.shift(); // Remove the oldest point to enforce max
-          }
-        }
-        onChange(newPoints);
-      },
-    });
-    return null;
-  };
-
-  return (
-    <MapContainer
-      center={center}
-      zoom={mapConfig.defaultZoom}
-      scrollWheelZoom={true}
-      style={{ height: '100%', width: '100%', borderRadius: 'inherit' }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <MapEventsHandler />
-      {(value || []).map((point, index) => (
-        <Marker key={index} position={[point.lat, point.lng]} />
-      ))}
-    </MapContainer>
-  );
-};
+import InteractiveMap, { Point } from '@/components/ui-elements/InteractiveMap';
 
 interface PreviewPanelProps {
   elements: UIElement[];
@@ -183,7 +111,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ elements, layout }) => {
             </div>
             <div className="p-2 text-xs bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 max-h-20 overflow-y-auto">
               {(formData[element.name] || []).length > 0 ? (
-                (formData[element.name] || []).map((p: Point, i: number) => (
+                ((formData[element.name] || []) as Point[]).map((p: Point, i: number) => (
                   <div key={i}>
                     Point {i + 1}: {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
                   </div>

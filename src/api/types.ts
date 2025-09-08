@@ -26302,7 +26302,6 @@ export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean;
-    isPublic?: boolean;
     templateId?: string | undefined;
 
     constructor(data?: interfaces.IWorkflowCreateDto) {
@@ -26344,7 +26343,6 @@ export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
                 }
             }
             this.isTemplate = _data["isTemplate"];
-            this.isPublic = _data["isPublic"];
             this.templateId = _data["templateId"];
         }
     }
@@ -26386,7 +26384,6 @@ export class WorkflowCreateDto implements interfaces.IWorkflowCreateDto {
             }
         }
         data["isTemplate"] = this.isTemplate;
-        data["isPublic"] = this.isPublic;
         data["templateId"] = this.templateId;
         return data;
     }
@@ -26567,7 +26564,6 @@ export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
     lastExecutionId?: string | undefined;
     executionCount?: number;
     averageExecutionTime?: string | undefined;
-    isPublic?: boolean;
     complexityMetrics?: WorkflowComplexityMetrics;
     validationResult?: WorkflowValidationResult;
 
@@ -26619,7 +26615,6 @@ export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
             this.lastExecutionId = _data["lastExecutionId"];
             this.executionCount = _data["executionCount"];
             this.averageExecutionTime = _data["averageExecutionTime"];
-            this.isPublic = _data["isPublic"];
             this.complexityMetrics = _data["complexityMetrics"] ? WorkflowComplexityMetrics.fromJS(_data["complexityMetrics"]) : <any>undefined;
             this.validationResult = _data["validationResult"] ? WorkflowValidationResult.fromJS(_data["validationResult"]) : <any>undefined;
         }
@@ -26671,7 +26666,6 @@ export class WorkflowDetailDto implements interfaces.IWorkflowDetailDto {
         data["lastExecutionId"] = this.lastExecutionId;
         data["executionCount"] = this.executionCount;
         data["averageExecutionTime"] = this.averageExecutionTime;
-        data["isPublic"] = this.isPublic;
         data["complexityMetrics"] = this.complexityMetrics ? this.complexityMetrics.toJSON() : <any>undefined;
         data["validationResult"] = this.validationResult ? this.validationResult.toJSON() : <any>undefined;
         return data;
@@ -28431,7 +28425,6 @@ export class WorkflowListDto implements interfaces.IWorkflowListDto {
     nodeCount?: number;
     edgeCount?: number;
     complexityLevel?: enums.ComplexityLevel;
-    isPublic?: boolean;
     hasPermission?: boolean;
 
     constructor(data?: interfaces.IWorkflowListDto) {
@@ -28464,7 +28457,6 @@ export class WorkflowListDto implements interfaces.IWorkflowListDto {
             this.nodeCount = _data["nodeCount"];
             this.edgeCount = _data["edgeCount"];
             this.complexityLevel = _data["complexityLevel"];
-            this.isPublic = _data["isPublic"];
             this.hasPermission = _data["hasPermission"];
         }
     }
@@ -28497,7 +28489,6 @@ export class WorkflowListDto implements interfaces.IWorkflowListDto {
         data["nodeCount"] = this.nodeCount;
         data["edgeCount"] = this.edgeCount;
         data["complexityLevel"] = this.complexityLevel;
-        data["isPublic"] = this.isPublic;
         data["hasPermission"] = this.hasPermission;
         return data;
     }
@@ -29582,7 +29573,6 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean | undefined;
-    isPublic?: boolean | undefined;
 
     constructor(data?: interfaces.IWorkflowUpdateDto) {
         if (data) {
@@ -29623,7 +29613,6 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
                 }
             }
             this.isTemplate = _data["isTemplate"];
-            this.isPublic = _data["isPublic"];
         }
     }
 
@@ -29664,7 +29653,6 @@ export class WorkflowUpdateDto implements interfaces.IWorkflowUpdateDto {
             }
         }
         data["isTemplate"] = this.isTemplate;
-        data["isPublic"] = this.isPublic;
         return data;
     }
 }

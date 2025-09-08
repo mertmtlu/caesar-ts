@@ -4335,7 +4335,6 @@ export interface IWorkflowCreateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean;
-    isPublic?: boolean;
     templateId?: string | undefined;
 }
 
@@ -4384,7 +4383,6 @@ export interface IWorkflowDetailDto {
     lastExecutionId?: string | undefined;
     executionCount?: number;
     averageExecutionTime?: string | undefined;
-    isPublic?: boolean;
     complexityMetrics?: IWorkflowComplexityMetrics;
     validationResult?: IWorkflowValidationResult;
 }
@@ -4688,7 +4686,6 @@ export interface IWorkflowListDto {
     nodeCount?: number;
     edgeCount?: number;
     complexityLevel?: enums.ComplexityLevel;
-    isPublic?: boolean;
     hasPermission?: boolean;
 }
 
@@ -4875,7 +4872,6 @@ export interface IWorkflowUpdateDto {
     tags?: string[] | undefined;
     metadata?: { [key: string]: any; } | undefined;
     isTemplate?: boolean | undefined;
-    isPublic?: boolean | undefined;
 }
 
 export interface IWorkflowUserPermissionDto {

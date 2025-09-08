@@ -14,7 +14,8 @@
       "Bash(npm install:*)",
       "Bash(sed:*)",
       "Bash(cp:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(tsc --noEmit)"
     ],
     "deny": []
   }
