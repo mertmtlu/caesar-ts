@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
 import { VersionCreateDto, VersionFileCreateDto, VersionReviewSubmissionDto, ProgramUpdateDto } from '@/api';
 import ProgramUserAssignmentModal from '@/components/admin/ProgramUserAssignmentModal';
+import ProjectGroupsModal from '@/components/projects/ProjectGroupsModal';
 import IconDisplay from '@/components/icons/IconDisplay';
 import IconUploader from '@/components/icons/IconUploader';
 import { IconEntityType } from '@/api/enums';
@@ -90,6 +91,7 @@ const ProjectDetailPage: React.FC = () => {
   const [isDeletingVersion, setIsDeletingVersion] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [showAccessControlModal, setShowAccessControlModal] = useState(false);
+  const [showGroupsModal, setShowGroupsModal] = useState(false);
   
 
   // Review form
@@ -813,6 +815,18 @@ Add your project documentation here.`,
           
           <Button
             variant="outline"
+            onClick={() => setShowGroupsModal(true)}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            }
+          >
+            Manage Groups
+          </Button>
+          
+          <Button
+            variant="outline"
             onClick={() => navigate(`/projects/${project.id}/components`)}
             leftIcon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1489,6 +1503,20 @@ Add your project documentation here.`,
           </div>
         </div>
       </Modal>
+
+      {/* Project Groups Modal */}
+      {project && (
+        <ProjectGroupsModal
+          isOpen={showGroupsModal}
+          onClose={() => setShowGroupsModal(false)}
+          projectId={project.id}
+          projectName={project.name}
+          onSave={() => {
+            // Optionally refresh project data if needed
+            loadProjectDetails();
+          }}
+        />
+      )}
     </div>
   );
 };

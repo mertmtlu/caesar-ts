@@ -13,7 +13,8 @@
       "Bash(npx eslint:*)",
       "Bash(npm install:*)",
       "Bash(sed:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

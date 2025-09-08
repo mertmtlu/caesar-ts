@@ -96,7 +96,7 @@ export class GroupsClient implements interfaces.IGroupsClient {
             result200 = types.GroupDto.fromJS(resultData200);
             return result200;
             });
-        } else if (status !== 200 && status !== 204) {
+        } else if (status !== 200 && status !== 204 && status !== 201) {
             return response.text().then((_responseText) => {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });

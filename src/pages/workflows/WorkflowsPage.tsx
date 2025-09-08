@@ -10,6 +10,7 @@ import WorkflowPermissionsModal from '@/components/workflow/WorkflowPermissionsM
 import WorkflowImportModal from '@/components/workflow/WorkflowImportModal';
 import WorkflowExportModal from '@/components/workflow/WorkflowExportModal';
 import IconDisplay from '@/components/icons/IconDisplay';
+// import GroupAccessBadge from '@/components/common/GroupAccessBadge';
 
 interface WorkflowListItem {
   id: string;
@@ -76,6 +77,7 @@ const WorkflowsPage: React.FC = () => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [workflowToExport, setWorkflowToExport] = useState<WorkflowListItem | null>(null);
+  
   
   // Icons state
   const [icons, setIcons] = useState<Map<string, string>>(new Map());
@@ -305,6 +307,7 @@ const WorkflowsPage: React.FC = () => {
     setWorkflowToExport(workflow);
     setShowExportModal(true);
   };
+
 
   const getStatusColor = (status: WorkflowStatus): string => {
     switch (status) {
@@ -635,6 +638,7 @@ const WorkflowsPage: React.FC = () => {
                   >
                     Export
                   </Button>
+                  
                   
                   <Button
                     variant="danger"

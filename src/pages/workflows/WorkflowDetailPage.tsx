@@ -6,6 +6,7 @@ import { WorkflowStatus, IconEntityType } from '@/api/enums';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import WorkflowPermissionsModal from '@/components/workflow/WorkflowPermissionsModal';
+import WorkflowGroupsModal from '@/components/workflow/WorkflowGroupsModal';
 import WorkflowExportModal from '@/components/workflow/WorkflowExportModal';
 import IconDisplay from '@/components/icons/IconDisplay';
 import IconUploader from '@/components/icons/IconUploader';
@@ -37,6 +38,7 @@ const WorkflowDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'analytics'>('overview');
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showGroupsModal, setShowGroupsModal] = useState(false);
   
   // Editing states
   const [isEditingName, setIsEditingName] = useState(false);
@@ -492,6 +494,18 @@ const WorkflowDetailPage: React.FC = () => {
             }
           >
             Share
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={() => setShowGroupsModal(true)}
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            }
+          >
+            Manage Groups
           </Button>
           
           <Button
@@ -1095,6 +1109,20 @@ const WorkflowDetailPage: React.FC = () => {
           onClose={() => setShowExportModal(false)}
           workflowId={workflowId!}
           workflowName={workflow.name || 'Untitled Workflow'}
+        />
+      )}
+      
+      {/* Workflow Groups Modal */}
+      {workflow && (
+        <WorkflowGroupsModal
+          isOpen={showGroupsModal}
+          onClose={() => setShowGroupsModal(false)}
+          workflowId={workflow.id!}
+          workflowName={workflow.name || 'Untitled Workflow'}
+          onSave={() => {
+            // Optionally refresh workflow data if needed
+            loadWorkflowDetails();
+          }}
         />
       )}
     </div>

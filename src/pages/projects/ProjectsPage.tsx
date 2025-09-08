@@ -9,6 +9,7 @@ import { ConfirmationModal } from '@/components/common/Modal';
 import { ProgramSearchDto } from '@/api';
 import { IVersionInfoDto } from '@/api/typeInterfaces';
 import IconDisplay from '@/components/icons/IconDisplay';
+// import GroupAccessBadge from '@/components/common/GroupAccessBadge'; // Placeholder for future use
 
 // Interfaces
 interface ProjectListItem {
@@ -74,6 +75,7 @@ const ProjectsPage: React.FC = () => {
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<ProjectToDelete | null>(null);
+  
   
   // Icons state
   const [icons, setIcons] = useState<Map<string, string>>(new Map());
@@ -234,6 +236,7 @@ const ProjectsPage: React.FC = () => {
     setProjectToDelete({ id: projectId, name: projectName });
     setShowDeleteModal(true);
   };
+
 
   const confirmDeleteProject = async () => {
     if (!projectToDelete) return;
@@ -800,6 +803,7 @@ const ProjectsPage: React.FC = () => {
         variant="danger"
         loading={isDeleting}
       />
+
     </div>
   );
 };

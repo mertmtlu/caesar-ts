@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Modal, { ConfirmationModal } from '@/components/common/Modal';
 import IconDisplay from '@/components/icons/IconDisplay';
 import IconUploader from '@/components/icons/IconUploader';
+import RemoteAppGroupsModal from '@/components/remoteapps/RemoteAppGroupsModal';
 
 const mimeTypeToFormat = (mimeType: string): string => {
   const formatMap: Record<string, string> = {
@@ -60,6 +61,7 @@ const RemoteAppDetailPage: React.FC = () => {
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showGroupsModal, setShowGroupsModal] = useState(false);
 
   useEffect(() => {
     if (appId) {
@@ -523,6 +525,19 @@ const RemoteAppDetailPage: React.FC = () => {
                   
                   <Button
                     variant="outline"
+                    onClick={() => setShowGroupsModal(true)}
+                    className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-gray-200/50 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800"
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    }
+                  >
+                    Manage Groups
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
                     onClick={() => setShowDeleteModal(true)}
                     className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-red-200/50 dark:border-red-700/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                     leftIcon={
@@ -781,6 +796,19 @@ const RemoteAppDetailPage: React.FC = () => {
                   >
                     Edit Settings
                   </Button>
+                  
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowGroupsModal(true)}
+                    className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-800"
+                    leftIcon={
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    }
+                  >
+                    Manage Groups
+                  </Button>
                 </div>
               </div>
             </div>
@@ -887,6 +915,15 @@ const RemoteAppDetailPage: React.FC = () => {
         cancelText="Cancel"
         variant="danger"
         loading={isDeleting}
+      />
+
+      {/* Groups Modal */}
+      <RemoteAppGroupsModal
+        isOpen={showGroupsModal}
+        onClose={() => setShowGroupsModal(false)}
+        remoteAppId={appId!}
+        remoteAppName={app.name || 'Untitled Remote App'}
+        onSave={() => loadAppDetails()}
       />
     </div>
   );

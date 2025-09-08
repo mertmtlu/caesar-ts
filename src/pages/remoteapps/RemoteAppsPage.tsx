@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ConfirmationModal } from '@/components/common/Modal';
 import IconDisplay from '@/components/icons/IconDisplay';
+// import GroupAccessBadge from '@/components/common/GroupAccessBadge'; // Placeholder for future use
 
 // Interfaces
 interface RemoteAppListItem {
@@ -65,6 +66,7 @@ const RemoteAppsPage: React.FC = () => {
   // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appToDelete, setAppToDelete] = useState<RemoteAppToDelete | null>(null);
+  
   
   // Icons state
   const [icons, setIcons] = useState<Map<string, string>>(new Map());
@@ -179,6 +181,7 @@ const RemoteAppsPage: React.FC = () => {
     setAppToDelete({ id: appId, name: appName });
     setShowDeleteModal(true);
   };
+
 
   const confirmDeleteApp = async () => {
     if (!appToDelete) return;
@@ -494,6 +497,16 @@ const RemoteAppsPage: React.FC = () => {
                     }
                   >
                     Edit
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    Duplicate
                   </Button>
                   
                   <Button

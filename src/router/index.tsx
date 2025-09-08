@@ -52,6 +52,7 @@ import RemoteAppDetailPage from '@/pages/remoteapps/RemoteAppDetailPage';
 // Admin Pages
 import UsersPage from '@/pages/admin/UsersPage';
 import ProgramPermissionsPage from '@/pages/admin/ProgramPermissionsPage';
+import GroupsPage from '@/pages/admin/GroupsPage';
 // import AdminDashboard from '@/pages/admin/AdminDashboard';
 // import SystemMonitoringPage from '@/pages/admin/SystemMonitoringPage';
 
@@ -299,6 +300,10 @@ export const router = createBrowserRouter([
           {
             path: 'programs',
             element: <ProgramPermissionsPage />
+          },
+          {
+            path: 'groups',
+            element: <GroupsPage />
           },
           // {
           //   path: 'monitoring',
