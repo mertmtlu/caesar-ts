@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { initializeTheme } from '@/stores/themeStore';
+import MaintenanceMode from '@/components/maintenance/MaintenanceMode';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -117,6 +118,8 @@ const ToastContainer: React.FC<{ toasts: Toast[] }> = ({ toasts }) => {
 const RootLayout: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [adminBypassed, setAdminBypassed] = useState(false);
 
   // Initialize application
   useEffect(() => {
@@ -124,6 +127,10 @@ const RootLayout: React.FC = () => {
       try {
         // Initialize theme system first
         initializeTheme();
+        
+        // Check maintenance mode
+        const maintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+        setIsMaintenanceMode(maintenanceMode);
         
         // Add any other global initialization logic here
         // For example: feature flags, analytics, etc.
@@ -167,6 +174,16 @@ const RootLayout: React.FC = () => {
 
   if (isLoading) {
     return <GlobalLoading />;
+  }
+
+  // Show maintenance mode if enabled and admin hasn't bypassed
+  if (isMaintenanceMode && !adminBypassed) {
+    return (
+      <MaintenanceMode
+        message={import.meta.env.VITE_MAINTENANCE_MESSAGE}
+        onAdminBypass={() => setAdminBypassed(true)}
+      />
+    );
   }
 
   return (
