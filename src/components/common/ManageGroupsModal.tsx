@@ -23,8 +23,9 @@ export interface EntityConfig {
 
 export interface GroupsHandler {
   loadGroups: (entityId: string) => Promise<GroupListDto[]>;
-  addGroups: (entityId: string, groupIds: string[]) => Promise<void>;
+  addGroups: (entityId: string, groupIds: string[], accessLevel?: string) => Promise<void>;
   removeGroup: (entityId: string, groupId: string) => Promise<void>;
+  updateAccessLevel?: (entityId: string, groupId: string, accessLevel: string) => Promise<void>;
 }
 
 interface ManageGroupsModalProps {
@@ -44,6 +45,7 @@ const ManageGroupsModal: React.FC<ManageGroupsModalProps> = ({
 }) => {
   const [currentGroups, setCurrentGroups] = useState<GroupListDto[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
+  const [selectedAccessLevel, setSelectedAccessLevel] = useState<string>('Read');
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,8 +80,8 @@ const ManageGroupsModal: React.FC<ManageGroupsModalProps> = ({
     setError(null);
     
     try {
-      console.log('Calling handler.addGroups with:', { entityId: config.entityId, selectedGroupIds, type: config.type });
-      await handler.addGroups(config.entityId, selectedGroupIds);
+      console.log('Calling handler.addGroups with:', { entityId: config.entityId, selectedGroupIds, accessLevel: selectedAccessLevel, type: config.type });
+      await handler.addGroups(config.entityId, selectedGroupIds, selectedAccessLevel);
       console.log('handler.addGroups completed successfully');
       
       // Reset selection and reload
@@ -103,6 +105,19 @@ const ManageGroupsModal: React.FC<ManageGroupsModalProps> = ({
       onSave?.();
     } catch (error: any) {
       setError(error?.message || `Failed to remove group from ${config.type}`);
+    }
+  };
+
+  const handleAccessLevelChange = async (groupId: string, newAccessLevel: string) => {
+    if (!handler.updateAccessLevel) return;
+    
+    try {
+      setError(null);
+      await handler.updateAccessLevel(config.entityId, groupId, newAccessLevel);
+      await loadEntityGroups();
+      onSave?.();
+    } catch (error: any) {
+      setError(error?.message || `Failed to update access level for group`);
     }
   };
 
@@ -193,7 +208,9 @@ const ManageGroupsModal: React.FC<ManageGroupsModalProps> = ({
                 groups={currentGroups}
                 onRemoveGroup={handleRemoveGroup}
                 showMemberCount={true}
-                showDescription={true}
+                showDescription={false}
+                showAccessLevel={true}
+                onAccessLevelChange={handler.updateAccessLevel ? handleAccessLevelChange : undefined}
                 emptyMessage=""
               />
             ) : (
@@ -239,24 +256,43 @@ const ManageGroupsModal: React.FC<ManageGroupsModalProps> = ({
           </div>
           
           <div className="p-6 space-y-4 relative">
-            <div className="relative z-10">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Select Groups
-              </label>
-              <div className="relative">
-                <GroupSelector
-                  selectedGroupIds={selectedGroupIds.filter(id => !assignedGroupIds.includes(id))}
-                  onSelectionChange={setSelectedGroupIds}
-                  multiple={true}
-                  placeholder="Search and select groups to add..."
-                  className="w-full"
-                />
+            <div className="relative z-10 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Access Level
+                </label>
+                <select
+                  value={selectedAccessLevel}
+                  onChange={(e) => setSelectedAccessLevel(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="Read">Read - View only access</option>
+                  <option value="Write">Write - Edit and view access</option>
+                  <option value="Execute">Execute - Run and execute access</option>
+                  <option value="Admin">Admin - Full administrative access</option>
+                </select>
               </div>
-              {selectedGroupIds.length > 0 && (
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  {selectedGroupIds.length} {selectedGroupIds.length === 1 ? 'group' : 'groups'} selected
-                </p>
-              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Select Groups
+                </label>
+                <div className="relative">
+                  <GroupSelector
+                    selectedGroupIds={selectedGroupIds}
+                    onSelectionChange={setSelectedGroupIds}
+                    multiple={true}
+                    placeholder="Search and select groups to add..."
+                    className="w-full"
+                    excludeGroupIds={assignedGroupIds}
+                  />
+                </div>
+                {selectedGroupIds.length > 0 && (
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    {selectedGroupIds.length} {selectedGroupIds.length === 1 ? 'group' : 'groups'} selected with <span className="font-medium">{selectedAccessLevel}</span> access
+                  </p>
+                )}
+              </div>
             </div>
             
             {selectedGroupIds.length > 0 && (

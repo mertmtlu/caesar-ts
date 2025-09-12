@@ -63,11 +63,11 @@ export const projectGroupsHandler: GroupsHandler = {
     return [];
   },
 
-  addGroups: async (projectId: string, groupIds: string[]): Promise<void> => {
+  addGroups: async (projectId: string, groupIds: string[], accessLevel: string = 'Read'): Promise<void> => {
     for (const groupId of groupIds) {
       const permissionDto = new ProgramGroupPermissionDto({
         groupId: groupId,
-        accessLevel: 'Read'
+        accessLevel: accessLevel
       });
       
       await api.programs.programs_AddGroupPermission(projectId, permissionDto);
@@ -78,6 +78,20 @@ export const projectGroupsHandler: GroupsHandler = {
 
   removeGroup: async (projectId: string, groupId: string): Promise<void> => {
     await api.programs.programs_RemoveGroupPermission(projectId, groupId);
+  },
+
+  updateAccessLevel: async (projectId: string, groupId: string, accessLevel: string): Promise<void> => {
+    // Remove the existing permission
+    await api.programs.programs_RemoveGroupPermission(projectId, groupId);
+    
+    // Add the new permission with updated access level
+    const permissionDto = new ProgramGroupPermissionDto({
+      groupId: groupId,
+      accessLevel: accessLevel
+    });
+    
+    await api.programs.programs_AddGroupPermission(projectId, permissionDto);
+    console.log(`Successfully updated access level for group ${groupId} to ${accessLevel}`);
   }
 };
 
@@ -105,7 +119,7 @@ export const workflowGroupsHandler: GroupsHandler = {
     return [];
   },
 
-  addGroups: async (workflowId: string, groupIds: string[]): Promise<void> => {
+  addGroups: async (workflowId: string, groupIds: string[], accessLevel: string = 'Read'): Promise<void> => {
     // Get current permissions first
     const currentPermResponse = await api.workflows.workflows_GetPermissions(workflowId);
     
@@ -194,7 +208,7 @@ export const remoteAppGroupsHandler: GroupsHandler = {
     return [];
   },
 
-  addGroups: async (remoteAppId: string, groupIds: string[]): Promise<void> => {
+  addGroups: async (remoteAppId: string, groupIds: string[], accessLevel: string = 'Read'): Promise<void> => {
     console.log('Remote app addGroups called with:', { remoteAppId, groupIds });
     
     try {

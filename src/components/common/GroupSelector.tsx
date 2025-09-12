@@ -9,6 +9,7 @@ interface GroupSelectorProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  excludeGroupIds?: string[];
 }
 
 const GroupSelector: React.FC<GroupSelectorProps> = ({
@@ -18,6 +19,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   placeholder = "Select groups...",
   disabled = false,
   className = "",
+  excludeGroupIds = [],
 }) => {
   const [groups, setGroups] = useState<GroupListDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +60,8 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     }
   };
 
-  const selectedGroups = groups.filter(group => selectedGroupIds.includes(group.id!));
+  const availableGroups = groups.filter(group => !excludeGroupIds.includes(group.id!));
+  const selectedGroups = availableGroups.filter(group => selectedGroupIds.includes(group.id!));
 
   const getDisplayText = () => {
     if (selectedGroups.length === 0) return placeholder;
@@ -112,12 +115,12 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
           {/* Dropdown */}
           <div className="absolute z-20 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
             <div className="max-h-60 overflow-auto py-1">
-              {groups.length === 0 ? (
+              {availableGroups.length === 0 ? (
                 <div className="px-3 py-2 text-gray-500 dark:text-white text-sm">
-                  No active groups available
+                  {groups.length === 0 ? 'No active groups available' : 'No additional groups available'}
                 </div>
               ) : (
-                groups.map((group) => (
+                availableGroups.map((group) => (
                   <button
                     key={group.id}
                     type="button"

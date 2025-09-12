@@ -10,6 +10,9 @@ interface GroupsListProps {
   className?: string;
   itemClassName?: string;
   readonly?: boolean;
+  showAccessLevel?: boolean;
+  onAccessLevelChange?: (groupId: string, newLevel: string) => void;
+  availableAccessLevels?: string[];
 }
 
 const GroupsList: React.FC<GroupsListProps> = ({
@@ -21,7 +24,17 @@ const GroupsList: React.FC<GroupsListProps> = ({
   className = "",
   itemClassName = "",
   readonly = false,
+  showAccessLevel = false,
+  onAccessLevelChange,
+  availableAccessLevels = ['Read', 'Write', 'Execute', 'Admin'],
 }) => {
+  const extractAccessLevel = (group: GroupListDto): string => {
+    if (group.description?.startsWith('Access Level: ')) {
+      return group.description.replace('Access Level: ', '');
+    }
+    return 'Read'; // Default access level
+  };
+
   if (groups.length === 0) {
     return (
       <div className={`text-center py-4 text-gray-500 dark:text-gray-400 ${className}`}>
@@ -55,6 +68,27 @@ const GroupsList: React.FC<GroupsListProps> = ({
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       {group.memberCount || 0} member{(group.memberCount || 0) !== 1 ? 's' : ''}
                     </span>
+                  )}
+                  
+                  {showAccessLevel && (
+                    <div className="flex items-center space-x-1">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Access:</span>
+                      {!readonly && onAccessLevelChange ? (
+                        <select
+                          value={extractAccessLevel(group)}
+                          onChange={(e) => onAccessLevelChange(group.id!, e.target.value)}
+                          className="text-xs px-2 py-0.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          {availableAccessLevels.map(level => (
+                            <option key={level} value={level}>{level}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-xs px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
+                          {extractAccessLevel(group)}
+                        </span>
+                      )}
+                    </div>
                   )}
                   
                   <span

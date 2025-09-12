@@ -222,7 +222,7 @@ const ProgramUserAssignmentModal: React.FC<ProgramUserAssignmentModalProps> = ({
   if (!isOpen) return null;
 
   const filteredUsers = getFilteredUsers();
-  const userPermissions = currentPermissions;
+  const userPermissions = currentPermissions.filter(p => p.type.toLowerCase() === 'user');
 
   return (
     <Modal
