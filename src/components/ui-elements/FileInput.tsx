@@ -135,9 +135,19 @@ const FileInput: React.FC<FileInputProps> = ({
       reader.onload = () => {
         const result = reader.result as string;
         const base64Content = result.split(',')[1]; // Remove data URL prefix
-        // Ensure UTF-8 encoding by creating a proper base64 string
-        const utf8EncodedContent = btoa(unescape(encodeURIComponent(atob(base64Content))));
-        resolve(utf8EncodedContent);
+        
+        console.log('File type:', file.type, 'Name:', file.name);
+        
+        // Only apply UTF-8 encoding for text files to handle Turkish characters
+        if (file.type.startsWith('text/') || file.type === 'application/json') {
+          console.log('Using UTF-8 encoding for text file');
+          const utf8EncodedContent = btoa(unescape(encodeURIComponent(atob(base64Content))));
+          resolve(utf8EncodedContent);
+        } else {
+          console.log('Using raw base64 for binary file');
+          // Binary files (Word, PDF, images, etc.) - use raw base64
+          resolve(base64Content);
+        }
       };
       reader.onerror = reject;
       reader.readAsDataURL(file);

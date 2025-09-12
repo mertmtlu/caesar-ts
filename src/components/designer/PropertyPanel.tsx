@@ -203,6 +203,40 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     updateElement({ mapConfig: newConfig });
   };
 
+  // Handle File Input Configuration
+  const updateFileInputConfig = (key: keyof import('@/types/componentDesigner').FileInputConfig, value: any) => {
+    const currentConfig = formData.fileInputConfig || {
+      maxFileSize: 10 * 1024 * 1024, // 10MB
+      multiple: false,
+      dragAndDrop: true,
+      showPreview: true,
+      uploadOnSelect: false,
+      acceptedFileTypes: ['*/*']
+    };
+    const newConfig = { ...currentConfig, [key]: value };
+    updateElement({ fileInputConfig: newConfig });
+  };
+
+  const updateFileTypeAtIndex = (index: number, value: string) => {
+    const currentTypes = [...(formData.fileInputConfig?.acceptedFileTypes || ['*/*'])];
+    currentTypes[index] = value;
+    updateFileInputConfig('acceptedFileTypes', currentTypes);
+  };
+
+  const removeFileTypeAtIndex = (index: number) => {
+    const currentTypes = [...(formData.fileInputConfig?.acceptedFileTypes || ['*/*'])];
+    if (currentTypes.length > 1) {
+      currentTypes.splice(index, 1);
+      updateFileInputConfig('acceptedFileTypes', currentTypes);
+    }
+  };
+
+  const addFileType = () => {
+    const currentTypes = [...(formData.fileInputConfig?.acceptedFileTypes || ['*/*'])];
+    currentTypes.push('*/*');
+    updateFileInputConfig('acceptedFileTypes', currentTypes);
+  };
+
   if (!selectedElement) {
     return (
       <div className="p-6 text-center">
@@ -376,6 +410,125 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                   <Input label="Default Lng" type="number" value={formData.mapConfig.defaultCenter.lng} onChange={(e) => updateMapCenter('lng', parseFloat(e.target.value))} step={0.001} />
                 </div>
                 <Input label="Default Zoom" type="number" value={formData.mapConfig.defaultZoom} onChange={(e) => updateMapConfig('defaultZoom', parseInt(e.target.value))} min={1} max={20} />
+              </div>
+            )}
+
+            {/* File Input Configuration */}
+            {selectedElement.type === 'file_input' && (
+              <div className="space-y-4 p-3 border rounded-md border-gray-200 dark:border-gray-600">
+                <h4 className="text-md font-medium text-gray-900 dark:text-white">File Input Configuration</h4>
+                
+                {/* Multiple Files */}
+                <div>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.fileInputConfig?.multiple || false}
+                      onChange={(e) => updateFileInputConfig('multiple', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Allow Multiple Files
+                    </span>
+                  </label>
+                </div>
+
+                {/* Max File Size */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Max File Size (MB)
+                  </label>
+                  <input
+                    type="number"
+                    value={((formData.fileInputConfig?.maxFileSize || 10485760) / (1024 * 1024)).toFixed(1)}
+                    onChange={(e) => updateFileInputConfig('maxFileSize', parseFloat(e.target.value) * 1024 * 1024)}
+                    min="0.1"
+                    max="100"
+                    step="0.1"
+                    className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
+                  />
+                </div>
+
+                {/* Accepted File Types */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Accepted File Types
+                  </label>
+                  <div className="space-y-2">
+                    {(formData.fileInputConfig?.acceptedFileTypes || ['*/*']).map((fileType, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={fileType}
+                          onChange={(e) => updateFileTypeAtIndex(index, e.target.value)}
+                          placeholder="e.g. .pdf, image/*, application/pdf"
+                          className="flex-1 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
+                        />
+                        <button
+                          onClick={() => removeFileTypeAtIndex(index)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                          disabled={(formData.fileInputConfig?.acceptedFileTypes || []).length <= 1}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={addFileType}
+                    >
+                      Add File Type
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Drag and Drop */}
+                <div>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.fileInputConfig?.dragAndDrop !== false}
+                      onChange={(e) => updateFileInputConfig('dragAndDrop', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Enable Drag & Drop
+                    </span>
+                  </label>
+                </div>
+
+                {/* Show Preview */}
+                <div>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.fileInputConfig?.showPreview !== false}
+                      onChange={(e) => updateFileInputConfig('showPreview', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Show File Preview
+                    </span>
+                  </label>
+                </div>
+
+                {/* Upload on Select */}
+                <div>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.fileInputConfig?.uploadOnSelect || false}
+                      onChange={(e) => updateFileInputConfig('uploadOnSelect', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Upload Immediately on Select
+                    </span>
+                  </label>
+                </div>
               </div>
             )}
 
