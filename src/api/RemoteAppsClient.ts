@@ -716,24 +716,21 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
 
     /**
      * Launch remote app - redirects to SSO URL if configured, otherwise to base URL
+     * Opens in new tab to handle browser redirects properly
      * @return OK
      */
     remoteApps_Launch(id: string): Promise<void> {
-        let url_ = this.baseUrl + "/api/RemoteApps/{id}/launch";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
+            
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/launch";
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRemoteApps_Launch(_response);
-        });
+        // Open the launch URL directly in a new tab to handle redirects properly
+        window.open(url_, '_blank', 'noopener,noreferrer');
+        
+        return Promise.resolve();
     }
 
     protected processRemoteApps_Launch(response: Response): Promise<void> {

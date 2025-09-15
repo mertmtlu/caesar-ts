@@ -273,12 +273,12 @@ const RemoteAppDetailPage: React.FC = () => {
     if (!app?.id) return;
     
     try {
-      // Use the SSO-aware launch endpoint which will handle redirection
+      // Use the SSO-aware launch method which handles redirects properly
       await api.remoteAppsClient.remoteApps_Launch(app.id);
     } catch (error) {
       console.error('Failed to launch remote app:', error);
       // Fallback to direct URL opening if the API call fails
-      if (app?.url) {
+      if (app.url) {
         window.open(app.url, '_blank', 'noopener,noreferrer');
       }
     }
