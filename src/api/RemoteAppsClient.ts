@@ -715,6 +715,43 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
     }
 
     /**
+     * Launch remote app - redirects to SSO URL if configured, otherwise to base URL
+     * @return OK
+     */
+    remoteApps_Launch(id: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/launch";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_Launch(_response);
+        });
+    }
+
+    protected processRemoteApps_Launch(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
      * Validate remote app name uniqueness
      * @param excludeId (optional) 
      * @param body (optional) 

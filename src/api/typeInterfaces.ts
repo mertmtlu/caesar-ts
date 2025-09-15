@@ -2509,6 +2509,9 @@ export interface IRemoteAppCreateDto {
     url: string;
     isPublic?: boolean;
     assignedUserIds?: string[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 }
 
 export interface IRemoteAppDetailDto {
@@ -2523,6 +2526,9 @@ export interface IRemoteAppDetailDto {
     createdAt?: Date;
     modifiedAt?: Date | undefined;
     assignedUsers?: IRemoteAppAssignedUserDto[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 }
 
 export interface IRemoteAppDetailDtoApiResponse {
@@ -2544,6 +2550,9 @@ export interface IRemoteAppDto {
     createdAt?: Date;
     modifiedAt?: Date | undefined;
     assignedUserIds?: string[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 }
 
 export interface IRemoteAppDtoApiResponse {
@@ -2563,6 +2572,9 @@ export interface IRemoteAppListDto {
     creator: string | undefined;
     status?: string | undefined;
     createdAt?: Date;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 }
 
 export interface IRemoteAppListDtoPagedResponse {
@@ -2589,6 +2601,9 @@ export interface IRemoteAppUpdateDto {
     url?: string | undefined;
     isPublic?: boolean | undefined;
     assignedUserIds?: string[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 }
 
 export interface IRemoteAppUserAssignmentDto {

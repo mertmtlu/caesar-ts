@@ -32,7 +32,13 @@ const CreateRemoteAppPage: React.FC = () => {
     description: '',
     url: '',
     isPublic: false,
+    ssoUrl: '',
+    defaultUsername: '',
+    defaultPassword: '',
   });
+  
+  // SSO configuration state
+  const [showSsoConfig, setShowSsoConfig] = useState(false);
   
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +69,25 @@ const CreateRemoteAppPage: React.FC = () => {
       }
     }
 
+    // SSO URL validation (optional)
+    if (formData.ssoUrl && formData.ssoUrl.trim()) {
+      try {
+        new URL(formData.ssoUrl);
+      } catch {
+        errors.ssoUrl = 'Please enter a valid SSO URL';
+      }
+    }
+
+    // Username validation (max 100 chars)
+    if (formData.defaultUsername && formData.defaultUsername.length > 100) {
+      errors.defaultUsername = 'Username must be 100 characters or less';
+    }
+
+    // Password validation (max 100 chars)
+    if (formData.defaultPassword && formData.defaultPassword.length > 100) {
+      errors.defaultPassword = 'Password must be 100 characters or less';
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -83,7 +108,10 @@ const CreateRemoteAppPage: React.FC = () => {
         description: formData.description.trim() || undefined,
         url: formData.url.trim(),
         isPublic: formData.isPublic,
-        assignedUserIds: [] // For now, empty array
+        assignedUserIds: [], // For now, empty array
+        ssoUrl: formData.ssoUrl.trim() || undefined,
+        defaultUsername: formData.defaultUsername.trim() || undefined,
+        defaultPassword: formData.defaultPassword.trim() || undefined,
       });
 
       const response = await api.remoteAppsClient.remoteApps_Create(createDto);
@@ -284,6 +312,128 @@ const CreateRemoteAppPage: React.FC = () => {
                 </div>
               </div>
 
+
+              {/* SSO Configuration Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">SSO Configuration</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Optional single sign-on settings for automatic authentication</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowSsoConfig(!showSsoConfig)}
+                      className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                    >
+                      <span>{showSsoConfig ? 'Hide' : 'Show'} SSO Config</span>
+                      <svg 
+                        className={`w-4 h-4 transition-transform duration-200 ${showSsoConfig ? 'rotate-180' : ''}`} 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                
+                {showSsoConfig && (
+                  <div className="p-6 space-y-6">
+                    {/* SSO URL */}
+                    <div>
+                      <label htmlFor="ssoUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        SSO URL <span className="text-gray-500">(optional)</span>
+                      </label>
+                      <Input
+                        id="ssoUrl"
+                        type="url"
+                        placeholder="https://example.com/sso"
+                        value={formData.ssoUrl}
+                        onChange={(e) => handleInputChange('ssoUrl', e.target.value)}
+                        errorMessage={validationErrors.ssoUrl}
+                        className="w-full"
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          </svg>
+                        }
+                      />
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        The SSO endpoint URL for automatic authentication
+                      </p>
+                    </div>
+
+                    {/* Default Username */}
+                    <div>
+                      <label htmlFor="defaultUsername" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Default Username <span className="text-gray-500">(optional)</span>
+                      </label>
+                      <Input
+                        id="defaultUsername"
+                        type="text"
+                        placeholder="Enter default username for SSO"
+                        value={formData.defaultUsername}
+                        onChange={(e) => handleInputChange('defaultUsername', e.target.value)}
+                        errorMessage={validationErrors.defaultUsername}
+                        className="w-full"
+                        maxLength={100}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        }
+                      />
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        {formData.defaultUsername.length}/100 characters
+                      </p>
+                    </div>
+
+                    {/* Default Password */}
+                    <div>
+                      <label htmlFor="defaultPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Default Password <span className="text-gray-500">(optional)</span>
+                      </label>
+                      <Input
+                        id="defaultPassword"
+                        type="password"
+                        placeholder="Enter default password for SSO"
+                        value={formData.defaultPassword}
+                        onChange={(e) => handleInputChange('defaultPassword', e.target.value)}
+                        errorMessage={validationErrors.defaultPassword}
+                        className="w-full"
+                        maxLength={100}
+                        leftIcon={
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        }
+                      />
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        {formData.defaultPassword.length}/100 characters
+                      </p>
+                    </div>
+
+                    {/* SSO Info */}
+                    <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">SSO Configuration</h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                            When SSO is configured, users will be automatically redirected to the SSO URL with the provided credentials. The format will be: {formData.ssoUrl || 'SSO_URL'}?username={formData.defaultUsername || 'USERNAME'}&password={formData.defaultPassword || 'PASSWORD'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Visibility Settings Card */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">

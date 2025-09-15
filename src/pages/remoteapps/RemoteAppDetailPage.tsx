@@ -269,9 +269,18 @@ const RemoteAppDetailPage: React.FC = () => {
     }
   };
 
-  const handleOpenApp = () => {
-    if (app?.url) {
-      window.open(app.url, '_blank', 'noopener,noreferrer');
+  const handleOpenApp = async () => {
+    if (!app?.id) return;
+    
+    try {
+      // Use the SSO-aware launch endpoint which will handle redirection
+      await api.remoteAppsClient.remoteApps_Launch(app.id);
+    } catch (error) {
+      console.error('Failed to launch remote app:', error);
+      // Fallback to direct URL opening if the API call fails
+      if (app?.url) {
+        window.open(app.url, '_blank', 'noopener,noreferrer');
+      }
     }
   };
 
@@ -751,6 +760,86 @@ const RemoteAppDetailPage: React.FC = () => {
                   </svg>
                   {app.isPublic ? 'Public' : 'Private'}
                 </span>
+              </div>
+
+              {/* SSO Configuration Card */}
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 p-6 hover:shadow-xl transition-all duration-300 md:col-span-2">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                    app.ssoUrl || app.defaultUsername || app.defaultPassword
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+                      : 'bg-gradient-to-r from-gray-400 to-gray-500'
+                  }`}>
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">SSO Configuration</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Single sign-on settings</p>
+                  </div>
+                </div>
+                
+                {app.ssoUrl || app.defaultUsername || app.defaultPassword ? (
+                  <div className="space-y-3">
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-orange-700 bg-orange-100 dark:text-orange-300 dark:bg-orange-900/30">
+                      <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      SSO Configured
+                    </span>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+                      {app.ssoUrl && (
+                        <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-orange-800 dark:text-orange-200">SSO URL</p>
+                          <p className="text-sm text-orange-700 dark:text-orange-300 truncate" title={app.ssoUrl}>
+                            {app.ssoUrl}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {app.defaultUsername && (
+                        <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-orange-800 dark:text-orange-200">Username</p>
+                          <p className="text-sm text-orange-700 dark:text-orange-300">
+                            {app.defaultUsername}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {app.defaultPassword && (
+                        <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-orange-800 dark:text-orange-200">Password</p>
+                          <p className="text-sm text-orange-700 dark:text-orange-300">
+                            •••••••••
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="mt-3 p-3 bg-orange-50/50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-800">
+                      <p className="text-xs text-orange-700 dark:text-orange-300">
+                        <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Users will be automatically redirected to the SSO URL with configured credentials when launching this app.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-gray-700 bg-gray-100 dark:text-gray-300 dark:bg-gray-800/30">
+                      <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636" />
+                      </svg>
+                      No SSO Configuration
+                    </span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Edit this app to configure single sign-on settings.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

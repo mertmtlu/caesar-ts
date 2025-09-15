@@ -15264,6 +15264,9 @@ export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
     url!: string;
     isPublic?: boolean;
     assignedUserIds?: string[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 
     constructor(data?: interfaces.IRemoteAppCreateDto) {
         if (data) {
@@ -15285,6 +15288,9 @@ export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
                 for (let item of _data["assignedUserIds"])
                     this.assignedUserIds!.push(item);
             }
+            this.defaultUsername = _data["defaultUsername"];
+            this.defaultPassword = _data["defaultPassword"];
+            this.ssoUrl = _data["ssoUrl"];
         }
     }
 
@@ -15306,6 +15312,9 @@ export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
             for (let item of this.assignedUserIds)
                 data["assignedUserIds"].push(item);
         }
+        data["defaultUsername"] = this.defaultUsername;
+        data["defaultPassword"] = this.defaultPassword;
+        data["ssoUrl"] = this.ssoUrl;
         return data;
     }
 }
@@ -15322,6 +15331,9 @@ export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
     createdAt?: Date;
     modifiedAt?: Date | undefined;
     assignedUsers?: RemoteAppAssignedUserDto[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 
     constructor(data?: interfaces.IRemoteAppDetailDto) {
         if (data) {
@@ -15349,6 +15361,9 @@ export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
                 for (let item of _data["assignedUsers"])
                     this.assignedUsers!.push(RemoteAppAssignedUserDto.fromJS(item));
             }
+            this.defaultUsername = _data["defaultUsername"];
+            this.defaultPassword = _data["defaultPassword"];
+            this.ssoUrl = _data["ssoUrl"];
         }
     }
 
@@ -15376,6 +15391,9 @@ export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
             for (let item of this.assignedUsers)
                 data["assignedUsers"].push(item ? item.toJSON() : <any>undefined);
         }
+        data["defaultUsername"] = this.defaultUsername;
+        data["defaultPassword"] = this.defaultPassword;
+        data["ssoUrl"] = this.ssoUrl;
         return data;
     }
 }
@@ -15443,6 +15461,9 @@ export class RemoteAppDto implements interfaces.IRemoteAppDto {
     createdAt?: Date;
     modifiedAt?: Date | undefined;
     assignedUserIds?: string[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 
     constructor(data?: interfaces.IRemoteAppDto) {
         if (data) {
@@ -15469,6 +15490,9 @@ export class RemoteAppDto implements interfaces.IRemoteAppDto {
                 for (let item of _data["assignedUserIds"])
                     this.assignedUserIds!.push(item);
             }
+            this.defaultUsername = _data["defaultUsername"];
+            this.defaultPassword = _data["defaultPassword"];
+            this.ssoUrl = _data["ssoUrl"];
         }
     }
 
@@ -15495,6 +15519,9 @@ export class RemoteAppDto implements interfaces.IRemoteAppDto {
             for (let item of this.assignedUserIds)
                 data["assignedUserIds"].push(item);
         }
+        data["defaultUsername"] = this.defaultUsername;
+        data["defaultPassword"] = this.defaultPassword;
+        data["ssoUrl"] = this.ssoUrl;
         return data;
     }
 }
@@ -15560,6 +15587,9 @@ export class RemoteAppListDto implements interfaces.IRemoteAppListDto {
     creator!: string | undefined;
     status?: string | undefined;
     createdAt?: Date;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 
     constructor(data?: interfaces.IRemoteAppListDto) {
         if (data) {
@@ -15580,6 +15610,9 @@ export class RemoteAppListDto implements interfaces.IRemoteAppListDto {
             this.creator = _data["creator"];
             this.status = _data["status"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.defaultUsername = _data["defaultUsername"];
+            this.defaultPassword = _data["defaultPassword"];
+            this.ssoUrl = _data["ssoUrl"];
         }
     }
 
@@ -15600,6 +15633,9 @@ export class RemoteAppListDto implements interfaces.IRemoteAppListDto {
         data["creator"] = this.creator;
         data["status"] = this.status;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["defaultUsername"] = this.defaultUsername;
+        data["defaultPassword"] = this.defaultPassword;
+        data["ssoUrl"] = this.ssoUrl;
         return data;
     }
 }
@@ -15720,6 +15756,9 @@ export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
     url?: string | undefined;
     isPublic?: boolean | undefined;
     assignedUserIds?: string[] | undefined;
+    defaultUsername?: string | undefined;
+    defaultPassword?: string | undefined;
+    ssoUrl?: string | undefined;
 
     constructor(data?: interfaces.IRemoteAppUpdateDto) {
         if (data) {
@@ -15741,6 +15780,9 @@ export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
                 for (let item of _data["assignedUserIds"])
                     this.assignedUserIds!.push(item);
             }
+            this.defaultUsername = _data["defaultUsername"];
+            this.defaultPassword = _data["defaultPassword"];
+            this.ssoUrl = _data["ssoUrl"];
         }
     }
 
@@ -15762,6 +15804,9 @@ export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
             for (let item of this.assignedUserIds)
                 data["assignedUserIds"].push(item);
         }
+        data["defaultUsername"] = this.defaultUsername;
+        data["defaultPassword"] = this.defaultPassword;
+        data["ssoUrl"] = this.ssoUrl;
         return data;
     }
 }

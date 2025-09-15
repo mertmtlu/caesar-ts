@@ -1577,6 +1577,12 @@ export interface IRemoteAppsClient {
     remoteApps_UpdateStatus(id: string, body: string | undefined): Promise<types.IBooleanApiResponse>;
 
     /**
+     * Launch remote app - redirects to SSO URL if configured, otherwise to base URL
+     * @return OK
+     */
+    remoteApps_Launch(id: string): Promise<void>;
+
+    /**
      * Validate remote app name uniqueness
      * @param excludeId (optional) 
      * @param body (optional) 

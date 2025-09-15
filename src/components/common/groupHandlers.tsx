@@ -27,6 +27,7 @@ export const projectGroupsHandler: GroupsHandler = {
           const potentialIds = [perm.id, perm.name].filter(Boolean);
           
           for (const potentialId of potentialIds) {
+            if (!potentialId) continue;
             try {
               console.log(`Trying to resolve group ID: ${potentialId}`);
               const groupResponse = await api.groupsClient.groups_GetById(potentialId);
@@ -313,6 +314,7 @@ export const remoteAppGroupsHandler: GroupsHandler = {
       
       // Remove each group member from the remote app
       for (const userId of memberUserIds) {
+        if (!userId) continue;
         try {
           await api.remoteAppsClient.remoteApps_UnassignUser(remoteAppId, userId);
         } catch (error: any) {
