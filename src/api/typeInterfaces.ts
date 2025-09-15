@@ -2563,6 +2563,18 @@ export interface IRemoteAppDtoApiResponse {
     timestamp?: Date;
 }
 
+export interface IRemoteAppLaunchDto {
+    redirectUrl: string | undefined;
+}
+
+export interface IRemoteAppLaunchDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IRemoteAppLaunchDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IRemoteAppListDto {
     id: string | undefined;
     name: string | undefined;

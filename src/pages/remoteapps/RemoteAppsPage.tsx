@@ -219,8 +219,15 @@ const RemoteAppsPage: React.FC = () => {
 
   const handleOpenApp = async (app: RemoteAppListItem) => {
     try {
-      // Use the SSO-aware launch method which handles redirects properly
-      await api.remoteAppsClient.remoteApps_Launch(app.id);
+      // Use the SSO-aware launch method which returns the redirect URL
+      const response = await api.remoteAppsClient.remoteApps_Launch(app.id);
+      
+      if (response.success && response.data?.redirectUrl) {
+        // Open the redirect URL returned by the API
+        window.open(response.data.redirectUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        throw new Error(response.message || 'No redirect URL provided');
+      }
     } catch (error) {
       console.error('Failed to launch remote app:', error);
       // Fallback to direct URL opening if the API call fails

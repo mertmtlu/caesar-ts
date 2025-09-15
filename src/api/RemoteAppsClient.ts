@@ -715,37 +715,44 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
     }
 
     /**
-     * Launch remote app - redirects to SSO URL if configured, otherwise to base URL
-     * Opens in new tab to handle browser redirects properly
+     * Launch remote app - returns launch URL in response DTO
      * @return OK
      */
-    remoteApps_Launch(id: string): Promise<void> {
+    remoteApps_Launch(id: string): Promise<types.RemoteAppLaunchDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/launch";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
-            
-        let url_ = this.baseUrl + "/api/RemoteApps/{id}/launch";
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
-        // Open the launch URL directly in a new tab to handle redirects properly
-        window.open(url_, '_blank', 'noopener,noreferrer');
-        
-        return Promise.resolve();
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_Launch(_response);
+        });
     }
 
-    protected processRemoteApps_Launch(response: Response): Promise<void> {
+    protected processRemoteApps_Launch(response: Response): Promise<types.RemoteAppLaunchDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.RemoteAppLaunchDtoApiResponse.fromJS(resultData200);
+            return result200;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<types.RemoteAppLaunchDtoApiResponse>(null as any);
     }
 
     /**

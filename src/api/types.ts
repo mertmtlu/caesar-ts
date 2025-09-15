@@ -15578,6 +15578,90 @@ export class RemoteAppDtoApiResponse implements interfaces.IRemoteAppDtoApiRespo
     }
 }
 
+export class RemoteAppLaunchDto implements interfaces.IRemoteAppLaunchDto {
+    redirectUrl!: string | undefined;
+
+    constructor(data?: interfaces.IRemoteAppLaunchDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.redirectUrl = _data["redirectUrl"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppLaunchDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppLaunchDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["redirectUrl"] = this.redirectUrl;
+        return data;
+    }
+}
+
+export class RemoteAppLaunchDtoApiResponse implements interfaces.IRemoteAppLaunchDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: RemoteAppLaunchDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IRemoteAppLaunchDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? RemoteAppLaunchDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppLaunchDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppLaunchDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class RemoteAppListDto implements interfaces.IRemoteAppListDto {
     id!: string | undefined;
     name!: string | undefined;
