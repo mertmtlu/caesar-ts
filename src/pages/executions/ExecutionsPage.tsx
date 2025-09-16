@@ -92,6 +92,56 @@ interface MenuState {
   position: { x: number; y: number };
 }
 
+const secureSsoRedirect = (redirectUrl: string) => {
+  try {
+    const url = new URL(redirectUrl);
+    const username = url.searchParams.get('username');
+    const password = url.searchParams.get('password');
+    
+    // Remove query parameters to get the base URL
+    const formActionUrl = `${url.origin}${url.pathname}`;
+
+    if (!username || !password) {
+      // Fallback for URLs without credentials
+      window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // 1. Create the form element
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = formActionUrl;
+    form.target = '_blank'; // Open in a new tab
+
+    // 2. Create hidden input fields for credentials
+    const userInput = document.createElement('input');
+    userInput.type = 'hidden';
+    userInput.name = 'username';
+    userInput.value = username;
+
+    const passInput = document.createElement('input');
+    passInput.type = 'hidden';
+    passInput.name = 'password';
+    passInput.value = password;
+
+    // 3. Append inputs to the form
+    form.appendChild(userInput);
+    form.appendChild(passInput);
+
+    // 4. Append the form to the body and submit
+    document.body.appendChild(form);
+    form.submit();
+
+    // 5. Clean up by removing the form
+    document.body.removeChild(form);
+
+  } catch (error) {
+    console.error('SSO redirect failed, falling back to direct URL:', error);
+    // Fallback to the original behavior if parsing fails
+    window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+  }
+};
+
 // Desktop icons configuration for different program types and languages
 const getDesktopIcon = (program: ProgramItem, iconData?: string): React.ReactNode => {
   // If we have custom icon data, use IconDisplay with custom styling
@@ -930,7 +980,7 @@ const ExecutionsPage: React.FC = () => {
       
       if (response.success && response.data?.redirectUrl) {
         // Open the redirect URL returned by the API
-        window.open(response.data.redirectUrl, '_blank', 'noopener,noreferrer');
+        secureSsoRedirect(response.data.redirectUrl);
       } else {
         throw new Error(response.message || 'No redirect URL provided');
       }

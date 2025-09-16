@@ -9,6 +9,7 @@ import { RemoteAppUpdateDto, RemoteAppDetailDto } from '@/api';
 import IconDisplay from '@/components/icons/IconDisplay';
 import IconUploader from '@/components/icons/IconUploader';
 import { IconEntityType } from '@/api/enums';
+import SsoInfoButton from '@/components/sso/SsoIntegrationGuide';
 
 const mimeTypeToFormat = (mimeType: string): string => {
   const formatMap: Record<string, string> = {
@@ -479,163 +480,158 @@ const EditRemoteAppPage: React.FC = () => {
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
 
           <form onSubmit={handleSubmit} className="p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Left Column - Basic Info */}
-              <div className="space-y-8">
-                {/* Basic Information Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-blue-200/50 dark:border-gray-700/50">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mr-3">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    Basic Information
-                  </h3>
-                  
-                  <div className="space-y-6">
-                    {/* Name Field */}
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        App Name *
-                      </label>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Enter a descriptive name for your app"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        errorMessage={validationErrors.name}
-                        className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
-                        leftIcon={
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                          </svg>
-                        }
-                      />
-                    </div>
-
-                    {/* URL Field */}
-                    <div>
-                      <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Application URL *
-                      </label>
-                      <Input
-                        id="url"
-                        type="url"
-                        placeholder="https://your-app-domain.com"
-                        value={formData.url}
-                        onChange={(e) => handleInputChange('url', e.target.value)}
-                        errorMessage={validationErrors.url}
-                        className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
-                        leftIcon={
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                          </svg>
-                        }
-                      />
-                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        The complete URL where users can access your application
-                      </p>
-                    </div>
-
-                    {/* Description Field */}
-                    <div>
-                      <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Description
-                      </label>
-                      <textarea
-                        id="description"
-                        rows={4}
-                        placeholder="Describe what this application does and how it helps your team..."
-                        value={formData.description}
-                        onChange={(e) => handleInputChange('description', e.target.value)}
-                        className="block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 resize-none"
-                      />
-                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        Optional: Help users understand the purpose of this application
-                      </p>
-                    </div>
+            <div className="space-y-8">
+              {/* Basic Information Card */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-blue-200/50 dark:border-gray-700/50">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mr-3">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
+                  Basic Information
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Name Field */}
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      App Name *
+                    </label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Enter a descriptive name for your app"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      errorMessage={validationErrors.name}
+                      className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                      }
+                    />
+                  </div>
+
+                  {/* URL Field */}
+                  <div>
+                    <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Application URL *
+                    </label>
+                    <Input
+                      id="url"
+                      type="url"
+                      placeholder="https://your-app-domain.com"
+                      value={formData.url}
+                      onChange={(e) => handleInputChange('url', e.target.value)}
+                      errorMessage={validationErrors.url}
+                      className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                      }
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      The complete URL where users can access your application
+                    </p>
+                  </div>
+                </div>
+
+                {/* Description Field - Full Width */}
+                <div className="mt-6">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    rows={4}
+                    placeholder="Describe what this application does and how it helps your team..."
+                    value={formData.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    className="block w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 resize-none"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Optional: Help users understand the purpose of this application
+                  </p>
                 </div>
               </div>
 
-              {/* Right Column - Configuration */}
-              <div className="space-y-8">
-                {/* Visibility Settings Card */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-green-200/50 dark:border-gray-700/50">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mr-3">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    </div>
-                    Access Control
-                  </h3>
+              {/* Visibility Settings Card */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-green-200/50 dark:border-gray-700/50">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mr-3">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </div>
+                  Access Control
+                </h3>
+                
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Choose who can access this remote application
+                  </p>
                   
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      Choose who can access this remote application
-                    </p>
-                    
-                    <div className="space-y-4">
-                      {/* Private Option */}
-                      <label className={`relative flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                        !formData.isPublic 
-                          ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' 
-                          : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}>
-                        <input
-                          id="private"
-                          name="visibility"
-                          type="radio"
-                          checked={!formData.isPublic}
-                          onChange={() => handleInputChange('isPublic', false)}
-                          className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mt-0.5"
-                        />
-                        <div className="ml-3 flex-1">
-                          <div className="flex items-center space-x-2">
-                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">Private</span>
-                          </div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Only you and specifically assigned users can access this application. Provides maximum control over access.
-                          </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Private Option */}
+                    <label className={`relative flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                      !formData.isPublic 
+                        ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' 
+                        : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}>
+                      <input
+                        id="private"
+                        name="visibility"
+                        type="radio"
+                        checked={!formData.isPublic}
+                        onChange={() => handleInputChange('isPublic', false)}
+                        className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mt-0.5"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="flex items-center space-x-2">
+                          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Private</span>
                         </div>
-                      </label>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          Only you and specifically assigned users can access this application. Provides maximum control over access.
+                        </p>
+                      </div>
+                    </label>
 
-                      {/* Public Option */}
-                      <label className={`relative flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                        formData.isPublic 
-                          ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' 
-                          : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600'
-                      }`}>
-                        <input
-                          id="public"
-                          name="visibility"
-                          type="radio"
-                          checked={formData.isPublic}
-                          onChange={() => handleInputChange('isPublic', true)}
-                          className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mt-0.5"
-                        />
-                        <div className="ml-3 flex-1">
-                          <div className="flex items-center space-x-2">
-                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">Public</span>
-                          </div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Anyone with access to the system can discover and use this application. Great for team-wide tools.
-                          </p>
+                    {/* Public Option */}
+                    <label className={`relative flex items-start p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                      formData.isPublic 
+                        ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20' 
+                        : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}>
+                      <input
+                        id="public"
+                        name="visibility"
+                        type="radio"
+                        checked={formData.isPublic}
+                        onChange={() => handleInputChange('isPublic', true)}
+                        className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mt-0.5"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="flex items-center space-x-2">
+                          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Public</span>
                         </div>
-                      </label>
-                    </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          Anyone with access to the system can discover and use this application. Great for team-wide tools.
+                        </p>
+                      </div>
+                    </label>
                   </div>
                 </div>
+              </div>
 
                 {/* SSO Configuration Card */}
                 <div className="bg-gradient-to-br from-orange-50 to-amber-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-orange-200/50 dark:border-gray-700/50">
@@ -650,6 +646,7 @@ const EditRemoteAppPage: React.FC = () => {
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">SSO Configuration</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">Optional single sign-on settings</p>
                       </div>
+                      <SsoInfoButton className="ml-2" />
                     </div>
                     <button
                       type="button"
@@ -752,11 +749,14 @@ const EditRemoteAppPage: React.FC = () => {
                               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                             </svg>
                           </div>
-                          <div className="ml-3">
+                          <div className="ml-3 min-w-0 flex-1">
                             <h4 className="text-sm font-medium text-orange-800 dark:text-orange-200">SSO Configuration</h4>
-                            <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
-                              When SSO is configured, users will be automatically redirected to the SSO URL with the provided credentials. The format will be: {formData.ssoUrl || 'SSO_URL'}?username={formData.defaultUsername || 'USERNAME'}&password={formData.defaultPassword || 'PASSWORD'}
+                            <p className="text-sm text-orange-700 dark:text-orange-300 mt-1 break-words">
+                              When SSO is configured, users will be automatically redirected to the SSO URL with the provided credentials.
                             </p>
+                            <div className="mt-2 p-2 bg-orange-100/50 dark:bg-orange-800/30 rounded text-xs text-orange-600 dark:text-orange-400 font-mono break-all">
+                              <span className="text-orange-500 dark:text-orange-300">Format:</span> {formData.ssoUrl || 'SSO_URL'}?username={formData.defaultUsername || 'USERNAME'}&amp;password={formData.defaultPassword || 'PASSWORD'}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -764,54 +764,10 @@ const EditRemoteAppPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Quick Actions Preview */}
-                <div className="bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-purple-200/50 dark:border-gray-700/50">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-3">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                    </div>
-                    Quick Actions
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => window.open(formData.url || app.url, '_blank')}
-                      disabled={!formData.url && !app.url}
-                      className="w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
-                      leftIcon={
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      }
-                    >
-                      Test Application URL
-                    </Button>
-                    
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => navigate(`/remoteapps/${appId}`)}
-                      className="w-full"
-                      leftIcon={
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                      }
-                    >
-                      Preview App Details
-                    </Button>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Form Actions */}
-            <div className="flex items-center justify-between pt-8 mt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8 mt-8 border-t border-gray-200/50 dark:border-gray-700/50">
               <Button
                 type="button"
                 variant="ghost"
@@ -826,7 +782,22 @@ const EditRemoteAppPage: React.FC = () => {
                 Cancel Changes
               </Button>
               
-              <div className="flex space-x-3">
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => window.open(formData.url || app.url, '_blank')}
+                  disabled={!formData.url && !app.url}
+                  className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm"
+                  leftIcon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  }
+                >
+                  Test URL
+                </Button>
+                
                 <Button
                   type="button"
                   variant="outline"
