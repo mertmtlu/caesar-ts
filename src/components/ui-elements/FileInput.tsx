@@ -1,27 +1,28 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { FileInputConfig } from '@/types/componentDesigner';
 import { api } from '@/api/api';
+import { FileDataDto } from '@/api/types';
 
-export interface FileData {
+interface InternalFileData {
   file: File;
-  id: string;
-  name: string;
-  size: number;
-  type: string;
+  id?: string;
+  name?: string;
+  size?: number;
+  type?: string;
+  checksum?: string;
   uploading?: boolean;
   uploaded?: boolean;
   error?: string;
   attachmentId?: string;
   storagePath?: string;
-  checksum?: string;
   filename?: string;
   base64Content?: string;
 }
 
 interface FileInputProps {
   config: FileInputConfig;
-  value?: FileData | FileData[];
-  onChange: (files: FileData | FileData[] | null) => void;
+  value?: FileDataDto | FileDataDto[];
+  onChange: (files: FileDataDto | FileDataDto[] | null) => void;
   onError?: (error: string) => void;
   disabled?: boolean;
   className?: string;
@@ -81,7 +82,7 @@ const FileInput: React.FC<FileInputProps> = ({
     return errors.length > 0 ? errors.join(', ') : null;
   }, [config.maxFileSize, config.acceptedFileTypes]);
 
-  const uploadFile = useCallback(async (fileData: FileData): Promise<FileData> => {
+  const uploadFile = useCallback(async (fileData: InternalFileData): Promise<InternalFileData> => {
     try {
       // Convert file to base64 once for all operations
       const fileContent = await fileToBase64(fileData.file);
@@ -107,7 +108,7 @@ const FileInput: React.FC<FileInputProps> = ({
       const fileHash = hashResponse.success && hashResponse.data ? hashResponse.data : undefined;
 
       // Step 3: Store file with base64 content and filename
-      const uploadedFile: FileData = {
+      const uploadedFile: InternalFileData = {
         ...fileData,
         uploading: false,
         uploaded: true,
@@ -154,7 +155,7 @@ const FileInput: React.FC<FileInputProps> = ({
     });
   };
 
-  const createFileData = useCallback((file: File): FileData => {
+  const createFileData = useCallback((file: File): InternalFileData => {
     return {
       file,
       id: `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -171,7 +172,7 @@ const FileInput: React.FC<FileInputProps> = ({
     const errors: string[] = [];
 
     // Validate each file
-    const validatedFiles: FileData[] = [];
+    const validatedFiles: InternalFileData[] = [];
     for (const file of fileArray) {
       const validationError = validateFile(file);
       if (validationError) {
@@ -199,11 +200,20 @@ const FileInput: React.FC<FileInputProps> = ({
     // Always process files to include base64 content
     const processPromises = validatedFiles.map(async (fileData) => {
       const fileContent = await fileToBase64(fileData.file);
-      return {
-        ...fileData,
+      
+      // Create FileDataDto for the onChange callback
+      const dto = new FileDataDto({
+        id: fileData.id,
+        name: fileData.name,
+        size: fileData.size,
+        type: fileData.type,
+        checksum: fileData.checksum,
+        base64Content: fileContent,
         filename: fileData.file.name,
-        base64Content: fileContent
-      };
+
+      });
+      
+      return dto;
     });
 
     const processedFiles = await Promise.all(processPromises);
@@ -266,7 +276,7 @@ const FileInput: React.FC<FileInputProps> = ({
   };
 
   const acceptAttribute = config.acceptedFileTypes?.join(',') || '';
-  const currentFiles: FileData[] = config.multiple 
+  const currentFiles: FileDataDto[] = config.multiple 
     ? (Array.isArray(value) ? value : []) 
     : (value && !Array.isArray(value) ? [value] : []);
 
@@ -334,24 +344,21 @@ const FileInput: React.FC<FileInputProps> = ({
             <div key={fileData.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="flex items-center space-x-3 flex-1 min-w-0">
                 <div className="flex-shrink-0">
-                  {fileData.uploaded ? '✅' : fileData.uploading ? '⏳' : fileData.error ? '❌' : '📄'}
+                  📄
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                    {fileData.name}
+                    {fileData.name || 'Unknown file'}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatFileSize(fileData.size)} • {fileData.type || 'Unknown type'}
+                    {formatFileSize(fileData.size || 0)} • {fileData.type || 'Unknown type'}
                   </p>
-                  {fileData.error && (
-                    <p className="text-xs text-red-600 dark:text-red-400">{fileData.error}</p>
-                  )}
                 </div>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  removeFile(fileData.id);
+                  removeFile(fileData.id || '');
                 }}
                 className="ml-3 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
                 disabled={disabled}

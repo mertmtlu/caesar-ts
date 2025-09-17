@@ -55,7 +55,7 @@ const ProgramInfoModal: React.FC<ProgramInfoModalProps> = ({ isOpen, onClose }) 
 
   const languages = [
     { id: 'python' as LanguageTab, name: 'Python', available: true, icon: PythonIcon },
-    { id: 'csharp' as LanguageTab, name: 'C#', available: false, icon: CSharpIcon },
+    { id: 'csharp' as LanguageTab, name: 'C#', available: true, icon: CSharpIcon },
     { id: 'java' as LanguageTab, name: 'Java', available: false, icon: JavaIcon },
     { id: 'javascript' as LanguageTab, name: 'JavaScript', available: false, icon: JavascriptIcon },
   ];
@@ -225,6 +225,57 @@ const ProgramInfoModal: React.FC<ProgramInfoModalProps> = ({ isOpen, onClose }) 
         </div>
       </div>
 
+      {/* Generated DTO Classes Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+          <div className="flex items-center">
+            <div className="bg-indigo-100 dark:bg-indigo-900 p-2 rounded-lg mr-3">
+              <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+            <div>
+              <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Generated DTO Classes
+              </h5>
+              <p className="text-indigo-600 dark:text-indigo-400 text-sm">
+                Automatically generated data transfer objects for complex components
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+            Complex component types like <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">map_input</code> and <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">file_input</code> use automatically generated Data Transfer Object classes:
+          </p>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg border border-gray-700 overflow-hidden">
+            <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
+              <span className="text-gray-400 text-xs font-mono">UIComponent.py (auto-generated)</span>
+            </div>
+            <pre className="p-6 overflow-x-auto text-sm">
+              <code className="text-gray-100">
+                <span className="text-gray-500"># DTO classes are automatically generated at the top of the file</span><br />
+                <span className="text-pink-400">class</span> <span className="text-blue-400">NamedPointDto</span>:
+                <br />
+                {'    '}<span className="text-yellow-300">id</span>: <span className="text-green-400">str</span><br />
+                {'    '}<span className="text-yellow-300">name</span>: <span className="text-green-400">str</span><br />
+                {'    '}<span className="text-yellow-300">lat</span>: <span className="text-green-400">float</span><br />
+                {'    '}<span className="text-yellow-300">lng</span>: <span className="text-green-400">float</span><br /><br />
+                <span className="text-pink-400">class</span> <span className="text-blue-400">FileDataDto</span>:
+                <br />
+                {'    '}<span className="text-yellow-300">id</span>: <span className="text-green-400">str</span><br />
+                {'    '}<span className="text-yellow-300">name</span>: <span className="text-green-400">str</span><br />
+                {'    '}<span className="text-yellow-300">size</span>: <span className="text-green-400">int</span><br />
+                {'    '}<span className="text-yellow-300">type</span>: <span className="text-green-400">str</span><br />
+                {'    '}<span className="text-yellow-300">checksum</span>: <span className="text-blue-400">Optional</span>[<span className="text-green-400">str</span>]<br />
+                {'    '}<span className="text-yellow-300">base64_content</span>: <span className="text-blue-400">Optional</span>[<span className="text-green-400">str</span>]<br />
+                {'    '}<span className="text-yellow-300">filename</span>: <span className="text-blue-400">Optional</span>[<span className="text-green-400">str</span>]
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
       {/* Available Properties Reference Card */}
       <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-6">
         <div className="flex items-center mb-4">
@@ -266,6 +317,207 @@ const ProgramInfoModal: React.FC<ProgramInfoModalProps> = ({ isOpen, onClose }) 
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
             <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">ui.validate()</code>
             <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">Validate all required fields</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCSharpUIContent = () => (
+    <div className="space-y-8">
+      {/* Header Section with Icon */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="flex items-center mb-4">
+          <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
+            <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+              UI Component Integration
+            </h4>
+            <p className="text-blue-600 dark:text-blue-400 text-sm">
+              Connect your C# programs to UI components
+            </p>
+          </div>
+        </div>
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+          The system automatically generates a <code className="bg-white dark:bg-gray-800 px-3 py-1 rounded-md border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 font-mono text-sm">UIComponent.cs</code> file 
+          based on your UI component configuration. Your programs can load and use this to access user input values seamlessly.
+        </p>
+      </div>
+
+      {/* Basic Usage Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+          <div className="flex items-center">
+            <div className="bg-green-100 dark:bg-green-900 p-2 rounded-lg mr-3">
+              <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Basic Usage
+            </h5>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
+            Load and access UI component values using the generated static Load method
+          </p>
+        </div>
+        <div className="p-6">
+          <pre className="bg-gray-900 dark:bg-gray-950 p-6 rounded-lg overflow-x-auto text-sm border border-gray-700">
+            <code className="text-gray-100">
+              <span className="text-gray-500">// In your Program.cs or main method</span><br />
+              <span className="text-pink-400">using</span> <span className="text-blue-300">TeiasProject</span>;
+              <br /><br />
+              <span className="text-pink-400">public class</span> <span className="text-blue-400">Program</span><br />
+              {'{'}<br />
+              {'    '}<span className="text-pink-400">public static void</span> <span className="text-blue-400">Main</span>(<span className="text-pink-400">string</span>[] <span className="text-yellow-300">args</span>)<br />
+              {'    {'}<br />
+              {'        '}<span className="text-pink-400">var</span> <span className="text-yellow-300">ui</span> = <span className="text-blue-400">UIComponent</span>.<span className="text-green-400">Load</span>(<span className="text-yellow-300">args</span>);<br /><br />
+              {'        '}<span className="text-gray-500">// Access UI element values</span><br />
+              {'        '}<span className="text-pink-400">string</span>? <span className="text-yellow-300">userInput</span> = <span className="text-yellow-300">ui</span>.<span className="text-green-400">InputFieldName</span>;<br />
+              {'        '}<span className="text-blue-400">List</span>&lt;<span className="text-blue-400">Dictionary</span>&lt;<span className="text-pink-400">string</span>, <span className="text-pink-400">object</span>&gt;&gt;? <span className="text-yellow-300">tableData</span> = <span className="text-yellow-300">ui</span>.<span className="text-green-400">DataTable</span>;<br />
+              {'        '}<span className="text-blue-400">List</span>&lt;<span className="text-blue-400">NamedPointDto</span>&gt;? <span className="text-yellow-300">locations</span> = <span className="text-yellow-300">ui</span>.<span className="text-green-400">LocationPicker</span>;<br />
+              {'    }'}<br />
+              {'}'}
+            </code>
+          </pre>
+        </div>
+      </div>
+
+      {/* Matrix Processing Example Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+          <div className="flex items-center">
+            <div className="bg-purple-100 dark:bg-purple-900 p-2 rounded-lg mr-3">
+              <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Matrix Processing Example
+              </h5>
+              <p className="text-purple-600 dark:text-purple-400 text-sm">
+                Advanced data extraction from table components
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+            Extract and process matrix data from table UI components with full type safety and validation:
+          </p>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg border border-gray-700 overflow-hidden">
+            <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
+              <span className="text-gray-400 text-xs font-mono">Program.cs</span>
+            </div>
+            <pre className="p-6 overflow-x-auto text-sm">
+              <code className="text-gray-100">
+                <span className="text-gray-500">// Assumes a table element named 'data_table'</span><br />
+                <span className="text-gray-500">// and a cell with a custom name 'TotalSum'</span><br />
+                <span className="text-pink-400">var</span> <span className="text-yellow-300">ui</span> = <span className="text-blue-400">UIComponent</span>.<span className="text-green-400">Load</span>(<span className="text-yellow-300">args</span>);<br /><br />
+                <span className="text-gray-500">// Access the whole table as a dictionary</span><br />
+                <span className="text-pink-400">var</span> <span className="text-yellow-300">table</span> = <span className="text-yellow-300">ui</span>.<span className="text-green-400">DataTable</span>;<br />
+                <span className="text-pink-400">if</span> (<span className="text-yellow-300">table</span> != <span className="text-pink-400">null</span> && <span className="text-yellow-300">table</span>.<span className="text-green-400">TryGetValue</span>(<span className="text-green-300">"A1"</span>, <span className="text-pink-400">out var</span> <span className="text-yellow-300">cellValue</span>))<br />
+                {'{'}<br />
+                {'    '}<span className="text-blue-400">Console</span>.<span className="text-green-400">WriteLine</span>($<span className="text-green-300">"Cell A1 value: </span>{'{cellValue}'}<span className="text-green-300">"</span>);<br />
+                {'}'}<br /><br />
+                <span className="text-gray-500">// Access a named cell directly</span><br />
+                <span className="text-pink-400">double</span>? <span className="text-yellow-300">totalSum</span> = <span className="text-yellow-300">ui</span>.<span className="text-green-400">TotalSum</span>;<br />
+                <span className="text-blue-400">Console</span>.<span className="text-green-400">WriteLine</span>($<span className="text-green-300">"Total Sum: </span>{'{totalSum}'}<span className="text-green-300">"</span>);
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      {/* Generated DTO Classes Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+          <div className="flex items-center">
+            <div className="bg-indigo-100 dark:bg-indigo-900 p-2 rounded-lg mr-3">
+              <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+            <div>
+              <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Generated DTO Classes
+              </h5>
+              <p className="text-indigo-600 dark:text-indigo-400 text-sm">
+                Strongly-typed data transfer objects for complex components
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+            Complex component types like <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">map_input</code> and <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">file_input</code> use strongly-typed Data Transfer Objects (DTOs) like <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">List&lt;NamedPointDto&gt;</code> and <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">List&lt;FileDataDto&gt;</code>. These classes are defined in a shared project and are automatically available to your program.
+          </p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <div className="flex items-start">
+              <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg mr-3 mt-1">
+                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-blue-800 dark:text-blue-200 text-sm font-medium mb-1">
+                  Shared Library Integration
+                </p>
+                <p className="text-blue-700 dark:text-blue-300 text-sm">
+                  DTOs are automatically referenced from the shared TeiasProject library, providing consistent type definitions across all your C# programs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Available Properties Reference Card */}
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-6">
+        <div className="flex items-center mb-4">
+          <div className="bg-amber-100 dark:bg-amber-900 p-2 rounded-lg mr-3">
+            <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Available Properties
+            </h5>
+            <p className="text-amber-600 dark:text-amber-400 text-sm">
+              Quick reference for UIComponent properties and methods
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
+            <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">ui.PropertyName</code>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">Access any UI element by its PascalCase name</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
+            <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">UIComponent.Load(args)</code>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">Static method to deserialize from command-line args</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
+            <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">ui.DataTable</code>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">Access table data as Dictionary&lt;string, object&gt;</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
+            <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">ui.CellName</code>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">Direct access to named table cells</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
+            <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">List&lt;NamedPointDto&gt;</code>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">Map component data with lat/lng coordinates</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-200 dark:border-amber-700">
+            <code className="text-blue-600 dark:text-blue-400 font-mono text-sm font-semibold">List&lt;FileDataDto&gt;</code>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">File input component data with metadata</p>
           </div>
         </div>
       </div>
@@ -529,12 +781,14 @@ const ProgramInfoModal: React.FC<ProgramInfoModalProps> = ({ isOpen, onClose }) 
   };
 
   const renderTabContent = () => {
-    if (activeTab !== 'python') {
+    if (activeTab === 'python') {
+      return activeSection === 'ui' ? renderPythonUIContent() : renderPythonWorkflowContent();
+    } else if (activeTab === 'csharp') {
+      return activeSection === 'ui' ? renderCSharpUIContent() : renderComingSoonContent('C# Workflow');
+    } else {
       const language = languages.find(l => l.id === activeTab);
       return renderComingSoonContent(language?.name || 'Language');
     }
-
-    return activeSection === 'ui' ? renderPythonUIContent() : renderPythonWorkflowContent();
   };
 
   return (
@@ -574,8 +828,8 @@ const ProgramInfoModal: React.FC<ProgramInfoModalProps> = ({ isOpen, onClose }) 
               ))}
             </div>
             
-            {/* Section Navigation (only for Python) */}
-            {activeTab === 'python' && (
+            {/* Section Navigation (only for available languages) */}
+            {(activeTab === 'python' || activeTab === 'csharp') && (
               <div className="flex items-center space-x-1">
                 {sections.map((section, index) => (
                   <React.Fragment key={section.id}>

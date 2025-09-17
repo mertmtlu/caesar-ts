@@ -1433,6 +1433,16 @@ export interface IExecutionValidationResultApiResponse {
     timestamp?: Date;
 }
 
+export interface IFileDataDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    size?: number;
+    type?: string | undefined;
+    checksum?: string | undefined;
+    base64Content?: string | undefined;
+    filename?: string | undefined;
+}
+
 export interface IFileStorageResult {
     filePath?: string | undefined;
     storageKey?: string | undefined;
@@ -1820,6 +1830,13 @@ export interface IMasonryUpdateDto {
     yAxisLength?: number | undefined;
     storeyHeight?: { [key: string]: number; } | undefined;
     unitTypeList?: IMasonryUnitType[] | undefined;
+}
+
+export interface INamedPointDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    lat?: number;
+    lng?: number;
 }
 
 export interface INodeConditionalExecutionDto {

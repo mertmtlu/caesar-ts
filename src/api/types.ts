@@ -8722,6 +8722,56 @@ export class ExecutionValidationResultApiResponse implements interfaces.IExecuti
     }
 }
 
+export class FileDataDto implements interfaces.IFileDataDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    size?: number;
+    type?: string | undefined;
+    checksum?: string | undefined;
+    base64Content?: string | undefined;
+    filename?: string | undefined;
+
+    constructor(data?: interfaces.IFileDataDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.size = _data["size"];
+            this.type = _data["type"];
+            this.checksum = _data["checksum"];
+            this.base64Content = _data["base64Content"];
+            this.filename = _data["filename"];
+        }
+    }
+
+    static fromJS(data: any): FileDataDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FileDataDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["size"] = this.size;
+        data["type"] = this.type;
+        data["checksum"] = this.checksum;
+        data["base64Content"] = this.base64Content;
+        data["filename"] = this.filename;
+        return data;
+    }
+}
+
 export class FileStorageResult implements interfaces.IFileStorageResult {
     filePath?: string | undefined;
     storageKey?: string | undefined;
@@ -11070,6 +11120,47 @@ export class MasonryUpdateDto implements interfaces.IMasonryUpdateDto {
             for (let item of this.unitTypeList)
                 data["unitTypeList"].push(item ? item.toJSON() : <any>undefined);
         }
+        return data;
+    }
+}
+
+export class NamedPointDto implements interfaces.INamedPointDto {
+    id?: string | undefined;
+    name?: string | undefined;
+    lat?: number;
+    lng?: number;
+
+    constructor(data?: interfaces.INamedPointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.lat = _data["lat"];
+            this.lng = _data["lng"];
+        }
+    }
+
+    static fromJS(data: any): NamedPointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NamedPointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["lat"] = this.lat;
+        data["lng"] = this.lng;
         return data;
     }
 }

@@ -6,6 +6,7 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { UIElement } from '@/types/componentDesigner';
+import { NamedPointDto } from '@/api/types';
 
 // Fix for default marker icon issue with modern bundlers
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -16,19 +17,17 @@ L.Icon.Default.mergeOptions({
 });
 
 export type Point = { lat: number; lng: number };
-export type NamedPoint = { id: string; name: string; lat: number; lng: number };
-export type PointsData = NamedPoint[];
 
 interface InteractiveMapProps {
   element: UIElement;
-  value: PointsData;
-  onChange: (newValue: PointsData) => void;
+  value: NamedPointDto[];
+  onChange: (newValue: NamedPointDto[]) => void;
   className?: string;
   style?: React.CSSProperties;
 }
 
 interface CoordinateDisplayProps {
-  points: PointsData;
+  points: NamedPointDto[];
   onRemovePoint: (index: number) => void;
   onClearAll: () => void;
   onUpdatePointName: (index: number, name: string) => void;
@@ -38,8 +37,8 @@ interface CoordinateDisplayProps {
 
 interface MapEventsHandlerProps {
   element: UIElement;
-  value: PointsData;
-  onChange: (newValue: PointsData) => void;
+  value: NamedPointDto[];
+  onChange: (newValue: NamedPointDto[]) => void;
 }
 
 const MapEventsHandler: React.FC<MapEventsHandlerProps> = ({ element, value, onChange }) => {
@@ -60,14 +59,14 @@ const MapEventsHandler: React.FC<MapEventsHandlerProps> = ({ element, value, onC
       const timestamp = Date.now();
       const pointNumber = (value?.length || 0) + 1;
       
-      const newPoint: NamedPoint = {
+      const newPoint = new NamedPointDto({
         id: `point_${timestamp}`,
         name: `Point ${pointNumber}`,
         lat: e.latlng.lat,
         lng: e.latlng.lng
-      };
+      });
       
-      let newPoints: NamedPoint[] = [];
+      let newPoints: NamedPointDto[] = [];
 
       if (mapConfig.selectionMode === 'single') {
         newPoints = [newPoint];
@@ -170,7 +169,7 @@ const CoordinateDisplay: React.FC<CoordinateDisplayProps> = ({
             
             {/* Coordinates */}
             <div className="text-xs font-mono text-gray-600 dark:text-gray-400 ml-4">
-              {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+              {point.lat?.toFixed(4) || '0'}, {point.lng?.toFixed(4) || '0'}
             </div>
           </div>
         ))}
@@ -210,7 +209,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
   const handleUpdatePointName = (index: number, newName: string) => {
     const newPoints = value.map((point, i) => 
-      i === index ? { ...point, name: newName } : point
+      i === index ? new NamedPointDto({ ...point, name: newName }) : point
     );
     onChange(newPoints);
   };
@@ -238,12 +237,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
           />
           <MapEventsHandler element={element} value={value} onChange={onChange} />
           {(value || []).map((point, index) => (
-            <Marker key={point.id} position={[point.lat, point.lng]}>
+            <Marker key={point.id} position={[point.lat || 0, point.lng || 0]}>
               <Popup>
                 <div className="text-center min-w-[150px]">
                   <div className="font-medium mb-2">{point.name}</div>
                   <div className="text-sm font-mono text-gray-600 mb-2">
-                    {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+                    {point.lat?.toFixed(4) || '0'}, {point.lng?.toFixed(4) || '0'}
                   </div>
                   <button
                     onClick={() => handleRemovePoint(index)}

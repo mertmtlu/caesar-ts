@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { UIElement, ValidationRule } from '@/types/componentDesigner';
 import Button from '@/components/common/Button';
-import FileInput, { FileData } from '@/components/ui-elements/FileInput';
+import FileInput from '@/components/ui-elements/FileInput';
+import { FileDataDto } from '@/api/types';
 
 // --- MAP SUPPORT ---
 import InteractiveMap from '@/components/ui-elements/InteractiveMap';
@@ -134,17 +135,17 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         return typeof value === 'string' && !!rule.value && !new RegExp(rule.value as string).test(value);
       case 'fileSize':
         if (Array.isArray(value)) {
-          return value.some((fileData: FileData) => fileData.size > (rule.value as number));
+          return value.some((fileData: FileDataDto) => (fileData.size || 0) > (rule.value as number));
         } else if (value) {
-          return (value as FileData).size > (rule.value as number);
+          return ((value as FileDataDto).size || 0) > (rule.value as number);
         }
         return false;
       case 'fileType':
         const allowedTypes = (rule.value as string).split(',');
         if (Array.isArray(value)) {
-          return value.some((fileData: FileData) => !allowedTypes.includes(fileData.type));
+          return value.some((fileData: FileDataDto) => !allowedTypes.includes(fileData.type || ''));
         } else if (value) {
-          return !allowedTypes.includes((value as FileData).type);
+          return !allowedTypes.includes((value as FileDataDto).type || '');
         }
         return false;
       case 'fileCount':
@@ -179,16 +180,16 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
             console.log('Processing file input for execution:', element.name, fileValue);
             if (fileValue) {
               if (Array.isArray(fileValue)) {
-                parameters[element.name] = fileValue.map((fileData: FileData) => ({
-                  filename: fileData.filename || fileData.name,
+                parameters[element.name] = fileValue.map((fileData: FileDataDto) => ({
+                  filename: fileData.name,
                   content: fileData.base64Content,
                   fileSize: fileData.size,
                   contentType: fileData.type
                 }));
               } else {
-                const fileData = fileValue as FileData;
+                const fileData = fileValue as FileDataDto;
                 parameters[element.name] = {
-                  filename: fileData.filename || fileData.name,
+                  filename: fileData.name,
                   content: fileData.base64Content,
                   fileSize: fileData.size,
                   contentType: fileData.type
