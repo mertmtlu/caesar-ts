@@ -297,6 +297,17 @@ const ExecutionDetailPage: React.FC = () => {
     }
   };
 
+  const handleDownloadAllFiles = async () => {
+    if (!executionId) return;
+    
+    try {
+      await api.executions.executions_DownloadAllExecutionFiles(executionId, undefined, undefined);
+    } catch (error) {
+      console.error('Failed to download all files:', error);
+      setError('Failed to download files. Please try again.');
+    }
+  };
+
   const handleStopExecution = async () => {
     if (!executionId || !execution) return;
     
@@ -560,11 +571,26 @@ const ExecutionDetailPage: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">Output Files</h2>
-          {isLoadingFiles && (
-            <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-          )}
+          <div className="flex items-center space-x-2">
+            {outputFiles.length > 0 && (
+              <Button
+                variant="outline"
+                onClick={handleDownloadAllFiles}
+                leftIcon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                }
+              >
+                Download All
+              </Button>
+            )}
+            {isLoadingFiles && (
+              <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            )}
+          </div>
         </div>
         
         <div className="p-6">
