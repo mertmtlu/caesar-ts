@@ -120,6 +120,7 @@ const ExecutionDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [filesHaveBeenFetched, setFilesHaveBeenFetched] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     if (executionId) {
@@ -299,12 +300,36 @@ const ExecutionDetailPage: React.FC = () => {
 
   const handleDownloadAllFiles = async () => {
     if (!executionId) return;
-    
+
     try {
-      await api.executions.executions_DownloadAllExecutionFiles(executionId, undefined, undefined);
+      setIsDownloading(true);
+      const response = await api.executions.executions_DownloadAllExecutionFiles(executionId, false, "optimal");
+
+      if (!response.success) {
+        throw new Error(response.message || 'Download request failed');
+      }
+
+      if (!response.data?.zipContent) {
+        throw new Error('No zip content received from server');
+      }
+
+      // For very large files, try direct data URL approach
+      const base64Data = response.data.zipContent;
+
+      // Create direct data URL - let browser handle the conversion
+      const dataUrl = `data:application/zip;base64,${base64Data}`;
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = response.data.fileName || `execution-${executionId}-files.zip`;
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
     } catch (error) {
-      console.error('Failed to download all files:', error);
+      console.error('Failed to download files:', error);
       setError('Failed to download files. Please try again.');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -576,13 +601,20 @@ const ExecutionDetailPage: React.FC = () => {
               <Button
                 variant="outline"
                 onClick={handleDownloadAllFiles}
+                disabled={isDownloading}
                 leftIcon={
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
+                  isDownloading ? (
+                    <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  )
                 }
               >
-                Download All
+                {isDownloading ? 'Downloading...' : 'Download All'}
               </Button>
             )}
             {isLoadingFiles && (

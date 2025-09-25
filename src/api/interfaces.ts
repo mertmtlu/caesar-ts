@@ -901,7 +901,7 @@ export interface IExecutionsClient {
      * @param compressionLevel (optional) 
      * @return OK
      */
-    executions_DownloadAllExecutionFiles(id: string, includeMetadata: boolean | undefined, compressionLevel: string | undefined): Promise<void>;
+    executions_DownloadAllExecutionFiles(id: string, includeMetadata: boolean | undefined, compressionLevel: string | undefined): Promise<types.IBulkDownloadResultApiResponse>;
 
     /**
      * Download selected output files from an execution as a ZIP archive

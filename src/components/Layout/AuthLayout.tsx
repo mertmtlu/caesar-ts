@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import CompactTerminalCloudIcon from '../icons/CompactTerminalCloudIcon';
 
 const AuthLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -42,19 +43,15 @@ const AuthLayout: React.FC = () => {
           <div className="flex justify-center">
             {/* Logo placeholder - replace with actual logo */}
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
+                <CompactTerminalCloudIcon />
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 Caesar
               </div>
             </div>
           </div>
-          <h2 className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          {/* <h2 className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
             One Ring to Rule Them All
-          </h2>
+          </h2> */}
         </div>
 
         {/* Main Auth Card */}

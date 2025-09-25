@@ -204,7 +204,7 @@ const MaintenanceMode: React.FC<MaintenanceModeProps> = ({
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-gray-500 text-sm">
-            © 2024 Caesar. We'll be back online shortly.
+            © 2025 Caesar. We'll be back online shortly.
           </p>
         </div>
       </div>

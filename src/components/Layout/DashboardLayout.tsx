@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/stores/themeStore';
+import CompactTerminalCloudIcon from '../icons/CompactTerminalCloudIcon';
 
 // Navigation items with role restrictions
 interface NavigationItem {
@@ -209,11 +210,7 @@ const DashboardLayout: React.FC = () => {
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                  </div>
+                  <CompactTerminalCloudIcon/>
                   <span className="text-xl font-bold text-gray-900 dark:text-white">Caesar</span>
                 </div>
               </div>
@@ -246,11 +243,7 @@ const DashboardLayout: React.FC = () => {
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                  </div>
+                  <CompactTerminalCloudIcon/>
                   <span className="text-xl font-bold text-gray-900 dark:text-white">Caesar</span>
                 </div>
               </div>
