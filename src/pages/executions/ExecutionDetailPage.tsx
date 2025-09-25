@@ -303,28 +303,51 @@ const ExecutionDetailPage: React.FC = () => {
 
     try {
       setIsDownloading(true);
-      const response = await api.executions.executions_DownloadAllExecutionFiles(executionId, false, "optimal");
 
-      if (!response.success) {
-        throw new Error(response.message || 'Download request failed');
+      // Get the authentication token
+      const token = localStorage.getItem('accessToken');
+
+      // Prepare headers with authentication
+      const headers: HeadersInit = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
 
-      if (!response.data?.zipContent) {
-        throw new Error('No zip content received from server');
+      // Use direct fetch to download the file as a blob
+      const response = await fetch(`${api.baseApiUrl}/api/Executions/${executionId}/files/download-all?includeMetadata=false&compressionLevel=optimal`, {
+        method: 'GET',
+        headers: headers
+      });
+
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.status} ${response.statusText}`);
       }
 
-      // For very large files, try direct data URL approach
-      const base64Data = response.data.zipContent;
+      // Get the filename from the Content-Disposition header or use a default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let fileName = `execution-${executionId}-files.zip`;
 
-      // Create direct data URL - let browser handle the conversion
-      const dataUrl = `data:application/zip;base64,${base64Data}`;
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        if (fileNameMatch && fileNameMatch[1]) {
+          fileName = fileNameMatch[1].replace(/['"]/g, '');
+        }
+      }
+
+      // Convert response to blob
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = response.data.fileName || `execution-${executionId}-files.zip`;
+      link.href = url;
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
 
+      // Cleanup
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Failed to download files:', error);
       setError('Failed to download files. Please try again.');

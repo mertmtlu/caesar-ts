@@ -300,6 +300,13 @@ export class ApiClient {
     }
 
     /**
+     * Get current API base URL
+     */
+    get baseApiUrl(): string {
+        return this.baseUrl;
+    }
+
+    /**
      * Update authentication configuration
      */
     updateAuth(
