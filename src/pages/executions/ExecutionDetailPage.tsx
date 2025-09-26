@@ -299,29 +299,70 @@ const ExecutionDetailPage: React.FC = () => {
   };
 
   const handleDownloadAllFiles = async () => {
-    if (!executionId) return;
+    console.log('=== Download All Files Started ===');
+    console.log('Execution ID:', executionId);
+    console.log('API Base URL:', api.baseApiUrl);
+
+    if (!executionId) {
+      console.error('No execution ID available');
+      return;
+    }
 
     try {
       setIsDownloading(true);
+      console.log('Set downloading state to true');
 
       // Step 1: Get the download token
+      console.log('Step 1: Requesting download token...');
+      console.log('Making API call to: executions_GenerateDownloadToken');
+
       const tokenResponse = await api.executions.executions_GenerateDownloadToken(executionId);
 
+      console.log('Token response received:');
+      console.log('- Success:', tokenResponse.success);
+      console.log('- Message:', tokenResponse.message);
+      console.log('- Data:', tokenResponse.data);
+      console.log('- Has token:', !!tokenResponse.data?.token);
+      console.log('- Token length:', tokenResponse.data?.token?.length);
+
+      if (tokenResponse.data?.token) {
+        console.log('Token preview:', tokenResponse.data.token.substring(0, 20) + '...');
+      }
+
       if (!tokenResponse.success || !tokenResponse.data?.token) {
-        throw new Error(tokenResponse.message || 'Failed to generate download token');
+        const errorMsg = tokenResponse.message || 'Failed to generate download token';
+        console.error('Token generation failed:', errorMsg);
+        throw new Error(errorMsg);
       }
 
       const downloadToken = tokenResponse.data.token;
+      console.log('Download token acquired successfully');
 
       // Step 2: Trigger the download using the token
+      console.log('Step 2: Constructing download URL...');
       const downloadUrl = `${api.baseApiUrl}/api/Executions/${executionId}/files/download-all?token=${downloadToken}`;
+      console.log('Download URL constructed:', downloadUrl);
+      console.log('URL length:', downloadUrl.length);
+
+      console.log('Triggering download via window.location.href...');
+      console.log('Current window.location.href before:', window.location.href);
+
       window.location.href = downloadUrl;
 
+      console.log('window.location.href assignment completed');
+      console.log('Current window.location.href after:', window.location.href);
+      console.log('=== Download trigger completed successfully ===');
+
     } catch (error) {
-      console.error('Failed to download files:', error);
+      console.error('=== Download Failed ===');
+      console.error('Error details:', error);
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       setError('Failed to download files. Please try again.');
     } finally {
+      console.log('Setting downloading state to false');
       setIsDownloading(false);
+      console.log('=== Download All Files Function Completed ===');
     }
   };
 
