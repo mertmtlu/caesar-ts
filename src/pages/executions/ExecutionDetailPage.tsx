@@ -304,50 +304,19 @@ const ExecutionDetailPage: React.FC = () => {
     try {
       setIsDownloading(true);
 
-      // Get the authentication token
-      const token = localStorage.getItem('accessToken');
+      // Step 1: Get the download token
+      const tokenResponse = await api.executions.executions_GenerateDownloadToken(executionId);
 
-      // Prepare headers with authentication
-      const headers: HeadersInit = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (!tokenResponse.success || !tokenResponse.data?.token) {
+        throw new Error(tokenResponse.message || 'Failed to generate download token');
       }
 
-      // Use direct fetch to download the file as a blob
-      const response = await fetch(`${api.baseApiUrl}/api/Executions/${executionId}/files/download-all?includeMetadata=false&compressionLevel=optimal`, {
-        method: 'GET',
-        headers: headers
-      });
+      const downloadToken = tokenResponse.data.token;
 
-      if (!response.ok) {
-        throw new Error(`Download failed: ${response.status} ${response.statusText}`);
-      }
+      // Step 2: Trigger the download using the token
+      const downloadUrl = `${api.baseApiUrl}/api/Executions/${executionId}/files/download-all?token=${downloadToken}`;
+      window.location.href = downloadUrl;
 
-      // Get the filename from the Content-Disposition header or use a default
-      const contentDisposition = response.headers.get('Content-Disposition');
-      let fileName = `execution-${executionId}-files.zip`;
-
-      if (contentDisposition) {
-        const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-        if (fileNameMatch && fileNameMatch[1]) {
-          fileName = fileNameMatch[1].replace(/['"]/g, '');
-        }
-      }
-
-      // Convert response to blob
-      const blob = await response.blob();
-
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-
-      // Cleanup
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Failed to download files:', error);
       setError('Failed to download files. Please try again.');

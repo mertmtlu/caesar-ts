@@ -492,24 +492,6 @@ export interface IBulkDownloadRequest {
     compressionLevel?: string | undefined;
 }
 
-export interface IBulkDownloadResult {
-    zipContent?: string | undefined;
-    fileName?: string | undefined;
-    totalSize?: number;
-    fileCount?: number;
-    includedFiles?: string[] | undefined;
-    skippedFiles?: string[] | undefined;
-    errors?: string[] | undefined;
-}
-
-export interface IBulkDownloadResultApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: IBulkDownloadResult;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-}
-
 export interface IBulkOperationResult {
     successCount?: number;
     failureCount?: number;
@@ -1459,6 +1441,18 @@ export interface IFileDataDto {
     checksum?: string | undefined;
     base64Content?: string | undefined;
     filename?: string | undefined;
+}
+
+export interface IFileDownloadTokenResponseDto {
+    token?: string | undefined;
+}
+
+export interface IFileDownloadTokenResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IFileDownloadTokenResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
 }
 
 export interface IFileStorageResult {

@@ -2834,132 +2834,6 @@ export class BulkDownloadRequest implements interfaces.IBulkDownloadRequest {
     }
 }
 
-export class BulkDownloadResult implements interfaces.IBulkDownloadResult {
-    zipContent?: string | undefined;
-    fileName?: string | undefined;
-    totalSize?: number;
-    fileCount?: number;
-    includedFiles?: string[] | undefined;
-    skippedFiles?: string[] | undefined;
-    errors?: string[] | undefined;
-
-    constructor(data?: interfaces.IBulkDownloadResult) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.zipContent = _data["zipContent"];
-            this.fileName = _data["fileName"];
-            this.totalSize = _data["totalSize"];
-            this.fileCount = _data["fileCount"];
-            if (Array.isArray(_data["includedFiles"])) {
-                this.includedFiles = [] as any;
-                for (let item of _data["includedFiles"])
-                    this.includedFiles!.push(item);
-            }
-            if (Array.isArray(_data["skippedFiles"])) {
-                this.skippedFiles = [] as any;
-                for (let item of _data["skippedFiles"])
-                    this.skippedFiles!.push(item);
-            }
-            if (Array.isArray(_data["errors"])) {
-                this.errors = [] as any;
-                for (let item of _data["errors"])
-                    this.errors!.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): BulkDownloadResult {
-        data = typeof data === 'object' ? data : {};
-        let result = new BulkDownloadResult();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["zipContent"] = this.zipContent;
-        data["fileName"] = this.fileName;
-        data["totalSize"] = this.totalSize;
-        data["fileCount"] = this.fileCount;
-        if (Array.isArray(this.includedFiles)) {
-            data["includedFiles"] = [];
-            for (let item of this.includedFiles)
-                data["includedFiles"].push(item);
-        }
-        if (Array.isArray(this.skippedFiles)) {
-            data["skippedFiles"] = [];
-            for (let item of this.skippedFiles)
-                data["skippedFiles"].push(item);
-        }
-        if (Array.isArray(this.errors)) {
-            data["errors"] = [];
-            for (let item of this.errors)
-                data["errors"].push(item);
-        }
-        return data;
-    }
-}
-
-export class BulkDownloadResultApiResponse implements interfaces.IBulkDownloadResultApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: BulkDownloadResult;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-
-    constructor(data?: interfaces.IBulkDownloadResultApiResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.success = _data["success"];
-            this.message = _data["message"];
-            this.data = _data["data"] ? BulkDownloadResult.fromJS(_data["data"]) : <any>undefined;
-            if (Array.isArray(_data["errors"])) {
-                this.errors = [] as any;
-                for (let item of _data["errors"])
-                    this.errors!.push(item);
-            }
-            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): BulkDownloadResultApiResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BulkDownloadResultApiResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        data["message"] = this.message;
-        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
-        if (Array.isArray(this.errors)) {
-            data["errors"] = [];
-            for (let item of this.errors)
-                data["errors"].push(item);
-        }
-        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
 export class BulkOperationResult implements interfaces.IBulkOperationResult {
     successCount?: number;
     failureCount?: number;
@@ -8894,6 +8768,90 @@ export class FileDataDto implements interfaces.IFileDataDto {
         data["checksum"] = this.checksum;
         data["base64Content"] = this.base64Content;
         data["filename"] = this.filename;
+        return data;
+    }
+}
+
+export class FileDownloadTokenResponseDto implements interfaces.IFileDownloadTokenResponseDto {
+    token?: string | undefined;
+
+    constructor(data?: interfaces.IFileDownloadTokenResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.token = _data["token"];
+        }
+    }
+
+    static fromJS(data: any): FileDownloadTokenResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FileDownloadTokenResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data;
+    }
+}
+
+export class FileDownloadTokenResponseDtoApiResponse implements interfaces.IFileDownloadTokenResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: FileDownloadTokenResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IFileDownloadTokenResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? FileDownloadTokenResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): FileDownloadTokenResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new FileDownloadTokenResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
         return data;
     }
 }
