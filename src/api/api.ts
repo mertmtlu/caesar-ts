@@ -335,6 +335,13 @@ export class ApiClient {
     getBaseUrl(): string {
         return this.baseUrl;
     }
+
+    /**
+     * Get current token
+    */
+    getCurrentToken(): string | null {
+        return this.authenticatedHttp ? this.authenticatedHttp['getToken']() : null;
+    }
 }
 
 // Export a factory function for creating API client instances

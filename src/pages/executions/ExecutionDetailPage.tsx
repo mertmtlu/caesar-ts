@@ -5,6 +5,7 @@ import { api } from '@/api/api';
 import Button from '@/components/common/Button';
 import ExecutionFileTree from '@/components/execution/ExecutionFileTree';
 import type { IExecutionFileDto } from '@/api/typeInterfaces';
+import streamSaver from 'streamsaver'; // Import streamsaver
 
 // Interfaces
 interface ExecutionDetail {
@@ -298,71 +299,53 @@ const ExecutionDetailPage: React.FC = () => {
     }
   };
 
+  // --- MODIFIED FUNCTION ---
   const handleDownloadAllFiles = async () => {
-    console.log('=== Download All Files Started ===');
-    console.log('Execution ID:', executionId);
-    console.log('API Base URL:', api.baseApiUrl);
-
     if (!executionId) {
       console.error('No execution ID available');
       return;
     }
 
+    setIsDownloading(true);
+    setError(null);
     try {
-      setIsDownloading(true);
-      console.log('Set downloading state to true');
+      const downloadUrl = `${api.baseApiUrl}/api/Executions/${executionId}/files/download-all`;
+      const token = api.getCurrentToken();
 
-      // Step 1: Get the download token
-      console.log('Step 1: Requesting download token...');
-      console.log('Making API call to: executions_GenerateDownloadToken');
+      const response = await fetch(downloadUrl, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      });
 
-      const tokenResponse = await api.executions.executions_GenerateDownloadToken(executionId);
-
-      console.log('Token response received:');
-      console.log('- Success:', tokenResponse.success);
-      console.log('- Message:', tokenResponse.message);
-      console.log('- Data:', tokenResponse.data);
-      console.log('- Has token:', !!tokenResponse.data?.token);
-      console.log('- Token length:', tokenResponse.data?.token?.length);
-
-      if (tokenResponse.data?.token) {
-        console.log('Token preview:', tokenResponse.data.token.substring(0, 20) + '...');
+      if (!response.ok) {
+        // Try to parse a JSON error response from the server for better debugging
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(`Failed to download files: ${errorData.message || response.statusText}`);
       }
 
-      if (!tokenResponse.success || !tokenResponse.data?.token) {
-        const errorMsg = tokenResponse.message || 'Failed to generate download token';
-        console.error('Token generation failed:', errorMsg);
-        throw new Error(errorMsg);
+      if (!response.body) {
+        throw new Error("Streaming downloads are not supported or the response body is missing.");
       }
 
-      const downloadToken = tokenResponse.data.token;
-      console.log('Download token acquired successfully');
+      const fileName = `execution_${executionId}_files.zip`;
+      
+      // Use streamsaver to create a writable stream that prompts the user to save
+      const fileStream = streamSaver.createWriteStream(fileName);
+      
+      // Get the readable stream from the fetch response
+      const readableStream = response.body;
 
-      // Step 2: Trigger the download using the token
-      console.log('Step 2: Constructing download URL...');
-      const downloadUrl = `${api.baseApiUrl}/api/Executions/${executionId}/files/download-all?token=${downloadToken}`;
-      console.log('Download URL constructed:', downloadUrl);
-      console.log('URL length:', downloadUrl.length);
-
-      console.log('Triggering download via window.location.href...');
-      console.log('Current window.location.href before:', window.location.href);
-
-      window.location.href = downloadUrl;
-
-      console.log('window.location.href assignment completed');
-      console.log('Current window.location.href after:', window.location.href);
-      console.log('=== Download trigger completed successfully ===');
+      // Pipe the download stream directly to the file, chunk by chunk
+      await readableStream.pipeTo(fileStream);
 
     } catch (error) {
       console.error('=== Download Failed ===');
       console.error('Error details:', error);
-      console.error('Error message:', error instanceof Error ? error.message : String(error));
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-      setError('Failed to download files. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+      setError(`Failed to download files. ${errorMessage}`);
     } finally {
-      console.log('Setting downloading state to false');
       setIsDownloading(false);
-      console.log('=== Download All Files Function Completed ===');
     }
   };
 
