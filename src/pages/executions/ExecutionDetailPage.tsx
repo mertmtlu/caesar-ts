@@ -299,7 +299,6 @@ const ExecutionDetailPage: React.FC = () => {
     }
   };
 
-  // --- MODIFIED FUNCTION ---
   const handleDownloadAllFiles = async () => {
     if (!executionId) {
       console.error('No execution ID available');
@@ -319,7 +318,6 @@ const ExecutionDetailPage: React.FC = () => {
       });
 
       if (!response.ok) {
-        // Try to parse a JSON error response from the server for better debugging
         const errorData = await response.json().catch(() => ({ message: response.statusText }));
         throw new Error(`Failed to download files: ${errorData.message || response.statusText}`);
       }
@@ -329,15 +327,15 @@ const ExecutionDetailPage: React.FC = () => {
       }
 
       const fileName = `execution_${executionId}_files.zip`;
-      
-      // Use streamsaver to create a writable stream that prompts the user to save
+
+      // Configure StreamSaver to prevent popup issues
+      streamSaver.mitm = `${window.location.origin}/streamsaver/mitm.html`;
+
+      // Use streamsaver to create a writable stream that saves directly to disk
       const fileStream = streamSaver.createWriteStream(fileName);
-      
-      // Get the readable stream from the fetch response
-      const readableStream = response.body;
 
       // Pipe the download stream directly to the file, chunk by chunk
-      await readableStream.pipeTo(fileStream);
+      await response.body.pipeTo(fileStream);
 
     } catch (error) {
       console.error('=== Download Failed ===');
