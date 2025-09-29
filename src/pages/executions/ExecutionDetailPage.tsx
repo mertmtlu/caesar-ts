@@ -1,11 +1,32 @@
-// src/pages/apps/ExecutionDetailPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { HubConnectionState } from '@microsoft/signalr';
 import { api } from '@/api/api';
 import Button from '@/components/common/Button';
 import ExecutionFileTree from '@/components/execution/ExecutionFileTree';
 import type { IExecutionFileDto } from '@/api/typeInterfaces';
-import streamSaver from 'streamsaver'; // Import streamsaver
+import streamSaver from 'streamsaver';
+import {
+  createExecutionSignalRService,
+  ExecutionOutputEvent,
+  ExecutionErrorEvent,
+  ExecutionStatusChangedEventArgs,
+  ExecutionCompletedEventArgs
+} from '@/services/executionSignalrService';
+
+// Initialize SignalR service singleton
+const signalRService = createExecutionSignalRService(
+  api.baseApiUrl,
+  () => api.getCurrentToken()
+);
+
+// --- NEW: Structured Log Entry for Robust Rendering ---
+interface LogEntry {
+  id: number;
+  timestamp: string;
+  type: 'stdout' | 'stderr' | 'system' | 'initial';
+  message: string;
+}
 
 // Interfaces
 interface ExecutionDetail {
@@ -113,42 +134,147 @@ const ExecutionDetailPage: React.FC = () => {
   const navigate = useNavigate();
   
   const [execution, setExecution] = useState<ExecutionDetail | null>(null);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const [outputFiles, setOutputFiles] = useState<IExecutionFileDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [autoRefresh, setAutoRefresh] = useState(false);
   const [filesHaveBeenFetched, setFilesHaveBeenFetched] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [signalrState, setSignalrState] = useState<HubConnectionState>(HubConnectionState.Disconnected);
 
+  const logCounter = useRef(0);
+  const logsEndRef = useRef<HTMLDivElement>(null);
+
+  // --- Initial Data Loading Effect ---
   useEffect(() => {
     if (executionId) {
-      setFilesHaveBeenFetched(false); // Reset file fetch status for new execution
+      setFilesHaveBeenFetched(false);
       loadExecutionDetail();
-      loadLogs();
     }
   }, [executionId]);
 
+  // --- REFACTORED: Single Unified SignalR Effect ---
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (autoRefresh && execution?.status.toLowerCase() === 'running') {
-      interval = setInterval(() => {
-        refreshExecutionStatus();
-        loadLogs(false); // Don't show loading indicators during auto-refresh
-      }, 2000); // Refresh every 2 seconds for running executions
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [autoRefresh, execution?.status]);
+    if (!executionId) return;
 
-  // Load output files once after execution is complete
+    let isMounted = true; 
+
+    const formatLog = (type: LogEntry['type'], message: string, timestamp: string): LogEntry => {
+        logCounter.current += 1;
+        const date = timestamp ? new Date(timestamp) : new Date();
+        return {
+            id: logCounter.current,
+            type,
+            message,
+            timestamp: date.toLocaleTimeString('en-US', { hour12: false }),
+        };
+    };
+
+    const handleInitialLogs = (initialLogLines: string[]) => {
+      if (!isMounted) return;
+      const formattedLogs = initialLogLines.map(line => {
+          logCounter.current += 1;
+          return {
+              id: logCounter.current,
+              type: 'initial' as const,
+              message: line,
+              timestamp: '' // Cached logs don't have a real-time timestamp
+          }
+      });
+      setLogs(formattedLogs);
+    };
+
+    const handleExecutionOutput = (event: ExecutionOutputEvent) => {
+        if (!isMounted || event.executionId !== executionId) return;
+        const newLog = formatLog('stdout', event.output, event.timestamp);
+        setLogs(prevLogs => [...prevLogs, newLog]);
+    };
+
+    const handleExecutionError = (event: ExecutionErrorEvent) => {
+        if (!isMounted || event.executionId !== executionId) return;
+        const newLog = formatLog('stderr', event.error, event.timestamp);
+        setLogs(prevLogs => [...prevLogs, newLog]);
+    };
+
+    const handleStatusChanged = (event: ExecutionStatusChangedEventArgs) => {
+        if (!isMounted || event.executionId !== executionId) return;
+        setExecution(prev => prev ? { ...prev, status: event.newStatus } : null);
+    };
+  
+    const handleCompleted = (event: ExecutionCompletedEventArgs) => {
+      if (!isMounted || event.executionId !== executionId) return;
+      setExecution(prev => prev ? {
+        ...prev,
+        status: event.status,
+        completedAt: new Date(event.completedAt),
+        result: {
+          exitCode: event.exitCode,
+          output: prev.result?.output,
+          errorOutput: event.errorMessage || prev.result?.errorOutput,
+        },
+      } : null);
+
+      if (event.success) {
+        loadOutputFiles();
+      }
+    };
+  
+    const setupSignalR = async () => {
+      const unsubscribeConnection = signalRService.onConnectionStateChanged(setSignalrState);
+
+      try {
+        await signalRService.connect();
+        if (!isMounted) return;
+
+        const unsubscribeInitial = signalRService.onInitialLogs(handleInitialLogs);
+        const unsubscribeOutput = signalRService.onExecutionOutput(handleExecutionOutput);
+        const unsubscribeError = signalRService.onExecutionError(handleExecutionError);
+        const unsubscribeStatus = signalRService.onExecutionStatusChanged(handleStatusChanged);
+        const unsubscribeCompleted = signalRService.onExecutionCompleted(handleCompleted);
+        
+        // --- MODIFIED: Just join the group. Server will send initial logs. ---
+        await signalRService.joinExecutionGroup(executionId);
+        
+        return () => {
+          isMounted = false;
+          unsubscribeConnection();
+          unsubscribeInitial();
+          unsubscribeOutput();
+          unsubscribeError();
+          unsubscribeStatus();
+          unsubscribeCompleted();
+          if (signalRService.connectionState === HubConnectionState.Connected) {
+            signalRService.leaveExecutionGroup(executionId);
+          }
+        };
+      } catch (e) {
+        console.error("SignalR connection failed: ", e);
+        return () => {
+          unsubscribeConnection();
+        };
+      }
+    };
+
+    const cleanupPromise = setupSignalR();
+
+    return () => {
+      isMounted = false;
+      cleanupPromise.then(cleanupFunc => {
+        if (cleanupFunc) {
+          cleanupFunc();
+        }
+      });
+      signalRService.disconnect();
+    };
+  }, [executionId]);
+
   useEffect(() => {
-    // Check if execution is in a final state and files haven't been fetched yet
+    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs]);
+
+  useEffect(() => {
     if (execution?.status && !filesHaveBeenFetched) {
       const status = execution.status.toLowerCase();
       if (status === 'completed' || status === 'failed') {
@@ -173,8 +299,8 @@ const ExecutionDetailPage: React.FC = () => {
           programId: response.data.programId || '',
           programName: response.data.programName || 'Unknown Program',
           status: response.data.status || 'unknown',
-          startedAt: response.data.startedAt || new Date(),
-          completedAt: response.data.completedAt,
+          startedAt: new Date(response.data.startedAt!),
+          completedAt: response.data.completedAt ? new Date(response.data.completedAt) : undefined,
           userId: response.data.userId || '',
           executionType: response.data.executionType || 'standard',
           parameters: response.data.parameters,
@@ -190,13 +316,7 @@ const ExecutionDetailPage: React.FC = () => {
             errorOutput: response.data.results?.error
           }
         };
-
         setExecution(executionData);
-        
-        // Enable auto-refresh for running executions
-        if (executionData.status.toLowerCase() === 'running') {
-          setAutoRefresh(true);
-        }
       } else {
         setError(response.message || 'Failed to load execution details');
       }
@@ -208,68 +328,25 @@ const ExecutionDetailPage: React.FC = () => {
     }
   };
 
-  const refreshExecutionStatus = async () => {
-    if (!executionId || !execution) return;
-    
-    try {
-      const response = await api.executions.executions_GetById(executionId);
-
-      if (response.success && response.data) {
-        const data = response.data;
-        // Only update the fields that might change during execution
-        setExecution(prev => prev ? {
-          ...prev,
-          status: data.status || 'unknown',
-          completedAt: data.completedAt,
-          resourceUsage: {
-            maxMemoryUsedMb: data.resourceUsage?.memoryUsed,
-            maxCpuPercent: data.resourceUsage?.cpuPercentage,
-            executionTimeMinutes: data.resourceUsage?.cpuTime ? data.resourceUsage.cpuTime / 60 : undefined
-          },
-          result: {
-            exitCode: data.results?.exitCode,
-            output: data.results?.output,
-            errorOutput: data.results?.error
-          }
-        } : null);
-        
-        // Disable auto-refresh if execution is no longer running
-        if (data.status?.toLowerCase() !== 'running') {
-          setAutoRefresh(false);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to refresh execution status:', error);
-      // Don't set error for refresh failures to avoid disrupting the UI
-    }
-  };
-
   const loadLogs = async (showLoading: boolean = true) => {
     if (!executionId) return;
     
     try {
-      if (showLoading) {
-        setIsLoadingLogs(true);
-      }
+      if (showLoading) setIsLoadingLogs(true);
       
-      const response = await api.executions.executions_GetExecutionLogs(executionId, 100);
+      const response = await api.executions.executions_GetExecutionLogs(executionId, 200);
       
       if (response.success && response.data) {
-        // Only update logs if they've actually changed to prevent unnecessary re-renders
-        setLogs(prevLogs => {
-          const newLogs = response.data || [];
-          if (JSON.stringify(prevLogs) !== JSON.stringify(newLogs)) {
-            return newLogs;
-          }
-          return prevLogs;
+        const formattedLogs = (response.data || []).map(line => {
+            logCounter.current += 1;
+            return { id: logCounter.current, type: 'initial' as const, message: line, timestamp: '' };
         });
+        setLogs(formattedLogs);
       }
     } catch (error) {
       console.error('Failed to load logs:', error);
     } finally {
-      if (showLoading) {
-        setIsLoadingLogs(false);
-      }
+      if (showLoading) setIsLoadingLogs(false);
     }
   };
 
@@ -278,21 +355,18 @@ const ExecutionDetailPage: React.FC = () => {
     
     try {
       setIsLoadingFiles(true);
+      setFilesHaveBeenFetched(true);
       setError(null);
 
-      // This will be called when API layer is updated
       const response = await api.executions.executions_ListExecutionFiles(executionId);
 
       if (response.success && response.data?.files) {
-        // Files are already in the correct format (IExecutionFileDto[])
         setOutputFiles(response.data.files);
       } else {
-        // Don't set error for missing files, just keep empty array
         setOutputFiles([]);
       }
     } catch (error) {
       console.error('Failed to load output files:', error);
-      // Don't set error for files since it's not critical
       setOutputFiles([]);
     } finally {
       setIsLoadingFiles(false);
@@ -300,10 +374,7 @@ const ExecutionDetailPage: React.FC = () => {
   };
 
   const handleDownloadAllFiles = async () => {
-    if (!executionId) {
-      console.error('No execution ID available');
-      return;
-    }
+    if (!executionId) return;
 
     setIsDownloading(true);
     setError(null);
@@ -312,9 +383,7 @@ const ExecutionDetailPage: React.FC = () => {
       const token = api.getCurrentToken();
 
       const response = await fetch(downloadUrl, {
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : ''
-        }
+        headers: { 'Authorization': token ? `Bearer ${token}` : '' }
       });
 
       if (!response.ok) {
@@ -327,19 +396,11 @@ const ExecutionDetailPage: React.FC = () => {
       }
 
       const fileName = `execution_${executionId}_files.zip`;
-
-      // Configure StreamSaver to prevent popup issues
       streamSaver.mitm = `${window.location.origin}/streamsaver/mitm.html`;
-
-      // Use streamsaver to create a writable stream that saves directly to disk
       const fileStream = streamSaver.createWriteStream(fileName);
-
-      // Pipe the download stream directly to the file, chunk by chunk
       await response.body.pipeTo(fileStream);
-
     } catch (error) {
-      console.error('=== Download Failed ===');
-      console.error('Error details:', error);
+      console.error('Download Failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
       setError(`Failed to download files. ${errorMessage}`);
     } finally {
@@ -352,9 +413,8 @@ const ExecutionDetailPage: React.FC = () => {
     
     try {
       const response = await api.executions.executions_StopExecution(executionId);
-      
       if (response.success) {
-        loadExecutionDetail(); // Refresh execution status
+        loadExecutionDetail();
       } else {
         setError(response.message || 'Failed to stop execution');
       }
@@ -653,15 +713,6 @@ const ExecutionDetailPage: React.FC = () => {
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">Execution Logs</h2>
           <div className="flex items-center space-x-2">
-            <label className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <input
-                type="checkbox"
-                checked={autoRefresh}
-                onChange={(e) => setAutoRefresh(e.target.checked)}
-                className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
-              />
-              <span>Auto-refresh</span>
-            </label>
             {isLoadingLogs && (
               <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -673,7 +724,15 @@ const ExecutionDetailPage: React.FC = () => {
         <div className="p-6">
           {logs.length > 0 ? (
             <pre className="text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-900 p-4 rounded-md overflow-auto max-h-96 border font-mono">
-              {logs.join('\n')}
+              {logs.map(log => (
+                <div key={log.id}>
+                  <span className="text-gray-500">{log.timestamp} </span>
+                  <span className={log.type === 'stderr' ? 'text-red-500' : 'text-gray-800 dark:text-gray-200'}>
+                    {log.message}
+                  </span>
+                </div>
+              ))}
+              <div ref={logsEndRef} />
             </pre>
           ) : (
             <div className="text-center py-8">
@@ -681,7 +740,7 @@ const ExecutionDetailPage: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                No logs available yet
+                {signalrState === HubConnectionState.Connected ? 'Waiting for logs...' : 'Connecting to log stream...'}
               </p>
             </div>
           )}
