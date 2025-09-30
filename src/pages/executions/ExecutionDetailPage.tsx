@@ -143,6 +143,7 @@ const ExecutionDetailPage: React.FC = () => {
   const [filesHaveBeenFetched, setFilesHaveBeenFetched] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [signalrState, setSignalrState] = useState<HubConnectionState>(HubConnectionState.Disconnected);
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   const logCounter = useRef(0);
   const logsEndRef = useRef<HTMLDivElement>(null);
@@ -155,11 +156,30 @@ const ExecutionDetailPage: React.FC = () => {
     }
   }, [executionId]);
 
-  // --- REFACTORED: Single Unified SignalR Effect ---
+  // --- Timer Effect for Running Executions ---
   useEffect(() => {
-    if (!executionId) return;
+    if (!execution || execution.status.toLowerCase() !== 'running') return;
 
-    let isMounted = true; 
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [execution?.status]);
+
+  // --- REFACTORED: Conditional SignalR Effect (only for running executions) ---
+  useEffect(() => {
+    if (!executionId || !execution) return;
+
+    const isRunning = execution.status.toLowerCase() === 'running';
+
+    // If not running, load static logs instead
+    if (!isRunning) {
+      loadLogs(false);
+      return;
+    }
+
+    let isMounted = true;
 
     const formatLog = (type: LogEntry['type'], message: string, timestamp: string): LogEntry => {
         logCounter.current += 1;
@@ -201,8 +221,14 @@ const ExecutionDetailPage: React.FC = () => {
     const handleStatusChanged = (event: ExecutionStatusChangedEventArgs) => {
         if (!isMounted || event.executionId !== executionId) return;
         setExecution(prev => prev ? { ...prev, status: event.newStatus } : null);
+
+        // If status changed to non-running, reload execution details to get results
+        const isNowRunning = event.newStatus.toLowerCase() === 'running';
+        if (!isNowRunning) {
+          loadExecutionDetail();
+        }
     };
-  
+
     const handleCompleted = (event: ExecutionCompletedEventArgs) => {
       if (!isMounted || event.executionId !== executionId) return;
       setExecution(prev => prev ? {
@@ -219,8 +245,11 @@ const ExecutionDetailPage: React.FC = () => {
       if (event.success) {
         loadOutputFiles();
       }
+
+      // Reload full execution details to get complete result data
+      loadExecutionDetail();
     };
-  
+
     const setupSignalR = async () => {
       const unsubscribeConnection = signalRService.onConnectionStateChanged(setSignalrState);
 
@@ -233,10 +262,10 @@ const ExecutionDetailPage: React.FC = () => {
         const unsubscribeError = signalRService.onExecutionError(handleExecutionError);
         const unsubscribeStatus = signalRService.onExecutionStatusChanged(handleStatusChanged);
         const unsubscribeCompleted = signalRService.onExecutionCompleted(handleCompleted);
-        
+
         // --- MODIFIED: Just join the group. Server will send initial logs. ---
         await signalRService.joinExecutionGroup(executionId);
-        
+
         return () => {
           isMounted = false;
           unsubscribeConnection();
@@ -268,7 +297,7 @@ const ExecutionDetailPage: React.FC = () => {
       });
       signalRService.disconnect();
     };
-  }, [executionId]);
+  }, [executionId, execution?.status]);
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -570,7 +599,7 @@ const ExecutionDetailPage: React.FC = () => {
             <div>
               <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Duration</dt>
               <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                {formatDuration(execution.startedAt, execution.completedAt)}
+                {formatDuration(execution.startedAt, execution.status.toLowerCase() === 'running' ? currentTime : execution.completedAt)}
               </dd>
             </div>
             
@@ -584,53 +613,13 @@ const ExecutionDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Resource Usage */}
-      {execution.resourceUsage && (
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Resource Usage</h2>
-          </div>
-          
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {execution.resourceUsage.maxMemoryUsedMb && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Max Memory</dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {execution.resourceUsage.maxMemoryUsedMb} MB
-                  </dd>
-                </div>
-              )}
-              
-              {execution.resourceUsage.maxCpuPercent && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Max CPU</dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {execution.resourceUsage.maxCpuPercent}%
-                  </dd>
-                </div>
-              )}
-              
-              {execution.resourceUsage.executionTimeMinutes && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Execution Time</dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {execution.resourceUsage.executionTimeMinutes} minutes
-                  </dd>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Execution Result */}
-      {execution.result && (
+      {/* Execution Result - Only show when NOT running */}
+      {execution.status.toLowerCase() !== 'running' && execution.result && (
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-medium text-gray-900 dark:text-white">Execution Result</h2>
           </div>
-          
+
           <div className="p-6 space-y-4">
             {execution.result.exitCode !== undefined && (
               <div>
@@ -640,7 +629,7 @@ const ExecutionDetailPage: React.FC = () => {
                 </dd>
               </div>
             )}
-            
+
             {execution.result.output && (
               <div>
                 <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Output</dt>
@@ -651,7 +640,7 @@ const ExecutionDetailPage: React.FC = () => {
                 </dd>
               </div>
             )}
-            
+
             {execution.result.errorOutput && (
               <div>
                 <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Error Output</dt>
@@ -708,10 +697,27 @@ const ExecutionDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Execution Logs */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+      {/* Execution Logs - Only show when running */}
+      {execution.status.toLowerCase() === 'running' && (
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white">Execution Logs</h2>
+          <div className="flex items-center space-x-3">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Execution Logs</h2>
+            {execution.status.toLowerCase() === 'running' && signalrState === HubConnectionState.Connected && (
+              <span className="flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span>Live Stream</span>
+              </span>
+            )}
+            {execution.status.toLowerCase() !== 'running' && (
+              <span className="flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Static Logs</span>
+              </span>
+            )}
+          </div>
           <div className="flex items-center space-x-2">
             {isLoadingLogs && (
               <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -720,7 +726,7 @@ const ExecutionDetailPage: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         <div className="p-6">
           {logs.length > 0 ? (
             <pre className="text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-900 p-4 rounded-md overflow-auto max-h-96 border font-mono">
@@ -740,12 +746,15 @@ const ExecutionDetailPage: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                {signalrState === HubConnectionState.Connected ? 'Waiting for logs...' : 'Connecting to log stream...'}
+                {execution.status.toLowerCase() === 'running'
+                  ? (signalrState === HubConnectionState.Connected ? 'Waiting for logs...' : 'Connecting to log stream...')
+                  : 'No logs available'}
               </p>
             </div>
           )}
         </div>
       </div>
+      )}
     </div>
   );
 };
