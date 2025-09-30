@@ -8,7 +8,10 @@
     <script>
         // This is the StreamSaver Man-in-the-middle iframe
         // It prevents popup issues by handling the download stream
-        importScripts('https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/mitm.js');
+        // Load the mitm script directly in the browser context
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/mitm.js';
+        document.head.appendChild(script);
     </script>
 </body>
 </html>

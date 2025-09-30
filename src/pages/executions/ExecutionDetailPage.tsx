@@ -396,7 +396,7 @@ const ExecutionDetailPage: React.FC = () => {
       }
 
       const fileName = `execution_${executionId}_files.zip`;
-      streamSaver.mitm = `${window.location.origin}/streamsaver/mitm.html`;
+      // streamSaver.mitm = `${window.location.origin}/streamsaver/mitm.html`;
       const fileStream = streamSaver.createWriteStream(fileName);
       await response.body.pipeTo(fileStream);
     } catch (error) {
