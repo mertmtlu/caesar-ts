@@ -1038,8 +1038,7 @@ const ExecutionsPage: React.FC = () => {
           environment: {},
           resourceLimits: new ExecutionResourceLimitsDto({
             maxMemoryMb: 512,
-            maxCpuPercentage: 50,
-            maxExecutionTimeMinutes: 30
+            maxCpuPercentage: 50
           })
         });
 

@@ -896,17 +896,11 @@ export interface IExecutionsClient {
     executions_DownloadExecutionFile(id: string, filePath: string): Promise<types.IVersionFileDetailDtoApiResponse>;
 
     /**
-     * Generate a single-use download token for execution files
+     * Downloads all output files from an execution as a ZIP archive.
+    This action is idempotent; the ZIP is created once and then reused.
      * @return OK
      */
-    executions_GenerateDownloadToken(id: string): Promise<types.IFileDownloadTokenResponseDtoApiResponse>;
-
-    /**
-     * Download all output files from an execution as a ZIP archive using a single-use token
-     * @param token (optional) 
-     * @return OK
-     */
-    executions_DownloadAllExecutionFiles(id: string, token: string | undefined): Promise<void>;
+    executions_DownloadAllExecutionFiles(id: string): Promise<void>;
 
     /**
      * Download selected output files from an execution as a ZIP archive

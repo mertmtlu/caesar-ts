@@ -1164,7 +1164,6 @@ export interface IExecutionParametersDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: IExecutionResourceLimitsDto;
     saveResults?: boolean;
-    timeoutMinutes?: number;
     executionName?: string | undefined;
 }
 
@@ -1206,7 +1205,6 @@ export interface IExecutionResourceLimitsDto {
     maxCpuPercentage?: number;
     maxMemoryMb?: number;
     maxDiskMb?: number;
-    maxExecutionTimeMinutes?: number;
     maxConcurrentExecutions?: number;
 }
 
@@ -1222,7 +1220,6 @@ export interface IExecutionResourceLimitsUpdateDto {
     maxCpuPercentage?: number | undefined;
     maxMemoryMb?: number | undefined;
     maxDiskMb?: number | undefined;
-    maxExecutionTimeMinutes?: number | undefined;
     maxConcurrentExecutions?: number | undefined;
 }
 
@@ -1441,18 +1438,6 @@ export interface IFileDataDto {
     checksum?: string | undefined;
     base64Content?: string | undefined;
     filename?: string | undefined;
-}
-
-export interface IFileDownloadTokenResponseDto {
-    token?: string | undefined;
-}
-
-export interface IFileDownloadTokenResponseDtoApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: IFileDownloadTokenResponseDto;
-    errors?: string[] | undefined;
-    timestamp?: Date;
 }
 
 export interface IFileStorageResult {
@@ -2198,7 +2183,6 @@ export interface IProgramExecutionRequestDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: IExecutionResourceLimitsDto;
     saveResults?: boolean;
-    timeoutMinutes?: number;
 }
 
 export interface IProgramFileDto {
@@ -4141,7 +4125,6 @@ export interface IVersionExecutionRequestDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: IExecutionResourceLimitsDto;
     saveResults?: boolean;
-    timeoutMinutes?: number;
 }
 
 export interface IVersionFileChangeDto {

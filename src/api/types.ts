@@ -7017,7 +7017,6 @@ export class ExecutionParametersDto implements interfaces.IExecutionParametersDt
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
-    timeoutMinutes?: number;
     executionName?: string | undefined;
 
     constructor(data?: interfaces.IExecutionParametersDto) {
@@ -7043,7 +7042,6 @@ export class ExecutionParametersDto implements interfaces.IExecutionParametersDt
             }
             this.resourceLimits = _data["resourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
             this.saveResults = _data["saveResults"];
-            this.timeoutMinutes = _data["timeoutMinutes"];
             this.executionName = _data["executionName"];
         }
     }
@@ -7069,7 +7067,6 @@ export class ExecutionParametersDto implements interfaces.IExecutionParametersDt
         }
         data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
         data["saveResults"] = this.saveResults;
-        data["timeoutMinutes"] = this.timeoutMinutes;
         data["executionName"] = this.executionName;
         return data;
     }
@@ -7293,7 +7290,6 @@ export class ExecutionResourceLimitsDto implements interfaces.IExecutionResource
     maxCpuPercentage?: number;
     maxMemoryMb?: number;
     maxDiskMb?: number;
-    maxExecutionTimeMinutes?: number;
     maxConcurrentExecutions?: number;
 
     constructor(data?: interfaces.IExecutionResourceLimitsDto) {
@@ -7310,7 +7306,6 @@ export class ExecutionResourceLimitsDto implements interfaces.IExecutionResource
             this.maxCpuPercentage = _data["maxCpuPercentage"];
             this.maxMemoryMb = _data["maxMemoryMb"];
             this.maxDiskMb = _data["maxDiskMb"];
-            this.maxExecutionTimeMinutes = _data["maxExecutionTimeMinutes"];
             this.maxConcurrentExecutions = _data["maxConcurrentExecutions"];
         }
     }
@@ -7327,7 +7322,6 @@ export class ExecutionResourceLimitsDto implements interfaces.IExecutionResource
         data["maxCpuPercentage"] = this.maxCpuPercentage;
         data["maxMemoryMb"] = this.maxMemoryMb;
         data["maxDiskMb"] = this.maxDiskMb;
-        data["maxExecutionTimeMinutes"] = this.maxExecutionTimeMinutes;
         data["maxConcurrentExecutions"] = this.maxConcurrentExecutions;
         return data;
     }
@@ -7389,7 +7383,6 @@ export class ExecutionResourceLimitsUpdateDto implements interfaces.IExecutionRe
     maxCpuPercentage?: number | undefined;
     maxMemoryMb?: number | undefined;
     maxDiskMb?: number | undefined;
-    maxExecutionTimeMinutes?: number | undefined;
     maxConcurrentExecutions?: number | undefined;
 
     constructor(data?: interfaces.IExecutionResourceLimitsUpdateDto) {
@@ -7406,7 +7399,6 @@ export class ExecutionResourceLimitsUpdateDto implements interfaces.IExecutionRe
             this.maxCpuPercentage = _data["maxCpuPercentage"];
             this.maxMemoryMb = _data["maxMemoryMb"];
             this.maxDiskMb = _data["maxDiskMb"];
-            this.maxExecutionTimeMinutes = _data["maxExecutionTimeMinutes"];
             this.maxConcurrentExecutions = _data["maxConcurrentExecutions"];
         }
     }
@@ -7423,7 +7415,6 @@ export class ExecutionResourceLimitsUpdateDto implements interfaces.IExecutionRe
         data["maxCpuPercentage"] = this.maxCpuPercentage;
         data["maxMemoryMb"] = this.maxMemoryMb;
         data["maxDiskMb"] = this.maxDiskMb;
-        data["maxExecutionTimeMinutes"] = this.maxExecutionTimeMinutes;
         data["maxConcurrentExecutions"] = this.maxConcurrentExecutions;
         return data;
     }
@@ -8768,90 +8759,6 @@ export class FileDataDto implements interfaces.IFileDataDto {
         data["checksum"] = this.checksum;
         data["base64Content"] = this.base64Content;
         data["filename"] = this.filename;
-        return data;
-    }
-}
-
-export class FileDownloadTokenResponseDto implements interfaces.IFileDownloadTokenResponseDto {
-    token?: string | undefined;
-
-    constructor(data?: interfaces.IFileDownloadTokenResponseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.token = _data["token"];
-        }
-    }
-
-    static fromJS(data: any): FileDownloadTokenResponseDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new FileDownloadTokenResponseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        return data;
-    }
-}
-
-export class FileDownloadTokenResponseDtoApiResponse implements interfaces.IFileDownloadTokenResponseDtoApiResponse {
-    success?: boolean;
-    message?: string | undefined;
-    data?: FileDownloadTokenResponseDto;
-    errors?: string[] | undefined;
-    timestamp?: Date;
-
-    constructor(data?: interfaces.IFileDownloadTokenResponseDtoApiResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.success = _data["success"];
-            this.message = _data["message"];
-            this.data = _data["data"] ? FileDownloadTokenResponseDto.fromJS(_data["data"]) : <any>undefined;
-            if (Array.isArray(_data["errors"])) {
-                this.errors = [] as any;
-                for (let item of _data["errors"])
-                    this.errors!.push(item);
-            }
-            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): FileDownloadTokenResponseDtoApiResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new FileDownloadTokenResponseDtoApiResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        data["message"] = this.message;
-        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
-        if (Array.isArray(this.errors)) {
-            data["errors"] = [];
-            for (let item of this.errors)
-                data["errors"].push(item);
-        }
-        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -13363,7 +13270,6 @@ export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionR
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
-    timeoutMinutes?: number;
 
     constructor(data?: interfaces.IProgramExecutionRequestDto) {
         if (data) {
@@ -13386,7 +13292,6 @@ export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionR
             }
             this.resourceLimits = _data["resourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
             this.saveResults = _data["saveResults"];
-            this.timeoutMinutes = _data["timeoutMinutes"];
         }
     }
 
@@ -13409,7 +13314,6 @@ export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionR
         }
         data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
         data["saveResults"] = this.saveResults;
-        data["timeoutMinutes"] = this.timeoutMinutes;
         return data;
     }
 }
@@ -25148,7 +25052,6 @@ export class VersionExecutionRequestDto implements interfaces.IVersionExecutionR
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
-    timeoutMinutes?: number;
 
     constructor(data?: interfaces.IVersionExecutionRequestDto) {
         if (data) {
@@ -25171,7 +25074,6 @@ export class VersionExecutionRequestDto implements interfaces.IVersionExecutionR
             }
             this.resourceLimits = _data["resourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
             this.saveResults = _data["saveResults"];
-            this.timeoutMinutes = _data["timeoutMinutes"];
         }
     }
 
@@ -25194,7 +25096,6 @@ export class VersionExecutionRequestDto implements interfaces.IVersionExecutionR
         }
         data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
         data["saveResults"] = this.saveResults;
-        data["timeoutMinutes"] = this.timeoutMinutes;
         return data;
     }
 }
