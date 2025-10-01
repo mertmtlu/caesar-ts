@@ -6,6 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import RootLayout from '@/components/Layout/RootLayout';
 import AuthLayout from '@/components/Layout/AuthLayout';
 import DashboardLayout from '@/components/Layout/DashboardLayout';
+import DemoLayout from '@/components/Layout/DemoLayout';
 
 // Auth Pages (to be created)
 import LoginPage from '@/pages/auth/LoginPage';
@@ -32,6 +33,10 @@ import EditorPage from '@/pages/editor/EditorPage';
 // Execution Pages
 import ExecutionsPage from '@/pages/executions/ExecutionsPage';
 import ExecutionDetailPage from '@/pages/executions/ExecutionDetailPage';
+
+// Demo Pages
+import DemoAppsPage from '@/pages/demo/DemoAppsPage';
+import DemoExecutionDetailPage from '@/pages/demo/DemoExecutionDetailPage';
 
 // Workflow Pages
 import WorkflowsPage from '@/pages/workflows/WorkflowsPage';
@@ -309,6 +314,26 @@ export const router = createBrowserRouter([
           //   path: 'monitoring',
           //   element: <SystemMonitoringPage />
           // }
+        ]
+      },
+
+      // Demo routes (chrome-less layout for product demos)
+      {
+        path: 'demo',
+        element: (
+          <RoleBasedRoute allowedRoles={['ExternalUser', 'Admin', 'InternalUser', 'InternalDev', 'ExternalDev']}>
+            <DemoLayout />
+          </RoleBasedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <DemoAppsPage />
+          },
+          {
+            path: 'execution/:executionId',
+            element: <DemoExecutionDetailPage />
+          }
         ]
       },
 

@@ -120,7 +120,10 @@ const EditorPage: React.FC = () => {
   const [newItemName, setNewItemName] = useState('');
   const [itemToRename, setItemToRename] = useState<string | null>(null);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
-  
+  const [showMoveModal, setShowMoveModal] = useState(false);
+  const [itemToMove, setItemToMove] = useState<string | null>(null);
+  const [moveDestinationPath, setMoveDestinationPath] = useState('');
+
   // Upload state
   const [uploadingFiles, setUploadingFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -796,9 +799,23 @@ const EditorPage: React.FC = () => {
           continue;
         }
 
-        // Determine file path based on selected directory
-        const filePath = selectedTreeItem && selectedTreeItem !== '/' 
-          ? `${selectedTreeItem}/${file.name}`
+        // Determine the parent directory for file upload
+        let parentPath = '';
+        if (selectedTreeItem && selectedTreeItem !== '/') {
+          const selectedItem = findItemInTree(fileTree, selectedTreeItem);
+          if (selectedItem && !selectedItem.isDirectory) {
+            // If selected item is a file, upload to parent directory
+            const pathParts = selectedTreeItem.split('/');
+            pathParts.pop(); // Remove the file name
+            parentPath = pathParts.join('/');
+          } else {
+            // If selected item is a directory, upload inside it
+            parentPath = selectedTreeItem;
+          }
+        }
+
+        const filePath = parentPath
+          ? `${parentPath}/${file.name}`
           : file.name;
 
         // Clean and validate file path
@@ -1111,32 +1128,45 @@ if __name__ == "__main__":
         // This is a common pattern since most file systems need at least one file in a folder
         const placeholderPath = `${folderPath}/.gitkeep`;
         const placeholderContent = '# This file keeps the folder in version control';
-        
+
+        // Immediately save the .gitkeep file to make folder creation atomic
+        const fileDto = new VersionFileCreateDto({
+          path: placeholderPath.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/^\//, ''),
+          content: utf8ToBase64(placeholderContent),
+          contentType: 'text/plain'
+        });
+
+        await api.files.files_BulkUploadFiles(project.id, version.id, [fileDto]);
+
+        // Now add to openFiles after successful creation
         const placeholderFile: EditorFile = {
             path: placeholderPath,
             content: placeholderContent,
             language: 'text',
-            isModified: true,
-            isNew: true,
-            originalContent: '',
+            isModified: false,  // Changed from true since it's now saved
+            isNew: false,        // Changed from true since it's now persisted
+            originalContent: placeholderContent,
             isEditorInitialized: false
         };
 
         setOpenFiles(prev => [...prev, placeholderFile]);
-        
+
+        // Reload file tree to show the new folder
+        await loadFiles(project.id, version.id);
+
         // Expand the parent folder if it exists
         if (parentPath) {
             setExpandedFolders(prev => new Set([...prev, parentPath]));
         }
-        
+
         // Also expand the newly created folder
         setExpandedFolders(prev => new Set([...prev, folderPath]));
-        
+
         // Close modal and reset form
         setShowNewFolderModal(false);
         setNewFolderName('');
         setError(null);
-        
+
     } catch (error) {
         console.error('Error creating new folder:', error);
         setError('Failed to create new folder. Please try again.');
@@ -1208,8 +1238,20 @@ if __name__ == "__main__":
           setShowDeleteModal(true);
         }
         break;
+      case 'move':
+        if (contextMenuTarget) {
+          const itemToMoveCheck = findItemInTree(fileTree, contextMenuTarget);
+          if (itemToMoveCheck && !itemToMoveCheck.isDirectory) {
+            setItemToMove(contextMenuTarget);
+            setMoveDestinationPath('');
+            setShowMoveModal(true);
+          } else {
+            setError('Moving directories is not currently supported.');
+          }
+        }
+        break;
     }
-    
+
     setShowContextMenu(false);
   };
 
@@ -1288,14 +1330,72 @@ if __name__ == "__main__":
     }
   };
 
+  const moveItem = async () => {
+    if (!itemToMove || !project || !version) return;
+
+    try {
+      const oldPath = itemToMove;
+
+      // Extract filename from old path
+      const pathParts = oldPath.split('/');
+      const fileName = pathParts[pathParts.length - 1];
+
+      // Build new path: destinationPath/fileName
+      const newPath = moveDestinationPath.trim()
+        ? `${moveDestinationPath.trim()}/${fileName}`
+        : fileName;
+
+      if (oldPath === newPath) {
+        setShowMoveModal(false);
+        setItemToMove(null);
+        setMoveDestinationPath('');
+        return;
+      }
+
+      // Check if destination already has a file with this name
+      const existsInTree = fileTree.some(item => findFileInTree(item, newPath));
+      const existsInOpenFiles = openFiles.some(f => f.path === newPath);
+      if (existsInTree || existsInOpenFiles) {
+        setError('A file with this name already exists at the destination.');
+        return;
+      }
+
+      // Validate destination directory exists
+      if (moveDestinationPath.trim()) {
+        const destinationExists = findItemInTree(fileTree, moveDestinationPath.trim());
+        if (!destinationExists || !destinationExists.isDirectory) {
+          setError('Destination directory does not exist.');
+          return;
+        }
+      }
+
+      const fileInOpenFiles = openFiles.find(f => f.path === oldPath);
+
+      // Use atomic rename which works for moves too
+      await performAtomicRename(oldPath, newPath, fileInOpenFiles);
+
+      setShowMoveModal(false);
+      setItemToMove(null);
+      setMoveDestinationPath('');
+      setError(null);
+
+    } catch (error) {
+      console.error('Failed to move item:', error);
+      setError('Failed to move item. Please try again.');
+    }
+  };
+
   const performAtomicRename = async (oldPath: string, newPath: string, openFile?: EditorFile) => {
     if (!project || !version) return;
+
+    let newFileCreated = false;
+    let newFilePathToRollback: string | null = null;
 
     try {
       // Step 1: Get the file content
       let content: string;
       let contentType: string;
-      
+
       if (openFile) {
         // Use content from open file
         if (openFile.isBinary) {
@@ -1309,7 +1409,7 @@ if __name__ == "__main__":
           }
         } else {
           content = utf8ToBase64(openFile.content);
-          contentType = openFile.language === 'json' ? 'application/json' : 
+          contentType = openFile.language === 'json' ? 'application/json' :
                        openFile.language === 'html' ? 'text/html' :
                        openFile.language === 'css' ? 'text/css' :
                        openFile.language === 'javascript' ? 'text/javascript' :
@@ -1331,20 +1431,38 @@ if __name__ == "__main__":
         content: content,
         contentType: contentType
       });
-      
-      await api.files.files_BulkUploadFiles(project.id, version.id, [fileDto]);
 
-      // Step 3: Delete the old file
-      await api.files.files_DeleteVersionFile(project.id, version.id, oldPath);
+      await api.files.files_BulkUploadFiles(project.id, version.id, [fileDto]);
+      newFileCreated = true;
+      newFilePathToRollback = newPath;
+
+      // Step 3: Delete the old file (with rollback on failure)
+      try {
+        await api.files.files_DeleteVersionFile(project.id, version.id, oldPath);
+      } catch (deleteError) {
+        console.error('Failed to delete old file during rename, attempting rollback...', deleteError);
+
+        // Rollback: Delete the newly created file
+        if (newFileCreated && newFilePathToRollback) {
+          try {
+            await api.files.files_DeleteVersionFile(project.id, version.id, newFilePathToRollback);
+            throw new Error('Rename failed: Could not delete original file. Rolled back changes.');
+          } catch (rollbackError) {
+            console.error('Rollback also failed:', rollbackError);
+            throw new Error('Rename partially completed. Manual cleanup may be required.');
+          }
+        }
+        throw deleteError;
+      }
 
       // Step 4: Update openFiles if the file was open
       if (openFile) {
-        setOpenFiles(prev => prev.map(f => 
-          f.path === oldPath 
+        setOpenFiles(prev => prev.map(f =>
+          f.path === oldPath
             ? { ...f, path: newPath, isModified: false }
             : f
         ));
-        
+
         // Update active file if this was the active file
         if (activeFile === oldPath) {
           setActiveFile(newPath);
@@ -1353,7 +1471,7 @@ if __name__ == "__main__":
 
       // Step 5: Reload file tree to reflect the changes
       await loadFiles(project.id, version.id);
-      
+
     } catch (error) {
       console.error('Failed to perform atomic rename:', error);
       throw error;
@@ -2369,6 +2487,63 @@ if __name__ == "__main__":
         </div>
       </Modal>
 
+      {/* Move File Modal */}
+      <Modal
+        isOpen={showMoveModal}
+        onClose={() => {
+          setShowMoveModal(false);
+          setItemToMove(null);
+          setMoveDestinationPath('');
+          setError(null);
+        }}
+        title="Move File"
+        footer={
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowMoveModal(false);
+                setItemToMove(null);
+                setMoveDestinationPath('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={moveItem}
+            >
+              Move
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Moving: <span className="font-mono text-gray-900 dark:text-white">{itemToMove}</span>
+          </div>
+          <Input
+            label="Destination Path (folder path, not including filename)"
+            placeholder="e.g., src/components or leave empty for root"
+            value={moveDestinationPath}
+            onChange={(e) => {
+              setMoveDestinationPath(e.target.value);
+              if (error && error.includes('destination')) {
+                setError(null);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                moveItem();
+              }
+            }}
+            autoFocus
+          />
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            Note: Enter only the folder path. The filename will be preserved.
+          </div>
+        </div>
+      </Modal>
+
       {/* Program Info Modal */}
       <ProgramInfoModal
         isOpen={showProgramInfo}
@@ -2424,7 +2599,19 @@ if __name__ == "__main__":
                   Rename
                 </button>
               )}
-              
+
+              {!isViewMode && (
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+                  onClick={() => handleContextMenuAction('move')}
+                >
+                  <svg className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  Move
+                </button>
+              )}
+
               {!isViewMode && (
                 <button
                   className="w-full px-3 py-2 text-left text-sm hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center"

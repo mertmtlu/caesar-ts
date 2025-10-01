@@ -206,7 +206,7 @@ const ExecutionFileTree: React.FC<ExecutionFileTreeProps> = ({
     setIsDownloadingAll(true);
     try {
       // This will be called when API layer is updated
-      await api.executions.executions_DownloadAllExecutionFiles(executionId, false, 'optimal');
+      await api.executions.executions_DownloadAllExecutionFiles(executionId);
       
       // The backend should handle the file download directly
       // Create a temporary link to trigger the download
