@@ -53,8 +53,12 @@ import RemoteAppDetailPage from '@/pages/remoteapps/RemoteAppDetailPage';
 import UsersPage from '@/pages/admin/UsersPage';
 import ProgramPermissionsPage from '@/pages/admin/ProgramPermissionsPage';
 import GroupsPage from '@/pages/admin/GroupsPage';
+import DemoAdminPage from '@/pages/admin/DemoAdminPage';
 // import AdminDashboard from '@/pages/admin/AdminDashboard';
 // import SystemMonitoringPage from '@/pages/admin/SystemMonitoringPage';
+
+// Demo Pages
+import DemoPage from '@/pages/demo/DemoPage';
 
 // Protected Route Component (to be created)
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -305,11 +309,21 @@ export const router = createBrowserRouter([
             path: 'groups',
             element: <GroupsPage />
           },
+          {
+            path: 'demo',
+            element: <DemoAdminPage />
+          },
           // {
           //   path: 'monitoring',
           //   element: <SystemMonitoringPage />
           // }
         ]
+      },
+
+      // Public demo route (no authentication or layout required)
+      {
+        path: 'demo',
+        element: <DemoPage />
       },
 
       // Catch-all route - redirect based on user role

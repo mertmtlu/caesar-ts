@@ -197,6 +197,11 @@ export interface IAppDeploymentRequestDto {
     authenticationMode?: string | undefined;
 }
 
+export interface IAppOptionDto {
+    id: string | undefined;
+    name: string | undefined;
+}
+
 export interface IApplicationHealthDto {
     status?: string | undefined;
     lastCheck?: Date;
@@ -254,6 +259,20 @@ export interface IAuthenticationResponseDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: IAuthenticationResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IAvailableAppsDto {
+    programs?: IAppOptionDto[] | undefined;
+    workflows?: IAppOptionDto[] | undefined;
+    remoteApps?: IAppOptionDto[] | undefined;
+}
+
+export interface IAvailableAppsDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IAvailableAppsDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -840,6 +859,83 @@ export interface IDataValidationResultDto {
     schemaUsed?: { [key: string]: any; } | undefined;
 }
 
+export interface IDemoShowcaseCreateDto {
+    associatedAppId: string;
+    appType: enums.AppType;
+    tab: string;
+    primaryGroup: string;
+    secondaryGroup: string;
+    videoPath: string;
+}
+
+export interface IDemoShowcaseDto {
+    id: string | undefined;
+    associatedAppId: string | undefined;
+    appType: string | undefined;
+    tab: string | undefined;
+    primaryGroup: string | undefined;
+    secondaryGroup: string | undefined;
+    videoPath: string | undefined;
+}
+
+export interface IDemoShowcaseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IDemoShowcaseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IDemoShowcaseDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IDemoShowcaseDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IDemoShowcaseItemDto {
+    id: string | undefined;
+    name: string | undefined;
+    description: string | undefined;
+    iconUrl?: string | undefined;
+    appId: string | undefined;
+    appType: string | undefined;
+    videoPath: string | undefined;
+    createdAt?: Date;
+    creatorFullName: string | undefined;
+    hasPublicUiComponent?: boolean;
+}
+
+export interface IDemoShowcasePublicDto {
+    id: string | undefined;
+    group: string | undefined;
+    videoPath: string | undefined;
+    appType: string | undefined;
+    appId: string | undefined;
+    name: string | undefined;
+    description: string | undefined;
+    creator: string | undefined;
+    createdAt?: Date;
+}
+
+export interface IDemoShowcasePublicDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IDemoShowcasePublicDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IDemoShowcaseUpdateDto {
+    associatedAppId?: string | undefined;
+    appType?: enums.AppType;
+    tab?: string | undefined;
+    primaryGroup?: string | undefined;
+    secondaryGroup?: string | undefined;
+    videoPath?: string | undefined;
+}
+
 export interface IDeploymentHistoryDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -1201,6 +1297,10 @@ export interface IExecutionQueueStatusDtoApiResponse {
     timestamp?: Date;
 }
 
+export interface IExecutionRequestDto {
+    inputs: { [key: string]: any; };
+}
+
 export interface IExecutionResourceLimitsDto {
     maxCpuPercentage?: number;
     maxMemoryMb?: number;
@@ -1260,6 +1360,21 @@ export interface IExecutionResourceUsageDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: IExecutionResourceUsageDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IExecutionResponseDto {
+    executionId: string | undefined;
+    status: string | undefined;
+    result?: any | undefined;
+    errorMessage?: string | undefined;
+}
+
+export interface IExecutionResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IExecutionResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -1438,6 +1553,11 @@ export interface IFileDataDto {
     checksum?: string | undefined;
     base64Content?: string | undefined;
     filename?: string | undefined;
+}
+
+export interface IFileParameter {
+    data: any;
+    fileName: string;
 }
 
 export interface IFileStorageResult {
@@ -2051,6 +2171,21 @@ export interface IPollutionResponseDto {
     pollutantLevel?: string | undefined;
 }
 
+export interface IPrimaryGroupDto {
+    primaryGroupName: string | undefined;
+    secondaryGroups?: ISecondaryGroupDto[] | undefined;
+}
+
+export interface IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    [key: string]: any;
+}
+
 export interface IProgramComponentMappingDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -2384,6 +2519,18 @@ export interface IProjectValidationResultDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: IProjectValidationResultDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IPublicDemoShowcaseResponse {
+    tabs?: ITabGroupDto[] | undefined;
+}
+
+export interface IPublicDemoShowcaseResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IPublicDemoShowcaseResponse;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -3026,6 +3173,11 @@ export interface IRollbackRequestDto {
     forceRollback?: boolean;
 }
 
+export interface ISecondaryGroupDto {
+    secondaryGroupName: string | undefined;
+    items?: IDemoShowcaseItemDto[] | undefined;
+}
+
 export interface ISecurityHazardDto {
     score?: number;
     level?: enums.Level;
@@ -3408,6 +3560,11 @@ export interface ITMVoltageUpdateDto {
     voltages: number[];
 }
 
+export interface ITabGroupDto {
+    tabName: string | undefined;
+    primaryGroups?: IPrimaryGroupDto[] | undefined;
+}
+
 export interface ITokenResponseDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
@@ -3720,6 +3877,21 @@ export interface IUiComponentRecommendationDtoListApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: IUiComponentRecommendationDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IUiComponentResponseDto {
+    id: string | undefined;
+    programId: string | undefined;
+    schema?: any | undefined;
+    configuration?: any | undefined;
+}
+
+export interface IUiComponentResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IUiComponentResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -4295,6 +4467,19 @@ export interface IVersionStatusUpdateDto {
 export interface IVersionUpdateDto {
     commitMessage?: string | undefined;
     reviewComments?: string | undefined;
+}
+
+export interface IVideoUploadResponseDto {
+    videoPath: string | undefined;
+    fileSize?: number;
+}
+
+export interface IVideoUploadResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IVideoUploadResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
 }
 
 export interface IWebAppDeploymentRequestDto {

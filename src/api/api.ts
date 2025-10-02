@@ -103,6 +103,7 @@ export class ApiClient {
     private _remoteAppsClient!: interfaces.IRemoteAppsClient;
     private _iconsClient!: interfaces.IIconsClient;
     private _groupsClient!: interfaces.IGroupsClient;
+    private _demoShowcaseClient!: interfaces.IDemoShowcaseClient;
 
     /**
      * Initialize API client with base URL and authentication handlers
@@ -150,6 +151,7 @@ export class ApiClient {
         this._remoteAppsClient = new clients.RemoteAppsClient(this.baseUrl, this.http);
         this._iconsClient = new clients.IconsClient(this.baseUrl, this.http);
         this._groupsClient = new clients.GroupsClient(this.baseUrl, this.http);
+        this._demoShowcaseClient = new clients.DemoShowcaseClient(this.baseUrl, this.http);
     }
 
     /**
@@ -300,6 +302,20 @@ export class ApiClient {
     }
 
     /**
+     * Demo Showcase management operations
+     */
+    get demoShowcaseClient(): interfaces.IDemoShowcaseClient {
+        return this._demoShowcaseClient;
+    }
+
+    /**
+     * Demo Showcase management operations (short alias)
+     */
+    get demoShowcase(): interfaces.IDemoShowcaseClient {
+        return this._demoShowcaseClient;
+    }
+
+    /**
      * Get current API base URL
      */
     get baseApiUrl(): string {
@@ -362,5 +378,5 @@ function getDynamicApiBaseUrl(): string {
 }
 
 // Export default instance that will be configured later
-// export const api = createApiClient(getDynamicApiBaseUrl());
-export const api = createApiClient("http://144.122.103.206:5090");
+export const api = createApiClient(getDynamicApiBaseUrl());
+// export const api = createApiClient("http://144.122.103.206:5090");

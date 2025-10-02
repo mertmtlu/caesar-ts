@@ -16,7 +16,12 @@ export default defineConfig({
         target: 'http://localhost:5090',
         changeOrigin: true,
         secure: false,
-      }
+      },
+      '/videos': {
+        target: 'http://localhost:5090',
+        changeOrigin: true,
+        secure: false,
+      },
     }
   },
   build: {

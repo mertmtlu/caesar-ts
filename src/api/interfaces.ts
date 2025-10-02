@@ -361,6 +361,73 @@ export interface IClientsClient {
     clients_GetStatistics(id: string): Promise<types.IClientStatisticsResponseDtoApiResponse>;
 }
 
+export interface IDemoShowcaseClient {
+
+    /**
+     * Get all demo showcases with nested 3-level grouping structure (Tab -> PrimaryGroup -> SecondaryGroup)
+     * @return OK
+     */
+    demoShowcase_GetPublicShowcase(): Promise<types.IPublicDemoShowcaseResponseApiResponse>;
+
+    /**
+     * Create a new demo showcase entry
+     * @param body (optional) 
+     * @return OK
+     */
+    demoShowcase_Create(body: types.IDemoShowcaseCreateDto | undefined): Promise<types.IDemoShowcaseDtoApiResponse>;
+
+    /**
+     * Get public UI component schema/configuration for a specific app
+     * @return OK
+     */
+    demoShowcase_GetPublicUiComponent(appId: string): Promise<types.IUiComponentResponseDtoApiResponse>;
+
+    /**
+     * Execute a public app with provided inputs (uses system user)
+     * @param body (optional) 
+     * @return OK
+     */
+    demoShowcase_ExecutePublicApp(appId: string, body: types.IExecutionRequestDto | undefined): Promise<types.IExecutionResponseDtoApiResponse>;
+
+    /**
+     * Get all demo showcases with associated app details (public - legacy)
+     * @return OK
+     */
+    demoShowcase_GetAllLegacy(): Promise<types.IDemoShowcasePublicDtoListApiResponse>;
+
+    /**
+     * Get all demo showcases for admin (raw data)
+     * @return OK
+     */
+    demoShowcase_GetAllAdmin(): Promise<types.IDemoShowcaseDtoListApiResponse>;
+
+    /**
+     * Update a demo showcase entry
+     * @param body (optional) 
+     * @return OK
+     */
+    demoShowcase_Update(id: string, body: types.IDemoShowcaseUpdateDto | undefined): Promise<types.IDemoShowcaseDtoApiResponse>;
+
+    /**
+     * Delete a demo showcase entry
+     * @return OK
+     */
+    demoShowcase_Delete(id: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Upload a video file and return its path
+     * @param file (optional) 
+     * @return OK
+     */
+    demoShowcase_UploadVideo(file: types.IFileParameter | undefined): Promise<types.IVideoUploadResponseDtoApiResponse>;
+
+    /**
+     * Get all available apps for admin dropdown selector
+     * @return OK
+     */
+    demoShowcase_GetAvailableApps(): Promise<types.IAvailableAppsDtoApiResponse>;
+}
+
 export interface IDeploymentsClient {
 
     /**

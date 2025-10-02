@@ -8,6 +8,12 @@ export enum AppDeploymentType {
     _4 = 4,
 }
 
+export enum AppType {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
 export enum BuildingType {
     _0 = 0,
     _1 = 1,

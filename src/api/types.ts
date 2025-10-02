@@ -1113,6 +1113,41 @@ export class AppDeploymentRequestDto implements interfaces.IAppDeploymentRequest
     }
 }
 
+export class AppOptionDto implements interfaces.IAppOptionDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: interfaces.IAppOptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): AppOptionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AppOptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
 export class ApplicationHealthDto implements interfaces.IApplicationHealthDto {
     status?: string | undefined;
     lastCheck?: Date;
@@ -1473,6 +1508,120 @@ export class AuthenticationResponseDtoApiResponse implements interfaces.IAuthent
     static fromJS(data: any): AuthenticationResponseDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new AuthenticationResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class AvailableAppsDto implements interfaces.IAvailableAppsDto {
+    programs?: AppOptionDto[] | undefined;
+    workflows?: AppOptionDto[] | undefined;
+    remoteApps?: AppOptionDto[] | undefined;
+
+    constructor(data?: interfaces.IAvailableAppsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["programs"])) {
+                this.programs = [] as any;
+                for (let item of _data["programs"])
+                    this.programs!.push(AppOptionDto.fromJS(item));
+            }
+            if (Array.isArray(_data["workflows"])) {
+                this.workflows = [] as any;
+                for (let item of _data["workflows"])
+                    this.workflows!.push(AppOptionDto.fromJS(item));
+            }
+            if (Array.isArray(_data["remoteApps"])) {
+                this.remoteApps = [] as any;
+                for (let item of _data["remoteApps"])
+                    this.remoteApps!.push(AppOptionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AvailableAppsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AvailableAppsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.programs)) {
+            data["programs"] = [];
+            for (let item of this.programs)
+                data["programs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.workflows)) {
+            data["workflows"] = [];
+            for (let item of this.workflows)
+                data["workflows"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.remoteApps)) {
+            data["remoteApps"] = [];
+            for (let item of this.remoteApps)
+                data["remoteApps"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class AvailableAppsDtoApiResponse implements interfaces.IAvailableAppsDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: AvailableAppsDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IAvailableAppsDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? AvailableAppsDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AvailableAppsDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new AvailableAppsDtoApiResponse();
         result.init(data);
         return result;
     }
@@ -5023,6 +5172,437 @@ export class DataValidationResultDto implements interfaces.IDataValidationResult
     }
 }
 
+export class DemoShowcaseCreateDto implements interfaces.IDemoShowcaseCreateDto {
+    associatedAppId!: string;
+    appType!: enums.AppType;
+    tab!: string;
+    primaryGroup!: string;
+    secondaryGroup!: string;
+    videoPath!: string;
+
+    constructor(data?: interfaces.IDemoShowcaseCreateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.associatedAppId = _data["associatedAppId"];
+            this.appType = _data["appType"];
+            this.tab = _data["tab"];
+            this.primaryGroup = _data["primaryGroup"];
+            this.secondaryGroup = _data["secondaryGroup"];
+            this.videoPath = _data["videoPath"];
+        }
+    }
+
+    static fromJS(data: any): DemoShowcaseCreateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcaseCreateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["associatedAppId"] = this.associatedAppId;
+        data["appType"] = this.appType;
+        data["tab"] = this.tab;
+        data["primaryGroup"] = this.primaryGroup;
+        data["secondaryGroup"] = this.secondaryGroup;
+        data["videoPath"] = this.videoPath;
+        return data;
+    }
+}
+
+export class DemoShowcaseDto implements interfaces.IDemoShowcaseDto {
+    id!: string | undefined;
+    associatedAppId!: string | undefined;
+    appType!: string | undefined;
+    tab!: string | undefined;
+    primaryGroup!: string | undefined;
+    secondaryGroup!: string | undefined;
+    videoPath!: string | undefined;
+
+    constructor(data?: interfaces.IDemoShowcaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.associatedAppId = _data["associatedAppId"];
+            this.appType = _data["appType"];
+            this.tab = _data["tab"];
+            this.primaryGroup = _data["primaryGroup"];
+            this.secondaryGroup = _data["secondaryGroup"];
+            this.videoPath = _data["videoPath"];
+        }
+    }
+
+    static fromJS(data: any): DemoShowcaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["associatedAppId"] = this.associatedAppId;
+        data["appType"] = this.appType;
+        data["tab"] = this.tab;
+        data["primaryGroup"] = this.primaryGroup;
+        data["secondaryGroup"] = this.secondaryGroup;
+        data["videoPath"] = this.videoPath;
+        return data;
+    }
+}
+
+export class DemoShowcaseDtoApiResponse implements interfaces.IDemoShowcaseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: DemoShowcaseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IDemoShowcaseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? DemoShowcaseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DemoShowcaseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcaseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class DemoShowcaseDtoListApiResponse implements interfaces.IDemoShowcaseDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: DemoShowcaseDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IDemoShowcaseDtoListApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(DemoShowcaseDto.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DemoShowcaseDtoListApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcaseDtoListApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class DemoShowcaseItemDto implements interfaces.IDemoShowcaseItemDto {
+    id!: string | undefined;
+    name!: string | undefined;
+    description!: string | undefined;
+    iconUrl?: string | undefined;
+    appId!: string | undefined;
+    appType!: string | undefined;
+    videoPath!: string | undefined;
+    createdAt?: Date;
+    creatorFullName!: string | undefined;
+    hasPublicUiComponent?: boolean;
+
+    constructor(data?: interfaces.IDemoShowcaseItemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.iconUrl = _data["iconUrl"];
+            this.appId = _data["appId"];
+            this.appType = _data["appType"];
+            this.videoPath = _data["videoPath"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.creatorFullName = _data["creatorFullName"];
+            this.hasPublicUiComponent = _data["hasPublicUiComponent"];
+        }
+    }
+
+    static fromJS(data: any): DemoShowcaseItemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcaseItemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["iconUrl"] = this.iconUrl;
+        data["appId"] = this.appId;
+        data["appType"] = this.appType;
+        data["videoPath"] = this.videoPath;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["creatorFullName"] = this.creatorFullName;
+        data["hasPublicUiComponent"] = this.hasPublicUiComponent;
+        return data;
+    }
+}
+
+export class DemoShowcasePublicDto implements interfaces.IDemoShowcasePublicDto {
+    id!: string | undefined;
+    group!: string | undefined;
+    videoPath!: string | undefined;
+    appType!: string | undefined;
+    appId!: string | undefined;
+    name!: string | undefined;
+    description!: string | undefined;
+    creator!: string | undefined;
+    createdAt?: Date;
+
+    constructor(data?: interfaces.IDemoShowcasePublicDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.group = _data["group"];
+            this.videoPath = _data["videoPath"];
+            this.appType = _data["appType"];
+            this.appId = _data["appId"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.creator = _data["creator"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DemoShowcasePublicDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcasePublicDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["group"] = this.group;
+        data["videoPath"] = this.videoPath;
+        data["appType"] = this.appType;
+        data["appId"] = this.appId;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["creator"] = this.creator;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class DemoShowcasePublicDtoListApiResponse implements interfaces.IDemoShowcasePublicDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: DemoShowcasePublicDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IDemoShowcasePublicDtoListApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(DemoShowcasePublicDto.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DemoShowcasePublicDtoListApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcasePublicDtoListApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class DemoShowcaseUpdateDto implements interfaces.IDemoShowcaseUpdateDto {
+    associatedAppId?: string | undefined;
+    appType?: enums.AppType;
+    tab?: string | undefined;
+    primaryGroup?: string | undefined;
+    secondaryGroup?: string | undefined;
+    videoPath?: string | undefined;
+
+    constructor(data?: interfaces.IDemoShowcaseUpdateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.associatedAppId = _data["associatedAppId"];
+            this.appType = _data["appType"];
+            this.tab = _data["tab"];
+            this.primaryGroup = _data["primaryGroup"];
+            this.secondaryGroup = _data["secondaryGroup"];
+            this.videoPath = _data["videoPath"];
+        }
+    }
+
+    static fromJS(data: any): DemoShowcaseUpdateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DemoShowcaseUpdateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["associatedAppId"] = this.associatedAppId;
+        data["appType"] = this.appType;
+        data["tab"] = this.tab;
+        data["primaryGroup"] = this.primaryGroup;
+        data["secondaryGroup"] = this.secondaryGroup;
+        data["videoPath"] = this.videoPath;
+        return data;
+    }
+}
+
 export class DeploymentHistoryDto implements interfaces.IDeploymentHistoryDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -7286,6 +7866,53 @@ export class ExecutionQueueStatusDtoApiResponse implements interfaces.IExecution
     }
 }
 
+export class ExecutionRequestDto implements interfaces.IExecutionRequestDto {
+    inputs!: { [key: string]: any; };
+
+    constructor(data?: interfaces.IExecutionRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.inputs = {};
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (_data["inputs"]) {
+                this.inputs = {} as any;
+                for (let key in _data["inputs"]) {
+                    if (_data["inputs"].hasOwnProperty(key))
+                        (<any>this.inputs)![key] = _data["inputs"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): ExecutionRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.inputs) {
+            data["inputs"] = {};
+            for (let key in this.inputs) {
+                if (this.inputs.hasOwnProperty(key))
+                    (<any>data["inputs"])[key] = (<any>this.inputs)[key];
+            }
+        }
+        return data;
+    }
+}
+
 export class ExecutionResourceLimitsDto implements interfaces.IExecutionResourceLimitsDto {
     maxCpuPercentage?: number;
     maxMemoryMb?: number;
@@ -7660,6 +8287,99 @@ export class ExecutionResourceUsageDtoApiResponse implements interfaces.IExecuti
     static fromJS(data: any): ExecutionResourceUsageDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionResourceUsageDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class ExecutionResponseDto implements interfaces.IExecutionResponseDto {
+    executionId!: string | undefined;
+    status!: string | undefined;
+    result?: any | undefined;
+    errorMessage?: string | undefined;
+
+    constructor(data?: interfaces.IExecutionResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.executionId = _data["executionId"];
+            this.status = _data["status"];
+            this.result = _data["result"];
+            this.errorMessage = _data["errorMessage"];
+        }
+    }
+
+    static fromJS(data: any): ExecutionResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["executionId"] = this.executionId;
+        data["status"] = this.status;
+        data["result"] = this.result;
+        data["errorMessage"] = this.errorMessage;
+        return data;
+    }
+}
+
+export class ExecutionResponseDtoApiResponse implements interfaces.IExecutionResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: ExecutionResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IExecutionResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? ExecutionResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ExecutionResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionResponseDtoApiResponse();
         result.init(data);
         return result;
     }
@@ -8760,6 +9480,16 @@ export class FileDataDto implements interfaces.IFileDataDto {
         data["base64Content"] = this.base64Content;
         data["filename"] = this.filename;
         return data;
+    }
+}
+
+export class FileParameter implements interfaces.IFileParameter {
+    data: any;
+    fileName: string;
+
+    constructor(data: any, fileName: string) {
+        this.data = data;
+        this.fileName = fileName;
     }
 }
 
@@ -12552,6 +13282,103 @@ export class PollutionResponseDto implements interfaces.IPollutionResponseDto {
     }
 }
 
+export class PrimaryGroupDto implements interfaces.IPrimaryGroupDto {
+    primaryGroupName!: string | undefined;
+    secondaryGroups?: SecondaryGroupDto[] | undefined;
+
+    constructor(data?: interfaces.IPrimaryGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.primaryGroupName = _data["primaryGroupName"];
+            if (Array.isArray(_data["secondaryGroups"])) {
+                this.secondaryGroups = [] as any;
+                for (let item of _data["secondaryGroups"])
+                    this.secondaryGroups!.push(SecondaryGroupDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PrimaryGroupDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PrimaryGroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["primaryGroupName"] = this.primaryGroupName;
+        if (Array.isArray(this.secondaryGroups)) {
+            data["secondaryGroups"] = [];
+            for (let item of this.secondaryGroups)
+                data["secondaryGroups"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class ProblemDetails implements interfaces.IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    [key: string]: any;
+
+    constructor(data?: interfaces.IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.type = _data["type"];
+            this.title = _data["title"];
+            this.status = _data["status"];
+            this.detail = _data["detail"];
+            this.instance = _data["instance"];
+        }
+    }
+
+    static fromJS(data: any): ProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["status"] = this.status;
+        data["detail"] = this.detail;
+        data["instance"] = this.instance;
+        return data;
+    }
+}
+
 export class ProgramComponentMappingDto implements interfaces.IProgramComponentMappingDto {
     id?: string | undefined;
     programId?: string | undefined;
@@ -14484,6 +15311,98 @@ export class ProjectValidationResultDtoApiResponse implements interfaces.IProjec
     static fromJS(data: any): ProjectValidationResultDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ProjectValidationResultDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class PublicDemoShowcaseResponse implements interfaces.IPublicDemoShowcaseResponse {
+    tabs?: TabGroupDto[] | undefined;
+
+    constructor(data?: interfaces.IPublicDemoShowcaseResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["tabs"])) {
+                this.tabs = [] as any;
+                for (let item of _data["tabs"])
+                    this.tabs!.push(TabGroupDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PublicDemoShowcaseResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicDemoShowcaseResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.tabs)) {
+            data["tabs"] = [];
+            for (let item of this.tabs)
+                data["tabs"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class PublicDemoShowcaseResponseApiResponse implements interfaces.IPublicDemoShowcaseResponseApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: PublicDemoShowcaseResponse;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IPublicDemoShowcaseResponseApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? PublicDemoShowcaseResponse.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PublicDemoShowcaseResponseApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicDemoShowcaseResponseApiResponse();
         result.init(data);
         return result;
     }
@@ -18378,6 +19297,49 @@ export class RollbackRequestDto implements interfaces.IRollbackRequestDto {
     }
 }
 
+export class SecondaryGroupDto implements interfaces.ISecondaryGroupDto {
+    secondaryGroupName!: string | undefined;
+    items?: DemoShowcaseItemDto[] | undefined;
+
+    constructor(data?: interfaces.ISecondaryGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.secondaryGroupName = _data["secondaryGroupName"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(DemoShowcaseItemDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SecondaryGroupDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SecondaryGroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["secondaryGroupName"] = this.secondaryGroupName;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
 export class SecurityHazardDto implements interfaces.ISecurityHazardDto {
     score?: number;
     level?: enums.Level;
@@ -20519,6 +21481,49 @@ export class TMVoltageUpdateDto implements interfaces.ITMVoltageUpdateDto {
     }
 }
 
+export class TabGroupDto implements interfaces.ITabGroupDto {
+    tabName!: string | undefined;
+    primaryGroups?: PrimaryGroupDto[] | undefined;
+
+    constructor(data?: interfaces.ITabGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tabName = _data["tabName"];
+            if (Array.isArray(_data["primaryGroups"])) {
+                this.primaryGroups = [] as any;
+                for (let item of _data["primaryGroups"])
+                    this.primaryGroups!.push(PrimaryGroupDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TabGroupDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TabGroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tabName"] = this.tabName;
+        if (Array.isArray(this.primaryGroups)) {
+            data["primaryGroups"] = [];
+            for (let item of this.primaryGroups)
+                data["primaryGroups"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
 export class TokenResponseDto implements interfaces.ITokenResponseDto {
     accessToken?: string | undefined;
     refreshToken?: string | undefined;
@@ -22607,6 +23612,99 @@ export class UiComponentRecommendationDtoListApiResponse implements interfaces.I
             for (let item of this.data)
                 data["data"].push(item ? item.toJSON() : <any>undefined);
         }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class UiComponentResponseDto implements interfaces.IUiComponentResponseDto {
+    id!: string | undefined;
+    programId!: string | undefined;
+    schema?: any | undefined;
+    configuration?: any | undefined;
+
+    constructor(data?: interfaces.IUiComponentResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.programId = _data["programId"];
+            this.schema = _data["schema"];
+            this.configuration = _data["configuration"];
+        }
+    }
+
+    static fromJS(data: any): UiComponentResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UiComponentResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["programId"] = this.programId;
+        data["schema"] = this.schema;
+        data["configuration"] = this.configuration;
+        return data;
+    }
+}
+
+export class UiComponentResponseDtoApiResponse implements interfaces.IUiComponentResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: UiComponentResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IUiComponentResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? UiComponentResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UiComponentResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UiComponentResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
         if (Array.isArray(this.errors)) {
             data["errors"] = [];
             for (let item of this.errors)
@@ -26074,6 +27172,93 @@ export class VersionUpdateDto implements interfaces.IVersionUpdateDto {
         data = typeof data === 'object' ? data : {};
         data["commitMessage"] = this.commitMessage;
         data["reviewComments"] = this.reviewComments;
+        return data;
+    }
+}
+
+export class VideoUploadResponseDto implements interfaces.IVideoUploadResponseDto {
+    videoPath!: string | undefined;
+    fileSize?: number;
+
+    constructor(data?: interfaces.IVideoUploadResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.videoPath = _data["videoPath"];
+            this.fileSize = _data["fileSize"];
+        }
+    }
+
+    static fromJS(data: any): VideoUploadResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new VideoUploadResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["videoPath"] = this.videoPath;
+        data["fileSize"] = this.fileSize;
+        return data;
+    }
+}
+
+export class VideoUploadResponseDtoApiResponse implements interfaces.IVideoUploadResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: VideoUploadResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IVideoUploadResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? VideoUploadResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): VideoUploadResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new VideoUploadResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
         return data;
     }
 }
