@@ -7867,7 +7867,7 @@ export class ExecutionQueueStatusDtoApiResponse implements interfaces.IExecution
 }
 
 export class ExecutionRequestDto implements interfaces.IExecutionRequestDto {
-    inputs!: { [key: string]: any; };
+    inputs!: any;
 
     constructor(data?: interfaces.IExecutionRequestDto) {
         if (data) {
@@ -7876,20 +7876,11 @@ export class ExecutionRequestDto implements interfaces.IExecutionRequestDto {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.inputs = {};
-        }
     }
 
     init(_data?: any) {
         if (_data) {
-            if (_data["inputs"]) {
-                this.inputs = {} as any;
-                for (let key in _data["inputs"]) {
-                    if (_data["inputs"].hasOwnProperty(key))
-                        (<any>this.inputs)![key] = _data["inputs"][key];
-                }
-            }
+            this.inputs = _data["inputs"];
         }
     }
 
@@ -7902,13 +7893,7 @@ export class ExecutionRequestDto implements interfaces.IExecutionRequestDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.inputs) {
-            data["inputs"] = {};
-            for (let key in this.inputs) {
-                if (this.inputs.hasOwnProperty(key))
-                    (<any>data["inputs"])[key] = (<any>this.inputs)[key];
-            }
-        }
+        data["inputs"] = this.inputs;
         return data;
     }
 }

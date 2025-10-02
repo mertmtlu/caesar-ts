@@ -3,7 +3,7 @@ import { api } from '@/api/api';
 import { ExecutionRequestDto } from '@/api/types';
 import Modal from '@/components/common/Modal';
 import ComponentForm from '@/components/common/ComponentForm';
-import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle, Zap } from 'lucide-react';
 
 interface ExecutionFormModalProps {
   isOpen: boolean;
@@ -16,7 +16,6 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
   // UI Schema state
   const [uiSchema, setUiSchema] = useState<any | null>(null);
   const [isLoadingSchema, setIsLoadingSchema] = useState(false);
-  const [schemaError, setSchemaError] = useState<string | null>(null);
 
   // Execution state
   const [isExecuting, setIsExecuting] = useState(false);
@@ -35,26 +34,46 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
 
   const resetState = () => {
     setUiSchema(null);
-    setSchemaError(null);
     setExecutionResult(null);
     setExecutionError(null);
   };
 
   const fetchUiSchema = async () => {
     setIsLoadingSchema(true);
-    setSchemaError(null);
 
     try {
       const response = await api.demoShowcase.demoShowcase_GetPublicUiComponent(appId!);
 
       if (response.success && response.data) {
-        setUiSchema(response.data.schema);
+        let schema = null;
+
+        // Try to get schema from configuration field (which is a JSON string)
+        if (response.data.configuration) {
+          try {
+            schema = JSON.parse(response.data.configuration);
+          } catch (parseError) {
+            console.error('Error parsing configuration:', parseError);
+          }
+        }
+
+        // Fallback to schema field if configuration is not available
+        if (!schema && response.data.schema) {
+          try {
+            schema = typeof response.data.schema === 'string'
+              ? JSON.parse(response.data.schema)
+              : response.data.schema;
+          } catch (parseError) {
+            console.error('Error parsing schema:', parseError);
+          }
+        }
+
+        setUiSchema(schema);
       } else {
-        setSchemaError(response.message || 'Failed to load form schema');
+        setUiSchema(null);
       }
     } catch (error) {
       console.error('Error loading UI schema:', error);
-      setSchemaError('Error loading form schema. Please try again.');
+      setUiSchema(null);
     } finally {
       setIsLoadingSchema(false);
     }
@@ -94,7 +113,13 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={itemName || 'Execute Demo'} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={itemName || 'Execute Demo'}
+      size="md"
+      className="!max-w-[70vw]"
+    >
       <div className="space-y-6">
         {/* Loading State */}
         {isLoadingSchema && (
@@ -104,28 +129,8 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
           </div>
         )}
 
-        {/* Schema Error */}
-        {schemaError && (
-          <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <AlertCircle className="h-5 w-5 text-red-400" />
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-sm text-red-800 dark:text-red-200">{schemaError}</p>
-              </div>
-              <button
-                onClick={fetchUiSchema}
-                className="ml-3 text-sm text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-300 underline"
-              >
-                Retry
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Dynamic Form */}
-        {!isLoadingSchema && !schemaError && uiSchema && !executionResult && (
+        {/* Dynamic Form - Show if UI schema exists */}
+        {!isLoadingSchema && uiSchema && uiSchema.elements && uiSchema.elements.length > 0 && !executionResult && (
           <div>
             <ComponentForm
               elements={uiSchema.elements || []}
@@ -134,6 +139,50 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
               isSubmitting={isExecuting}
               title="Input Parameters"
             />
+          </div>
+        )}
+
+        {/* No Form - Direct execution button */}
+        {!isLoadingSchema && (!uiSchema || !uiSchema.elements || uiSchema.elements.length === 0) && !executionResult && (
+          <div className="space-y-4">
+            <div className="rounded-md bg-blue-50 dark:bg-blue-900/20 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-5 w-5 text-blue-400" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    This app doesn't require any input parameters. Click Execute to run it directly.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={handleClose}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleExecute({})}
+                disabled={isExecuting}
+                className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-emerald-500 border border-transparent rounded-md hover:from-green-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isExecuting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Executing...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4" />
+                    Execute
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         )}
 

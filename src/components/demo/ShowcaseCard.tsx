@@ -1,4 +1,5 @@
-import { Play, Calendar, User, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, Calendar, User, Zap, Sparkles, Video } from 'lucide-react';
 import { DemoShowcaseItemDto } from '@/api/types';
 
 interface ShowcaseCardProps {
@@ -7,17 +8,12 @@ interface ShowcaseCardProps {
   onExecuteClick: (appId: string, itemName: string) => void;
 }
 
-export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCardProps) {
-  const handleClick = () => {
-    if (item.hasPublicUiComponent && item.appId) {
-      // Open execution form modal
-      onExecuteClick(item.appId, item.name || 'Untitled');
-    } else if (item.videoPath) {
-      // Open video modal
-      onVideoClick(item.videoPath);
-    }
-  };
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
+export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCardProps) {
   const formatDate = (date?: Date) => {
     if (!date) return 'Unknown date';
     return new Date(date).toLocaleDateString('en-US', {
@@ -27,84 +23,155 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
     });
   };
 
-  // Determine icon and label based on item type
-  const isInteractive = item.hasPublicUiComponent && item.appId;
-  const Icon = isInteractive ? Zap : Play;
-  const iconColor = isInteractive
-    ? 'text-green-600 dark:text-green-400'
-    : 'text-blue-600 dark:text-blue-400';
-  const iconBgColor = isInteractive
-    ? 'bg-green-100 dark:bg-green-900/30 group-hover:bg-green-200 dark:group-hover:bg-green-900/50'
-    : 'bg-blue-100 dark:bg-blue-900/30 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50';
-  const ariaLabel = isInteractive
-    ? `Execute: ${item.name}`
-    : `Play video: ${item.name}`;
+  const handleExecuteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.appId) {
+      onExecuteClick(item.appId, item.name || 'Untitled');
+    }
+  };
+
+  const handleVideoClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.videoPath) {
+      onVideoClick(item.videoPath);
+    }
+  };
+
+  // Determine icon and style based on item type
+  const hasExecution = !!item.appId;
+  const hasVideo = !!item.videoPath;
+  const Icon = hasExecution ? Zap : Play;
+  const gradientFrom = 'from-blue-500';
+  const gradientTo = 'to-purple-500';
+  const hoverGlow = 'group-hover:shadow-blue-500/20';
+  const decorativeColor = 'bg-blue-500/10';
 
   return (
-    <div
-      onClick={handleClick}
-      className="group relative bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-200 dark:border-gray-700"
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
-      aria-label={ariaLabel}
+    <motion.div
+      variants={itemVariants}
+      className={`group relative rounded-2xl overflow-hidden
+                 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900
+                 border border-gray-200/50 dark:border-gray-700/50
+                 shadow-lg hover:shadow-2xl ${hoverGlow}
+                 transition-all duration-300`}
+      whileHover={{ scale: 1.02, y: -4 }}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Gradient Overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradientFrom}/5 ${gradientTo}/5
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+
+      {/* Decorative Element */}
+      <div className={`absolute top-0 right-0 w-32 h-32 ${decorativeColor} rounded-full blur-3xl
+                      transform translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-500`} />
 
       <div className="relative p-6">
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-            {item.name || 'Untitled'}
-          </h3>
-          <div className={`flex-shrink-0 ml-3 p-2 rounded-full transition-colors ${iconBgColor}`}>
-            <Icon size={20} className={iconColor} />
+        {/* Header with Icon */}
+        <div className="flex items-start gap-4 mb-4">
+          <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br ${gradientFrom} ${gradientTo}
+                         shadow-lg group-hover:shadow-xl
+                         transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+            <Icon className="w-6 h-6 text-white" />
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+              {item.name || 'Untitled'}
+            </h3>
+
+            {/* Type Badge */}
+            {item.appType && (
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+                                bg-gradient-to-r ${gradientFrom} ${gradientTo} text-white`}>
+                  <Sparkles className="w-3 h-3" />
+                  {item.appType}
+                </span>
+                {hasExecution && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+                                 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                    Executable
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 min-h-[3rem]">
+        {/* Description */}
+        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 min-h-[2.5rem] text-sm leading-relaxed">
           {item.description || 'No description available'}
         </p>
 
-        <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+        {/* Metadata */}
+        <div className="space-y-2">
           {item.creatorFullName && (
-            <div className="flex items-center gap-2">
-              <User size={16} />
-              <span>{item.creatorFullName}</span>
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-700/50">
+                <User className="w-3.5 h-3.5" />
+              </div>
+              <span className="font-medium">{item.creatorFullName}</span>
             </div>
           )}
+
           {item.createdAt && (
-            <div className="flex items-center gap-2">
-              <Calendar size={16} />
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-700/50">
+                <Calendar className="w-3.5 h-3.5" />
+              </div>
               <span>{formatDate(item.createdAt)}</span>
             </div>
           )}
-          <div className="flex items-center gap-2 mt-2">
-            {item.appType && (
-              <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium">
-                {item.appType}
-              </span>
-            )}
-            {isInteractive && (
-              <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-medium">
-                Interactive
-              </span>
-            )}
-          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-2">
+          {hasExecution && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleExecuteClick}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                       bg-gradient-to-r from-green-500 to-emerald-500
+                       text-white font-semibold text-sm
+                       hover:from-green-600 hover:to-emerald-600
+                       shadow-md hover:shadow-lg
+                       transition-all duration-200"
+            >
+              <Zap className="w-4 h-4" />
+              Execute
+            </motion.button>
+          )}
+          {hasVideo && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleVideoClick}
+              className={`${hasExecution ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                       bg-gradient-to-r from-blue-500 to-purple-500
+                       text-white font-semibold text-sm
+                       hover:from-blue-600 hover:to-purple-600
+                       shadow-md hover:shadow-lg
+                       transition-all duration-200`}
+            >
+              <Video className="w-4 h-4" />
+              Watch Demo
+            </motion.button>
+          )}
+          {!hasExecution && !hasVideo && (
+            <div className="w-full flex items-center justify-center px-4 py-2.5 rounded-lg
+                          bg-gray-100 dark:bg-gray-700/50
+                          text-gray-500 dark:text-gray-400 text-sm">
+              No actions available
+            </div>
+          )}
         </div>
       </div>
 
-      <div
-        className={`absolute bottom-0 left-0 right-0 h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${
-          isInteractive
-            ? 'bg-gradient-to-r from-green-500 to-emerald-500'
-            : 'bg-gradient-to-r from-blue-500 to-purple-500'
-        }`}
-      />
-    </div>
+      {/* Bottom Progress Bar */}
+      <div className={`absolute bottom-0 left-0 right-0 h-1
+                      bg-gradient-to-r ${gradientFrom} ${gradientTo}
+                      transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
+    </motion.div>
   );
 }

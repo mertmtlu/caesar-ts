@@ -1298,7 +1298,7 @@ export interface IExecutionQueueStatusDtoApiResponse {
 }
 
 export interface IExecutionRequestDto {
-    inputs: { [key: string]: any; };
+    inputs: any;
 }
 
 export interface IExecutionResourceLimitsDto {
