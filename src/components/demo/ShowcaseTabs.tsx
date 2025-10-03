@@ -183,7 +183,7 @@ export function ShowcaseTabs({
                                       <div
                                         key={item.id}
                                         className="p-3 rounded-lg border border-gray-200 dark:border-gray-700
-                                                 bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500
+                                                 bg-transparent hover:border-blue-400 dark:hover:border-blue-500
                                                  hover:shadow-md transition-all"
                                       >
                                         <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
@@ -193,17 +193,19 @@ export function ShowcaseTabs({
                                           {item.description || 'No description available'}
                                         </p>
 
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-col gap-1.5">
                                           {hasExecution && (
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
                                               }}
-                                              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-md
-                                                       bg-green-600 hover:bg-green-700 text-white font-medium text-xs transition-colors"
+                                              className="w-full flex items-center justify-center gap-1 px-2 py-1 rounded
+                                                       bg-transparent border border-green-600 text-green-600 hover:bg-green-600 hover:text-white
+                                                       dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500 dark:hover:text-white
+                                                       font-medium text-xs transition-colors"
                                             >
-                                              <Zap size={14} />
+                                              <Zap size={12} />
                                               Execute
                                             </button>
                                           )}
@@ -213,10 +215,12 @@ export function ShowcaseTabs({
                                                 e.stopPropagation();
                                                 item.videoPath && onVideoClick(item.videoPath);
                                               }}
-                                              className={`${hasExecution ? 'flex-1' : 'w-full'} flex items-center justify-center gap-1 px-2 py-1.5 rounded-md
-                                                       bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors`}
+                                              className="w-full flex items-center justify-center gap-1 px-2 py-1 rounded
+                                                       bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white
+                                                       dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white
+                                                       font-medium text-xs transition-colors"
                                             >
-                                              <Video size={14} />
+                                              <Video size={12} />
                                               Watch
                                             </button>
                                           )}
