@@ -10,10 +10,13 @@ import { ShowcaseCard } from '@/components/demo/ShowcaseCard';
 import { VideoModal } from '@/components/demo/VideoModal';
 import { ExecutionFormModal } from '@/components/demo/ExecutionFormModal';
 import { Loader2, AlertCircle, Search, X, Inbox } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type ViewType = 'primary' | 'secondary' | 'programs';
 
 export default function DemoPage() {
+  const navigate = useNavigate();
+
   // Nested showcase data
   const [showcaseData, setShowcaseData] = useState<PublicDemoShowcaseResponse | null>(null);
 
@@ -99,6 +102,11 @@ export default function DemoPage() {
       primaryGroup: null,
       secondaryGroup: null
     });
+  };
+
+  const handleExecutionSuccess = (executionId: string) => {
+    handleCloseExecutionModal(); // Close the modal first
+    navigate(`/demo/execution/${executionId}`);
   };
 
   const handlePrimaryCardClick = (groupName: string) => {
@@ -352,74 +360,12 @@ export default function DemoPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-            Ceasar
-          </h1>
+          
         </motion.div>
 
         
 
-        {/* Stats Section - only show on main view */}
-        {!activePath.primaryGroup && !activePath.secondaryGroup && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-          >
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-500/10 rounded-xl">
-                  <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {showcaseData.tabs?.reduce((acc, tab) => acc + (tab.primaryGroups?.length || 0), 0) || 0}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Categories</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-500/10 rounded-xl">
-                  <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {showcaseData.tabs?.reduce((acc, tab) =>
-                      acc + (tab.primaryGroups?.reduce((acc2, pg) =>
-                        acc2 + (pg.secondaryGroups?.length || 0), 0) || 0), 0) || 0}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Subcategories</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-pink-500/10 rounded-xl">
-                  <svg className="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {showcaseData.tabs?.reduce((acc, tab) =>
-                      acc + (tab.primaryGroups?.reduce((acc2, pg) =>
-                        acc2 + (pg.secondaryGroups?.reduce((acc3, sg) =>
-                          acc3 + (sg.items?.length || 0), 0) || 0), 0) || 0), 0) || 0}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Demo Items</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+       
 
         {/* Top-level tabs - always visible */}
         <ShowcaseTabs
@@ -529,62 +475,7 @@ export default function DemoPage() {
           </AnimatePresence>
         </div>
 
-        {/* Footer */}
-        <motion.footer
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-20 pt-12 pb-8 border-t border-gray-200 dark:border-gray-700"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">About Demo Showcase</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                Discover a comprehensive collection of interactive demonstrations showcasing the full range of capabilities and features available on our platform.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="/auth/login" className="text-blue-600 dark:text-blue-400 hover:underline">
-                    Sign In
-                  </a>
-                </li>
-                <li>
-                  <a href="/dashboard" className="text-blue-600 dark:text-blue-400 hover:underline">
-                    Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline">
-                    Projects
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Get Started</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                Ready to explore? Browse through our categories or use the search bar to find specific demos.
-              </p>
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all shadow-md hover:shadow-lg text-sm font-medium"
-              >
-                Back to Top
-              </button>
-            </div>
-          </div>
-
-          <div className="text-center pt-8 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              © {new Date().getFullYear()} Caesar Platform. All rights reserved.
-            </p>
-          </div>
-        </motion.footer>
+        
       </div>
 
       {/* Video Modal */}
@@ -600,6 +491,7 @@ export default function DemoPage() {
         appId={executionModalState.appId}
         itemName={executionModalState.itemName}
         onClose={handleCloseExecutionModal}
+        onExecutionSuccess={handleExecutionSuccess}
       />
     </div>
   );

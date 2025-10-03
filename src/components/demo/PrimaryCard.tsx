@@ -52,9 +52,6 @@ export function PrimaryCard({ title, secondaryGroups, onClick }: PrimaryCardProp
                              group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {title}
                 </h3>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {secondaryGroups.length} {secondaryGroups.length === 1 ? 'category' : 'categories'}
-                </p>
               </div>
             </div>
           </div>
@@ -65,9 +62,6 @@ export function PrimaryCard({ title, secondaryGroups, onClick }: PrimaryCardProp
 
         {/* Secondary Groups Preview Grid */}
         <div className="space-y-3">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Quick Preview
-          </p>
           <div className="grid grid-cols-3 gap-2">
             {visibleGroups.map((group, index) => (
               <motion.div

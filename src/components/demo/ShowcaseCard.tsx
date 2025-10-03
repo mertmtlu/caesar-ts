@@ -67,10 +67,10 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
       <div className="relative p-6">
         {/* Header with Icon */}
         <div className="flex items-start gap-4 mb-4">
-          <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br ${gradientFrom} ${gradientTo}
+          <div className={`flex-shrink-0 p-3 rounded-xl
                          shadow-lg group-hover:shadow-xl
                          transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
-            <Icon className="w-6 h-6 text-white" />
+            <Icon className="w-6 h-6 text-white" /> {/* TODO: CHANGE TO NEW ICON */}
           </div>
 
           <div className="flex-1 min-w-0">
@@ -82,7 +82,7 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
             {item.appType && (
               <div className="flex items-center gap-2">
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
-                                bg-gradient-to-r ${gradientFrom} ${gradientTo} text-white`}>
+                                text-white`}>
                   <Sparkles className="w-3 h-3" />
                   {item.appType}
                 </span>
@@ -132,13 +132,13 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
               whileTap={{ scale: 0.95 }}
               onClick={handleExecuteClick}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
-                       bg-gradient-to-r from-green-500 to-emerald-500
-                       text-white font-semibold text-sm
-                       hover:from-green-600 hover:to-emerald-600
-                       shadow-md hover:shadow-lg
-                       transition-all duration-200"
+                bg-green-600 text-white
+                font-semibold text-sm
+                hover:bg-green-600
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-400
+                transition-colors duration-200"
             >
-              <Zap className="w-4 h-4" />
+              <Zap className="w-4 h-4" /> {/* TODO: CHANGE TO NEW ICON */}
               Execute
             </motion.button>
           )}
@@ -148,11 +148,11 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
               whileTap={{ scale: 0.95 }}
               onClick={handleVideoClick}
               className={`${hasExecution ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
-                       bg-gradient-to-r from-blue-500 to-purple-500
-                       text-white font-semibold text-sm
-                       hover:from-blue-600 hover:to-purple-600
-                       shadow-md hover:shadow-lg
-                       transition-all duration-200`}
+                       bg-blue-600 text-white
+                       font-semibold text-sm
+                       hover:bg-blue-600
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-400
+                       transition-colors duration-200`}
             >
               <Video className="w-4 h-4" />
               Watch Demo

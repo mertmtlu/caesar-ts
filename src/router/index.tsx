@@ -59,6 +59,7 @@ import DemoAdminPage from '@/pages/admin/DemoAdminPage';
 
 // Demo Pages
 import DemoPage from '@/pages/demo/DemoPage';
+import PublicExecutionDetailPage from '@/pages/demo/PublicExecutionDetailPage';
 
 // Protected Route Component (to be created)
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -324,6 +325,10 @@ export const router = createBrowserRouter([
       {
         path: 'demo',
         element: <DemoPage />
+      },
+      {
+        path: 'demo/execution/:executionId',
+        element: <PublicExecutionDetailPage />
       },
 
       // Catch-all route - redirect based on user role

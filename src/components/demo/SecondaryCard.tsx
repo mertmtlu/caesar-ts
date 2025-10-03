@@ -52,9 +52,6 @@ export function SecondaryCard({ title, items, onClick }: SecondaryCardProps) {
                              group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                   {title}
                 </h3>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {items.length} {items.length === 1 ? 'item' : 'items'}
-                </p>
               </div>
             </div>
           </div>
@@ -65,9 +62,6 @@ export function SecondaryCard({ title, items, onClick }: SecondaryCardProps) {
 
         {/* Program Items Preview Grid */}
         <div className="space-y-3">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Quick Preview
-          </p>
           <div className="grid grid-cols-3 gap-2">
             {visibleItems.map((item, index) => {
               const isInteractive = item.hasPublicUiComponent && item.appId;

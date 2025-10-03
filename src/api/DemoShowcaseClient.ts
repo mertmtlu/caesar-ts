@@ -250,6 +250,234 @@ export class DemoShowcaseClient implements interfaces.IDemoShowcaseClient {
     }
 
     /**
+     * Get public execution status and details
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionStatus(executionId: string): Promise<types.PublicExecutionDetailDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/DemoShowcase/execution/{executionId}/status";
+        if (executionId === undefined || executionId === null)
+            throw new Error("The parameter 'executionId' must be defined.");
+        url_ = url_.replace("{executionId}", encodeURIComponent("" + executionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDemoShowcase_GetPublicExecutionStatus(_response);
+        });
+    }
+
+    protected processDemoShowcase_GetPublicExecutionStatus(response: Response): Promise<types.PublicExecutionDetailDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.PublicExecutionDetailDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = types.ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = types.ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.PublicExecutionDetailDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Get public execution logs
+     * @param lines (optional) 
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionLogs(executionId: string, lines: number | undefined): Promise<types.PublicExecutionLogsDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/DemoShowcase/execution/{executionId}/logs?";
+        if (executionId === undefined || executionId === null)
+            throw new Error("The parameter 'executionId' must be defined.");
+        url_ = url_.replace("{executionId}", encodeURIComponent("" + executionId));
+        if (lines === null)
+            throw new Error("The parameter 'lines' cannot be null.");
+        else if (lines !== undefined)
+            url_ += "lines=" + encodeURIComponent("" + lines) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDemoShowcase_GetPublicExecutionLogs(_response);
+        });
+    }
+
+    protected processDemoShowcase_GetPublicExecutionLogs(response: Response): Promise<types.PublicExecutionLogsDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.PublicExecutionLogsDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = types.ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = types.ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.PublicExecutionLogsDtoApiResponse>(null as any);
+    }
+
+    /**
+     * List public execution output files
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionFiles(executionId: string): Promise<types.PublicExecutionFilesDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/DemoShowcase/execution/{executionId}/files";
+        if (executionId === undefined || executionId === null)
+            throw new Error("The parameter 'executionId' must be defined.");
+        url_ = url_.replace("{executionId}", encodeURIComponent("" + executionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDemoShowcase_GetPublicExecutionFiles(_response);
+        });
+    }
+
+    protected processDemoShowcase_GetPublicExecutionFiles(response: Response): Promise<types.PublicExecutionFilesDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.PublicExecutionFilesDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = types.ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = types.ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.PublicExecutionFilesDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Download a single output file from public execution
+     * @return OK
+     */
+    demoShowcase_DownloadPublicExecutionFile(executionId: string, filePath: string): Promise<types.VersionFileDetailDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/DemoShowcase/execution/{executionId}/files/download/{filePath}";
+        if (executionId === undefined || executionId === null)
+            throw new Error("The parameter 'executionId' must be defined.");
+        url_ = url_.replace("{executionId}", encodeURIComponent("" + executionId));
+        if (filePath === undefined || filePath === null)
+            throw new Error("The parameter 'filePath' must be defined.");
+        url_ = url_.replace("{filePath}", encodeURIComponent("" + filePath));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDemoShowcase_DownloadPublicExecutionFile(_response);
+        });
+    }
+
+    protected processDemoShowcase_DownloadPublicExecutionFile(response: Response): Promise<types.VersionFileDetailDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.VersionFileDetailDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = types.ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = types.ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.VersionFileDetailDtoApiResponse>(null as any);
+    }
+
+    /**
      * Get all demo showcases for admin (raw data)
      * @return OK
      */

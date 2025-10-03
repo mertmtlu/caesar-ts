@@ -2535,6 +2535,53 @@ export interface IPublicDemoShowcaseResponseApiResponse {
     timestamp?: Date;
 }
 
+export interface IPublicExecutionDetailDto {
+    executionId: string | undefined;
+    status: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    parameters?: any | undefined;
+    exitCode?: number | undefined;
+    errorMessage?: string | undefined;
+    duration?: number | undefined;
+}
+
+export interface IPublicExecutionDetailDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IPublicExecutionDetailDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IPublicExecutionFilesDto {
+    executionId: string | undefined;
+    files?: string[] | undefined;
+    totalFiles?: number;
+}
+
+export interface IPublicExecutionFilesDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IPublicExecutionFilesDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IPublicExecutionLogsDto {
+    executionId: string | undefined;
+    logs?: string[] | undefined;
+    totalLines?: number;
+}
+
+export interface IPublicExecutionLogsDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IPublicExecutionLogsDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IRefreshTokenDto {
     accessToken: string;
     refreshToken: string;

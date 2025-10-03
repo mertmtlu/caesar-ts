@@ -3,23 +3,23 @@ import { api } from '@/api/api';
 import { ExecutionRequestDto } from '@/api/types';
 import Modal from '@/components/common/Modal';
 import ComponentForm from '@/components/common/ComponentForm';
-import { Loader2, AlertCircle, CheckCircle, Zap } from 'lucide-react';
+import { Loader2, AlertCircle, Zap } from 'lucide-react';
 
 interface ExecutionFormModalProps {
   isOpen: boolean;
   appId: string | null;
   itemName: string | null;
   onClose: () => void;
+  onExecutionSuccess?: (executionId: string) => void;
 }
 
-export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: ExecutionFormModalProps) {
+export function ExecutionFormModal({ isOpen, appId, itemName, onClose, onExecutionSuccess  }: ExecutionFormModalProps) {
   // UI Schema state
   const [uiSchema, setUiSchema] = useState<any | null>(null);
   const [isLoadingSchema, setIsLoadingSchema] = useState(false);
 
   // Execution state
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<any | null>(null);
   const [executionError, setExecutionError] = useState<string | null>(null);
 
   // Fetch UI schema when modal opens
@@ -34,7 +34,6 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
 
   const resetState = () => {
     setUiSchema(null);
-    setExecutionResult(null);
     setExecutionError(null);
   };
 
@@ -82,7 +81,6 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
   const handleExecute = async (formData: Record<string, any>) => {
     setIsExecuting(true);
     setExecutionError(null);
-    setExecutionResult(null);
 
     try {
       // Create execution request
@@ -92,10 +90,16 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
 
       const response = await api.demoShowcase.demoShowcase_ExecutePublicApp(appId!, requestDto);
 
-      if (response.success && response.data) {
-        setExecutionResult(response.data);
+      if (response.success && response.data?.executionId) {
+        // If the success handler is provided, call it.
+        // This will trigger navigation and the modal will close.
+        if (onExecutionSuccess) {
+          onExecutionSuccess(response.data.executionId);
+        } else {
+          // Fallback to old behavior if prop isn't provided
+        }
       } else {
-        setExecutionError(response.message || 'Execution failed');
+        setExecutionError(response.message || 'Execution failed or did not return an ID.');
       }
     } catch (error) {
       console.error('Error executing app:', error);
@@ -130,7 +134,7 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
         )}
 
         {/* Dynamic Form - Show if UI schema exists */}
-        {!isLoadingSchema && uiSchema && uiSchema.elements && uiSchema.elements.length > 0 && !executionResult && (
+        {!isLoadingSchema && uiSchema && uiSchema.elements && uiSchema.elements.length > 0 && (
           <div>
             <ComponentForm
               elements={uiSchema.elements || []}
@@ -143,7 +147,7 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
         )}
 
         {/* No Form - Direct execution button */}
-        {!isLoadingSchema && (!uiSchema || !uiSchema.elements || uiSchema.elements.length === 0) && !executionResult && (
+        {!isLoadingSchema && (!uiSchema || !uiSchema.elements || uiSchema.elements.length === 0) && (
           <div className="space-y-4">
             <div className="rounded-md bg-blue-50 dark:bg-blue-900/20 p-4">
               <div className="flex">
@@ -197,65 +201,6 @@ export function ExecutionFormModal({ isOpen, appId, itemName, onClose }: Executi
                 <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Execution Failed</h3>
                 <p className="mt-2 text-sm text-red-700 dark:text-red-300">{executionError}</p>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Execution Success */}
-        {executionResult && (
-          <div className="space-y-4">
-            <div className="rounded-md bg-green-50 dark:bg-green-900/20 p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800 dark:text-green-200">Execution Successful</h3>
-                  {executionResult.executionId && (
-                    <p className="mt-1 text-sm text-green-700 dark:text-green-300">
-                      Execution ID: {executionResult.executionId}
-                    </p>
-                  )}
-                  {executionResult.status && (
-                    <p className="mt-1 text-sm text-green-700 dark:text-green-300">
-                      Status: {executionResult.status}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Display Result */}
-            {executionResult.result && (
-              <div>
-                <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Result:</h4>
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 overflow-auto max-h-96">
-                  <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-                    {typeof executionResult.result === 'string'
-                      ? executionResult.result
-                      : JSON.stringify(executionResult.result, null, 2)}
-                  </pre>
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <button
-                onClick={() => {
-                  setExecutionResult(null);
-                  setExecutionError(null);
-                }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Execute Again
-              </button>
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Close
-              </button>
             </div>
           </div>
         )}

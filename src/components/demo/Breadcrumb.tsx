@@ -100,9 +100,9 @@ export function Breadcrumb({ activePath, onNavigate }: BreadcrumbProps) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="px-4 py-2 rounded-lg
-                       bg-gradient-to-r from-blue-500 to-purple-500
                        text-white font-semibold text-sm
-                       shadow-md border border-blue-400/20"
+                       shadow-md border border-blue-400/20
+                       bg-blue-600/80 dark:bg-blue-800/80 backdrop-blur-sm"
             >
               {segment.label}
             </motion.div>

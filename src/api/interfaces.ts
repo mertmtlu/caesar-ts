@@ -396,6 +396,31 @@ export interface IDemoShowcaseClient {
     demoShowcase_GetAllLegacy(): Promise<types.IDemoShowcasePublicDtoListApiResponse>;
 
     /**
+     * Get public execution status and details
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionStatus(executionId: string): Promise<types.IPublicExecutionDetailDtoApiResponse>;
+
+    /**
+     * Get public execution logs
+     * @param lines (optional) 
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionLogs(executionId: string, lines: number | undefined): Promise<types.IPublicExecutionLogsDtoApiResponse>;
+
+    /**
+     * List public execution output files
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionFiles(executionId: string): Promise<types.IPublicExecutionFilesDtoApiResponse>;
+
+    /**
+     * Download a single output file from public execution
+     * @return OK
+     */
+    demoShowcase_DownloadPublicExecutionFile(executionId: string, filePath: string): Promise<types.IVersionFileDetailDtoApiResponse>;
+
+    /**
      * Get all demo showcases for admin (raw data)
      * @return OK
      */

@@ -15407,6 +15407,307 @@ export class PublicDemoShowcaseResponseApiResponse implements interfaces.IPublic
     }
 }
 
+export class PublicExecutionDetailDto implements interfaces.IPublicExecutionDetailDto {
+    executionId!: string | undefined;
+    status!: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    parameters?: any | undefined;
+    exitCode?: number | undefined;
+    errorMessage?: string | undefined;
+    duration?: number | undefined;
+
+    constructor(data?: interfaces.IPublicExecutionDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.executionId = _data["executionId"];
+            this.status = _data["status"];
+            this.startedAt = _data["startedAt"] ? new Date(_data["startedAt"].toString()) : <any>undefined;
+            this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
+            this.parameters = _data["parameters"];
+            this.exitCode = _data["exitCode"];
+            this.errorMessage = _data["errorMessage"];
+            this.duration = _data["duration"];
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["executionId"] = this.executionId;
+        data["status"] = this.status;
+        data["startedAt"] = this.startedAt ? this.startedAt.toISOString() : <any>undefined;
+        data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
+        data["parameters"] = this.parameters;
+        data["exitCode"] = this.exitCode;
+        data["errorMessage"] = this.errorMessage;
+        data["duration"] = this.duration;
+        return data;
+    }
+}
+
+export class PublicExecutionDetailDtoApiResponse implements interfaces.IPublicExecutionDetailDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: PublicExecutionDetailDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IPublicExecutionDetailDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? PublicExecutionDetailDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionDetailDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionDetailDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class PublicExecutionFilesDto implements interfaces.IPublicExecutionFilesDto {
+    executionId!: string | undefined;
+    files?: string[] | undefined;
+    totalFiles?: number;
+
+    constructor(data?: interfaces.IPublicExecutionFilesDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.executionId = _data["executionId"];
+            if (Array.isArray(_data["files"])) {
+                this.files = [] as any;
+                for (let item of _data["files"])
+                    this.files!.push(item);
+            }
+            this.totalFiles = _data["totalFiles"];
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionFilesDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionFilesDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["executionId"] = this.executionId;
+        if (Array.isArray(this.files)) {
+            data["files"] = [];
+            for (let item of this.files)
+                data["files"].push(item);
+        }
+        data["totalFiles"] = this.totalFiles;
+        return data;
+    }
+}
+
+export class PublicExecutionFilesDtoApiResponse implements interfaces.IPublicExecutionFilesDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: PublicExecutionFilesDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IPublicExecutionFilesDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? PublicExecutionFilesDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionFilesDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionFilesDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class PublicExecutionLogsDto implements interfaces.IPublicExecutionLogsDto {
+    executionId!: string | undefined;
+    logs?: string[] | undefined;
+    totalLines?: number;
+
+    constructor(data?: interfaces.IPublicExecutionLogsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.executionId = _data["executionId"];
+            if (Array.isArray(_data["logs"])) {
+                this.logs = [] as any;
+                for (let item of _data["logs"])
+                    this.logs!.push(item);
+            }
+            this.totalLines = _data["totalLines"];
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionLogsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionLogsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["executionId"] = this.executionId;
+        if (Array.isArray(this.logs)) {
+            data["logs"] = [];
+            for (let item of this.logs)
+                data["logs"].push(item);
+        }
+        data["totalLines"] = this.totalLines;
+        return data;
+    }
+}
+
+export class PublicExecutionLogsDtoApiResponse implements interfaces.IPublicExecutionLogsDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: PublicExecutionLogsDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IPublicExecutionLogsDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? PublicExecutionLogsDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionLogsDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionLogsDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class RefreshTokenDto implements interfaces.IRefreshTokenDto {
     accessToken!: string;
     refreshToken!: string;
