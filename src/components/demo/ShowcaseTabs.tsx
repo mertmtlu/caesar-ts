@@ -14,6 +14,7 @@ interface ShowcaseTabsProps {
   onBack: () => void;
   onVideoClick: (videoPath: string) => void;
   onExecuteClick: (appId: string, appType: string, itemName: string) => void;
+  itemIcons: Map<string, string>;
 }
 
 export function ShowcaseTabs({
@@ -26,12 +27,11 @@ export function ShowcaseTabs({
   onSecondaryCardClick,
   onBack,
   onVideoClick,
-  onExecuteClick
+  onExecuteClick,
+  itemIcons
 }: ShowcaseTabsProps) {
   // Track which secondary groups are open (all open by default)
   const [openSecondaryGroups, setOpenSecondaryGroups] = useState<Set<string>>(new Set());
-  // Track selected primary group within each tab
-  const [selectedPrimaryGroupLocal, setSelectedPrimaryGroupLocal] = useState<Record<string, string>>({});
 
   if (!tabs || tabs.length === 0) {
     return null;
@@ -47,13 +47,6 @@ export function ShowcaseTabs({
       }
       return newSet;
     });
-  };
-
-  const handlePrimaryGroupSelect = (tabName: string, primaryGroupName: string) => {
-    setSelectedPrimaryGroupLocal(prev => ({
-      ...prev,
-      [tabName]: primaryGroupName
-    }));
   };
 
   return (
@@ -97,40 +90,26 @@ export function ShowcaseTabs({
               </div>
             )}
 
-            {/* Expanded View - Tabs Layout for Primary Groups */}
+            {/* Expanded View - Column Layout for Primary Groups */}
             {isSelected && (
               <div className="h-full overflow-y-auto p-6">
-                {/* Primary Group Tabs */}
-                <div className="flex justify-evenly mb-6 border-b border-gray-200 dark:border-gray-700">
-                  {primaryGroups.map((primaryGroup) => {
-                    const isSelectedPrimary = (selectedPrimaryGroupLocal[tab.tabName || ''] || primaryGroups[0]?.primaryGroupName) === primaryGroup.primaryGroupName;
+                <div className="flex gap-6 justify-evenly">
+                  {primaryGroups.map((primaryGroup) => (
+                    <div
+                      key={primaryGroup.primaryGroupName}
+                      className="flex-1"
+                    >
+                      {/* Primary Group Header */}
+                      <div className="mb-4">
+                        <h2 className="font-bold text-xl text-center text-gray-900 dark:text-white mb-2">
+                          {primaryGroup.primaryGroupName}
+                        </h2>
+                        <div className="border-b-2 border-gray-300 dark:border-gray-600"></div>
+                      </div>
 
-                    return (
-                      <button
-                        key={primaryGroup.primaryGroupName}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          tab.tabName && primaryGroup.primaryGroupName && handlePrimaryGroupSelect(tab.tabName, primaryGroup.primaryGroupName);
-                        }}
-                        className={`
-                          flex-1 px-4 py-3 font-semibold text-sm transition-all border-b-2 whitespace-nowrap
-                          ${isSelectedPrimary
-                            ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                            : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
-                          }
-                        `}
-                      >
-                        {primaryGroup.primaryGroupName}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Secondary Groups as Dropdowns for Selected Primary Group */}
-                <div className="space-y-3">
-                  {primaryGroups
-                    .find(pg => pg.primaryGroupName === (selectedPrimaryGroupLocal[tab.tabName || ''] || primaryGroups[0]?.primaryGroupName))
-                    ?.secondaryGroups?.map((secondaryGroup) => {
+                      {/* Secondary Groups as Dropdowns */}
+                      <div className="space-y-3">
+                        {primaryGroup.secondaryGroups?.map((secondaryGroup) => {
                       const groupKey = `${tab.tabName}-${secondaryGroup.secondaryGroupName}`;
                       const isOpen = !openSecondaryGroups.has(groupKey); // Open by default (inverse logic)
 
@@ -182,10 +161,12 @@ export function ShowcaseTabs({
                                 <div className="p-3 pt-0 border-t border-gray-200 dark:border-gray-700 space-y-3">
                                   {/* Direct Items (no tertiary group) */}
                                   {directItems.length > 0 && (
-                                    <div className="grid grid-cols-5 gap-3">
+                                    <div className="grid grid-cols-2 gap-3">
                                       {directItems.map((item: DemoShowcaseItemDto) => {
                                         const hasVideo = !!item.videoPath;
                                         const hasExecution = !!item.appId;
+
+                                        const iconData = item.appId ? itemIcons.get(item.appId) : undefined;
 
                                         return (
                                           <div
@@ -194,13 +175,22 @@ export function ShowcaseTabs({
                                                      bg-transparent hover:border-blue-400 dark:hover:border-blue-500
                                                      hover:shadow-md transition-all flex gap-3"
                                           >
-                                            <div className="flex-1">
-                                              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                                                {item.name || 'Untitled'}
-                                              </h4>
-                                              <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
-                                                {item.description || 'No description available'}
-                                              </p>
+                                            <div className="flex-1 flex gap-2">
+                                              {iconData && (
+                                                <img
+                                                  src={iconData}
+                                                  alt={item.name || 'App icon'}
+                                                  className="w-10 h-10 rounded object-cover flex-shrink-0"
+                                                />
+                                              )}
+                                              <div className="flex-1 min-w-0">
+                                                <h4 className="font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                                                  {item.name || 'Untitled'}
+                                                </h4>
+                                                <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                                                  {item.description || 'No description available'}
+                                                </p>
+                                              </div>
                                             </div>
 
                                             <div className="flex gap-2 justify-center">
@@ -285,10 +275,11 @@ export function ShowcaseTabs({
                                               transition={{ duration: 0.2 }}
                                               className="overflow-hidden"
                                             >
-                                              <div className="p-2 pt-0 grid grid-cols-5 gap-2 border-t border-gray-300 dark:border-gray-600">
+                                              <div className="p-2 pt-0 grid grid-cols-2 gap-2 border-t border-gray-300 dark:border-gray-600">
                                                 {tertiaryGroup.items?.map((item: DemoShowcaseItemDto) => {
                                                   const hasVideo = !!item.videoPath;
                                                   const hasExecution = !!item.appId;
+                                                  const iconData = item.appId ? itemIcons.get(item.appId) : undefined;
 
                                                   return (
                                                     <div
@@ -297,13 +288,22 @@ export function ShowcaseTabs({
                                                                bg-white dark:bg-gray-900/50 hover:border-blue-400 dark:hover:border-blue-500
                                                                hover:shadow-md transition-all flex gap-3"
                                                     >
-                                                      <div className="flex-1">
-                                                        <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                                                          {item.name || 'Untitled'}
-                                                        </h4>
-                                                        <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
-                                                          {item.description || 'No description available'}
-                                                        </p>
+                                                      <div className="flex-1 flex gap-2">
+                                                        {iconData && (
+                                                          <img
+                                                            src={iconData}
+                                                            alt={item.name || 'App icon'}
+                                                            className="w-10 h-10 rounded object-cover flex-shrink-0"
+                                                          />
+                                                        )}
+                                                        <div className="flex-1 min-w-0">
+                                                          <h4 className="font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                                                            {item.name || 'Untitled'}
+                                                          </h4>
+                                                          <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                                                            {item.description || 'No description available'}
+                                                          </p>
+                                                        </div>
                                                       </div>
 
                                                       <div className="flex gap-2 justify-center">
@@ -354,7 +354,10 @@ export function ShowcaseTabs({
                           </AnimatePresence>
                         </div>
                       );
-                    })}
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

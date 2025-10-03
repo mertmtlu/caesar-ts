@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '@/api/api';
-import { PublicDemoShowcaseResponse } from '@/api/types';
+import { PublicDemoShowcaseResponse, DemoShowcaseItemDto } from '@/api/types';
+import { IconEntityType } from '@/api/enums';
 import { ShowcaseTabs } from '@/components/demo/ShowcaseTabs';
 import { PrimaryCard } from '@/components/demo/PrimaryCard';
 import { SecondaryCard } from '@/components/demo/SecondaryCard';
@@ -71,6 +72,9 @@ export default function DemoPage() {
   // Nested showcase data
   const [showcaseData, setShowcaseData] = useState<PublicDemoShowcaseResponse | null>(null);
 
+  // Icons state
+  const [itemIcons, setItemIcons] = useState<Map<string, string>>(new Map());
+
   // Active path state - tracks user's position in hierarchy
   const [activePath, setActivePath] = useState<{
     tab: string | null;
@@ -105,6 +109,92 @@ export default function DemoPage() {
     fetchShowcaseData();
   }, []);
 
+  const loadItemIcons = async (data: PublicDemoShowcaseResponse) => {
+    try {
+      // Collect all items from all tabs, primary groups, secondary groups, and tertiary groups
+      const allItems: DemoShowcaseItemDto[] = [];
+
+      data.tabs?.forEach(tab => {
+        tab.primaryGroups?.forEach(primaryGroup => {
+          primaryGroup.secondaryGroups?.forEach(secondaryGroup => {
+            // Add direct items
+            if (secondaryGroup.items) {
+              allItems.push(...secondaryGroup.items);
+            }
+            // Add items from tertiary groups
+            secondaryGroup.tertiaryGroups?.forEach(tertiaryGroup => {
+              if (tertiaryGroup.items) {
+                allItems.push(...tertiaryGroup.items);
+              }
+            });
+          });
+        });
+      });
+
+      if (allItems.length === 0) return;
+
+      // Group items by app type for batch requests
+      const programIds = allItems.filter(item => item.appType === '0' && item.appId).map(item => item.appId!);
+      const workflowIds = allItems.filter(item => item.appType === '1' && item.appId).map(item => item.appId!);
+      const remoteAppIds = allItems.filter(item => item.appType === '2' && item.appId).map(item => item.appId!);
+
+      const newIcons = new Map<string, string>();
+
+      // Load Program icons
+      if (programIds.length > 0) {
+        const programIconRequest = {
+          entityType: IconEntityType.Program,
+          entityIds: programIds
+        };
+        const programIconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(programIconRequest);
+        if (programIconsResponse.success && programIconsResponse.data) {
+          programIconsResponse.data.forEach(icon => {
+            if (icon.entityId && icon.iconData) {
+              newIcons.set(icon.entityId, icon.iconData);
+            }
+          });
+        }
+      }
+
+      // Load Workflow icons
+      if (workflowIds.length > 0) {
+        const workflowIconRequest = {
+          entityType: IconEntityType.Workflow,
+          entityIds: workflowIds
+        };
+        const workflowIconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(workflowIconRequest);
+        if (workflowIconsResponse.success && workflowIconsResponse.data) {
+          workflowIconsResponse.data.forEach(icon => {
+            if (icon.entityId && icon.iconData) {
+              newIcons.set(icon.entityId, icon.iconData);
+            }
+          });
+        }
+      }
+
+      // Load RemoteApp icons
+      if (remoteAppIds.length > 0) {
+        const remoteAppIconRequest = {
+          entityType: IconEntityType.RemoteApp,
+          entityIds: remoteAppIds
+        };
+        const remoteAppIconsResponse = await api.iconsClient.icons_GetIconsByEntityIds(remoteAppIconRequest);
+        if (remoteAppIconsResponse.success && remoteAppIconsResponse.data) {
+          remoteAppIconsResponse.data.forEach(icon => {
+            if (icon.entityId && icon.iconData) {
+              newIcons.set(icon.entityId, icon.iconData);
+            }
+          });
+        }
+      }
+
+      setItemIcons(newIcons);
+    } catch (error) {
+      console.error('Failed to load item icons:', error);
+      // Don't show error to user for icons, just log it
+    }
+  };
+
   const fetchShowcaseData = async () => {
     try {
       setIsLoading(true);
@@ -115,6 +205,9 @@ export default function DemoPage() {
       if (response.success && response.data) {
         const data = response.data as PublicDemoShowcaseResponse;
         setShowcaseData(data);
+
+        // Load icons for all items
+        loadItemIcons(data);
 
         // Auto-select first tab if available
         if (data.tabs && data.tabs.length > 0) {
@@ -403,6 +496,7 @@ export default function DemoPage() {
           onBack={handleBack}
           onVideoClick={handleVideoClick}
           onExecuteClick={handleExecuteClick}
+          itemIcons={itemIcons}
         />
 
         {/* Error Message */}

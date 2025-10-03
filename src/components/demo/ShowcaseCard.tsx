@@ -6,6 +6,7 @@ interface ShowcaseCardProps {
   item: DemoShowcaseItemDto;
   onVideoClick: (videoPath: string) => void;
   onExecuteClick: (appId: string, appType: string, itemName: string) => void;
+  itemIcons?: Map<string, string>;
 }
 
 const itemVariants = {
@@ -13,7 +14,7 @@ const itemVariants = {
   show: { opacity: 1, y: 0 }
 };
 
-export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCardProps) {
+export function ShowcaseCard({ item, onVideoClick, onExecuteClick, itemIcons }: ShowcaseCardProps) {
   const formatDate = (date?: Date) => {
     if (!date) return 'Unknown date';
     return new Date(date).toLocaleDateString('en-US', {
@@ -46,6 +47,9 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
   const hoverGlow = 'group-hover:shadow-blue-500/20';
   const decorativeColor = 'bg-blue-500/10';
 
+  // Get custom icon if available
+  const iconData = item.appId && itemIcons ? itemIcons.get(item.appId) : undefined;
+
   return (
     <motion.div
       variants={itemVariants}
@@ -67,11 +71,21 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
       <div className="relative p-6">
         {/* Header with Icon */}
         <div className="flex items-start gap-4 mb-4">
-          <div className={`flex-shrink-0 p-3 rounded-xl
-                         shadow-lg group-hover:shadow-xl
-                         transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
-            <Icon className="w-6 h-6 text-white" /> {/* TODO: CHANGE TO NEW ICON */}
-          </div>
+          {iconData ? (
+            <div className="flex-shrink-0 rounded-xl shadow-lg group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 overflow-hidden">
+              <img
+                src={iconData}
+                alt={item.name || 'App icon'}
+                className="w-16 h-16 object-cover"
+              />
+            </div>
+          ) : (
+            <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br ${gradientFrom} ${gradientTo}
+                           shadow-lg group-hover:shadow-xl
+                           transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+              <Icon className="w-6 h-6 text-white" />
+            </div>
+          )}
 
           <div className="flex-1 min-w-0">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
@@ -134,11 +148,11 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
                 bg-green-600 text-white
                 font-semibold text-sm
-                hover:bg-green-600
+                hover:bg-green-700
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-400
                 transition-colors duration-200"
             >
-              <Zap className="w-4 h-4" /> {/* TODO: CHANGE TO NEW ICON */}
+              <Play className="w-4 h-4" fill="currentColor" />
               Execute
             </motion.button>
           )}
@@ -150,7 +164,7 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
               className={`${hasExecution ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
                        bg-blue-600 text-white
                        font-semibold text-sm
-                       hover:bg-blue-600
+                       hover:bg-blue-700
                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-400
                        transition-colors duration-200`}
             >
