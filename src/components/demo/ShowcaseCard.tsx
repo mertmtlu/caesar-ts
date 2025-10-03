@@ -4,7 +4,7 @@ import { DemoShowcaseItemDto } from '@/api/types';
 
 interface ShowcaseCardProps {
   item: DemoShowcaseItemDto;
-  onVideoClick: (videoPath: string) => void;
+  onVideoClick: (videoPath: string, itemName?: string, creatorName?: string) => void;
   onExecuteClick: (appId: string, appType: string, itemName: string) => void;
   itemIcons?: Map<string, string>;
 }
@@ -34,7 +34,7 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick, itemIcons }: 
   const handleVideoClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (item.videoPath) {
-      onVideoClick(item.videoPath);
+      onVideoClick(item.videoPath, item.name, item.creatorFullName);
     }
   };
 

@@ -93,7 +93,9 @@ export default function DemoPage() {
   const [videoModalState, setVideoModalState] = useState<{
     isOpen: boolean;
     videoPath: string | null;
-  }>({ isOpen: false, videoPath: null });
+    itemName?: string | null;
+    creatorName?: string | null;
+  }>({ isOpen: false, videoPath: null, itemName: null, creatorName: null });
 
   const [executionModalState, setExecutionModalState] = useState<{
     isOpen: boolean;
@@ -292,8 +294,8 @@ export default function DemoPage() {
     }
   };
 
-  const handleVideoClick = (videoPath: string) => {
-    setVideoModalState({ isOpen: true, videoPath });
+  const handleVideoClick = (videoPath: string, itemName?: string, creatorName?: string) => {
+    setVideoModalState({ isOpen: true, videoPath, itemName, creatorName });
   };
 
   const handleRemoteAppLaunch = async (appId: string) => {
@@ -325,7 +327,7 @@ export default function DemoPage() {
   };
 
   const handleCloseVideoModal = () => {
-    setVideoModalState({ isOpen: false, videoPath: null });
+    setVideoModalState({ isOpen: false, videoPath: null, itemName: null, creatorName: null });
   };
 
   const handleCloseExecutionModal = () => {
@@ -484,6 +486,9 @@ export default function DemoPage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 dark:bg-gray-900">
       <div className="max-w-[90%] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Page Title */}
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6 text-center">Çoklu Afet Risk Platformu</h1>
+
         {/* Top-level tabs - always visible */}
         <ShowcaseTabs
           tabs={showcaseData.tabs}
@@ -530,6 +535,8 @@ export default function DemoPage() {
       <VideoModal
         isOpen={videoModalState.isOpen}
         videoPath={videoModalState.videoPath}
+        itemName={videoModalState.itemName}
+        creatorName={videoModalState.creatorName}
         onClose={handleCloseVideoModal}
       />
 

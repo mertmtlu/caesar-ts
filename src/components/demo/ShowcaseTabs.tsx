@@ -12,7 +12,7 @@ interface ShowcaseTabsProps {
   onPrimaryCardClick: (groupName: string) => void;
   onSecondaryCardClick: (groupName: string) => void;
   onBack: () => void;
-  onVideoClick: (videoPath: string) => void;
+  onVideoClick: (videoPath: string, itemName?: string, creatorName?: string) => void;
   onExecuteClick: (appId: string, appType: string, itemName: string) => void;
   itemIcons: Map<string, string>;
 }
@@ -50,7 +50,7 @@ export function ShowcaseTabs({
   };
 
   return (
-    <div className="flex gap-4 h-[90vh]">
+    <div className="flex gap-4 h-[80vh]">
       {tabs.map((tab) => {
         const isSelected = selectedTab === tab.tabName;
         const primaryGroups = tab.primaryGroups || [];
@@ -213,7 +213,7 @@ export function ShowcaseTabs({
                                                 <button
                                                   onClick={(e) => {
                                                     e.stopPropagation();
-                                                    item.videoPath && onVideoClick(item.videoPath);
+                                                    item.videoPath && onVideoClick(item.videoPath, item.name, item.creatorFullName);
                                                   }}
                                                   className="w-8 h-8 rounded-full flex items-center justify-center
                                                            bg-blue-600 hover:bg-blue-700 text-white
@@ -326,7 +326,7 @@ export function ShowcaseTabs({
                                                           <button
                                                             onClick={(e) => {
                                                               e.stopPropagation();
-                                                              item.videoPath && onVideoClick(item.videoPath);
+                                                              item.videoPath && onVideoClick(item.videoPath, item.name, item.creatorFullName);
                                                             }}
                                                             className="w-8 h-8 rounded-full flex items-center justify-center
                                                                      bg-blue-600 hover:bg-blue-700 text-white
