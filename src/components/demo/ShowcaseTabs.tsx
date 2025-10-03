@@ -1,6 +1,6 @@
 import { TabGroupDto, DemoShowcaseItemDto } from '@/api/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Video, Zap } from 'lucide-react';
+import { ChevronRight, ChevronDown, Play, Camera } from 'lucide-react';
 import { useState } from 'react';
 
 interface ShowcaseTabsProps {
@@ -182,7 +182,7 @@ export function ShowcaseTabs({
                                 <div className="p-3 pt-0 border-t border-gray-200 dark:border-gray-700 space-y-3">
                                   {/* Direct Items (no tertiary group) */}
                                   {directItems.length > 0 && (
-                                    <div className="grid grid-cols-3 gap-3">
+                                    <div className="grid grid-cols-5 gap-3">
                                       {directItems.map((item: DemoShowcaseItemDto) => {
                                         const hasVideo = !!item.videoPath;
                                         const hasExecution = !!item.appId;
@@ -192,29 +192,31 @@ export function ShowcaseTabs({
                                             key={item.id}
                                             className="p-3 rounded-lg border border-gray-200 dark:border-gray-700
                                                      bg-transparent hover:border-blue-400 dark:hover:border-blue-500
-                                                     hover:shadow-md transition-all"
+                                                     hover:shadow-md transition-all flex gap-3"
                                           >
-                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                                              {item.name || 'Untitled'}
-                                            </h4>
-                                            <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                                              {item.description || 'No description available'}
-                                            </p>
+                                            <div className="flex-1">
+                                              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                                {item.name || 'Untitled'}
+                                              </h4>
+                                              <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                                                {item.description || 'No description available'}
+                                              </p>
+                                            </div>
 
-                                            <div className="flex flex-col gap-1.5">
+                                            <div className="flex gap-2 justify-center">
                                               {hasExecution && (
                                                 <button
                                                   onClick={(e) => {
                                                     e.stopPropagation();
                                                     item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
                                                   }}
-                                                  className="w-full flex items-center justify-center gap-1 px-2 py-1 rounded
-                                                           bg-transparent border border-green-600 text-green-600 hover:bg-green-600 hover:text-white
-                                                           dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500 dark:hover:text-white
-                                                           font-medium text-xs transition-colors"
+                                                  className="w-8 h-8 rounded-full flex items-center justify-center
+                                                           bg-green-600 hover:bg-green-700 text-white
+                                                           dark:bg-green-500 dark:hover:bg-green-600
+                                                           shadow-md hover:shadow-lg transition-all"
+                                                  title="Execute"
                                                 >
-                                                  <Zap size={12} />
-                                                  Execute
+                                                  <Play size={14} fill="currentColor" />
                                                 </button>
                                               )}
                                               {hasVideo && (
@@ -223,13 +225,13 @@ export function ShowcaseTabs({
                                                     e.stopPropagation();
                                                     item.videoPath && onVideoClick(item.videoPath);
                                                   }}
-                                                  className="w-full flex items-center justify-center gap-1 px-2 py-1 rounded
-                                                           bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white
-                                                           dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white
-                                                           font-medium text-xs transition-colors"
+                                                  className="w-8 h-8 rounded-full flex items-center justify-center
+                                                           bg-blue-600 hover:bg-blue-700 text-white
+                                                           dark:bg-blue-500 dark:hover:bg-blue-600
+                                                           shadow-md hover:shadow-lg transition-all"
+                                                  title="Watch Video"
                                                 >
-                                                  <Video size={12} />
-                                                  Watch
+                                                  <Camera size={14} />
                                                 </button>
                                               )}
                                             </div>
@@ -283,7 +285,7 @@ export function ShowcaseTabs({
                                               transition={{ duration: 0.2 }}
                                               className="overflow-hidden"
                                             >
-                                              <div className="p-2 pt-0 grid grid-cols-3 gap-2 border-t border-gray-300 dark:border-gray-600">
+                                              <div className="p-2 pt-0 grid grid-cols-5 gap-2 border-t border-gray-300 dark:border-gray-600">
                                                 {tertiaryGroup.items?.map((item: DemoShowcaseItemDto) => {
                                                   const hasVideo = !!item.videoPath;
                                                   const hasExecution = !!item.appId;
@@ -293,29 +295,31 @@ export function ShowcaseTabs({
                                                       key={item.id}
                                                       className="p-3 rounded-lg border border-gray-200 dark:border-gray-700
                                                                bg-white dark:bg-gray-900/50 hover:border-blue-400 dark:hover:border-blue-500
-                                                               hover:shadow-md transition-all"
+                                                               hover:shadow-md transition-all flex gap-3"
                                                     >
-                                                      <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                                                        {item.name || 'Untitled'}
-                                                      </h4>
-                                                      <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                                                        {item.description || 'No description available'}
-                                                      </p>
+                                                      <div className="flex-1">
+                                                        <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                                          {item.name || 'Untitled'}
+                                                        </h4>
+                                                        <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                                                          {item.description || 'No description available'}
+                                                        </p>
+                                                      </div>
 
-                                                      <div className="flex flex-col gap-1.5">
+                                                      <div className="flex gap-2 justify-center">
                                                         {hasExecution && (
                                                           <button
                                                             onClick={(e) => {
                                                               e.stopPropagation();
                                                               item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
                                                             }}
-                                                            className="w-full flex items-center justify-center gap-1 px-2 py-1 rounded
-                                                                     bg-transparent border border-green-600 text-green-600 hover:bg-green-600 hover:text-white
-                                                                     dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500 dark:hover:text-white
-                                                                     font-medium text-xs transition-colors"
+                                                            className="w-8 h-8 rounded-full flex items-center justify-center
+                                                                     bg-green-600 hover:bg-green-700 text-white
+                                                                     dark:bg-green-500 dark:hover:bg-green-600
+                                                                     shadow-md hover:shadow-lg transition-all"
+                                                            title="Execute"
                                                           >
-                                                            <Zap size={12} />
-                                                            Execute
+                                                            <Play size={14} fill="currentColor" />
                                                           </button>
                                                         )}
                                                         {hasVideo && (
@@ -324,13 +328,13 @@ export function ShowcaseTabs({
                                                               e.stopPropagation();
                                                               item.videoPath && onVideoClick(item.videoPath);
                                                             }}
-                                                            className="w-full flex items-center justify-center gap-1 px-2 py-1 rounded
-                                                                     bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white
-                                                                     dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white
-                                                                     font-medium text-xs transition-colors"
+                                                            className="w-8 h-8 rounded-full flex items-center justify-center
+                                                                     bg-blue-600 hover:bg-blue-700 text-white
+                                                                     dark:bg-blue-500 dark:hover:bg-blue-600
+                                                                     shadow-md hover:shadow-lg transition-all"
+                                                            title="Watch Video"
                                                           >
-                                                            <Video size={12} />
-                                                            Watch
+                                                            <Camera size={14} />
                                                           </button>
                                                         )}
                                                       </div>
