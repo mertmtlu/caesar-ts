@@ -1,6 +1,7 @@
 import { TabGroupDto, DemoShowcaseItemDto } from '@/api/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Video, Zap } from 'lucide-react';
+import { Breadcrumb } from './Breadcrumb';
 
 interface ShowcaseTabsProps {
   tabs: TabGroupDto[];
@@ -100,32 +101,6 @@ export function ShowcaseTabs({
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {/* Back Button */}
-                    {(selectedPrimaryGroup || selectedSecondaryGroup) && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onBack();
-                        }}
-                        className="mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                      >
-                        <ChevronLeft size={20} />
-                        <span className="font-medium">Back</span>
-                      </button>
-                    )}
-
-                    {/* Tab Header */}
-                    <div className="mb-6">
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        {selectedSecondaryGroup || selectedPrimaryGroup || tab.tabName}
-                      </h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {currentView === 'primary' && `${primaryGroups.length} ${primaryGroups.length === 1 ? 'category' : 'categories'}`}
-                        {currentView === 'secondary' && `${secondaryGroups.length} ${secondaryGroups.length === 1 ? 'subcategory' : 'subcategories'}`}
-                        {currentView === 'programs' && `${programs.length} ${programs.length === 1 ? 'item' : 'items'}`}
-                      </p>
-                    </div>
-
                     {/* Primary Groups View */}
                     {currentView === 'primary' && (
                       <div className="grid grid-cols-1 gap-4">
@@ -156,9 +131,9 @@ export function ShowcaseTabs({
                                     {primaryGroup.primaryGroupName}
                                   </h3>
                                   <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
-                                    <span>{secondaryCount} subcategories</span>
+                                    <span>{secondaryCount} kategori</span>
                                     <span>•</span>
-                                    <span>{totalItems} items</span>
+                                    <span>{totalItems} uygulama</span>
                                   </div>
                                 </div>
                                 <ChevronRight
@@ -198,10 +173,11 @@ export function ShowcaseTabs({
                                     {secondaryGroup.secondaryGroupName}
                                   </h3>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                                    {itemCount} {itemCount === 1 ? 'öğe' : 'öğe'}
                                   </p>
                                 </div>
                                 <ChevronRight
+
                                   className="text-gray-400 group-hover:text-purple-500 transition-colors flex-shrink-0 mt-1"
                                   size={20}
                                 />

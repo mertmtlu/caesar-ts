@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '@/api/api';
 import { PublicDemoShowcaseResponse } from '@/api/types';
 import { ShowcaseTabs } from '@/components/demo/ShowcaseTabs';
-import { Breadcrumb } from '@/components/demo/Breadcrumb';
 import { PrimaryCard } from '@/components/demo/PrimaryCard';
 import { SecondaryCard } from '@/components/demo/SecondaryCard';
 import { ShowcaseCard } from '@/components/demo/ShowcaseCard';
