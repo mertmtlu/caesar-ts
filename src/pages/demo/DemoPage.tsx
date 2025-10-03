@@ -14,6 +14,58 @@ import { useNavigate } from 'react-router-dom';
 
 type ViewType = 'primary' | 'secondary' | 'programs';
 
+// SSO-aware redirect function for remote apps
+const secureSsoRedirect = (redirectUrl: string) => {
+  try {
+    const url = new URL(redirectUrl);
+    console.log('Parsed redirect URL:', url);
+    const username = url.searchParams.get('username');
+    const password = url.searchParams.get('password');
+    
+    // Remove query parameters to get the base URL
+    const formActionUrl = `${url.origin}${url.pathname}`;
+
+    if (!username || !password) {
+      // Fallback for URLs without credentials
+      window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // 1. Create the form element
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = formActionUrl;
+    form.target = '_blank'; // Open in a new tab
+
+    // 2. Create hidden input fields for credentials
+    const userInput = document.createElement('input');
+    userInput.type = 'hidden';
+    userInput.name = 'username';
+    userInput.value = username;
+
+    const passInput = document.createElement('input');
+    passInput.type = 'hidden';
+    passInput.name = 'password';
+    passInput.value = password;
+
+    // 3. Append inputs to the form
+    form.appendChild(userInput);
+    form.appendChild(passInput);
+
+    // 4. Append the form to the body and submit
+    document.body.appendChild(form);
+    form.submit();
+
+    // 5. Clean up by removing the form
+    document.body.removeChild(form);
+
+  } catch (error) {
+    console.error('SSO redirect failed, falling back to direct URL:', error);
+    // Fallback to the original behavior if parsing fails
+    window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+  }
+};
+
 export default function DemoPage() {
   const navigate = useNavigate();
 
@@ -140,12 +192,44 @@ export default function DemoPage() {
     }
   };
 
+  const handleBack = () => {
+    if (activePath.secondaryGroup) {
+      setActivePath(prev => ({ ...prev, secondaryGroup: null }));
+    } else if (activePath.primaryGroup) {
+      setActivePath(prev => ({ ...prev, primaryGroup: null }));
+    }
+  };
+
   const handleVideoClick = (videoPath: string) => {
     setVideoModalState({ isOpen: true, videoPath });
   };
 
-  const handleExecuteClick = (appId: string, itemName: string) => {
-    setExecutionModalState({ isOpen: true, appId, itemName });
+  const handleRemoteAppLaunch = async (appId: string) => {
+    try {
+      const response = await api.demoShowcase.demoShowcase_LaunchRemoteApp(appId);
+
+      console.log('Remote app launch response:', response);
+
+      if (response.success && response.data?.redirectUrl) {
+        console.log('Redirecting to SSO URL:', response.data.redirectUrl);
+        secureSsoRedirect(response.data.redirectUrl);
+      } else {
+        setError(response.message || 'Failed to launch remote app');
+      }
+    } catch (error) {
+      console.error('Failed to launch remote app:', error);
+      setError('Failed to launch remote app. Please try again.');
+    }
+  };
+
+  const handleExecuteClick = (appId: string, appType: string, itemName: string) => {
+    // Check if it's a Remote App (AppType._2 = 2)
+    if (appType === '2' || appType === 'RemoteApp') {
+      handleRemoteAppLaunch(appId);
+    } else {
+      // Existing program execution logic
+      setExecutionModalState({ isOpen: true, appId, itemName });
+    }
   };
 
   const handleCloseVideoModal = () => {
@@ -208,38 +292,6 @@ export default function DemoPage() {
       item.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [showcaseData, activePath.tab, activePath.primaryGroup, activePath.secondaryGroup, searchQuery]);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1
-      }
-    }
-  };
-
-  const expandVariants = {
-    initial: { scale: 0.95, opacity: 0 },
-    animate: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 300,
-        damping: 30
-      }
-    },
-    exit: {
-      scale: 0.95,
-      opacity: 0,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
 
   if (isLoading) {
     return (
@@ -339,143 +391,46 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 dark:bg-gray-900">
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 -z-10">
-        {/* Gradient Base */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950" />
-
-        {/* Animated Orbs */}
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-400/40 dark:bg-purple-600/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl animate-blob" />
-        <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-400/40 dark:bg-blue-600/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-400/40 dark:bg-pink-600/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl animate-blob animation-delay-4000" />
-
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          
-        </motion.div>
-
-        
-
-       
-
+      <div className="max-w-[90%] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Top-level tabs - always visible */}
         <ShowcaseTabs
           tabs={showcaseData.tabs}
           selectedTab={activePath.tab}
+          selectedPrimaryGroup={activePath.primaryGroup}
+          selectedSecondaryGroup={activePath.secondaryGroup}
           onTabSelect={handleTabClick}
+          onPrimaryCardClick={handlePrimaryCardClick}
+          onSecondaryCardClick={handleSecondaryCardClick}
+          onBack={handleBack}
+          onVideoClick={handleVideoClick}
+          onExecuteClick={handleExecuteClick}
         />
 
-        {/* Breadcrumb - only show when navigated beyond primary level */}
-        {activePath.tab && (activePath.primaryGroup || activePath.secondaryGroup) && (
-          <div className="mt-8">
-            <Breadcrumb
-              activePath={activePath}
-              onNavigate={handleBreadcrumbClick}
-            />
-          </div>
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 rounded-md bg-red-50 dark:bg-red-900/20 p-4"
+          >
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <AlertCircle className="h-5 w-5 text-red-400" />
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+              </div>
+              <div className="ml-auto pl-3">
+                <button
+                  onClick={() => setError(null)}
+                  className="text-sm text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-300"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </motion.div>
         )}
-
-        {/* Animated expanding views */}
-        <div className="mt-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={getCurrentView()}
-              variants={expandVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              {/* No Results */}
-              {!hasResults && searchQuery && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col items-center justify-center py-20"
-                >
-                  <div className="p-6 rounded-2xl bg-gray-100 dark:bg-gray-800 mb-6">
-                    <Search className="w-16 h-16 text-gray-400 dark:text-gray-600" />
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300 text-xl font-medium">No results found</p>
-                  <p className="text-gray-500 dark:text-gray-400 mt-2">Try a different search term</p>
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="mt-4 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                  >
-                    Clear Search
-                  </button>
-                </motion.div>
-              )}
-
-              {/* Level 1: Primary Cards with Secondary Icons Preview */}
-              {hasResults && getCurrentView() === 'primary' && (
-                <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                >
-                  {getCurrentTabPrimaryGroups.map((primaryGroup) => (
-                    <PrimaryCard
-                      key={primaryGroup.primaryGroupName}
-                      title={primaryGroup.primaryGroupName || 'Untitled Group'}
-                      secondaryGroups={primaryGroup.secondaryGroups || []}
-                      onClick={() => handlePrimaryCardClick(primaryGroup.primaryGroupName!)}
-                    />
-                  ))}
-                </motion.div>
-              )}
-
-              {/* Level 2: Secondary Cards with Program Icons Preview */}
-              {hasResults && getCurrentView() === 'secondary' && (
-                <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                >
-                  {getCurrentPrimarySecondaryGroups.map((secondaryGroup) => (
-                    <SecondaryCard
-                      key={secondaryGroup.secondaryGroupName}
-                      title={secondaryGroup.secondaryGroupName || 'Untitled Subgroup'}
-                      items={secondaryGroup.items || []}
-                      onClick={() => handleSecondaryCardClick(secondaryGroup.secondaryGroupName!)}
-                    />
-                  ))}
-                </motion.div>
-              )}
-
-              {/* Level 3: Full Program Cards */}
-              {hasResults && getCurrentView() === 'programs' && (
-                <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                >
-                  {getCurrentSecondaryItems.map((item) => (
-                    <ShowcaseCard
-                      key={item.id}
-                      item={item}
-                      onVideoClick={handleVideoClick}
-                      onExecuteClick={handleExecuteClick}
-                    />
-                  ))}
-                </motion.div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        
       </div>
 
       {/* Video Modal */}

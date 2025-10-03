@@ -12,6 +12,16 @@ interface PublicExecutionDetail {
   status: string;
   startedAt: Date;
   completedAt?: Date;
+  resourceUsage?: {
+    maxMemoryUsedMb?: number;
+    maxCpuPercent?: number;
+    executionTimeMinutes?: number;
+  };
+  result?: {
+    exitCode?: number;
+    output?: string;
+    errorOutput?: string;
+  };
 }
 
 // NEW: Structured Log Entry for robust rendering (copied from your better implementation)
@@ -80,6 +90,7 @@ const PublicExecutionDetailPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [isDownloading, setIsDownloading] = useState(false);
   const logCounter = useRef(0);
   const logsEndRef = useRef<HTMLDivElement>(null);
   const [signalrState, setSignalrState] = useState<HubConnectionState>(HubConnectionState.Disconnected);
@@ -141,8 +152,8 @@ const PublicExecutionDetailPage: React.FC = () => {
         setSignalrState(HubConnectionState.Connected);
         await connection.invoke('JoinExecutionGroup', executionId);
 
-        // Initial fetch for page load
-        const detailRes = await api.demoShowcase.demoShowcase_GetPublicExecutionStatus(executionId);
+        // Initial fetch for page load - use extended details endpoint
+        const detailRes = await api.demoShowcase.demoShowcase_GetPublicExecutionDetails(executionId);
         if (isMounted && detailRes.success && detailRes.data) {
           setExecution({
             // Explicitly map properties to ensure type safety
@@ -150,6 +161,8 @@ const PublicExecutionDetailPage: React.FC = () => {
             status: detailRes.data.status || 'unknown',
             startedAt: new Date(detailRes.data.startedAt!),
             completedAt: detailRes.data.completedAt ? new Date(detailRes.data.completedAt) : undefined,
+            resourceUsage: detailRes.data.resourceUsage,
+            result: detailRes.data.result
         });
           const logsRes = await api.demoShowcase.demoShowcase_GetPublicExecutionLogs(executionId, 500);
           if (isMounted && logsRes.success && logsRes.data?.logs) {
@@ -204,6 +217,59 @@ const PublicExecutionDetailPage: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const handleDownloadAllFiles = async () => {
+    if (!executionId) return;
+
+    setIsDownloading(true);
+    setError(null);
+    try {
+      const fileResponse = await api.demoShowcase.demoShowcase_DownloadAllPublicExecutionFiles(executionId);
+
+      // Create download link
+      const url = window.URL.createObjectURL(fileResponse.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileResponse.fileName || `execution_${executionId}_files.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download Failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+      setError(`Failed to download files. ${errorMessage}`);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleStopExecution = async () => {
+    if (!executionId || !execution) return;
+
+    try {
+      const response = await api.demoShowcase.demoShowcase_StopPublicExecution(executionId);
+      if (response.success) {
+        // Reload execution details to get updated status
+        const detailRes = await api.demoShowcase.demoShowcase_GetPublicExecutionDetails(executionId);
+        if (detailRes.success && detailRes.data) {
+          setExecution({
+            executionId: detailRes.data.executionId || executionId,
+            status: detailRes.data.status || 'unknown',
+            startedAt: new Date(detailRes.data.startedAt!),
+            completedAt: detailRes.data.completedAt ? new Date(detailRes.data.completedAt) : undefined,
+            resourceUsage: detailRes.data.resourceUsage,
+            result: detailRes.data.result
+          });
+        }
+      } else {
+        setError(response.message || 'Failed to stop execution');
+      }
+    } catch (error) {
+      console.error('Failed to stop execution:', error);
+      setError('Failed to stop execution. Please try again.');
+    }
+  };
+
   // --- Render Logic ---
   if (isLoading) {
     return (
@@ -234,52 +300,204 @@ const PublicExecutionDetailPage: React.FC = () => {
           <Button variant="ghost" onClick={() => navigate('/demo')}>&larr; Back to Showcase</Button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Public Execution Details</h1>
         </div>
-        {signalrState === HubConnectionState.Connected && !isExecutionFinished && (
+        <div className="flex items-center space-x-2">
+          {!isExecutionFinished && execution?.status?.toLowerCase() === 'running' && (
+            <Button
+              variant="danger"
+              onClick={handleStopExecution}
+              leftIcon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10h6v4H9z" />
+                </svg>
+              }
+            >
+              Stop Execution
+            </Button>
+          )}
+          {signalrState === HubConnectionState.Connected && !isExecutionFinished && (
             <span className="flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span>Live</span>
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span>Live</span>
             </span>
-        )}
+          )}
+        </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
-            <dd className={`flex items-center space-x-2 mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(execution.status)}`}>
-              {getStatusIcon(execution.status)}
-              <span>{execution.status}</span>
-            </dd>
+      {/* Error Message */}
+      {error && (
+        <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                onClick={() => setError(null)}
+                className="text-sm text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-300"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Started At</dt>
-            <dd className="mt-1 text-sm text-gray-900 dark:text-white">{formatDateTime(execution.startedAt)}</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Duration</dt>
-            <dd className="mt-1 text-sm text-gray-900 dark:text-white">{formatDuration(execution.startedAt, isExecutionFinished ? execution.completedAt : currentTime)}</dd>
+        </div>
+      )}
+
+      {/* Execution Overview */}
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white">Execution Overview</h2>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+              <dd className={`flex items-center space-x-2 mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(execution.status)}`}>
+                {getStatusIcon(execution.status)}
+                <span>{execution.status}</span>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Started At</dt>
+              <dd className="mt-1 text-sm text-gray-900 dark:text-white">{formatDateTime(execution.startedAt)}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Duration</dt>
+              <dd className="mt-1 text-sm text-gray-900 dark:text-white">{formatDuration(execution.startedAt, isExecutionFinished ? execution.completedAt : currentTime)}</dd>
+            </div>
+            {execution.completedAt && (
+              <div>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Completed At</dt>
+                <dd className="mt-1 text-sm text-gray-900 dark:text-white">{formatDateTime(execution.completedAt)}</dd>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
+      {/* Resource Usage - Only show when completed */}
+      {isExecutionFinished && execution.resourceUsage && (
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Resource Usage</h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {execution.resourceUsage.maxMemoryUsedMb !== undefined && (
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Memory Used</dt>
+                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">{execution.resourceUsage.maxMemoryUsedMb.toFixed(2)} MB</dd>
+                </div>
+              )}
+              {execution.resourceUsage.maxCpuPercent !== undefined && (
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">CPU Usage</dt>
+                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">{execution.resourceUsage.maxCpuPercent.toFixed(2)}%</dd>
+                </div>
+              )}
+              {execution.resourceUsage.executionTimeMinutes !== undefined && (
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Execution Time</dt>
+                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">{execution.resourceUsage.executionTimeMinutes.toFixed(2)} min</dd>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Execution Result - Only show when NOT running */}
+      {isExecutionFinished && execution.result && (
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Execution Result</h2>
+          </div>
+          <div className="p-6 space-y-4">
+            {execution.result.exitCode !== undefined && (
+              <div>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Exit Code</dt>
+                <dd className={`mt-1 text-sm font-mono ${execution.result.exitCode === 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  {execution.result.exitCode}
+                </dd>
+              </div>
+            )}
+            {execution.result.output && (
+              <div>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Output</dt>
+                <dd className="mt-1">
+                  <pre className="text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-900 p-4 rounded-md overflow-auto max-h-64 border">
+                    {execution.result.output}
+                  </pre>
+                </dd>
+              </div>
+            )}
+            {execution.result.errorOutput && (
+              <div>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Error Output</dt>
+                <dd className="mt-1">
+                  <pre className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-md overflow-auto max-h-64 border border-red-200 dark:border-red-800">
+                    {execution.result.errorOutput}
+                  </pre>
+                </dd>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Output Files */}
       {isExecutionFinished && (
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Output Files</h2>
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Output Files</h2>
+            {outputFiles.length > 0 && (
+              <Button
+                variant="outline"
+                onClick={handleDownloadAllFiles}
+                disabled={isDownloading}
+                leftIcon={
+                  isDownloading ? (
+                    <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  )
+                }
+              >
+                {isDownloading ? 'Downloading...' : 'Download All'}
+              </Button>
+            )}
+          </div>
+          <div className="p-6">
             {outputFiles.length > 0 ? (
-                <ul>
-                    {outputFiles.map(file => (
-                        <li key={file}>
-                            <a 
-                                href={`${api.baseApiUrl}/api/DemoShowcase/execution/${executionId}/files/download/${file}`}
-                                className="text-blue-500 hover:underline"
-                                download
-                            >
-                                {file}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            ) : <p className="text-gray-500">No output files were generated.</p>}
+              <ul className="space-y-2">
+                {outputFiles.map(file => (
+                  <li key={file} className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <a
+                      href={`${api.baseApiUrl}/api/DemoShowcase/execution/${executionId}/files/download/${file}`}
+                      className="text-blue-500 hover:underline"
+                      download
+                    >
+                      {file}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">No output files were generated.</p>
+            )}
+          </div>
         </div>
       )}
 

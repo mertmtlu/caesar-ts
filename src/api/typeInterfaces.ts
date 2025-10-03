@@ -1364,6 +1364,12 @@ export interface IExecutionResourceUsageDtoApiResponse {
     timestamp?: Date;
 }
 
+export interface IExecutionResourceUsageExtendedDto {
+    maxMemoryUsedMb?: number;
+    maxCpuPercent?: number;
+    executionTimeMinutes?: number;
+}
+
 export interface IExecutionResponseDto {
     executionId: string | undefined;
     status: string | undefined;
@@ -1394,6 +1400,12 @@ export interface IExecutionResultDtoApiResponse {
     data?: IExecutionResultDto;
     errors?: string[] | undefined;
     timestamp?: Date;
+}
+
+export interface IExecutionResultExtendedDto {
+    exitCode?: number;
+    output?: string | undefined;
+    errorOutput?: string | undefined;
 }
 
 export interface IExecutionScheduleRequestDto {
@@ -1472,6 +1484,18 @@ export interface IExecutionStatusDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: IExecutionStatusDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IExecutionStopResponseDto {
+    success?: boolean;
+}
+
+export interface IExecutionStopResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IExecutionStopResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }
@@ -2554,6 +2578,26 @@ export interface IPublicExecutionDetailDtoApiResponse {
     timestamp?: Date;
 }
 
+export interface IPublicExecutionDetailExtendedDto {
+    executionId: string | undefined;
+    status: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    parameters?: any | undefined;
+    errorMessage?: string | undefined;
+    duration?: number | undefined;
+    resourceUsage?: IExecutionResourceUsageExtendedDto;
+    result?: IExecutionResultExtendedDto;
+}
+
+export interface IPublicExecutionDetailExtendedDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IPublicExecutionDetailExtendedDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IPublicExecutionFilesDto {
     executionId: string | undefined;
     files?: string[] | undefined;
@@ -2778,6 +2822,19 @@ export interface IRemoteAppLaunchDtoApiResponse {
     success?: boolean;
     message?: string | undefined;
     data?: IRemoteAppLaunchDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IRemoteAppLaunchResponseDto {
+    redirectUrl: string | undefined;
+    requiresSso?: boolean;
+}
+
+export interface IRemoteAppLaunchResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IRemoteAppLaunchResponseDto;
     errors?: string[] | undefined;
     timestamp?: Date;
 }

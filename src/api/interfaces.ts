@@ -396,6 +396,12 @@ export interface IDemoShowcaseClient {
     demoShowcase_GetAllLegacy(): Promise<types.IDemoShowcasePublicDtoListApiResponse>;
 
     /**
+     * Launch a remote app with optional SSO credentials
+     * @return OK
+     */
+    demoShowcase_LaunchRemoteApp(appId: string): Promise<types.IRemoteAppLaunchResponseDtoApiResponse>;
+
+    /**
      * Get public execution status and details
      * @return OK
      */
@@ -419,6 +425,24 @@ export interface IDemoShowcaseClient {
      * @return OK
      */
     demoShowcase_DownloadPublicExecutionFile(executionId: string, filePath: string): Promise<types.IVersionFileDetailDtoApiResponse>;
+
+    /**
+     * Download all output files from public execution as ZIP
+     * @return OK
+     */
+    demoShowcase_DownloadAllPublicExecutionFiles(executionId: string): Promise<FileResponse>;
+
+    /**
+     * Get detailed execution information with resource usage and results
+     * @return OK
+     */
+    demoShowcase_GetPublicExecutionDetails(executionId: string): Promise<types.IPublicExecutionDetailExtendedDtoApiResponse>;
+
+    /**
+     * Stop a running public execution
+     * @return OK
+     */
+    demoShowcase_StopPublicExecution(executionId: string): Promise<types.IExecutionStopResponseDtoApiResponse>;
 
     /**
      * Get all demo showcases for admin (raw data)

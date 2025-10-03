@@ -5,7 +5,7 @@ import { DemoShowcaseItemDto } from '@/api/types';
 interface ShowcaseCardProps {
   item: DemoShowcaseItemDto;
   onVideoClick: (videoPath: string) => void;
-  onExecuteClick: (appId: string, itemName: string) => void;
+  onExecuteClick: (appId: string, appType: string, itemName: string) => void;
 }
 
 const itemVariants = {
@@ -26,7 +26,7 @@ export function ShowcaseCard({ item, onVideoClick, onExecuteClick }: ShowcaseCar
   const handleExecuteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (item.appId) {
-      onExecuteClick(item.appId, item.name || 'Untitled');
+      onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
     }
   };
 

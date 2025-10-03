@@ -8291,6 +8291,44 @@ export class ExecutionResourceUsageDtoApiResponse implements interfaces.IExecuti
     }
 }
 
+export class ExecutionResourceUsageExtendedDto implements interfaces.IExecutionResourceUsageExtendedDto {
+    maxMemoryUsedMb?: number;
+    maxCpuPercent?: number;
+    executionTimeMinutes?: number;
+
+    constructor(data?: interfaces.IExecutionResourceUsageExtendedDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.maxMemoryUsedMb = _data["maxMemoryUsedMb"];
+            this.maxCpuPercent = _data["maxCpuPercent"];
+            this.executionTimeMinutes = _data["executionTimeMinutes"];
+        }
+    }
+
+    static fromJS(data: any): ExecutionResourceUsageExtendedDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionResourceUsageExtendedDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["maxMemoryUsedMb"] = this.maxMemoryUsedMb;
+        data["maxCpuPercent"] = this.maxCpuPercent;
+        data["executionTimeMinutes"] = this.executionTimeMinutes;
+        return data;
+    }
+}
+
 export class ExecutionResponseDto implements interfaces.IExecutionResponseDto {
     executionId!: string | undefined;
     status!: string | undefined;
@@ -8487,6 +8525,44 @@ export class ExecutionResultDtoApiResponse implements interfaces.IExecutionResul
                 data["errors"].push(item);
         }
         data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class ExecutionResultExtendedDto implements interfaces.IExecutionResultExtendedDto {
+    exitCode?: number;
+    output?: string | undefined;
+    errorOutput?: string | undefined;
+
+    constructor(data?: interfaces.IExecutionResultExtendedDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.exitCode = _data["exitCode"];
+            this.output = _data["output"];
+            this.errorOutput = _data["errorOutput"];
+        }
+    }
+
+    static fromJS(data: any): ExecutionResultExtendedDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionResultExtendedDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["exitCode"] = this.exitCode;
+        data["output"] = this.output;
+        data["errorOutput"] = this.errorOutput;
         return data;
     }
 }
@@ -8948,6 +9024,90 @@ export class ExecutionStatusDtoApiResponse implements interfaces.IExecutionStatu
     static fromJS(data: any): ExecutionStatusDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new ExecutionStatusDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class ExecutionStopResponseDto implements interfaces.IExecutionStopResponseDto {
+    success?: boolean;
+
+    constructor(data?: interfaces.IExecutionStopResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+        }
+    }
+
+    static fromJS(data: any): ExecutionStopResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionStopResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        return data;
+    }
+}
+
+export class ExecutionStopResponseDtoApiResponse implements interfaces.IExecutionStopResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: ExecutionStopResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IExecutionStopResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? ExecutionStopResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ExecutionStopResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExecutionStopResponseDtoApiResponse();
         result.init(data);
         return result;
     }
@@ -15512,6 +15672,114 @@ export class PublicExecutionDetailDtoApiResponse implements interfaces.IPublicEx
     }
 }
 
+export class PublicExecutionDetailExtendedDto implements interfaces.IPublicExecutionDetailExtendedDto {
+    executionId!: string | undefined;
+    status!: string | undefined;
+    startedAt?: Date;
+    completedAt?: Date | undefined;
+    parameters?: any | undefined;
+    errorMessage?: string | undefined;
+    duration?: number | undefined;
+    resourceUsage?: ExecutionResourceUsageExtendedDto;
+    result?: ExecutionResultExtendedDto;
+
+    constructor(data?: interfaces.IPublicExecutionDetailExtendedDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.executionId = _data["executionId"];
+            this.status = _data["status"];
+            this.startedAt = _data["startedAt"] ? new Date(_data["startedAt"].toString()) : <any>undefined;
+            this.completedAt = _data["completedAt"] ? new Date(_data["completedAt"].toString()) : <any>undefined;
+            this.parameters = _data["parameters"];
+            this.errorMessage = _data["errorMessage"];
+            this.duration = _data["duration"];
+            this.resourceUsage = _data["resourceUsage"] ? ExecutionResourceUsageExtendedDto.fromJS(_data["resourceUsage"]) : <any>undefined;
+            this.result = _data["result"] ? ExecutionResultExtendedDto.fromJS(_data["result"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionDetailExtendedDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionDetailExtendedDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["executionId"] = this.executionId;
+        data["status"] = this.status;
+        data["startedAt"] = this.startedAt ? this.startedAt.toISOString() : <any>undefined;
+        data["completedAt"] = this.completedAt ? this.completedAt.toISOString() : <any>undefined;
+        data["parameters"] = this.parameters;
+        data["errorMessage"] = this.errorMessage;
+        data["duration"] = this.duration;
+        data["resourceUsage"] = this.resourceUsage ? this.resourceUsage.toJSON() : <any>undefined;
+        data["result"] = this.result ? this.result.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class PublicExecutionDetailExtendedDtoApiResponse implements interfaces.IPublicExecutionDetailExtendedDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: PublicExecutionDetailExtendedDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IPublicExecutionDetailExtendedDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? PublicExecutionDetailExtendedDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PublicExecutionDetailExtendedDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublicExecutionDetailExtendedDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class PublicExecutionFilesDto implements interfaces.IPublicExecutionFilesDto {
     executionId!: string | undefined;
     files?: string[] | undefined;
@@ -16927,6 +17195,93 @@ export class RemoteAppLaunchDtoApiResponse implements interfaces.IRemoteAppLaunc
     static fromJS(data: any): RemoteAppLaunchDtoApiResponse {
         data = typeof data === 'object' ? data : {};
         let result = new RemoteAppLaunchDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class RemoteAppLaunchResponseDto implements interfaces.IRemoteAppLaunchResponseDto {
+    redirectUrl!: string | undefined;
+    requiresSso?: boolean;
+
+    constructor(data?: interfaces.IRemoteAppLaunchResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.redirectUrl = _data["redirectUrl"];
+            this.requiresSso = _data["requiresSso"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppLaunchResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppLaunchResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["redirectUrl"] = this.redirectUrl;
+        data["requiresSso"] = this.requiresSso;
+        return data;
+    }
+}
+
+export class RemoteAppLaunchResponseDtoApiResponse implements interfaces.IRemoteAppLaunchResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: RemoteAppLaunchResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IRemoteAppLaunchResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? RemoteAppLaunchResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppLaunchResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppLaunchResponseDtoApiResponse();
         result.init(data);
         return result;
     }
