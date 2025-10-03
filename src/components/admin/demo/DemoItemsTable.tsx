@@ -75,6 +75,9 @@ const DemoItemsTable: React.FC<DemoItemsTableProps> = ({
                 Secondary Group
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Tertiary Group
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 App Type
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -109,6 +112,11 @@ const DemoItemsTable: React.FC<DemoItemsTableProps> = ({
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900 dark:text-white">
                     {item.secondaryGroup}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 italic">
+                    {item.tertiaryGroup || '—'}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

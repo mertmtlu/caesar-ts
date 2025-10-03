@@ -5178,6 +5178,7 @@ export class DemoShowcaseCreateDto implements interfaces.IDemoShowcaseCreateDto 
     tab!: string;
     primaryGroup!: string;
     secondaryGroup!: string;
+    tertiaryGroup?: string | undefined;
     videoPath!: string;
 
     constructor(data?: interfaces.IDemoShowcaseCreateDto) {
@@ -5196,6 +5197,7 @@ export class DemoShowcaseCreateDto implements interfaces.IDemoShowcaseCreateDto 
             this.tab = _data["tab"];
             this.primaryGroup = _data["primaryGroup"];
             this.secondaryGroup = _data["secondaryGroup"];
+            this.tertiaryGroup = _data["tertiaryGroup"];
             this.videoPath = _data["videoPath"];
         }
     }
@@ -5214,6 +5216,7 @@ export class DemoShowcaseCreateDto implements interfaces.IDemoShowcaseCreateDto 
         data["tab"] = this.tab;
         data["primaryGroup"] = this.primaryGroup;
         data["secondaryGroup"] = this.secondaryGroup;
+        data["tertiaryGroup"] = this.tertiaryGroup;
         data["videoPath"] = this.videoPath;
         return data;
     }
@@ -5226,6 +5229,7 @@ export class DemoShowcaseDto implements interfaces.IDemoShowcaseDto {
     tab!: string | undefined;
     primaryGroup!: string | undefined;
     secondaryGroup!: string | undefined;
+    tertiaryGroup?: string | undefined;
     videoPath!: string | undefined;
 
     constructor(data?: interfaces.IDemoShowcaseDto) {
@@ -5245,6 +5249,7 @@ export class DemoShowcaseDto implements interfaces.IDemoShowcaseDto {
             this.tab = _data["tab"];
             this.primaryGroup = _data["primaryGroup"];
             this.secondaryGroup = _data["secondaryGroup"];
+            this.tertiaryGroup = _data["tertiaryGroup"];
             this.videoPath = _data["videoPath"];
         }
     }
@@ -5264,6 +5269,7 @@ export class DemoShowcaseDto implements interfaces.IDemoShowcaseDto {
         data["tab"] = this.tab;
         data["primaryGroup"] = this.primaryGroup;
         data["secondaryGroup"] = this.secondaryGroup;
+        data["tertiaryGroup"] = this.tertiaryGroup;
         data["videoPath"] = this.videoPath;
         return data;
     }
@@ -5562,6 +5568,7 @@ export class DemoShowcaseUpdateDto implements interfaces.IDemoShowcaseUpdateDto 
     tab?: string | undefined;
     primaryGroup?: string | undefined;
     secondaryGroup?: string | undefined;
+    tertiaryGroup?: string | undefined;
     videoPath?: string | undefined;
 
     constructor(data?: interfaces.IDemoShowcaseUpdateDto) {
@@ -5580,6 +5587,7 @@ export class DemoShowcaseUpdateDto implements interfaces.IDemoShowcaseUpdateDto 
             this.tab = _data["tab"];
             this.primaryGroup = _data["primaryGroup"];
             this.secondaryGroup = _data["secondaryGroup"];
+            this.tertiaryGroup = _data["tertiaryGroup"];
             this.videoPath = _data["videoPath"];
         }
     }
@@ -5598,6 +5606,7 @@ export class DemoShowcaseUpdateDto implements interfaces.IDemoShowcaseUpdateDto 
         data["tab"] = this.tab;
         data["primaryGroup"] = this.primaryGroup;
         data["secondaryGroup"] = this.secondaryGroup;
+        data["tertiaryGroup"] = this.tertiaryGroup;
         data["videoPath"] = this.videoPath;
         return data;
     }
@@ -19941,6 +19950,7 @@ export class RollbackRequestDto implements interfaces.IRollbackRequestDto {
 export class SecondaryGroupDto implements interfaces.ISecondaryGroupDto {
     secondaryGroupName!: string | undefined;
     items?: DemoShowcaseItemDto[] | undefined;
+    tertiaryGroups?: TertiaryGroupDto[] | undefined;
 
     constructor(data?: interfaces.ISecondaryGroupDto) {
         if (data) {
@@ -19959,6 +19969,11 @@ export class SecondaryGroupDto implements interfaces.ISecondaryGroupDto {
                 for (let item of _data["items"])
                     this.items!.push(DemoShowcaseItemDto.fromJS(item));
             }
+            if (Array.isArray(_data["tertiaryGroups"])) {
+                this.tertiaryGroups = [] as any;
+                for (let item of _data["tertiaryGroups"])
+                    this.tertiaryGroups!.push(TertiaryGroupDto.fromJS(item));
+            }
         }
     }
 
@@ -19976,6 +19991,11 @@ export class SecondaryGroupDto implements interfaces.ISecondaryGroupDto {
             data["items"] = [];
             for (let item of this.items)
                 data["items"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.tertiaryGroups)) {
+            data["tertiaryGroups"] = [];
+            for (let item of this.tertiaryGroups)
+                data["tertiaryGroups"].push(item ? item.toJSON() : <any>undefined);
         }
         return data;
     }
@@ -22160,6 +22180,49 @@ export class TabGroupDto implements interfaces.ITabGroupDto {
             data["primaryGroups"] = [];
             for (let item of this.primaryGroups)
                 data["primaryGroups"].push(item ? item.toJSON() : <any>undefined);
+        }
+        return data;
+    }
+}
+
+export class TertiaryGroupDto implements interfaces.ITertiaryGroupDto {
+    tertiaryGroupName!: string | undefined;
+    items?: DemoShowcaseItemDto[] | undefined;
+
+    constructor(data?: interfaces.ITertiaryGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tertiaryGroupName = _data["tertiaryGroupName"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(DemoShowcaseItemDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TertiaryGroupDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TertiaryGroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tertiaryGroupName"] = this.tertiaryGroupName;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : <any>undefined);
         }
         return data;
     }

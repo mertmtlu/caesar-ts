@@ -18,6 +18,7 @@ interface DemoItemForm {
   tab: string;
   primaryGroup: string;
   secondaryGroup: string;
+  tertiaryGroup: string;
   videoFile: File | null;
   uploadedVideoPath: string;
 }
@@ -33,6 +34,7 @@ const CreateDemoItemModal: React.FC<CreateDemoItemModalProps> = ({
     tab: '',
     primaryGroup: '',
     secondaryGroup: '',
+    tertiaryGroup: '',
     videoFile: null,
     uploadedVideoPath: ''
   });
@@ -86,6 +88,7 @@ const CreateDemoItemModal: React.FC<CreateDemoItemModalProps> = ({
       tab: '',
       primaryGroup: '',
       secondaryGroup: '',
+      tertiaryGroup: '',
       videoFile: null,
       uploadedVideoPath: ''
     });
@@ -219,6 +222,7 @@ const CreateDemoItemModal: React.FC<CreateDemoItemModalProps> = ({
         tab: form.tab,
         primaryGroup: form.primaryGroup,
         secondaryGroup: form.secondaryGroup,
+        tertiaryGroup: form.tertiaryGroup || undefined, // Optional field
         videoPath: form.uploadedVideoPath
       });
 
@@ -311,6 +315,16 @@ const CreateDemoItemModal: React.FC<CreateDemoItemModalProps> = ({
             errorMessage={errors.secondaryGroup}
             placeholder="Enter secondary group (e.g., Basic Tests, Advanced Reports)"
             required
+          />
+          <Input
+            label="Tertiary Group (Optional)"
+            value={form.tertiaryGroup}
+            onChange={(e) => {
+              setForm(prev => ({ ...prev, tertiaryGroup: e.target.value }));
+              setErrors(prev => ({ ...prev, tertiaryGroup: '' }));
+            }}
+            errorMessage={errors.tertiaryGroup}
+            placeholder="Enter tertiary group (optional, e.g., Sub-category)"
           />
         </div>
 

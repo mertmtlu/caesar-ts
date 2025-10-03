@@ -865,6 +865,7 @@ export interface IDemoShowcaseCreateDto {
     tab: string;
     primaryGroup: string;
     secondaryGroup: string;
+    tertiaryGroup?: string | undefined;
     videoPath: string;
 }
 
@@ -875,6 +876,7 @@ export interface IDemoShowcaseDto {
     tab: string | undefined;
     primaryGroup: string | undefined;
     secondaryGroup: string | undefined;
+    tertiaryGroup?: string | undefined;
     videoPath: string | undefined;
 }
 
@@ -933,6 +935,7 @@ export interface IDemoShowcaseUpdateDto {
     tab?: string | undefined;
     primaryGroup?: string | undefined;
     secondaryGroup?: string | undefined;
+    tertiaryGroup?: string | undefined;
     videoPath?: string | undefined;
 }
 
@@ -3280,6 +3283,7 @@ export interface IRollbackRequestDto {
 export interface ISecondaryGroupDto {
     secondaryGroupName: string | undefined;
     items?: IDemoShowcaseItemDto[] | undefined;
+    tertiaryGroups?: ITertiaryGroupDto[] | undefined;
 }
 
 export interface ISecurityHazardDto {
@@ -3667,6 +3671,11 @@ export interface ITMVoltageUpdateDto {
 export interface ITabGroupDto {
     tabName: string | undefined;
     primaryGroups?: IPrimaryGroupDto[] | undefined;
+}
+
+export interface ITertiaryGroupDto {
+    tertiaryGroupName: string | undefined;
+    items?: IDemoShowcaseItemDto[] | undefined;
 }
 
 export interface ITokenResponseDto {
