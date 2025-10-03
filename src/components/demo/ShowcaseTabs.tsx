@@ -97,128 +97,140 @@ export function ShowcaseTabs({
               </div>
             )}
 
-            {/* Expanded View - Column Layout with Dropdowns */}
+            {/* Expanded View - Tabs Layout for Primary Groups */}
             {isSelected && (
               <div className="h-full overflow-y-auto p-6">
-                <div className="flex gap-6 justify-center">
-                  {primaryGroups.map((primaryGroup) => (
-                    <div
-                      key={primaryGroup.primaryGroupName}
-                      className="flex-1 max-w"
-                    >
-                      {/* Primary Group Header */}
-                      <div className="mb-4 p-4 rounded-lg text-white">
-                        <h2 className="font-bold text-xl text-center">
-                          {primaryGroup.primaryGroupName}
-                        </h2>
-                      </div>
+                {/* Primary Group Tabs */}
+                <div className="flex justify-evenly mb-6 border-b border-gray-200 dark:border-gray-700">
+                  {primaryGroups.map((primaryGroup) => {
+                    const isSelectedPrimary = (selectedPrimaryGroupLocal[tab.tabName || ''] || primaryGroups[0]?.primaryGroupName) === primaryGroup.primaryGroupName;
 
-                      {/* Secondary Groups as Dropdowns */}
-                      <div className="space-y-3">
-                        {primaryGroup.secondaryGroups?.map((secondaryGroup) => {
-                          const groupKey = `${primaryGroup.primaryGroupName}-${secondaryGroup.secondaryGroupName}`;
-                          const isOpen = !openSecondaryGroups.has(groupKey); // Open by default (inverse logic)
+                    return (
+                      <button
+                        key={primaryGroup.primaryGroupName}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          tab.tabName && primaryGroup.primaryGroupName && handlePrimaryGroupSelect(tab.tabName, primaryGroup.primaryGroupName);
+                        }}
+                        className={`
+                          flex-1 px-4 py-3 font-semibold text-sm transition-all border-b-2 whitespace-nowrap
+                          ${isSelectedPrimary
+                            ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                            : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                          }
+                        `}
+                      >
+                        {primaryGroup.primaryGroupName}
+                      </button>
+                    );
+                  })}
+                </div>
 
-                          return (
-                            <div
-                              key={secondaryGroup.secondaryGroupName}
-                              className="border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden
-                                       bg-white dark:bg-gray-900/50"
-                            >
-                              {/* Dropdown Header */}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleSecondaryGroup(groupKey);
-                                }}
-                                className="w-full p-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                {/* Secondary Groups as Dropdowns for Selected Primary Group */}
+                <div className="space-y-3">
+                  {primaryGroups
+                    .find(pg => pg.primaryGroupName === (selectedPrimaryGroupLocal[tab.tabName || ''] || primaryGroups[0]?.primaryGroupName))
+                    ?.secondaryGroups?.map((secondaryGroup) => {
+                      const groupKey = `${tab.tabName}-${secondaryGroup.secondaryGroupName}`;
+                      const isOpen = !openSecondaryGroups.has(groupKey); // Open by default (inverse logic)
+
+                      return (
+                        <div
+                          key={secondaryGroup.secondaryGroupName}
+                          className="border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden
+                                   bg-white dark:bg-gray-900/50"
+                        >
+                          {/* Dropdown Header */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSecondaryGroup(groupKey);
+                            }}
+                            className="w-full p-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-2">
+                              <motion.div
+                                animate={{ rotate: isOpen ? 0 : -90 }}
+                                transition={{ duration: 0.2 }}
                               >
-                                <div className="flex items-center gap-2">
-                                  <motion.div
-                                    animate={{ rotate: isOpen ? 0 : -90 }}
-                                    transition={{ duration: 0.2 }}
-                                  >
-                                    <ChevronDown className="text-purple-500" size={20} />
-                                  </motion.div>
-                                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                                    {secondaryGroup.secondaryGroupName}
-                                  </h3>
-                                </div>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {secondaryGroup.items?.length || 0} items
-                                </span>
-                              </button>
-
-                              {/* Dropdown Content */}
-                              <AnimatePresence>
-                                {isOpen && (
-                                  <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="overflow-hidden"
-                                  >
-                                    <div className="p-3 pt-0 space-y-2 border-t border-gray-200 dark:border-gray-700">
-                                      {secondaryGroup.items?.map((item: DemoShowcaseItemDto) => {
-                                        const hasVideo = !!item.videoPath;
-                                        const hasExecution = !!item.appId;
-
-                                        return (
-                                          <div
-                                            key={item.id}
-                                            className="p-3 rounded-lg border border-gray-200 dark:border-gray-700
-                                                     bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500
-                                                     hover:shadow-md transition-all"
-                                          >
-                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                                              {item.name || 'Untitled'}
-                                            </h4>
-                                            <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                                              {item.description || 'No description available'}
-                                            </p>
-
-                                            <div className="flex gap-2">
-                                              {hasExecution && (
-                                                <button
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
-                                                  }}
-                                                  className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-md
-                                                           bg-green-600 hover:bg-green-700 text-white font-medium text-xs transition-colors"
-                                                >
-                                                  <Zap size={14} />
-                                                  Execute
-                                                </button>
-                                              )}
-                                              {hasVideo && (
-                                                <button
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    item.videoPath && onVideoClick(item.videoPath);
-                                                  }}
-                                                  className={`${hasExecution ? 'flex-1' : 'w-full'} flex items-center justify-center gap-1 px-2 py-1.5 rounded-md
-                                                           bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors`}
-                                                >
-                                                  <Video size={14} />
-                                                  Watch
-                                                </button>
-                                              )}
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
+                                <ChevronDown className="text-purple-500" size={20} />
+                              </motion.div>
+                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                                {secondaryGroup.secondaryGroupName}
+                              </h3>
                             </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {secondaryGroup.items?.length || 0} items
+                            </span>
+                          </button>
+
+                          {/* Dropdown Content */}
+                          <AnimatePresence>
+                            {isOpen && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="p-3 pt-0 grid grid-cols-3 gap-3 border-t border-gray-200 dark:border-gray-700">
+                                  {secondaryGroup.items?.map((item: DemoShowcaseItemDto) => {
+                                    const hasVideo = !!item.videoPath;
+                                    const hasExecution = !!item.appId;
+
+                                    return (
+                                      <div
+                                        key={item.id}
+                                        className="p-3 rounded-lg border border-gray-200 dark:border-gray-700
+                                                 bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500
+                                                 hover:shadow-md transition-all"
+                                      >
+                                        <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                          {item.name || 'Untitled'}
+                                        </h4>
+                                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                                          {item.description || 'No description available'}
+                                        </p>
+
+                                        <div className="flex gap-2">
+                                          {hasExecution && (
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
+                                              }}
+                                              className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-md
+                                                       bg-green-600 hover:bg-green-700 text-white font-medium text-xs transition-colors"
+                                            >
+                                              <Zap size={14} />
+                                              Execute
+                                            </button>
+                                          )}
+                                          {hasVideo && (
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                item.videoPath && onVideoClick(item.videoPath);
+                                              }}
+                                              className={`${hasExecution ? 'flex-1' : 'w-full'} flex items-center justify-center gap-1 px-2 py-1.5 rounded-md
+                                                       bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors`}
+                                            >
+                                              <Video size={14} />
+                                              Watch
+                                            </button>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             )}
