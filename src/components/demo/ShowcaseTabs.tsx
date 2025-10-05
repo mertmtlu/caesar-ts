@@ -260,34 +260,29 @@ export function ShowcaseTabs({
                                         const allChildren = [...directItems, ...tertiaryGroups];
 
                                         return (
-                                        <div key={secondaryGroup.secondaryGroupName} className="relative">
-                                            <div className="absolute bg-gray-400 dark:bg-gray-600" style={{left: '-64px',width: '2px',top: '-10000px',height: '10024px'}}></div>
-                                            <div className="absolute" style={{ left: '-64px', top: '24px' }}>
-                                                <svg width="64" height="2" style={{ overflow: 'visible' }}>
-                                                    <line x1="0" y1="0" x2="56" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
-                                                    <polygon points="64,0 56,-4 56,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
+                                        <div key={secondaryGroup.secondaryGroupName} className="relative mb-4">
+                                            <div className="absolute bg-gray-400 dark:bg-gray-600" style={{left: '-64px',width: '2px',top: '-10000px',height: '10012px'}}></div>
+                                            <div className="absolute" style={{ left: '-64px', top: '12px' }}>
+                                                <svg width="40" height="2" style={{ overflow: 'visible' }}>
+                                                    <line x1="0" y1="0" x2="32" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
+                                                    <polygon points="40,0 32,-4 32,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
                                                 </svg>
                                             </div>
-                                            <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-gray-800 shadow-md max-w-md">
-                                                <button onClick={() => toggleGroup(secondaryKey)} className="w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                                    <div className="flex items-center gap-3">
-                                                    <motion.div animate={{ rotate: isSecondaryOpen ? 0 : -90 }} transition={{ duration: 0.2 }}>
-                                                        <ChevronDown className="text-white" size={24} />
-                                                    </motion.div>
-                                                    <h4 className="font-bold text-base text-white">{secondaryGroup.secondaryGroupName}</h4> {/* CHANGED FONT SIZE */}
-                                                    </div>
-                                                    <span className="text-sm text-white font-medium">{totalItems} items</span>
-                                                </button>
-                                                <AnimatePresence>
-                                                    {isSecondaryOpen && (
-                                                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                                                        <div className="p-4 pt-0 border-t border-gray-200 dark:border-gray-700">
-                                                            <div className="mt-4">
+                                            <button
+                                                onClick={() => toggleGroup(secondaryKey)}
+                                                className="hover:opacity-70 transition-opacity"
+                                                style={{ marginLeft: '-12px' }}
+                                            >
+                                                <h4 className="font-semibold text-sm text-white">{secondaryGroup.secondaryGroupName}</h4>
+                                            </button>
+                                            <AnimatePresence>
+                                                {isSecondaryOpen && (
+                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                                                    <div className="mt-2 ml-6">
                                                                 {allChildren.map((child, index) => {
                                                                     const key = 'id' in child ? child.id : child.tertiaryGroupName;
                                                                     return (
                                                                         <React.Fragment key={key}>
-                                                                            {index > 0 && <div className="border-t border-gray-200 dark:border-gray-700 my-3" />}
                                                                             {'tertiaryGroupName' in child ? (
                                                                                 (() => {
                                                                                     const tertiaryGroup = child;
@@ -295,26 +290,21 @@ export function ShowcaseTabs({
                                                                                     const isTertiaryOpen = !collapsedGroups.has(tertiaryKey);
                                                                                     const tertiaryContainerKey = `${secondaryKey}-${tertiaryGroup.tertiaryGroupName}-container`;
                                                                                     return (
-                                                                                        <div ref={el => tertiaryGroupContainerRefs.current[tertiaryContainerKey] = el} className="pl-12 relative">
-                                                                                            <div className="absolute bg-gray-400 dark:bg-gray-600" style={{ left: '-48px', width: '2px', top: '-10000px', height: '10016px' }}></div>
-                                                                                            <div className="absolute" style={{ left: '-48px', top: '16px' }}>
-                                                                                                <svg width="48" height="2" style={{ overflow: 'visible' }}>
-                                                                                                    <line x1="0" y1="0" x2="40" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
-                                                                                                    <polygon points="48,0 40,-4 40,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
+                                                                                        <div ref={el => tertiaryGroupContainerRefs.current[tertiaryContainerKey] = el} className="pl-12 relative mb-3">
+                                                                                            <div className="absolute bg-gray-400 dark:bg-gray-600" style={{ left: '-48px', width: '2px', top: '-10000px', height: '10010px' }}></div>
+                                                                                            <div className="absolute" style={{ left: '-48px', top: '10px' }}>
+                                                                                                <svg width="32" height="2" style={{ overflow: 'visible' }}>
+                                                                                                    <line x1="0" y1="0" x2="24" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
+                                                                                                    <polygon points="32,0 24,-4 24,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
                                                                                                 </svg>
                                                                                             </div>
-                                                                                            <div className="border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800/50 max-w-sm">
-                                                                                                <button onClick={() => toggleGroup(tertiaryKey)} className="w-full p-3 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-colors">
-                                                                                                    <div className="flex items-center gap-2">
-                                                                                                        <motion.div animate={{ rotate: isTertiaryOpen ? 0 : -90 }} transition={{ duration: 0.2 }}><ChevronDown className="text-white" size={20} /></motion.div>
-                                                                                                        <h5 className="font-semibold text-white">{tertiaryGroup.tertiaryGroupName}</h5>
-                                                                                                    </div>
-                                                                                                    <span className="text-xs text-white font-medium">{tertiaryGroup.items?.length || 0} items</span>
-                                                                                                </button>
-                                                                                                <AnimatePresence>
-                                                                                                    {isTertiaryOpen && (
-                                                                                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                                                                                                            <div className="p-3 pt-0 border-t border-gray-300 dark:border-gray-600 space-y-2">
+                                                                                            <button onClick={() => toggleGroup(tertiaryKey)} className="hover:opacity-70 transition-opacity">
+                                                                                                <h5 className="font-medium text-sm text-white">{tertiaryGroup.tertiaryGroupName}</h5>
+                                                                                            </button>
+                                                                                            <AnimatePresence>
+                                                                                                {isTertiaryOpen && (
+                                                                                                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                                                                                                        <div className="mt-2 ml-6 space-y-2">
                                                                                                                 {tertiaryGroup.items?.map((item: DemoShowcaseItemDto) => {
                                                                                                                     const hasVideo = !!item.videoPath;
                                                                                                                     const hasExecution = !!item.appId;
@@ -333,11 +323,10 @@ export function ShowcaseTabs({
                                                                                                                         </div>
                                                                                                                     );
                                                                                                                 })}
-                                                                                                            </div>
-                                                                                                        </motion.div>
-                                                                                                    )}
-                                                                                                </AnimatePresence>
-                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </motion.div>
+                                                                                                )}
+                                                                                            </AnimatePresence>
                                                                                         </div>
                                                                                     );
                                                                                 })()
@@ -367,12 +356,10 @@ export function ShowcaseTabs({
                                                                     )
                                                                 })}
                                                             </div>
-                                                        </div>
-                                                    </motion.div>
+                                                        </motion.div>
                                                     )}
                                                 </AnimatePresence>
                                             </div>
-                                        </div>
                                         );
                                     })}
                                     </div>
