@@ -338,12 +338,6 @@ export default function DemoPage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 dark:bg-gray-900">
       <div className="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Page Title */}
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">Çoklu Afet Risk Platformu</h1>
-
-        {/* Horizontal Divider */}
-        <div className="w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-8 shadow-lg"></div>
-
         {/* Hierarchical Tree View */}
         <ShowcaseTabs
           tabs={showcaseData.tabs}
