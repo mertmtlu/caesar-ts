@@ -15,7 +15,8 @@
       "Bash(sed:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
-      "Bash(tsc --noEmit)"
+      "Bash(tsc --noEmit)",
+      "Read(//mnt/c/Users/Mert/Desktop/**)"
     ],
     "deny": []
   }

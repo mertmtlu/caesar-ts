@@ -1,18 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { api } from '@/api/api';
 import { PublicDemoShowcaseResponse, DemoShowcaseItemDto } from '@/api/types';
 import { IconEntityType } from '@/api/enums';
 import { ShowcaseTabs } from '@/components/demo/ShowcaseTabs';
-import { PrimaryCard } from '@/components/demo/PrimaryCard';
-import { SecondaryCard } from '@/components/demo/SecondaryCard';
-import { ShowcaseCard } from '@/components/demo/ShowcaseCard';
 import { VideoModal } from '@/components/demo/VideoModal';
 import { ExecutionFormModal } from '@/components/demo/ExecutionFormModal';
-import { Loader2, AlertCircle, Search, X, Inbox } from 'lucide-react';
+import { Loader2, AlertCircle, Inbox } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-type ViewType = 'primary' | 'secondary' | 'programs';
 
 // SSO-aware redirect function for remote apps
 const secureSsoRedirect = (redirectUrl: string) => {
@@ -74,20 +69,6 @@ export default function DemoPage() {
 
   // Icons state
   const [itemIcons, setItemIcons] = useState<Map<string, string>>(new Map());
-
-  // Active path state - tracks user's position in hierarchy
-  const [activePath, setActivePath] = useState<{
-    tab: string | null;
-    primaryGroup: string | null;
-    secondaryGroup: string | null;
-  }>({
-    tab: null,
-    primaryGroup: null,
-    secondaryGroup: null
-  });
-
-  // Search state
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Modal states
   const [videoModalState, setVideoModalState] = useState<{
@@ -210,14 +191,6 @@ export default function DemoPage() {
 
         // Load icons for all items
         loadItemIcons(data);
-
-        // Auto-select first tab if available
-        if (data.tabs && data.tabs.length > 0) {
-          setActivePath(prev => ({
-            ...prev,
-            tab: data.tabs![0].tabName || null
-          }));
-        }
       } else {
         setError(response.message || 'Failed to load showcase items');
       }
@@ -229,69 +202,9 @@ export default function DemoPage() {
     }
   };
 
-  // Determine which view to render based on activePath
-  const getCurrentView = (): ViewType => {
-    if (activePath.secondaryGroup) {
-      return 'programs';
-    }
-    if (activePath.primaryGroup) {
-      return 'secondary';
-    }
-    return 'primary';
-  };
-
-  // Navigation handlers
-  const handleTabClick = (tabName: string) => {
-    setSearchQuery(''); // Clear search when changing tabs
-    setActivePath({
-      tab: tabName,
-      primaryGroup: null,
-      secondaryGroup: null
-    });
-  };
-
   const handleExecutionSuccess = (executionId: string) => {
     handleCloseExecutionModal(); // Close the modal first
     navigate(`/demo/execution/${executionId}`);
-  };
-
-  const handlePrimaryCardClick = (groupName: string) => {
-    setActivePath(prev => ({
-      ...prev,
-      primaryGroup: groupName,
-      secondaryGroup: null
-    }));
-  };
-
-  const handleSecondaryCardClick = (groupName: string) => {
-    setActivePath(prev => ({
-      ...prev,
-      secondaryGroup: groupName
-    }));
-  };
-
-  // Backward navigation from breadcrumb
-  const handleBreadcrumbClick = (level: 'tab' | 'primary' | 'secondary') => {
-    if (level === 'tab') {
-      setActivePath(prev => ({
-        ...prev,
-        primaryGroup: null,
-        secondaryGroup: null
-      }));
-    } else if (level === 'primary') {
-      setActivePath(prev => ({
-        ...prev,
-        secondaryGroup: null
-      }));
-    }
-  };
-
-  const handleBack = () => {
-    if (activePath.secondaryGroup) {
-      setActivePath(prev => ({ ...prev, secondaryGroup: null }));
-    } else if (activePath.primaryGroup) {
-      setActivePath(prev => ({ ...prev, primaryGroup: null }));
-    }
   };
 
   const handleVideoClick = (videoPath: string, itemName?: string, creatorName?: string) => {
@@ -333,59 +246,6 @@ export default function DemoPage() {
   const handleCloseExecutionModal = () => {
     setExecutionModalState({ isOpen: false, appId: null, itemName: null });
   };
-
-  // Helper functions for data navigation with search filtering
-  const getCurrentTabPrimaryGroups = useMemo(() => {
-    const groups = showcaseData?.tabs
-      ?.find(tab => tab.tabName === activePath.tab)
-      ?.primaryGroups || [];
-
-    if (!searchQuery) return groups;
-
-    return groups.filter(group =>
-      group.primaryGroupName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      group.secondaryGroups?.some(sg =>
-        sg.secondaryGroupName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sg.items?.some(item =>
-          item.name?.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      )
-    );
-  }, [showcaseData, activePath.tab, searchQuery]);
-
-  const getCurrentPrimarySecondaryGroups = useMemo(() => {
-    const groups = showcaseData?.tabs
-      ?.find(tab => tab.tabName === activePath.tab)
-      ?.primaryGroups
-      ?.find(group => group.primaryGroupName === activePath.primaryGroup)
-      ?.secondaryGroups || [];
-
-    if (!searchQuery) return groups;
-
-    return groups.filter(group =>
-      group.secondaryGroupName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      group.items?.some(item =>
-        item.name?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    );
-  }, [showcaseData, activePath.tab, activePath.primaryGroup, searchQuery]);
-
-  const getCurrentSecondaryItems = useMemo(() => {
-    const items = showcaseData?.tabs
-      ?.find(tab => tab.tabName === activePath.tab)
-      ?.primaryGroups
-      ?.find(group => group.primaryGroupName === activePath.primaryGroup)
-      ?.secondaryGroups
-      ?.find(group => group.secondaryGroupName === activePath.secondaryGroup)
-      ?.items || [];
-
-    if (!searchQuery) return items;
-
-    return items.filter(item =>
-      item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [showcaseData, activePath.tab, activePath.primaryGroup, activePath.secondaryGroup, searchQuery]);
 
   if (isLoading) {
     return (
@@ -475,30 +335,18 @@ export default function DemoPage() {
     );
   }
 
-  const currentData = getCurrentView() === 'primary'
-    ? getCurrentTabPrimaryGroups
-    : getCurrentView() === 'secondary'
-    ? getCurrentPrimarySecondaryGroups
-    : getCurrentSecondaryItems;
-
-  const hasResults = currentData.length > 0;
-
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-[90%] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Title */}
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6 text-center">Çoklu Afet Risk Platformu</h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">Çoklu Afet Risk Platformu</h1>
 
-        {/* Top-level tabs - always visible */}
+        {/* Horizontal Divider */}
+        <div className="w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-8 shadow-lg"></div>
+
+        {/* Hierarchical Tree View */}
         <ShowcaseTabs
           tabs={showcaseData.tabs}
-          selectedTab={activePath.tab}
-          selectedPrimaryGroup={activePath.primaryGroup}
-          selectedSecondaryGroup={activePath.secondaryGroup}
-          onTabSelect={handleTabClick}
-          onPrimaryCardClick={handlePrimaryCardClick}
-          onSecondaryCardClick={handleSecondaryCardClick}
-          onBack={handleBack}
           onVideoClick={handleVideoClick}
           onExecuteClick={handleExecuteClick}
           itemIcons={itemIcons}
