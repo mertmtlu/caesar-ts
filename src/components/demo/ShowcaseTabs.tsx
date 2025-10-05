@@ -221,11 +221,11 @@ export function ShowcaseTabs({
                 <div className="w-full flex flex-col items-center">
                     <div
                         ref={(el) => (tabDividerRefs.current[tab.tabName!] = el)}
-                        className="h-1 rounded-full bg-gray-300 dark:bg-gray-700"
+                        className="h-1 rounded-full shadow-lg bg-gray-300 dark:bg-gray-700 mb-8"
                         style={{ width: '100%', maxWidth: '250px' }}
                     />
 
-                    <div className="w-full mt-8 space-y-8 relative" style={{ paddingTop: '50px' }}>
+                    <div className="w-full space-y-8 relative" style={{ paddingTop: '50px' }}>
                         <svg
                             ref={(el) => (primarySvgRefs.current[tab.tabName!] = el)}
                             className="absolute left-0 right-0 w-full pointer-events-none"
@@ -238,7 +238,7 @@ export function ShowcaseTabs({
 
                         <div className="flex flex-wrap gap-8 justify-evenly">
                         {tab.primaryGroups.map((primaryGroup) => (
-                            <div 
+                            <div
                                 key={primaryGroup.primaryGroupName}
                                 ref={(el) => (primaryGroupRefs.current[`${tab.tabName!}-${primaryGroup.primaryGroupName!}`] = el)}
                                 className="flex-1 flex flex-col items-center min-w-[240px]"
@@ -247,8 +247,10 @@ export function ShowcaseTabs({
                                   {primaryGroup.primaryGroupName}
                                 </h3>
 
+                                <div className="h-1 w-full max-w-full rounded-full shadow-lg bg-gray-300 dark:bg-gray-700 mt-4 mb-4 relative z-10" />
+
                                 {primaryGroup.secondaryGroups && primaryGroup.secondaryGroups.length > 0 && (
-                                    <div className="w-full mt-8 pl-16 space-y-4 relative" style={{ overflow: 'hidden' }}>
+                                    <div className="w-full pl-16 space-y-4 relative" style={{ overflow: 'hidden' }}>
                                     {primaryGroup.secondaryGroups.map((secondaryGroup) => {
                                         const secondaryKey = `${tab.tabName}-${primaryGroup.primaryGroupName}-${secondaryGroup.secondaryGroupName}`;
                                         const isSecondaryOpen = !collapsedGroups.has(secondaryKey);
@@ -280,23 +282,7 @@ export function ShowcaseTabs({
                                                     {isSecondaryOpen && (
                                                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
                                                         <div className="p-4 pt-0 border-t border-gray-200 dark:border-gray-700">
-                                                            <div className="relative">
-                                                                <svg
-                                                                    ref={(el) => (secondarySvgRefs.current[secondaryKey] = el)}
-                                                                    className="absolute left-0 right-0 w-full pointer-events-none"
-                                                                    style={{ top: '16px', height: '50px', zIndex: 0 }}
-                                                                >
-                                                                    {(secondaryArrowPaths[secondaryKey] || []).map((pathD, index) => (
-                                                                        <path key={`secondary-arrow-${index}`} d={pathD} stroke="rgba(156, 163, 175, 0.5)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead)"/>
-                                                                    ))}
-                                                                </svg>
-                                                                <div
-                                                                    ref={(el) => (secondaryDividerRefs.current[secondaryKey] = el)}
-                                                                    className="h-1 mt-4 rounded-full bg-gray-300 dark:bg-gray-700"
-                                                                    style={{ width: '100%' }}
-                                                                />
-                                                            </div>
-                                                            <div className="mt-12">
+                                                            <div className="mt-4">
                                                                 {allChildren.map((child, index) => {
                                                                     const key = 'id' in child ? child.id : child.tertiaryGroupName;
                                                                     return (
