@@ -310,7 +310,6 @@ export function ShowcaseTabs({
                                                                                                                             {iconData && <img src={iconData} alt={item.name || 'App icon'} className="w-10 h-10 rounded object-cover flex-shrink-0" />}
                                                                                                                             <div className="flex-1 min-w-0">
                                                                                                                                 <h5 className="font-semibold text-sm text-white">{item.name || 'Untitled'}</h5>
-                                                                                                                                <p className="text-xs text-gray-400 line-clamp-1">{item.description || 'No description available'}</p>
                                                                                                                             </div>
                                                                                                                             <div className="flex gap-1">
                                                                                                                                 {hasExecution && <button onClick={(e) => { e.stopPropagation(); item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled'); }} className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all" title="Run"><Play size={18} fill="currentColor" /></button>}
@@ -338,7 +337,6 @@ export function ShowcaseTabs({
                                                                                             {iconData && <img src={iconData} alt={item.name || 'App icon'} className="w-10 h-10 rounded object-cover flex-shrink-0" />}
                                                                                             <div className="flex-1 min-w-0">
                                                                                                 <h5 className="font-semibold text-sm text-white">{item.name || 'Untitled'}</h5>
-                                                                                                <p className="text-xs text-gray-400 line-clamp-1">{item.description || 'No description available'}</p>
                                                                                             </div>
                                                                                             <div className="flex gap-1">
                                                                                                 {hasExecution && <button onClick={(e) => { e.stopPropagation(); item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled'); }} className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all" title="Run"><Play size={18} fill="currentColor" /></button>}
