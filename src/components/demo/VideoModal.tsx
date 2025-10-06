@@ -77,14 +77,7 @@ export function VideoModal({ isOpen, videoPath, itemName, creatorName, onClose }
                   {itemName || 'Video Preview'}
                 </h2>
 
-                {creatorName && (
-                  <div className="flex items-center justify-center gap-3 text-gray-300">
-                    <div className="p-2 rounded-lg bg-white/10">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <span className="text-lg font-medium">{creatorName}</span>
-                  </div>
-                )}
+                
               </div>
             </div>
           </motion.div>

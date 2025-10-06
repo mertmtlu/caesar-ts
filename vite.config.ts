@@ -18,7 +18,7 @@ export default defineConfig({
         secure: false,
       },
       '/videos': {
-        target: 'http://localhost:5090',
+        target: 'http://144.122.103.206:5090',
         changeOrigin: true,
         secure: false,
       },

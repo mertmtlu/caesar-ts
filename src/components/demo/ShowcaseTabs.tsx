@@ -1,7 +1,7 @@
 import { TabGroupDto, DemoShowcaseItemDto } from '@/api/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Play, Camera } from 'lucide-react';
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect, useMemo } from 'react';
 
 // Interface for the second-level arrow paths, keyed by the parent tab's name
 interface PrimaryArrowPaths {
@@ -40,29 +40,54 @@ export function ShowcaseTabs({
   const directItemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tertiaryGroupContainerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // Memoize separate items and regular tabs to prevent infinite loops
+  const { separateItems, regularTabs } = useMemo(() => {
+    const separateTab = tabs.find(tab => tab.tabName?.toLowerCase() === 'seperate');
+    const items: DemoShowcaseItemDto[] = [];
+
+    if (separateTab) {
+      separateTab.primaryGroups?.forEach(primaryGroup => {
+        primaryGroup.secondaryGroups?.forEach(secondaryGroup => {
+          if (secondaryGroup.items) {
+            items.push(...secondaryGroup.items);
+          }
+          secondaryGroup.tertiaryGroups?.forEach(tertiaryGroup => {
+            if (tertiaryGroup.items) {
+              items.push(...tertiaryGroup.items);
+            }
+          });
+        });
+      });
+    }
+
+    const filteredTabs = tabs.filter(tab => tab.tabName?.toLowerCase() !== 'seperate');
+
+    return { separateItems: items, regularTabs: filteredTabs };
+  }, [tabs]);
+
   useLayoutEffect(() => {
     const calculateTopLevelPaths = () => {
       const svgEl = topSvgRef.current;
       const dividerEl = titleDividerRef.current;
-      if (!svgEl || !dividerEl || Object.keys(tabRefs.current).length !== tabs.length) return;
+      if (!svgEl || !dividerEl || Object.keys(tabRefs.current).length !== regularTabs.length) return;
 
       const svgRect = svgEl.getBoundingClientRect();
       const dividerRect = dividerEl.getBoundingClientRect();
-      
-      const newPaths = tabs.map((tab, index) => {
+
+      const newPaths = regularTabs.map((tab, index) => {
         const tabEl = tabRefs.current[tab.tabName!];
         if (!tabEl) return '';
 
         const tabRect = tabEl.getBoundingClientRect();
-        const totalTabs = tabs.length;
-        
+        const totalTabs = regularTabs.length;
+
         const fraction = (index + 1) / (totalTabs + 1);
         const startX = dividerRect.left + fraction * dividerRect.width;
         const relativeStartX = startX - svgRect.left;
 
         const endX = tabRect.left + tabRect.width / 2;
         const relativeEndX = endX - svgRect.left;
-        
+
         return `M ${relativeStartX} 0 C ${relativeStartX} 45, ${relativeEndX} 45, ${relativeEndX} 85`;
       });
       setTopLevelArrowPaths(newPaths);
@@ -70,7 +95,7 @@ export function ShowcaseTabs({
 
     const calculatePrimaryPaths = () => {
         const newPrimaryPaths: PrimaryArrowPaths = {};
-        tabs.forEach(tab => {
+        regularTabs.forEach(tab => {
             if (!tab.primaryGroups || tab.primaryGroups.length === 0) return;
 
             const tabDividerEl = tabDividerRefs.current[tab.tabName!];
@@ -103,7 +128,7 @@ export function ShowcaseTabs({
 
     const calculateSecondaryPaths = () => {
         const newSecondaryPaths: Record<string, string[]> = {};
-        tabs.forEach(tab => {
+        regularTabs.forEach(tab => {
             (tab.primaryGroups || []).forEach(primaryGroup => {
                 (primaryGroup.secondaryGroups || []).forEach(secondaryGroup => {
                     const secondaryKey = `${tab.tabName}-${primaryGroup.primaryGroupName}-${secondaryGroup.secondaryGroupName}`;
@@ -164,7 +189,7 @@ export function ShowcaseTabs({
     handleResize(); // Initial calculation
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [tabs, collapsedGroups]);
+  }, [regularTabs, collapsedGroups]);
 
   const toggleGroup = (groupKey: string) => {
     setCollapsedGroups(prev => {
@@ -176,28 +201,6 @@ export function ShowcaseTabs({
   };
   
   if (!tabs || tabs.length === 0) return null;
-
-  // Check if there's a "seperate" tab and collect all its items
-  const separateTab = tabs.find(tab => tab.tabName?.toLowerCase() === 'seperate');
-  const separateItems: DemoShowcaseItemDto[] = [];
-
-  if (separateTab) {
-    separateTab.primaryGroups?.forEach(primaryGroup => {
-      primaryGroup.secondaryGroups?.forEach(secondaryGroup => {
-        if (secondaryGroup.items) {
-          separateItems.push(...secondaryGroup.items);
-        }
-        secondaryGroup.tertiaryGroups?.forEach(tertiaryGroup => {
-          if (tertiaryGroup.items) {
-            separateItems.push(...tertiaryGroup.items);
-          }
-        });
-      });
-    });
-  }
-
-  // Filter out the "seperate" tab from the main tabs
-  const regularTabs = tabs.filter(tab => tab.tabName?.toLowerCase() !== 'seperate');
 
   return (
     <div className="w-full space-y-8 p-4">
