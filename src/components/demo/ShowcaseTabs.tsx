@@ -392,7 +392,7 @@ export function ShowcaseTabs({
 
       {/* Fixed position showcase items from "seperate" tab */}
       {separateItems.length > 0 && (
-        <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50">
+        <div className="fixed bottom-4 right-4 flex flex-col gap-3 z-50">
           {separateItems.map((item) => {
             const hasVideo = !!item.videoPath;
             const hasExecution = !!item.appId;
@@ -403,17 +403,17 @@ export function ShowcaseTabs({
                 key={item.id}
                 initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="p-2 rounded-lg w-[250px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 hover:border-blue-400 dark:hover:border-blue-500 transition-all flex items-center gap-3"
+                className="p-4 rounded-lg w-[320px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 hover:border-blue-400 dark:hover:border-blue-500 transition-all flex items-center gap-4"
               >
                 {iconData && (
                   <img
                     src={iconData}
                     alt={item.name || 'App icon'}
-                    className="w-10 h-10 rounded object-cover flex-shrink-0"
+                    className="w-14 h-14 rounded object-cover flex-shrink-0"
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <h5 className="font-semibold text-sm text-white">{item.name || 'Untitled'}</h5>
+                  <h5 className="font-semibold text-base text-white">{item.name || 'Untitled'}</h5>
                 </div>
                 <div className="flex gap-1">
                   {hasExecution && (
@@ -425,7 +425,7 @@ export function ShowcaseTabs({
                       className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all"
                       title="Run"
                     >
-                      <Play size={18} fill="currentColor" />
+                      <Play size={20} fill="currentColor" />
                     </button>
                   )}
                   {hasVideo && (
@@ -437,7 +437,7 @@ export function ShowcaseTabs({
                       className="p-2 hover:bg-blue-600/20 text-blue-500 rounded transition-all"
                       title="Watch"
                     >
-                      <Camera size={18} />
+                      <Camera size={20} />
                     </button>
                   )}
                 </div>

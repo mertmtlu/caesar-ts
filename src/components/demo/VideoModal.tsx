@@ -48,7 +48,7 @@ export function VideoModal({ isOpen, videoPath, itemName, creatorName, onClose }
       aria-labelledby="video-modal-title"
     >
       <div
-        className="relative w-full max-w-5xl mx-4"
+        className="relative w-[80vw] h-[80vh] mx-4"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -64,9 +64,8 @@ export function VideoModal({ isOpen, videoPath, itemName, creatorName, onClose }
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg overflow-hidden shadow-2xl cursor-pointer group"
+            className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg overflow-hidden shadow-2xl cursor-pointer group w-full h-full"
             onClick={() => setShowPreview(false)}
-            style={{ aspectRatio: '16/9' }}
           >
             <div className="relative w-full h-full flex flex-col items-center justify-center p-8">
               {/* Gradient overlay */}
@@ -93,14 +92,14 @@ export function VideoModal({ isOpen, videoPath, itemName, creatorName, onClose }
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-black rounded-lg overflow-hidden shadow-2xl"
+            className="bg-black rounded-lg overflow-hidden shadow-2xl w-full h-full flex items-center justify-center"
           >
             <video
               ref={videoRef}
               src={videoPath || ''}
               controls
               autoPlay
-              className="w-full h-auto"
+              className="w-full h-full object-contain"
               aria-labelledby="video-modal-title"
             >
               Your browser does not support the video tag.
