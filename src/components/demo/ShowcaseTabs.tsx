@@ -263,22 +263,22 @@ export function ShowcaseTabs({
                                         <div key={secondaryGroup.secondaryGroupName} className="relative mb-4">
                                             <div className="absolute bg-gray-400 dark:bg-gray-600" style={{left: '-64px',width: '2px',top: '-10000px',height: '10012px'}}></div>
                                             <div className="absolute" style={{ left: '-64px', top: '12px' }}>
-                                                <svg width="40" height="2" style={{ overflow: 'visible' }}>
-                                                    <line x1="0" y1="0" x2="32" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
-                                                    <polygon points="40,0 32,-4 32,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
+                                                <svg width="24" height="2" style={{ overflow: 'visible' }}>
+                                                    <line x1="0" y1="0" x2="16" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
+                                                    <polygon points="24,0 16,-4 16,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
                                                 </svg>
                                             </div>
                                             <button
                                                 onClick={() => toggleGroup(secondaryKey)}
                                                 className="hover:opacity-70 transition-opacity"
-                                                style={{ marginLeft: '-12px' }}
+                                                style={{ marginLeft: '-30px' }}
                                             >
                                                 <h4 className="font-semibold text-sm text-white">{secondaryGroup.secondaryGroupName}</h4>
                                             </button>
                                             <AnimatePresence>
                                                 {isSecondaryOpen && (
-                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                                                    <div className="mt-2 ml-6">
+                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-visible">
+                                                    <div className="mt-2" style={{ marginLeft: '-30px' }}>
                                                                 {allChildren.map((child, index) => {
                                                                     const key = 'id' in child ? child.id : child.tertiaryGroupName;
                                                                     return (
@@ -290,25 +290,17 @@ export function ShowcaseTabs({
                                                                                     const isTertiaryOpen = !collapsedGroups.has(tertiaryKey);
                                                                                     const tertiaryContainerKey = `${secondaryKey}-${tertiaryGroup.tertiaryGroupName}-container`;
                                                                                     return (
-                                                                                        <div ref={el => tertiaryGroupContainerRefs.current[tertiaryContainerKey] = el} className="pl-12 relative mb-3">
-                                                                                            <div className="absolute bg-gray-400 dark:bg-gray-600" style={{ left: '-48px', width: '2px', top: '-10000px', height: '10010px' }}></div>
-                                                                                            <div className="absolute" style={{ left: '-48px', top: '10px' }}>
-                                                                                                <svg width="32" height="2" style={{ overflow: 'visible' }}>
-                                                                                                    <line x1="0" y1="0" x2="24" y2="0" stroke="currentColor" strokeWidth="2" className="text-gray-400 dark:text-gray-600" />
-                                                                                                    <polygon points="32,0 24,-4 24,4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
-                                                                                                </svg>
-                                                                                            </div>
+                                                                                        <div ref={el => tertiaryGroupContainerRefs.current[tertiaryContainerKey] = el} className="mb-3">
                                                                                             <button
                                                                                                 onClick={() => toggleGroup(tertiaryKey)}
                                                                                                 className="hover:opacity-70 transition-opacity"
-                                                                                                style={{ marginLeft: '-12px' }}
                                                                                             >
                                                                                                 <h5 className="font-medium text-sm text-white">{tertiaryGroup.tertiaryGroupName}</h5>
                                                                                             </button>
                                                                                             <AnimatePresence>
                                                                                                 {isTertiaryOpen && (
                                                                                                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                                                                                                        <div className="mt-2 ml-6 space-y-2">
+                                                                                                        <div className="mt-2 space-y-2">
                                                                                                                 {tertiaryGroup.items?.map((item: DemoShowcaseItemDto) => {
                                                                                                                     const hasVideo = !!item.videoPath;
                                                                                                                     const hasExecution = !!item.appId;
