@@ -177,6 +177,28 @@ export function ShowcaseTabs({
   
   if (!tabs || tabs.length === 0) return null;
 
+  // Check if there's a "seperate" tab and collect all its items
+  const separateTab = tabs.find(tab => tab.tabName?.toLowerCase() === 'seperate');
+  const separateItems: DemoShowcaseItemDto[] = [];
+
+  if (separateTab) {
+    separateTab.primaryGroups?.forEach(primaryGroup => {
+      primaryGroup.secondaryGroups?.forEach(secondaryGroup => {
+        if (secondaryGroup.items) {
+          separateItems.push(...secondaryGroup.items);
+        }
+        secondaryGroup.tertiaryGroups?.forEach(tertiaryGroup => {
+          if (tertiaryGroup.items) {
+            separateItems.push(...tertiaryGroup.items);
+          }
+        });
+      });
+    });
+  }
+
+  // Filter out the "seperate" tab from the main tabs
+  const regularTabs = tabs.filter(tab => tab.tabName?.toLowerCase() !== 'seperate');
+
   return (
     <div className="w-full space-y-8 p-4">
       {/* Page Title */}
@@ -206,10 +228,10 @@ export function ShowcaseTabs({
           ))}
         </svg>
 
-        {tabs.map((tab) => (
-          <div 
-            ref={(el) => (tabRefs.current[tab.tabName!] = el)} 
-            key={tab.tabName} 
+        {regularTabs.map((tab) => (
+          <div
+            ref={(el) => (tabRefs.current[tab.tabName!] = el)}
+            key={tab.tabName}
             className="flex-1 flex flex-col items-center"
           >
             {/* Tab as Text */}
@@ -312,7 +334,7 @@ export function ShowcaseTabs({
                                                                                                                                 <h5 className="font-semibold text-sm text-white">{item.name || 'Untitled'}</h5>
                                                                                                                             </div>
                                                                                                                             <div className="flex gap-1">
-                                                                                                                                {hasExecution && <button onClick={(e) => { e.stopPropagation(); item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled'); }} className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all" title="Run"><Play size={18} fill="currentColor" /></button>}
+                                                                                                                                {/* {hasExecution && <button onClick={(e) => { e.stopPropagation(); item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled'); }} className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all" title="Run"><Play size={18} fill="currentColor" /></button>} */}
                                                                                                                                 {hasVideo && <button onClick={(e) => { e.stopPropagation(); item.videoPath && onVideoClick(item.videoPath, item.name, item.creatorFullName); }} className="p-2 hover:bg-blue-600/20 text-blue-500 rounded transition-all" title="Watch"><Camera size={18} /></button>}
                                                                                                                             </div>
                                                                                                                         </div>
@@ -339,7 +361,7 @@ export function ShowcaseTabs({
                                                                                                 <h5 className="font-semibold text-sm text-white">{item.name || 'Untitled'}</h5>
                                                                                             </div>
                                                                                             <div className="flex gap-1">
-                                                                                                {hasExecution && <button onClick={(e) => { e.stopPropagation(); item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled'); }} className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all" title="Run"><Play size={18} fill="currentColor" /></button>}
+                                                                                                {/* {hasExecution && <button onClick={(e) => { e.stopPropagation(); item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled'); }} className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all" title="Run"><Play size={18} fill="currentColor" /></button>} */}
                                                                                                 {hasVideo && <button onClick={(e) => { e.stopPropagation(); item.videoPath && onVideoClick(item.videoPath, item.name, item.creatorFullName); }} className="p-2 hover:bg-blue-600/20 text-blue-500 rounded transition-all" title="Watch"><Camera size={18} /></button>}
                                                                                             </div>
                                                                                         </div>
@@ -367,6 +389,63 @@ export function ShowcaseTabs({
           </div>
         ))}
       </div>
+
+      {/* Fixed position showcase items from "seperate" tab */}
+      {separateItems.length > 0 && (
+        <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50">
+          {separateItems.map((item) => {
+            const hasVideo = !!item.videoPath;
+            const hasExecution = !!item.appId;
+            const iconData = item.appId ? itemIcons.get(item.appId) : undefined;
+
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-2 rounded-lg w-[250px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 hover:border-blue-400 dark:hover:border-blue-500 transition-all flex items-center gap-3"
+              >
+                {iconData && (
+                  <img
+                    src={iconData}
+                    alt={item.name || 'App icon'}
+                    className="w-10 h-10 rounded object-cover flex-shrink-0"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <h5 className="font-semibold text-sm text-white">{item.name || 'Untitled'}</h5>
+                </div>
+                <div className="flex gap-1">
+                  {hasExecution && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        item.appId && onExecuteClick(item.appId, item.appType || '0', item.name || 'Untitled');
+                      }}
+                      className="p-2 hover:bg-green-600/20 text-green-500 rounded transition-all"
+                      title="Run"
+                    >
+                      <Play size={18} fill="currentColor" />
+                    </button>
+                  )}
+                  {hasVideo && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        item.videoPath && onVideoClick(item.videoPath, item.name, item.creatorFullName);
+                      }}
+                      className="p-2 hover:bg-blue-600/20 text-blue-500 rounded transition-all"
+                      title="Watch"
+                    >
+                      <Camera size={18} />
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
