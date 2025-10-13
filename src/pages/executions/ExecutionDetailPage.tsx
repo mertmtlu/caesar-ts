@@ -147,6 +147,7 @@ const ExecutionDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [filesHaveBeenFetched, setFilesHaveBeenFetched] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<number>(0);
   const [signalrState, setSignalrState] = useState<HubConnectionState>(HubConnectionState.Disconnected);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
@@ -412,28 +413,24 @@ const ExecutionDetailPage: React.FC = () => {
 
     setIsDownloading(true);
     setError(null);
+
+    let responseForBlob: Response | null = null;
+
     try {
       const downloadUrl = `${api.baseApiUrl}/api/Executions/${executionId}/files/download-all`;
       const token = api.getCurrentToken();
       const fileName = `execution_${executionId}_files.zip`;
 
-      const response = await fetch(downloadUrl, {
-        headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-      });
+      // Check if we're in a secure context (HTTPS) and log it
+      const isSecureContext = window.isSecureContext;
+      console.log('Download context:', { isSecureContext, hasFilePicker: 'showSaveFilePicker' in window });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: response.statusText }));
-        throw new Error(`Failed to download files: ${errorData.message || response.statusText}`);
-      }
-
-      if (!response.body) {
-        throw new Error("Streaming downloads are not supported or the response body is missing.");
-      }
-
-      // Try File System Access API first (Chrome/Edge, no popup needed!)
-      // @ts-ignore - File System Access API may not be in types yet
+      // Try File System Access API first (Chrome/Edge 86+)
+      // This works on HTTP and doesn't create any popup!
+      // @ts-ignore
       if ('showSaveFilePicker' in window) {
         try {
+          console.log('Attempting File System Access API...');
           // @ts-ignore
           const fileHandle = await window.showSaveFilePicker({
             suggestedName: fileName,
@@ -443,24 +440,122 @@ const ExecutionDetailPage: React.FC = () => {
             }]
           });
 
+          // Now fetch the file
+          const response = await fetch(downloadUrl, {
+            headers: { 'Authorization': token ? `Bearer ${token}` : '' }
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          if (!response.body) {
+            throw new Error("Response body is missing");
+          }
+
           const writable = await fileHandle.createWritable();
           await response.body.pipeTo(writable);
+          console.log('File System Access API download complete!');
           return; // Success!
         } catch (err: any) {
-          // User cancelled or error - fall through to StreamSaver
-          if (err.name !== 'AbortError') {
-            console.warn('File System Access API failed:', err);
-          } else {
-            // User cancelled, abort download
+          // User cancelled - this is normal
+          if (err.name === 'AbortError') {
+            console.log('User cancelled download');
             setIsDownloading(false);
             return;
           }
+          // Other error - log and fall through
+          console.warn('File System Access API failed:', err);
         }
       }
 
-      // Fallback to StreamSaver (will use iframe on HTTPS, popup on HTTP)
-      const fileStream = streamSaver.createWriteStream(fileName);
-      await response.body.pipeTo(fileStream);
+      // Fetch the response for blob fallback
+      const response = await fetch(downloadUrl, {
+        headers: { 'Authorization': token ? `Bearer ${token}` : '' }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(`Failed to download files: ${errorData.message || response.statusText}`);
+      }
+
+      // IMPORTANT: On HTTP, NEVER use StreamSaver (it creates popups)
+      // Instead, use chunked download with progress tracking
+      if (!isSecureContext) {
+        console.log('HTTP context detected - using chunked download with progress (no popup)');
+
+        const contentLength = response.headers.get('content-length');
+        const total = contentLength ? parseInt(contentLength, 10) : 0;
+
+        if (!response.body) {
+          throw new Error("Response body is missing");
+        }
+
+        const reader = response.body.getReader();
+        const chunks: BlobPart[] = [];
+        let receivedLength = 0;
+
+        // Show initial progress
+        setDownloadProgress(1);
+
+        // Read the stream chunk by chunk
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          chunks.push(value);
+          receivedLength += value.length;
+
+          // Update progress
+          if (total > 0) {
+            const progress = Math.round((receivedLength / total) * 100);
+            setDownloadProgress(progress);
+            console.log(`Download progress: ${progress}% (${receivedLength}/${total} bytes)`);
+          } else {
+            // If no content-length, show MB downloaded instead
+            const mb = (receivedLength / (1024 * 1024)).toFixed(1);
+            console.log(`Downloaded: ${mb} MB`);
+            // Set progress to a pulsing value to show activity
+            setDownloadProgress(Math.min(99, Math.floor(receivedLength / 100000) % 100));
+          }
+        }
+
+        // Combine chunks into single blob
+        const blob = new Blob(chunks);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        console.log('Chunked download complete!');
+        setDownloadProgress(0);
+        return;
+      }
+
+      // Only use StreamSaver on HTTPS (uses hidden iframe, no popup)
+      if (response.body) {
+        console.log('HTTPS context - using StreamSaver');
+        const fileStream = streamSaver.createWriteStream(fileName);
+        await response.body.pipeTo(fileStream);
+        console.log('StreamSaver download complete!');
+      } else {
+        // No streaming support, fall back to blob
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }
     } catch (error) {
       console.error('Download Failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
@@ -710,7 +805,9 @@ const ExecutionDetailPage: React.FC = () => {
                   )
                 }
               >
-                {isDownloading ? 'Downloading...' : 'Download All'}
+                {isDownloading
+                  ? (downloadProgress > 0 ? `Downloading ${downloadProgress}%` : 'Preparing download...')
+                  : 'Download All'}
               </Button>
             )}
             {isLoadingFiles && (
