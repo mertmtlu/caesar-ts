@@ -14,6 +14,11 @@ import {
   ExecutionCompletedEventArgs
 } from '@/services/executionSignalrService';
 
+// Configure StreamSaver with local mitm and service worker
+if (typeof window !== 'undefined') {
+  streamSaver.mitm = `${window.location.origin}/mitm.html`;
+}
+
 // Initialize SignalR service singleton
 const signalRService = createExecutionSignalRService(
   api.baseApiUrl,
@@ -410,6 +415,7 @@ const ExecutionDetailPage: React.FC = () => {
     try {
       const downloadUrl = `${api.baseApiUrl}/api/Executions/${executionId}/files/download-all`;
       const token = api.getCurrentToken();
+      const fileName = `execution_${executionId}_files.zip`;
 
       const response = await fetch(downloadUrl, {
         headers: { 'Authorization': token ? `Bearer ${token}` : '' }
@@ -424,8 +430,35 @@ const ExecutionDetailPage: React.FC = () => {
         throw new Error("Streaming downloads are not supported or the response body is missing.");
       }
 
-      const fileName = `execution_${executionId}_files.zip`;
-      // streamSaver.mitm = `${window.location.origin}/streamsaver/mitm.html`;
+      // Try File System Access API first (Chrome/Edge, no popup needed!)
+      // @ts-ignore - File System Access API may not be in types yet
+      if ('showSaveFilePicker' in window) {
+        try {
+          // @ts-ignore
+          const fileHandle = await window.showSaveFilePicker({
+            suggestedName: fileName,
+            types: [{
+              description: 'ZIP Archive',
+              accept: { 'application/zip': ['.zip'] }
+            }]
+          });
+
+          const writable = await fileHandle.createWritable();
+          await response.body.pipeTo(writable);
+          return; // Success!
+        } catch (err: any) {
+          // User cancelled or error - fall through to StreamSaver
+          if (err.name !== 'AbortError') {
+            console.warn('File System Access API failed:', err);
+          } else {
+            // User cancelled, abort download
+            setIsDownloading(false);
+            return;
+          }
+        }
+      }
+
+      // Fallback to StreamSaver (will use iframe on HTTPS, popup on HTTP)
       const fileStream = streamSaver.createWriteStream(fileName);
       await response.body.pipeTo(fileStream);
     } catch (error) {
