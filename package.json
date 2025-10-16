@@ -13,6 +13,8 @@
     "@heroicons/react": "^2.2.0",
     "@microsoft/signalr": "^8.0.7",
     "@monaco-editor/react": "^4.7.0",
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.4.0",
     "@tailwindcss/postcss": "^4.1.8",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
@@ -23,7 +25,9 @@
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.6.1",
+    "simplex-noise": "^4.0.3",
     "streamsaver": "^2.0.6",
+    "three": "^0.180.0",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
@@ -36,6 +40,7 @@
     "@types/react-leaflet": "^3.0.0",
     "@types/react-router-dom": "^5.3.3",
     "@types/streamsaver": "^2.0.5",
+    "@types/three": "^0.180.0",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.25.0",
