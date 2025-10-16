@@ -14,7 +14,6 @@ interface RegisterFormData {
   username: string;
   password: string;
   confirmPassword: string;
-  acceptTerms: boolean;
   subscribeNewsletter: boolean;
 }
 
@@ -31,7 +30,6 @@ const RegisterPage: React.FC = () => {
     username: '',
     password: '',
     confirmPassword: '',
-    acceptTerms: false,
     subscribeNewsletter: false
   });
   const [errors, setErrors] = useState<RegisterError[]>([]);
@@ -145,14 +143,6 @@ const RegisterPage: React.FC = () => {
       });
     }
 
-    // Terms acceptance validation
-    if (!formData.acceptTerms) {
-      newErrors.push({
-        field: 'acceptTerms',
-        message: 'You must accept the terms and conditions to continue'
-      });
-    }
-
     return newErrors;
   };
 
@@ -167,10 +157,10 @@ const RegisterPage: React.FC = () => {
   const handleInputChange = (field: keyof RegisterFormData) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = ['acceptTerms', 'subscribeNewsletter'].includes(field) 
-      ? e.target.checked 
+    const value = ['subscribeNewsletter'].includes(field)
+      ? e.target.checked
       : e.target.value;
-    
+
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -236,8 +226,8 @@ const RegisterPage: React.FC = () => {
         setShowSuccessMessage(true);
       } else {
         // Handle API errors
-        const errorMessages = response.errors && response.errors.length > 0 
-          ? response.errors 
+        const errorMessages = response.errors && response.errors.length > 0
+          ? response.errors
           : [response.message || 'Registration failed. Please try again.'];
         
         setErrors(errorMessages.map(msg => ({ message: msg })));
@@ -478,60 +468,6 @@ const RegisterPage: React.FC = () => {
             </svg>
           }
         />
-
-        {/* Terms and Newsletter */}
-        <div className="space-y-4">
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                id="acceptTerms"
-                name="acceptTerms"
-                type="checkbox"
-                checked={formData.acceptTerms}
-                onChange={handleInputChange('acceptTerms')}
-                disabled={isLoading}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:focus:ring-blue-500"
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="acceptTerms" className="text-gray-900 dark:text-gray-300">
-                I agree to the{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-                  Terms and Conditions
-                </a>
-                {' '}and{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-                  Privacy Policy
-                </a>
-                <span className="text-red-500 ml-1">*</span>
-              </label>
-              {getFieldError('acceptTerms') && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                  {getFieldError('acceptTerms')}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                id="subscribeNewsletter"
-                name="subscribeNewsletter"
-                type="checkbox"
-                checked={formData.subscribeNewsletter}
-                onChange={handleInputChange('subscribeNewsletter')}
-                disabled={isLoading}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:focus:ring-blue-500"
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="subscribeNewsletter" className="text-gray-900 dark:text-gray-300">
-                Subscribe to our newsletter for updates and tips
-              </label>
-            </div>
-          </div>
-        </div>
 
         {/* Submit Button */}
         <div>

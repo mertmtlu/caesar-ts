@@ -44,12 +44,12 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
   }, []);
 
   // Configuration constants
-  const PARTICLE_COUNT = 20000;
-  const REPEL_RADIUS = 0.5;
-  const REPEL_STRENGTH = 1;
-  const RETURN_DAMPING = 1;
-  const SWIRL_INTENSITY = 0.03;
-  const CONVERGENCE_SPEED = 0.008;
+  const PARTICLE_COUNT = 30000;
+  const REPEL_RADIUS = 1.3; // Radius of the repel zone
+  const REPEL_SMOOTHNESS = 0.02; // How quickly particles move to repel position (0-1, lower = smoother)
+  const RETURN_SPEED = 0.01; // How quickly particles return to target when not repelled
+  const SWIRL_INTENSITY = 0.15;
+  const CONVERGENCE_SPEED = 0.1;
 
   // Initialize particles and positions buffer synchronously
   const { particles, positions } = useMemo(() => {
@@ -103,7 +103,7 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
         // Create text geometry with depth for the sampler to work properly
         const textGeometry = new TextGeometry(text, {
           font: font,
-          size: 1.8,
+          size: 4,
           depth: 0.1, // CRITICAL: Sampler needs surface area to work on
           curveSegments: 12,
           bevelEnabled: true,
@@ -149,12 +149,20 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
     const positionAttribute = pointsRef.current.geometry.attributes.position;
     const time = clockRef.current.getElapsedTime();
 
-    // Convert 2D mouse to 3D world space
-    mouse3D.current.set(
-      mousePosition.current.x,
-      mousePosition.current.y,
-      0.5
-    ).unproject(camera);
+    // ===== V2.0: IMPROVED MOUSE POSITION CONVERSION =====
+    // Convert normalized device coordinates (-1 to 1) to world space
+    // Create a raycaster plane at z=0 to get accurate 3D position
+    const raycaster = new THREE.Raycaster();
+    const mouseNDC = new THREE.Vector2(mousePosition.current.x, mousePosition.current.y);
+    raycaster.setFromCamera(mouseNDC, camera);
+
+    // Create a plane at z=0 (where the text is)
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const intersectPoint = new THREE.Vector3();
+    raycaster.ray.intersectPlane(plane, intersectPoint);
+
+    // Store the accurate mouse position in world space
+    mouse3D.current.copy(intersectPoint);
 
     const radiusSq = REPEL_RADIUS * REPEL_RADIUS;
     const particles = particlesRef.current;
@@ -175,31 +183,40 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
         );
       }
 
-      // ===== MOUSE REPULSION (OPTIMIZED) =====
-      const dx = particle.currentPos.x - (mouse3D.current.x * 35);
-      const dy = particle.currentPos.y - (mouse3D.current.y * 35);
+      // ===== V2.0: IMPROVED MOUSE REPULSION =====
+      // Calculate distance from particle's target position to mouse
+      const dx = particle.targetPos.x - mouse3D.current.x;
+      const dy = particle.targetPos.y - mouse3D.current.y;
+      const distSq = dx * dx + dy * dy;
 
-      // Bounding box check first (cheap operation)
-      if (Math.abs(dx) < REPEL_RADIUS && Math.abs(dy) < REPEL_RADIUS) {
-        const distSq = dx * dx + dy * dy;
+      if (distSq < radiusSq && distSq > 0.001) {
+        // Particle is within repel radius
+        const dist = Math.sqrt(distSq);
 
-        if (distSq < radiusSq && distSq > 0.01) {
-          // Calculate repel force (inverse square falloff)
-          const dist = Math.sqrt(distSq);
-          const force = (1 - dist / REPEL_RADIUS) * REPEL_STRENGTH;
+        // Calculate where particle should be: exactly at the edge of repel radius
+        // Direction away from mouse
+        const dirX = dx / dist;
+        const dirY = dy / dist;
 
-          // Apply force in direction away from mouse
-          particle.repelOffset.x += (dx / dist) * force;
-          particle.repelOffset.y += (dy / dist) * force;
-        } else {
-          // Spring back to target when outside radius
-          particle.repelOffset.x *= (1 - RETURN_DAMPING);
-          particle.repelOffset.y *= (1 - RETURN_DAMPING);
-        }
+        // Target position for repelled particle (at the edge of the radius)
+        const repelTargetX = mouse3D.current.x + dirX * REPEL_RADIUS;
+        const repelTargetY = mouse3D.current.y + dirY * REPEL_RADIUS;
+
+        // Smoothly interpolate current offset toward the repel target
+        const targetOffsetX = repelTargetX - particle.targetPos.x;
+        const targetOffsetY = repelTargetY - particle.targetPos.y;
+
+        // Smooth transition to repelled position
+        particle.repelOffset.x += (targetOffsetX - particle.repelOffset.x) * REPEL_SMOOTHNESS;
+        particle.repelOffset.y += (targetOffsetY - particle.repelOffset.y) * REPEL_SMOOTHNESS;
       } else {
-        // Far from mouse - gentle spring back
-        particle.repelOffset.x *= (1 - RETURN_DAMPING * 0.5);
-        particle.repelOffset.y *= (1 - RETURN_DAMPING * 0.5);
+        // Outside repel radius - smoothly return to original position
+        particle.repelOffset.x *= (1 - RETURN_SPEED);
+        particle.repelOffset.y *= (1 - RETURN_SPEED);
+
+        // Snap to zero if very close to prevent floating point drift
+        if (Math.abs(particle.repelOffset.x) < 0.001) particle.repelOffset.x = 0;
+        if (Math.abs(particle.repelOffset.y) < 0.001) particle.repelOffset.y = 0;
       }
 
       // ===== SWIRLING EFFECT (after formation) =====
@@ -222,7 +239,7 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
         swirlY = noiseY * SWIRL_INTENSITY;
       }
 
-      // ===== FINAL POSITION (combine all forces) =====
+      // ===== FINAL POSITION (combine all effects) =====
       positionAttribute.array[i3] = particle.targetPos.x + particle.repelOffset.x + swirlX;
       positionAttribute.array[i3 + 1] = particle.targetPos.y + particle.repelOffset.y + swirlY;
       positionAttribute.array[i3 + 2] = particle.targetPos.z;

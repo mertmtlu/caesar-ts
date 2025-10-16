@@ -12,8 +12,8 @@ const AuthLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine if particle animation should be shown (only on login page)
-  const shouldShowParticles = location.pathname === '/auth/login';
+  // Determine if particle animation should be shown (login, register, forgot password pages)
+  const shouldShowParticles = ['/auth/login', '/auth/register', '/auth/forgot-password'].includes(location.pathname);
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
@@ -39,7 +39,7 @@ const AuthLayout: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen grid ${shouldShowParticles ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} bg-gray-50 dark:bg-gray-900`}>
+    <div className={`min-h-screen grid ${shouldShowParticles ? 'lg:grid-cols-[70%_30%]' : 'lg:grid-cols-1'} bg-gray-50 dark:bg-gray-900`}>
       {/* LEFT COLUMN - Animated Particle Logo (Desktop only, Login page only) */}
       {shouldShowParticles && (
         <div className="hidden lg:block bg-gradient-to-br from-blue-600 via-indigo-700 to-indigo-900 dark:from-blue-950 dark:via-indigo-950 dark:to-black relative overflow-hidden">

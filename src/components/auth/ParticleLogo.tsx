@@ -6,15 +6,26 @@ import ParticleText from './ParticleText';
 const ParticleLogo: React.FC = () => {
   // Store mouse position in normalized device coordinates (-1 to 1)
   const mouseRef = useRef({ x: 0, y: 0 });
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      // Convert to normalized device coordinates
+      // Get the canvas container's bounding box
+      const container = canvasContainerRef.current;
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+
+      // Calculate mouse position relative to the canvas container
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      // Convert to normalized device coordinates relative to the canvas
       // x: left edge = -1, right edge = 1
       // y: bottom edge = -1, top edge = 1 (inverted from screen coordinates)
       mouseRef.current = {
-        x: (event.clientX / window.innerWidth) * 2 - 1,
-        y: -(event.clientY / window.innerHeight) * 2 + 1,
+        x: (x / rect.width) * 2 - 1,
+        y: -(y / rect.height) * 2 + 1,
       };
     };
 
@@ -26,7 +37,7 @@ const ParticleLogo: React.FC = () => {
   }, []);
 
   return (
-    <div className="absolute inset-0 w-full h-full">
+    <div ref={canvasContainerRef} className="absolute inset-0 w-full h-full">
       {/* Three.js Canvas */}
       <Canvas
         camera={{ position: [0, 0, 15], fov: 60 }}
