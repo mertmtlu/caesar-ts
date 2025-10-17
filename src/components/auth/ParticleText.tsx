@@ -44,10 +44,11 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
   }, []);
 
   // Configuration constants
-  const PARTICLE_COUNT = 30000;
-  const REPEL_RADIUS = 1.3; // Radius of the repel zone
-  const REPEL_SMOOTHNESS = 0.02; // How quickly particles move to repel position (0-1, lower = smoother)
-  const RETURN_SPEED = 0.01; // How quickly particles return to target when not repelled
+  const PARTICLE_COUNT = 100000;
+  const EFFECT_RADIUS = 1; // Radius of the gravity effect zone
+  const REPULSION_STRENGTH = 20; // Maximum push strength (higher = stronger push away)
+  const REPULSION_SMOOTHNESS = 0.01; // How quickly particles move to repelled position (0-1, lower = smoother)
+  const RETURN_SPEED = 0.05; // How quickly particles return to target when not affected
   const SWIRL_INTENSITY = 0.15;
   const CONVERGENCE_SPEED = 0.1;
 
@@ -164,7 +165,7 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
     // Store the accurate mouse position in world space
     mouse3D.current.copy(intersectPoint);
 
-    const radiusSq = REPEL_RADIUS * REPEL_RADIUS;
+    const radiusSq = EFFECT_RADIUS * EFFECT_RADIUS;
     const particles = particlesRef.current;
 
     for (let i = 0; i < particles.length; i++) {
@@ -183,34 +184,42 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
         );
       }
 
-      // ===== V2.0: IMPROVED MOUSE REPULSION =====
+      // ===== GRAVITY-BASED REPULSION EFFECT =====
       // Calculate distance from particle's target position to mouse
       const dx = particle.targetPos.x - mouse3D.current.x;
       const dy = particle.targetPos.y - mouse3D.current.y;
       const distSq = dx * dx + dy * dy;
 
       if (distSq < radiusSq && distSq > 0.001) {
-        // Particle is within repel radius
+        // Particle is within effect radius
         const dist = Math.sqrt(distSq);
 
-        // Calculate where particle should be: exactly at the edge of repel radius
-        // Direction away from mouse
+        // Calculate falloff: closer particles are affected more (inverse square for realistic gravity)
+        // Using inverse distance falloff: strength decreases with distance
+        const falloff = 1 - (dist / EFFECT_RADIUS); // 1.0 at center, 0.0 at edge
+
+        // Direction away from mouse (repulsion)
         const dirX = dx / dist;
         const dirY = dy / dist;
 
-        // Target position for repelled particle (at the edge of the radius)
-        const repelTargetX = mouse3D.current.x + dirX * REPEL_RADIUS;
-        const repelTargetY = mouse3D.current.y + dirY * REPEL_RADIUS;
+        // Calculate push distance based on repulsion strength and falloff
+        // Closer particles are pushed more strongly, further particles are pushed less
+        const pushStrength = REPULSION_STRENGTH * falloff;
+        const pushDistance = pushStrength;
 
-        // Smoothly interpolate current offset toward the repel target
+        // Target position for repelled particle (pushed away from mouse)
+        const repelTargetX = particle.targetPos.x + dirX * pushDistance;
+        const repelTargetY = particle.targetPos.y + dirY * pushDistance;
+
+        // Calculate target offset from original position
         const targetOffsetX = repelTargetX - particle.targetPos.x;
         const targetOffsetY = repelTargetY - particle.targetPos.y;
 
         // Smooth transition to repelled position
-        particle.repelOffset.x += (targetOffsetX - particle.repelOffset.x) * REPEL_SMOOTHNESS;
-        particle.repelOffset.y += (targetOffsetY - particle.repelOffset.y) * REPEL_SMOOTHNESS;
+        particle.repelOffset.x += (targetOffsetX - particle.repelOffset.x) * REPULSION_SMOOTHNESS;
+        particle.repelOffset.y += (targetOffsetY - particle.repelOffset.y) * REPULSION_SMOOTHNESS;
       } else {
-        // Outside repel radius - smoothly return to original position
+        // Outside effect radius - smoothly return to original position
         particle.repelOffset.x *= (1 - RETURN_SPEED);
         particle.repelOffset.y *= (1 - RETURN_SPEED);
 
