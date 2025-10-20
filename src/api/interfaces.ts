@@ -1666,23 +1666,50 @@ export interface IRemoteAppsClient {
     remoteApps_GetPublicApps(pageNumber: number | undefined, pageSize: number | undefined, sorting_Field: string, sorting_Direction: enums.SortDirection | undefined): Promise<types.IRemoteAppListDtoPagedResponseApiResponse>;
 
     /**
-     * Assign user to remote app
+     * Get all permissions for a remote app
+     * @return OK
+     */
+    remoteApps_GetRemoteAppPermissions(id: string): Promise<types.IRemoteAppPermissionDtoListApiResponse>;
+
+    /**
+     * Add user permission to remote app
      * @param body (optional) 
      * @return OK
      */
-    remoteApps_AssignUser(id: string, body: types.IRemoteAppUserAssignmentDto | undefined): Promise<types.IBooleanApiResponse>;
+    remoteApps_AddUserPermission(id: string, body: types.IRemoteAppUserPermissionDto | undefined): Promise<types.IRemoteAppDtoApiResponse>;
 
     /**
-     * Unassign user from remote app
+     * Update user permission for remote app
+     * @param body (optional) 
      * @return OK
      */
-    remoteApps_UnassignUser(id: string, userId: string): Promise<types.IBooleanApiResponse>;
+    remoteApps_UpdateUserPermission(id: string, userId: string, body: types.IRemoteAppUserPermissionDto | undefined): Promise<types.IRemoteAppDtoApiResponse>;
 
     /**
-     * Check if user is assigned to remote app
+     * Remove user permission from remote app
      * @return OK
      */
-    remoteApps_IsUserAssigned(id: string, userId: string): Promise<types.IBooleanApiResponse>;
+    remoteApps_RemoveUserPermission(id: string, userId: string): Promise<types.IBooleanApiResponse>;
+
+    /**
+     * Add group permission to remote app
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_AddGroupPermission(id: string, body: types.IRemoteAppGroupPermissionDto | undefined): Promise<types.IRemoteAppDtoApiResponse>;
+
+    /**
+     * Update group permission for remote app
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_UpdateGroupPermission(id: string, groupId: string, body: types.IRemoteAppGroupPermissionDto | undefined): Promise<types.IRemoteAppDtoApiResponse>;
+
+    /**
+     * Remove group permission from remote app
+     * @return OK
+     */
+    remoteApps_RemoveGroupPermission(id: string, groupId: string): Promise<types.IBooleanApiResponse>;
 
     /**
      * Update remote app status (active, inactive, maintenance)

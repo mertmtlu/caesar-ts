@@ -109,7 +109,6 @@ const CreateRemoteAppPage: React.FC = () => {
         description: formData.description.trim() || undefined,
         url: formData.url.trim(),
         isPublic: formData.isPublic,
-        assignedUserIds: [], // For now, empty array
         ssoUrl: formData.ssoUrl.trim() || undefined,
         defaultUsername: formData.defaultUsername.trim() || undefined,
         defaultPassword: formData.defaultPassword.trim() || undefined,

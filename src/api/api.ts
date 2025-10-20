@@ -390,5 +390,5 @@ function getDynamicApiBaseUrl(): string {
 }
 
 // Export default instance that will be configured later
-// export const api = createApiClient(getDynamicApiBaseUrl());
-export const api = createApiClient("http://144.122.103.206:5090");
+export const api = createApiClient(getDynamicApiBaseUrl());
+// export const api = createApiClient("http://144.122.103.206:5090");

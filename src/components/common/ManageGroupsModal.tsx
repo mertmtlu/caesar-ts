@@ -7,7 +7,7 @@ import GroupSelector from '@/components/common/GroupSelector';
 import GroupsList from '@/components/common/GroupsList';
 
 export interface EntityConfig {
-  type: 'project' | 'workflow' | 'remoteapp';
+  type: 'project' | 'workflow';
   entityId: string;
   entityName: string;
   icon: React.ReactNode;

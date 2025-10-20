@@ -1264,6 +1264,7 @@ export interface IExecutionParametersDto {
     resourceLimits?: IExecutionResourceLimitsDto;
     saveResults?: boolean;
     executionName?: string | undefined;
+    jobProfile?: string | undefined;
 }
 
 export interface IExecutionPerformanceDto {
@@ -2345,6 +2346,7 @@ export interface IProgramExecutionRequestDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: IExecutionResourceLimitsDto;
     saveResults?: boolean;
+    jobProfile?: string | undefined;
 }
 
 export interface IProgramFileDto {
@@ -2750,19 +2752,11 @@ export interface IRegionUpdateDto {
     headquarters?: string | undefined;
 }
 
-export interface IRemoteAppAssignedUserDto {
-    userId: string | undefined;
-    username?: string | undefined;
-    fullName?: string | undefined;
-    email?: string | undefined;
-}
-
 export interface IRemoteAppCreateDto {
     name: string;
     description?: string | undefined;
     url: string;
     isPublic?: boolean;
-    assignedUserIds?: string[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -2779,7 +2773,7 @@ export interface IRemoteAppDetailDto {
     status?: string | undefined;
     createdAt?: Date;
     modifiedAt?: Date | undefined;
-    assignedUsers?: IRemoteAppAssignedUserDto[] | undefined;
+    permissions?: IRemoteAppPermissionDto[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -2803,7 +2797,6 @@ export interface IRemoteAppDto {
     status?: string | undefined;
     createdAt?: Date;
     modifiedAt?: Date | undefined;
-    assignedUserIds?: string[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -2815,6 +2808,11 @@ export interface IRemoteAppDtoApiResponse {
     data?: IRemoteAppDto;
     errors?: string[] | undefined;
     timestamp?: Date;
+}
+
+export interface IRemoteAppGroupPermissionDto {
+    groupId: string;
+    accessLevel: string;
 }
 
 export interface IRemoteAppLaunchDto {
@@ -2874,19 +2872,34 @@ export interface IRemoteAppListDtoPagedResponseApiResponse {
     timestamp?: Date;
 }
 
+export interface IRemoteAppPermissionDto {
+    type?: string | undefined;
+    id?: string | undefined;
+    name?: string | undefined;
+    accessLevel?: string | undefined;
+}
+
+export interface IRemoteAppPermissionDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IRemoteAppPermissionDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
 export interface IRemoteAppUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     url?: string | undefined;
     isPublic?: boolean | undefined;
-    assignedUserIds?: string[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
 }
 
-export interface IRemoteAppUserAssignmentDto {
+export interface IRemoteAppUserPermissionDto {
     userId: string;
+    accessLevel: string;
 }
 
 export interface IRequestAssignmentDto {
@@ -4410,6 +4423,7 @@ export interface IVersionExecutionRequestDto {
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: IExecutionResourceLimitsDto;
     saveResults?: boolean;
+    jobProfile?: string | undefined;
 }
 
 export interface IVersionFileChangeDto {

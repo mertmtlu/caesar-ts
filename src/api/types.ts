@@ -7607,6 +7607,7 @@ export class ExecutionParametersDto implements interfaces.IExecutionParametersDt
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
     executionName?: string | undefined;
+    jobProfile?: string | undefined;
 
     constructor(data?: interfaces.IExecutionParametersDto) {
         if (data) {
@@ -7632,6 +7633,7 @@ export class ExecutionParametersDto implements interfaces.IExecutionParametersDt
             this.resourceLimits = _data["resourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
             this.saveResults = _data["saveResults"];
             this.executionName = _data["executionName"];
+            this.jobProfile = _data["jobProfile"];
         }
     }
 
@@ -7657,6 +7659,7 @@ export class ExecutionParametersDto implements interfaces.IExecutionParametersDt
         data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
         data["saveResults"] = this.saveResults;
         data["executionName"] = this.executionName;
+        data["jobProfile"] = this.jobProfile;
         return data;
     }
 }
@@ -14251,6 +14254,7 @@ export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionR
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
+    jobProfile?: string | undefined;
 
     constructor(data?: interfaces.IProgramExecutionRequestDto) {
         if (data) {
@@ -14273,6 +14277,7 @@ export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionR
             }
             this.resourceLimits = _data["resourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
             this.saveResults = _data["saveResults"];
+            this.jobProfile = _data["jobProfile"];
         }
     }
 
@@ -14295,6 +14300,7 @@ export class ProgramExecutionRequestDto implements interfaces.IProgramExecutionR
         }
         data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
         data["saveResults"] = this.saveResults;
+        data["jobProfile"] = this.jobProfile;
         return data;
     }
 }
@@ -16778,53 +16784,11 @@ export class RegionUpdateDto implements interfaces.IRegionUpdateDto {
     }
 }
 
-export class RemoteAppAssignedUserDto implements interfaces.IRemoteAppAssignedUserDto {
-    userId!: string | undefined;
-    username?: string | undefined;
-    fullName?: string | undefined;
-    email?: string | undefined;
-
-    constructor(data?: interfaces.IRemoteAppAssignedUserDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userId = _data["userId"];
-            this.username = _data["username"];
-            this.fullName = _data["fullName"];
-            this.email = _data["email"];
-        }
-    }
-
-    static fromJS(data: any): RemoteAppAssignedUserDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new RemoteAppAssignedUserDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["username"] = this.username;
-        data["fullName"] = this.fullName;
-        data["email"] = this.email;
-        return data;
-    }
-}
-
 export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
     name!: string;
     description?: string | undefined;
     url!: string;
     isPublic?: boolean;
-    assignedUserIds?: string[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -16844,11 +16808,6 @@ export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
             this.description = _data["description"];
             this.url = _data["url"];
             this.isPublic = _data["isPublic"];
-            if (Array.isArray(_data["assignedUserIds"])) {
-                this.assignedUserIds = [] as any;
-                for (let item of _data["assignedUserIds"])
-                    this.assignedUserIds!.push(item);
-            }
             this.defaultUsername = _data["defaultUsername"];
             this.defaultPassword = _data["defaultPassword"];
             this.ssoUrl = _data["ssoUrl"];
@@ -16868,11 +16827,6 @@ export class RemoteAppCreateDto implements interfaces.IRemoteAppCreateDto {
         data["description"] = this.description;
         data["url"] = this.url;
         data["isPublic"] = this.isPublic;
-        if (Array.isArray(this.assignedUserIds)) {
-            data["assignedUserIds"] = [];
-            for (let item of this.assignedUserIds)
-                data["assignedUserIds"].push(item);
-        }
         data["defaultUsername"] = this.defaultUsername;
         data["defaultPassword"] = this.defaultPassword;
         data["ssoUrl"] = this.ssoUrl;
@@ -16891,7 +16845,7 @@ export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
     status?: string | undefined;
     createdAt?: Date;
     modifiedAt?: Date | undefined;
-    assignedUsers?: RemoteAppAssignedUserDto[] | undefined;
+    permissions?: RemoteAppPermissionDto[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -16917,10 +16871,10 @@ export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
             this.status = _data["status"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
-            if (Array.isArray(_data["assignedUsers"])) {
-                this.assignedUsers = [] as any;
-                for (let item of _data["assignedUsers"])
-                    this.assignedUsers!.push(RemoteAppAssignedUserDto.fromJS(item));
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(RemoteAppPermissionDto.fromJS(item));
             }
             this.defaultUsername = _data["defaultUsername"];
             this.defaultPassword = _data["defaultPassword"];
@@ -16947,10 +16901,10 @@ export class RemoteAppDetailDto implements interfaces.IRemoteAppDetailDto {
         data["status"] = this.status;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
-        if (Array.isArray(this.assignedUsers)) {
-            data["assignedUsers"] = [];
-            for (let item of this.assignedUsers)
-                data["assignedUsers"].push(item ? item.toJSON() : <any>undefined);
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item ? item.toJSON() : <any>undefined);
         }
         data["defaultUsername"] = this.defaultUsername;
         data["defaultPassword"] = this.defaultPassword;
@@ -17021,7 +16975,6 @@ export class RemoteAppDto implements interfaces.IRemoteAppDto {
     status?: string | undefined;
     createdAt?: Date;
     modifiedAt?: Date | undefined;
-    assignedUserIds?: string[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -17046,11 +16999,6 @@ export class RemoteAppDto implements interfaces.IRemoteAppDto {
             this.status = _data["status"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.modifiedAt = _data["modifiedAt"] ? new Date(_data["modifiedAt"].toString()) : <any>undefined;
-            if (Array.isArray(_data["assignedUserIds"])) {
-                this.assignedUserIds = [] as any;
-                for (let item of _data["assignedUserIds"])
-                    this.assignedUserIds!.push(item);
-            }
             this.defaultUsername = _data["defaultUsername"];
             this.defaultPassword = _data["defaultPassword"];
             this.ssoUrl = _data["ssoUrl"];
@@ -17075,11 +17023,6 @@ export class RemoteAppDto implements interfaces.IRemoteAppDto {
         data["status"] = this.status;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["modifiedAt"] = this.modifiedAt ? this.modifiedAt.toISOString() : <any>undefined;
-        if (Array.isArray(this.assignedUserIds)) {
-            data["assignedUserIds"] = [];
-            for (let item of this.assignedUserIds)
-                data["assignedUserIds"].push(item);
-        }
         data["defaultUsername"] = this.defaultUsername;
         data["defaultPassword"] = this.defaultPassword;
         data["ssoUrl"] = this.ssoUrl;
@@ -17135,6 +17078,41 @@ export class RemoteAppDtoApiResponse implements interfaces.IRemoteAppDtoApiRespo
                 data["errors"].push(item);
         }
         data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class RemoteAppGroupPermissionDto implements interfaces.IRemoteAppGroupPermissionDto {
+    groupId!: string;
+    accessLevel!: string;
+
+    constructor(data?: interfaces.IRemoteAppGroupPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.groupId = _data["groupId"];
+            this.accessLevel = _data["accessLevel"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppGroupPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppGroupPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["accessLevel"] = this.accessLevel;
         return data;
     }
 }
@@ -17482,12 +17460,112 @@ export class RemoteAppListDtoPagedResponseApiResponse implements interfaces.IRem
     }
 }
 
+export class RemoteAppPermissionDto implements interfaces.IRemoteAppPermissionDto {
+    type?: string | undefined;
+    id?: string | undefined;
+    name?: string | undefined;
+    accessLevel?: string | undefined;
+
+    constructor(data?: interfaces.IRemoteAppPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.accessLevel = _data["accessLevel"];
+        }
+    }
+
+    static fromJS(data: any): RemoteAppPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["accessLevel"] = this.accessLevel;
+        return data;
+    }
+}
+
+export class RemoteAppPermissionDtoListApiResponse implements interfaces.IRemoteAppPermissionDtoListApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: RemoteAppPermissionDto[] | undefined;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IRemoteAppPermissionDtoListApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(RemoteAppPermissionDto.fromJS(item));
+            }
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RemoteAppPermissionDtoListApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoteAppPermissionDtoListApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
 export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
     name?: string | undefined;
     description?: string | undefined;
     url?: string | undefined;
     isPublic?: boolean | undefined;
-    assignedUserIds?: string[] | undefined;
     defaultUsername?: string | undefined;
     defaultPassword?: string | undefined;
     ssoUrl?: string | undefined;
@@ -17507,11 +17585,6 @@ export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
             this.description = _data["description"];
             this.url = _data["url"];
             this.isPublic = _data["isPublic"];
-            if (Array.isArray(_data["assignedUserIds"])) {
-                this.assignedUserIds = [] as any;
-                for (let item of _data["assignedUserIds"])
-                    this.assignedUserIds!.push(item);
-            }
             this.defaultUsername = _data["defaultUsername"];
             this.defaultPassword = _data["defaultPassword"];
             this.ssoUrl = _data["ssoUrl"];
@@ -17531,11 +17604,6 @@ export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
         data["description"] = this.description;
         data["url"] = this.url;
         data["isPublic"] = this.isPublic;
-        if (Array.isArray(this.assignedUserIds)) {
-            data["assignedUserIds"] = [];
-            for (let item of this.assignedUserIds)
-                data["assignedUserIds"].push(item);
-        }
         data["defaultUsername"] = this.defaultUsername;
         data["defaultPassword"] = this.defaultPassword;
         data["ssoUrl"] = this.ssoUrl;
@@ -17543,10 +17611,11 @@ export class RemoteAppUpdateDto implements interfaces.IRemoteAppUpdateDto {
     }
 }
 
-export class RemoteAppUserAssignmentDto implements interfaces.IRemoteAppUserAssignmentDto {
+export class RemoteAppUserPermissionDto implements interfaces.IRemoteAppUserPermissionDto {
     userId!: string;
+    accessLevel!: string;
 
-    constructor(data?: interfaces.IRemoteAppUserAssignmentDto) {
+    constructor(data?: interfaces.IRemoteAppUserPermissionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17558,12 +17627,13 @@ export class RemoteAppUserAssignmentDto implements interfaces.IRemoteAppUserAssi
     init(_data?: any) {
         if (_data) {
             this.userId = _data["userId"];
+            this.accessLevel = _data["accessLevel"];
         }
     }
 
-    static fromJS(data: any): RemoteAppUserAssignmentDto {
+    static fromJS(data: any): RemoteAppUserPermissionDto {
         data = typeof data === 'object' ? data : {};
-        let result = new RemoteAppUserAssignmentDto();
+        let result = new RemoteAppUserPermissionDto();
         result.init(data);
         return result;
     }
@@ -17571,6 +17641,7 @@ export class RemoteAppUserAssignmentDto implements interfaces.IRemoteAppUserAssi
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
+        data["accessLevel"] = this.accessLevel;
         return data;
     }
 }
@@ -26854,6 +26925,7 @@ export class VersionExecutionRequestDto implements interfaces.IVersionExecutionR
     environment?: { [key: string]: string; } | undefined;
     resourceLimits?: ExecutionResourceLimitsDto;
     saveResults?: boolean;
+    jobProfile?: string | undefined;
 
     constructor(data?: interfaces.IVersionExecutionRequestDto) {
         if (data) {
@@ -26876,6 +26948,7 @@ export class VersionExecutionRequestDto implements interfaces.IVersionExecutionR
             }
             this.resourceLimits = _data["resourceLimits"] ? ExecutionResourceLimitsDto.fromJS(_data["resourceLimits"]) : <any>undefined;
             this.saveResults = _data["saveResults"];
+            this.jobProfile = _data["jobProfile"];
         }
     }
 
@@ -26898,6 +26971,7 @@ export class VersionExecutionRequestDto implements interfaces.IVersionExecutionR
         }
         data["resourceLimits"] = this.resourceLimits ? this.resourceLimits.toJSON() : <any>undefined;
         data["saveResults"] = this.saveResults;
+        data["jobProfile"] = this.jobProfile;
         return data;
     }
 }

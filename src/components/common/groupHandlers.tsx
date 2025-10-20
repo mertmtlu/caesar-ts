@@ -1,6 +1,6 @@
 import React from 'react';
 import { api } from '@/api/api';
-import { GroupListDto, ProgramGroupPermissionDto, WorkflowPermissionUpdateDto, RemoteAppUserAssignmentDto } from '@/api';
+import { GroupListDto, ProgramGroupPermissionDto, WorkflowPermissionUpdateDto } from '@/api';
 import { GroupsHandler, EntityConfig } from './ManageGroupsModal';
 
 // Project/Program Groups Handler
@@ -200,146 +200,9 @@ export const workflowGroupsHandler: GroupsHandler = {
   }
 };
 
-// Remote App Groups Handler (User-based assignments)
-export const remoteAppGroupsHandler: GroupsHandler = {
-  loadGroups: async (_remoteAppId: string): Promise<GroupListDto[]> => {
-    // Remote apps API doesn't support group permissions directly
-    // It only supports individual user assignments
-    // Since there's no direct group support, we return empty array
-    return [];
-  },
-
-  addGroups: async (remoteAppId: string, groupIds: string[], accessLevel: string = 'Read'): Promise<void> => {
-    console.log('Remote app addGroups called with:', { remoteAppId, groupIds });
-    
-    try {
-      const usersToAssign = new Set<string>();
-      const assignmentErrors: string[] = [];
-      const emptyGroups: string[] = [];
-      
-      // Get members from all selected groups
-      for (const groupId of groupIds) {
-        try {
-          console.log(`Getting members for group: ${groupId}`);
-          const members = await api.groupsClient.groups_GetMembers(groupId);
-          console.log(`Members for group ${groupId}:`, members);
-          
-          if (members && members.length > 0) {
-            members.forEach(member => {
-              if (member.userId) {
-                usersToAssign.add(member.userId);
-                console.log(`Added user ${member.userId} to assignment list`);
-              }
-            });
-          } else {
-            // Get group name for better feedback
-            try {
-              const groupResponse = await api.groupsClient.groups_GetById(groupId);
-              const groupName = groupResponse?.name || `Group ${groupId}`;
-              emptyGroups.push(groupName);
-              console.log(`Group ${groupId} (${groupName}) has no members`);
-            } catch (err) {
-              emptyGroups.push(`Group ${groupId}`);
-              console.warn(`Failed to get group details for ${groupId}:`, err);
-            }
-          }
-        } catch (error: any) {
-          console.warn(`Failed to get members for group ${groupId}:`, error);
-          assignmentErrors.push(`Failed to load members for group ${groupId}`);
-        }
-      }
-    
-      // Check if no users to assign
-      console.log(`Users to assign: ${usersToAssign.size}, Empty groups: ${emptyGroups.length}`);
-      
-      if (usersToAssign.size === 0) {
-        if (emptyGroups.length > 0) {
-          throw new Error(`Selected groups have no members: ${emptyGroups.join(', ')}. Please add members to these groups first.`);
-        } else {
-          throw new Error('No users found to assign to the remote app.');
-        }
-      }
-      
-      // Assign each user to the remote app
-      console.log(`Starting assignment of ${usersToAssign.size} users to remote app ${remoteAppId}`);
-      
-      for (const userId of usersToAssign) {
-        try {
-          console.log(`Checking if user ${userId} is already assigned`);
-          // Check if user is already assigned to avoid duplicates
-          const isAssigned = await api.remoteAppsClient.remoteApps_IsUserAssigned(remoteAppId, userId);
-          console.log(`User ${userId} assignment check result:`, isAssigned);
-          
-          if (!isAssigned.success || !isAssigned.data) {
-            console.log(`Assigning user ${userId} to remote app ${remoteAppId}`);
-            const assignmentDto = new RemoteAppUserAssignmentDto({
-              userId: userId
-            });
-            
-            const assignResult = await api.remoteAppsClient.remoteApps_AssignUser(remoteAppId, assignmentDto);
-            console.log(`Assignment result for user ${userId}:`, assignResult);
-          } else {
-            console.log(`User ${userId} is already assigned, skipping`);
-          }
-        } catch (error: any) {
-          console.error(`Failed to assign user ${userId} to remote app:`, error);
-          assignmentErrors.push(`Failed to assign user ${userId}: ${error?.message || 'Unknown error'}`);
-        }
-      }
-      
-      if (assignmentErrors.length > 0) {
-        console.error('Assignment errors:', assignmentErrors);
-        throw new Error(`Some assignments failed: ${assignmentErrors.join(', ')}`);
-      } else if (usersToAssign.size > 0) {
-        console.log(`Successfully assigned ${usersToAssign.size} users from selected groups to the remote app.`);
-      }
-    } catch (error: any) {
-      console.error('Error in remote app addGroups:', error);
-      throw error; // Re-throw to let the UI handle it
-    }
-  },
-
-  removeGroup: async (remoteAppId: string, groupId: string): Promise<void> => {
-    try {
-      // Get group members
-      const membersResponse = await api.groupsClient.groups_GetMembers(groupId);
-      
-      if (!membersResponse || membersResponse.length === 0) {
-        console.warn(`Group ${groupId} has no members to remove`);
-        return;
-      }
-      
-      const memberUserIds = membersResponse.map(member => member.userId).filter(Boolean);
-      const removalErrors: string[] = [];
-      
-      // Remove each group member from the remote app
-      for (const userId of memberUserIds) {
-        if (!userId) continue;
-        try {
-          await api.remoteAppsClient.remoteApps_UnassignUser(remoteAppId, userId);
-        } catch (error: any) {
-          console.warn(`Failed to remove user ${userId} from remote app:`, error);
-          removalErrors.push(`Failed to remove user ${userId}`);
-        }
-      }
-      
-      if (removalErrors.length > 0) {
-        throw new Error(`Some user removals failed: ${removalErrors.join(', ')}`);
-      } else {
-        console.log(`Successfully removed ${memberUserIds.length} group members from remote app`);
-      }
-    } catch (error: any) {
-      if (error.message?.includes('Some user removals failed')) {
-        throw error;
-      }
-      throw new Error(`Failed to remove group members from remote app: ${error?.message || 'Unknown error'}`);
-    }
-  }
-};
-
 // Entity Configuration Factory
 export const createEntityConfig = (
-  type: 'project' | 'workflow' | 'remoteapp',
+  type: 'project' | 'workflow',
   entityId: string,
   entityName: string
 ): EntityConfig => {
@@ -386,29 +249,6 @@ export const createEntityConfig = (
           { label: 'Role-Based', description: 'Groups are mapped to workflow roles for access control' },
           { label: 'Execute', description: 'Authorized users can run workflow executions' },
           { label: 'Monitor', description: 'Users can view execution history and results' }
-        ]
-      }
-    },
-
-    remoteapp: {
-      type: 'remoteapp' as const,
-      entityId,
-      entityName,
-      icon: (
-        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
-      gradientColors: 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20',
-      badgeColor: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-      badgeText: 'Remote App',
-      description: 'Configure which groups can access this remote application',
-      infoPanel: {
-        title: 'Remote App Access Limitations',
-        items: [
-          { label: 'User-Based', description: 'Remote apps only support individual user assignments, not direct group permissions' },
-          { label: 'Group Assignment', description: 'Adding groups assigns all group members individually to the app' },
-          { label: 'Removal', description: 'Group removal is not supported - users must be removed individually' }
         ]
       }
     }

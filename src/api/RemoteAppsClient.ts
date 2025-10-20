@@ -535,12 +535,53 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
     }
 
     /**
-     * Assign user to remote app
+     * Get all permissions for a remote app
+     * @return OK
+     */
+    remoteApps_GetRemoteAppPermissions(id: string): Promise<types.RemoteAppPermissionDtoListApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_GetRemoteAppPermissions(_response);
+        });
+    }
+
+    protected processRemoteApps_GetRemoteAppPermissions(response: Response): Promise<types.RemoteAppPermissionDtoListApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.RemoteAppPermissionDtoListApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.RemoteAppPermissionDtoListApiResponse>(null as any);
+    }
+
+    /**
+     * Add user permission to remote app
      * @param body (optional) 
      * @return OK
      */
-    remoteApps_AssignUser(id: string, body: types.RemoteAppUserAssignmentDto | undefined): Promise<types.BooleanApiResponse> {
-        let url_ = this.baseUrl + "/api/RemoteApps/{id}/users";
+    remoteApps_AddUserPermission(id: string, body: types.RemoteAppUserPermissionDto | undefined): Promise<types.RemoteAppDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions/users";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -558,18 +599,18 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRemoteApps_AssignUser(_response);
+            return this.processRemoteApps_AddUserPermission(_response);
         });
     }
 
-    protected processRemoteApps_AssignUser(response: Response): Promise<types.BooleanApiResponse> {
+    protected processRemoteApps_AddUserPermission(response: Response): Promise<types.RemoteAppDtoApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = types.BooleanApiResponse.fromJS(resultData200);
+            result200 = types.RemoteAppDtoApiResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -577,15 +618,64 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
             return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
             });
         }
-        return Promise.resolve<types.BooleanApiResponse>(null as any);
+        return Promise.resolve<types.RemoteAppDtoApiResponse>(null as any);
     }
 
     /**
-     * Unassign user from remote app
+     * Update user permission for remote app
+     * @param body (optional) 
      * @return OK
      */
-    remoteApps_UnassignUser(id: string, userId: string): Promise<types.BooleanApiResponse> {
-        let url_ = this.baseUrl + "/api/RemoteApps/{id}/users/{userId}";
+    remoteApps_UpdateUserPermission(id: string, userId: string, body: types.RemoteAppUserPermissionDto | undefined): Promise<types.RemoteAppDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions/users/{userId}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_UpdateUserPermission(_response);
+        });
+    }
+
+    protected processRemoteApps_UpdateUserPermission(response: Response): Promise<types.RemoteAppDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.RemoteAppDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.RemoteAppDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Remove user permission from remote app
+     * @return OK
+     */
+    remoteApps_RemoveUserPermission(id: string, userId: string): Promise<types.BooleanApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions/users/{userId}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -602,11 +692,11 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRemoteApps_UnassignUser(_response);
+            return this.processRemoteApps_RemoveUserPermission(_response);
         });
     }
 
-    protected processRemoteApps_UnassignUser(response: Response): Promise<types.BooleanApiResponse> {
+    protected processRemoteApps_RemoveUserPermission(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -625,32 +715,127 @@ export class RemoteAppsClient implements interfaces.IRemoteAppsClient {
     }
 
     /**
-     * Check if user is assigned to remote app
+     * Add group permission to remote app
+     * @param body (optional) 
      * @return OK
      */
-    remoteApps_IsUserAssigned(id: string, userId: string): Promise<types.BooleanApiResponse> {
-        let url_ = this.baseUrl + "/api/RemoteApps/{id}/users/{userId}/assigned";
+    remoteApps_AddGroupPermission(id: string, body: types.RemoteAppGroupPermissionDto | undefined): Promise<types.RemoteAppDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions/groups";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (userId === undefined || userId === null)
-            throw new Error("The parameter 'userId' must be defined.");
-        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_AddGroupPermission(_response);
+        });
+    }
+
+    protected processRemoteApps_AddGroupPermission(response: Response): Promise<types.RemoteAppDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.RemoteAppDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.RemoteAppDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Update group permission for remote app
+     * @param body (optional) 
+     * @return OK
+     */
+    remoteApps_UpdateGroupPermission(id: string, groupId: string, body: types.RemoteAppGroupPermissionDto | undefined): Promise<types.RemoteAppDtoApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions/groups/{groupId}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (groupId === undefined || groupId === null)
+            throw new Error("The parameter 'groupId' must be defined.");
+        url_ = url_.replace("{groupId}", encodeURIComponent("" + groupId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoteApps_UpdateGroupPermission(_response);
+        });
+    }
+
+    protected processRemoteApps_UpdateGroupPermission(response: Response): Promise<types.RemoteAppDtoApiResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = types.RemoteAppDtoApiResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException(JSON.parse(_responseText).message, status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<types.RemoteAppDtoApiResponse>(null as any);
+    }
+
+    /**
+     * Remove group permission from remote app
+     * @return OK
+     */
+    remoteApps_RemoveGroupPermission(id: string, groupId: string): Promise<types.BooleanApiResponse> {
+        let url_ = this.baseUrl + "/api/RemoteApps/{id}/permissions/groups/{groupId}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (groupId === undefined || groupId === null)
+            throw new Error("The parameter 'groupId' must be defined.");
+        url_ = url_.replace("{groupId}", encodeURIComponent("" + groupId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "GET",
+            method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRemoteApps_IsUserAssigned(_response);
+            return this.processRemoteApps_RemoveGroupPermission(_response);
         });
     }
 
-    protected processRemoteApps_IsUserAssigned(response: Response): Promise<types.BooleanApiResponse> {
+    protected processRemoteApps_RemoveGroupPermission(response: Response): Promise<types.BooleanApiResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {

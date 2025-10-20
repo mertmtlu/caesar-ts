@@ -162,7 +162,6 @@ const EditRemoteAppPage: React.FC = () => {
         description: formData.description.trim() || undefined,
         url: formData.url.trim(),
         isPublic: formData.isPublic,
-        assignedUserIds: [], // For now, we'll handle user assignments elsewhere
         ssoUrl: formData.ssoUrl.trim() || undefined,
         defaultUsername: formData.defaultUsername.trim() || undefined,
         defaultPassword: formData.defaultPassword.trim() || undefined,
