@@ -533,7 +533,7 @@ const ExecutionsPage: React.FC = () => {
           currentVersion: program.currentVersion,
           newestComponent: program.newestComponentType ? {
             id: '',
-            name: 'Latest Component',
+            name: 'UI',
             type: program.newestComponentType,
             status: 'active',
             programId: program.id || '',
@@ -1253,7 +1253,7 @@ const ExecutionsPage: React.FC = () => {
         <>
           {/* Desktop Icons Grid */}
           <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-6 min-h-96">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 items-start">
               {filteredPrograms.map((program) => (
                 <div
                   key={program.id}
@@ -1322,16 +1322,16 @@ const ExecutionsPage: React.FC = () => {
                     )}
                   </div>
                   
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={program.name}>
+                  <div className="text-center w-32">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white break-words leading-tight">
                       {program.name}
                     </p>
                     {program.hasComponents && program.newestComponent ? (
-                      <p className="text-xs text-blue-600 dark:text-blue-400 truncate max-w-20" title={program.newestComponent.name}>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 break-words leading-tight mt-0.5">
                         {program.newestComponent.name}
                       </p>
                     ) : (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={program.language}>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 break-words leading-tight mt-0.5">
                         {program.language}
                       </p>
                     )}
@@ -1375,7 +1375,7 @@ const ExecutionsPage: React.FC = () => {
         <>
           {/* Workflow Icons Grid */}
           <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-6 min-h-96">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 items-start">
               {filteredWorkflows.map((workflow) => (
                 <div
                   key={workflow.id}
@@ -1414,11 +1414,11 @@ const ExecutionsPage: React.FC = () => {
                     )}
                   </div>
                   
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={workflow.name}>
+                  <div className="text-center w-32">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white break-words leading-tight">
                       {workflow.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={`${workflow.nodeCount} nodes`}>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 break-words leading-tight mt-0.5">
                       {workflow.nodeCount} nodes
                     </p>
                   </div>
@@ -1461,7 +1461,7 @@ const ExecutionsPage: React.FC = () => {
         <>
           {/* Remote Apps Icons Grid */}
           <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 p-6 min-h-96">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 items-start">
               {filteredRemoteApps.map((app) => (
                 <div
                   key={app.id}
@@ -1484,11 +1484,11 @@ const ExecutionsPage: React.FC = () => {
                     {/* Status indicator (already included in the icon) */}
                   </div>
                   
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-20" title={app.name}>
+                  <div className="text-center w-32">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white break-words leading-tight">
                       {app.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title={app.isPublic ? 'Public' : 'Private'}>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 break-words leading-tight mt-0.5">
                       {app.isPublic ? 'Public' : 'Private'}
                     </p>
                   </div>

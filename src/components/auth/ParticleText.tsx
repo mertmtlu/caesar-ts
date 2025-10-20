@@ -44,7 +44,7 @@ const ParticleText: React.FC<Props> = ({ text, mousePosition }) => {
   }, []);
 
   // Configuration constants
-  const PARTICLE_COUNT = 100000;
+  const PARTICLE_COUNT = 40000;
   const EFFECT_RADIUS = 1; // Radius of the gravity effect zone
   const REPULSION_STRENGTH = 20; // Maximum push strength (higher = stronger push away)
   const REPULSION_SMOOTHNESS = 0.01; // How quickly particles move to repelled position (0-1, lower = smoother)
