@@ -23,15 +23,15 @@ class AuthenticatedHttpClient {
     fetch = async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
         // Get current token
         const token = this.getToken();
-        
+
         // Prepare headers
         const headers = new Headers(init?.headers);
-        
+
         // Add Authorization header if token exists
         if (token) {
             headers.set('Authorization', `Bearer ${token}`);
         }
-        
+
         // Add default headers
         if (!headers.has('Content-Type') && init?.method !== 'GET') {
             headers.set('Content-Type', 'application/json');
@@ -45,10 +45,22 @@ class AuthenticatedHttpClient {
 
         // Handle 401 Unauthorized - token might be expired
         if (response.status === 401 && token) {
+            // Convert RequestInfo to string for URL checking
+            const requestUrl = typeof url === 'string' ? url : url.url;
+
+            // CRITICAL: If the refresh endpoint itself returned 401, this is a fatal error
+            // DO NOT attempt to refresh again - this would cause an infinite loop
+            if (requestUrl.includes('/api/Auth/refresh')) {
+                console.error('Refresh token is invalid or expired. Logging out...');
+                this.onTokenExpired();
+                return response;
+            }
+
+            // For other endpoints, attempt token refresh once
             try {
                 // Try to refresh the token
                 const newToken = await this.refreshToken();
-                
+
                 if (newToken) {
                     // Retry the request with new token
                     headers.set('Authorization', `Bearer ${newToken}`);
