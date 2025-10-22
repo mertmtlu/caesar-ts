@@ -4,6 +4,299 @@ import * as interfaces from './typeInterfaces';
 import * as enums from './enums';
 import { formatDate } from './utils';
 
+export class AIConversationRequestDto implements interfaces.IAIConversationRequestDto {
+    userPrompt!: string;
+    programId!: string;
+    versionId?: string | undefined;
+    conversationHistory?: ConversationMessage[] | undefined;
+    currentlyOpenFiles?: OpenFileContext[] | undefined;
+    cursorContext?: string | undefined;
+    preferences?: AIPreferences;
+
+    constructor(data?: interfaces.IAIConversationRequestDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userPrompt = _data["userPrompt"];
+            this.programId = _data["programId"];
+            this.versionId = _data["versionId"];
+            if (Array.isArray(_data["conversationHistory"])) {
+                this.conversationHistory = [] as any;
+                for (let item of _data["conversationHistory"])
+                    this.conversationHistory!.push(ConversationMessage.fromJS(item));
+            }
+            if (Array.isArray(_data["currentlyOpenFiles"])) {
+                this.currentlyOpenFiles = [] as any;
+                for (let item of _data["currentlyOpenFiles"])
+                    this.currentlyOpenFiles!.push(OpenFileContext.fromJS(item));
+            }
+            this.cursorContext = _data["cursorContext"];
+            this.preferences = _data["preferences"] ? AIPreferences.fromJS(_data["preferences"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AIConversationRequestDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AIConversationRequestDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userPrompt"] = this.userPrompt;
+        data["programId"] = this.programId;
+        data["versionId"] = this.versionId;
+        if (Array.isArray(this.conversationHistory)) {
+            data["conversationHistory"] = [];
+            for (let item of this.conversationHistory)
+                data["conversationHistory"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.currentlyOpenFiles)) {
+            data["currentlyOpenFiles"] = [];
+            for (let item of this.currentlyOpenFiles)
+                data["currentlyOpenFiles"].push(item ? item.toJSON() : <any>undefined);
+        }
+        data["cursorContext"] = this.cursorContext;
+        data["preferences"] = this.preferences ? this.preferences.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class AIConversationResponseDto implements interfaces.IAIConversationResponseDto {
+    displayText!: string | undefined;
+    fileOperations?: FileOperationDto[] | undefined;
+    conversationHistory?: ConversationMessage[] | undefined;
+    suggestedFollowUps?: string[] | undefined;
+    warnings?: string[] | undefined;
+    metadata?: AIResponseMetadata;
+
+    constructor(data?: interfaces.IAIConversationResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.displayText = _data["displayText"];
+            if (Array.isArray(_data["fileOperations"])) {
+                this.fileOperations = [] as any;
+                for (let item of _data["fileOperations"])
+                    this.fileOperations!.push(FileOperationDto.fromJS(item));
+            }
+            if (Array.isArray(_data["conversationHistory"])) {
+                this.conversationHistory = [] as any;
+                for (let item of _data["conversationHistory"])
+                    this.conversationHistory!.push(ConversationMessage.fromJS(item));
+            }
+            if (Array.isArray(_data["suggestedFollowUps"])) {
+                this.suggestedFollowUps = [] as any;
+                for (let item of _data["suggestedFollowUps"])
+                    this.suggestedFollowUps!.push(item);
+            }
+            if (Array.isArray(_data["warnings"])) {
+                this.warnings = [] as any;
+                for (let item of _data["warnings"])
+                    this.warnings!.push(item);
+            }
+            this.metadata = _data["metadata"] ? AIResponseMetadata.fromJS(_data["metadata"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AIConversationResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AIConversationResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["displayText"] = this.displayText;
+        if (Array.isArray(this.fileOperations)) {
+            data["fileOperations"] = [];
+            for (let item of this.fileOperations)
+                data["fileOperations"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.conversationHistory)) {
+            data["conversationHistory"] = [];
+            for (let item of this.conversationHistory)
+                data["conversationHistory"].push(item ? item.toJSON() : <any>undefined);
+        }
+        if (Array.isArray(this.suggestedFollowUps)) {
+            data["suggestedFollowUps"] = [];
+            for (let item of this.suggestedFollowUps)
+                data["suggestedFollowUps"].push(item);
+        }
+        if (Array.isArray(this.warnings)) {
+            data["warnings"] = [];
+            for (let item of this.warnings)
+                data["warnings"].push(item);
+        }
+        data["metadata"] = this.metadata ? this.metadata.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export class AIConversationResponseDtoApiResponse implements interfaces.IAIConversationResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: AIConversationResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+
+    constructor(data?: interfaces.IAIConversationResponseDtoApiResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.success = _data["success"];
+            this.message = _data["message"];
+            this.data = _data["data"] ? AIConversationResponseDto.fromJS(_data["data"]) : <any>undefined;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AIConversationResponseDtoApiResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new AIConversationResponseDtoApiResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["success"] = this.success;
+        data["message"] = this.message;
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class AIPreferences implements interfaces.IAIPreferences {
+    verbosity?: string | undefined;
+    explainReasoning?: boolean;
+    suggestBestPractices?: boolean;
+    maxFileOperations?: number;
+    contextMode?: string | undefined;
+
+    constructor(data?: interfaces.IAIPreferences) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.verbosity = _data["verbosity"];
+            this.explainReasoning = _data["explainReasoning"];
+            this.suggestBestPractices = _data["suggestBestPractices"];
+            this.maxFileOperations = _data["maxFileOperations"];
+            this.contextMode = _data["contextMode"];
+        }
+    }
+
+    static fromJS(data: any): AIPreferences {
+        data = typeof data === 'object' ? data : {};
+        let result = new AIPreferences();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["verbosity"] = this.verbosity;
+        data["explainReasoning"] = this.explainReasoning;
+        data["suggestBestPractices"] = this.suggestBestPractices;
+        data["maxFileOperations"] = this.maxFileOperations;
+        data["contextMode"] = this.contextMode;
+        return data;
+    }
+}
+
+export class AIResponseMetadata implements interfaces.IAIResponseMetadata {
+    tokensUsed?: number;
+    processingTimeMs?: number;
+    filesAnalyzed?: string[] | undefined;
+    confidenceLevel?: string | undefined;
+    needsMoreContext?: boolean;
+
+    constructor(data?: interfaces.IAIResponseMetadata) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tokensUsed = _data["tokensUsed"];
+            this.processingTimeMs = _data["processingTimeMs"];
+            if (Array.isArray(_data["filesAnalyzed"])) {
+                this.filesAnalyzed = [] as any;
+                for (let item of _data["filesAnalyzed"])
+                    this.filesAnalyzed!.push(item);
+            }
+            this.confidenceLevel = _data["confidenceLevel"];
+            this.needsMoreContext = _data["needsMoreContext"];
+        }
+    }
+
+    static fromJS(data: any): AIResponseMetadata {
+        data = typeof data === 'object' ? data : {};
+        let result = new AIResponseMetadata();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tokensUsed"] = this.tokensUsed;
+        data["processingTimeMs"] = this.processingTimeMs;
+        if (Array.isArray(this.filesAnalyzed)) {
+            data["filesAnalyzed"] = [];
+            for (let item of this.filesAnalyzed)
+                data["filesAnalyzed"].push(item);
+        }
+        data["confidenceLevel"] = this.confidenceLevel;
+        data["needsMoreContext"] = this.needsMoreContext;
+        return data;
+    }
+}
+
 export class ActiveDeploymentDto implements interfaces.IActiveDeploymentDto {
     programId?: string | undefined;
     programName?: string | undefined;
@@ -4531,6 +4824,55 @@ export class ContainerVolumeMountDto implements interfaces.IContainerVolumeMount
         data["hostPath"] = this.hostPath;
         data["type"] = this.type;
         data["readOnly"] = this.readOnly;
+        return data;
+    }
+}
+
+export class ConversationMessage implements interfaces.IConversationMessage {
+    role!: string;
+    content!: string;
+    timestamp?: Date;
+    fileOperations?: FileOperationDto[] | undefined;
+
+    constructor(data?: interfaces.IConversationMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.role = _data["role"];
+            this.content = _data["content"];
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : <any>undefined;
+            if (Array.isArray(_data["fileOperations"])) {
+                this.fileOperations = [] as any;
+                for (let item of _data["fileOperations"])
+                    this.fileOperations!.push(FileOperationDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ConversationMessage {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConversationMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["role"] = this.role;
+        data["content"] = this.content;
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        if (Array.isArray(this.fileOperations)) {
+            data["fileOperations"] = [];
+            for (let item of this.fileOperations)
+                data["fileOperations"].push(item ? item.toJSON() : <any>undefined);
+        }
         return data;
     }
 }
@@ -9640,6 +9982,53 @@ export class FileDataDto implements interfaces.IFileDataDto {
     }
 }
 
+export class FileOperationDto implements interfaces.IFileOperationDto {
+    operationType!: enums.FileOperationType;
+    filePath!: string;
+    content?: string | undefined;
+    description?: string | undefined;
+    focusLine?: number | undefined;
+    changedLines?: string | undefined;
+
+    constructor(data?: interfaces.IFileOperationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.operationType = _data["operationType"];
+            this.filePath = _data["filePath"];
+            this.content = _data["content"];
+            this.description = _data["description"];
+            this.focusLine = _data["focusLine"];
+            this.changedLines = _data["changedLines"];
+        }
+    }
+
+    static fromJS(data: any): FileOperationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FileOperationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["operationType"] = this.operationType;
+        data["filePath"] = this.filePath;
+        data["content"] = this.content;
+        data["description"] = this.description;
+        data["focusLine"] = this.focusLine;
+        data["changedLines"] = this.changedLines;
+        return data;
+    }
+}
+
 export class FileParameter implements interfaces.IFileParameter {
     data: any;
     fileName: string;
@@ -13257,6 +13646,56 @@ export class ObjectApiResponse implements interfaces.IObjectApiResponse {
                 data["errors"].push(item);
         }
         data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export class OpenFileContext implements interfaces.IOpenFileContext {
+    filePath!: string | undefined;
+    content?: string | undefined;
+    hasUnsavedChanges?: boolean;
+    isFocused?: boolean;
+    cursorLine?: number | undefined;
+    cursorColumn?: number | undefined;
+    selectedRange?: string | undefined;
+
+    constructor(data?: interfaces.IOpenFileContext) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.filePath = _data["filePath"];
+            this.content = _data["content"];
+            this.hasUnsavedChanges = _data["hasUnsavedChanges"];
+            this.isFocused = _data["isFocused"];
+            this.cursorLine = _data["cursorLine"];
+            this.cursorColumn = _data["cursorColumn"];
+            this.selectedRange = _data["selectedRange"];
+        }
+    }
+
+    static fromJS(data: any): OpenFileContext {
+        data = typeof data === 'object' ? data : {};
+        let result = new OpenFileContext();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["filePath"] = this.filePath;
+        data["content"] = this.content;
+        data["hasUnsavedChanges"] = this.hasUnsavedChanges;
+        data["isFocused"] = this.isFocused;
+        data["cursorLine"] = this.cursorLine;
+        data["cursorColumn"] = this.cursorColumn;
+        data["selectedRange"] = this.selectedRange;
         return data;
     }
 }

@@ -20,6 +20,7 @@ import { RemoteAppsClient } from './RemoteAppsClient'
 import { IconsClient } from './IconsClient'
 import { GroupsClient } from './GroupsClient'
 import { DemoShowcaseClient } from './DemoShowcaseClient'
+import { AIAssistantClient } from './AIAssistantClient'
 
 export {
     AlternativeTMsClient,
@@ -44,5 +45,6 @@ export {
     RemoteAppsClient,
     IconsClient,
     GroupsClient,
-    DemoShowcaseClient
+    DemoShowcaseClient,
+    AIAssistantClient,
 }

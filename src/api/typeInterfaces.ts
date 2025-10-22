@@ -2,6 +2,49 @@
 
 import * as enums from './enums';
 
+export interface IAIConversationRequestDto {
+    userPrompt: string;
+    programId: string;
+    versionId?: string | undefined;
+    conversationHistory?: IConversationMessage[] | undefined;
+    currentlyOpenFiles?: IOpenFileContext[] | undefined;
+    cursorContext?: string | undefined;
+    preferences?: IAIPreferences;
+}
+
+export interface IAIConversationResponseDto {
+    displayText: string | undefined;
+    fileOperations?: IFileOperationDto[] | undefined;
+    conversationHistory?: IConversationMessage[] | undefined;
+    suggestedFollowUps?: string[] | undefined;
+    warnings?: string[] | undefined;
+    metadata?: IAIResponseMetadata;
+}
+
+export interface IAIConversationResponseDtoApiResponse {
+    success?: boolean;
+    message?: string | undefined;
+    data?: IAIConversationResponseDto;
+    errors?: string[] | undefined;
+    timestamp?: Date;
+}
+
+export interface IAIPreferences {
+    verbosity?: string | undefined;
+    explainReasoning?: boolean;
+    suggestBestPractices?: boolean;
+    maxFileOperations?: number;
+    contextMode?: string | undefined;
+}
+
+export interface IAIResponseMetadata {
+    tokensUsed?: number;
+    processingTimeMs?: number;
+    filesAnalyzed?: string[] | undefined;
+    confidenceLevel?: string | undefined;
+    needsMoreContext?: boolean;
+}
+
 export interface IActiveDeploymentDto {
     programId?: string | undefined;
     programName?: string | undefined;
@@ -759,6 +802,13 @@ export interface IContainerVolumeMountDto {
     hostPath?: string | undefined;
     type?: string | undefined;
     readOnly?: boolean;
+}
+
+export interface IConversationMessage {
+    role: string;
+    content: string;
+    timestamp?: Date;
+    fileOperations?: IFileOperationDto[] | undefined;
 }
 
 export interface ICopyBlockDto {
@@ -1583,6 +1633,15 @@ export interface IFileDataDto {
     filename?: string | undefined;
 }
 
+export interface IFileOperationDto {
+    operationType: enums.FileOperationType;
+    filePath: string;
+    content?: string | undefined;
+    description?: string | undefined;
+    focusLine?: number | undefined;
+    changedLines?: string | undefined;
+}
+
 export interface IFileParameter {
     data: any;
     fileName: string;
@@ -2168,6 +2227,16 @@ export interface IObjectApiResponse {
     data?: any | undefined;
     errors?: string[] | undefined;
     timestamp?: Date;
+}
+
+export interface IOpenFileContext {
+    filePath: string | undefined;
+    content?: string | undefined;
+    hasUnsavedChanges?: boolean;
+    isFocused?: boolean;
+    cursorLine?: number | undefined;
+    cursorColumn?: number | undefined;
+    selectedRange?: string | undefined;
 }
 
 export interface IPasswordResetResponseDto {

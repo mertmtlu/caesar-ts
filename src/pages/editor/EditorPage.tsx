@@ -10,6 +10,7 @@ import InfoButton from '@/components/editor/InfoButton';
 import ProgramInfoModal from '@/components/editor/ProgramInfoModal';
 import * as monaco from 'monaco-editor';
 import { VersionFileCreateDto, VersionFileUpdateDto, VersionCommitDto, VersionFileChangeDto, VersionUpdateDto } from '@/api';
+import { AIChatPanel } from '@/components/ai';
 
 // UTF-8 safe base64 encoding/decoding utilities
 const utf8ToBase64 = (str: string): string => {
@@ -115,6 +116,7 @@ const EditorPage: React.FC = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [showProgramInfo, setShowProgramInfo] = useState(false);
+  const [showAIPanel, setShowAIPanel] = useState(false);
   const [newFileName, setNewFileName] = useState('');
   const [newFolderName, setNewFolderName] = useState('');
   const [newItemName, setNewItemName] = useState('');
@@ -1688,12 +1690,25 @@ if __name__ == "__main__":
                     >
                       Upload Files
                     </Button>
+
+                    <Button
+                      variant={showAIPanel ? "primary" : "outline"}
+                      size="sm"
+                      onClick={() => setShowAIPanel(!showAIPanel)}
+                      leftIcon={
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                      }
+                    >
+                      AI Assistant
+                    </Button>
                   </>
                 )}
-                
+
                 {/* Info Button - Available in both view and edit modes */}
-                <InfoButton 
-                  onClick={() => setShowProgramInfo(true)} 
+                <InfoButton
+                  onClick={() => setShowProgramInfo(true)}
                   className="ml-2"
                 />
               </>
@@ -1991,6 +2006,18 @@ if __name__ == "__main__":
             )}
           </div>
         </div>
+
+        {/* AI Assistant Panel */}
+        {showAIPanel && projectId && (
+          <div className="w-96 flex-shrink-0">
+            <AIChatPanel
+              editorInstance={editorRef.current}
+              programId={projectId}
+              versionId={versionId}
+              onClose={() => setShowAIPanel(false)}
+            />
+          </div>
+        )}
       </div>
 
       {/* New File Modal */}

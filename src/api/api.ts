@@ -116,6 +116,7 @@ export class ApiClient {
     private _iconsClient!: interfaces.IIconsClient;
     private _groupsClient!: interfaces.IGroupsClient;
     private _demoShowcaseClient!: interfaces.IDemoShowcaseClient;
+    private _aiAssistantClient!: interfaces.IAIAssistantClient;
 
     /**
      * Initialize API client with base URL and authentication handlers
@@ -164,6 +165,7 @@ export class ApiClient {
         this._iconsClient = new clients.IconsClient(this.baseUrl, this.http);
         this._groupsClient = new clients.GroupsClient(this.baseUrl, this.http);
         this._demoShowcaseClient = new clients.DemoShowcaseClient(this.baseUrl, this.http);
+        this._aiAssistantClient = new clients.AIAssistantClient(this.baseUrl, this.http);
     }
 
     /**
@@ -325,6 +327,13 @@ export class ApiClient {
      */
     get demoShowcase(): interfaces.IDemoShowcaseClient {
         return this._demoShowcaseClient;
+    }
+
+    /**
+     * AI Assistant management operations
+     */
+    get aiAssistantClient(): interfaces.IAIAssistantClient {
+        return this._aiAssistantClient;
     }
 
     /**

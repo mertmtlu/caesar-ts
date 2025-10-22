@@ -122,6 +122,12 @@ export enum ExecutionPriority {
     _3 = 3,
 }
 
+export enum FileOperationType {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
 export enum IconEntityType {
     _0 = 0,
     _1 = 1,

@@ -3,6 +3,24 @@
 import * as types from './typeInterfaces';
 import * as enums from './enums';
 
+export interface IAIAssistantClient {
+
+    /**
+     * Converse with the AI assistant about a specific program/version.
+    The AI can suggest file modifications, answer questions, and provide guidance.
+     * @param body (optional) Conversation request containing user prompt, history, and target program/version
+     * @return OK
+     */
+    aIAssistant_Converse(body: types.IAIConversationRequestDto | undefined): Promise<types.IAIConversationResponseDtoApiResponse>;
+
+    /**
+     * Get suggested prompts based on current project context
+     * @param programId Program ID
+     * @return OK
+     */
+    aIAssistant_GetSuggestedPrompts(programId: string): Promise<types.IStringListApiResponse>;
+}
+
 export interface IAlternativeTMsClient {
 
     /**
