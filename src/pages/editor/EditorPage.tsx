@@ -10,7 +10,7 @@ import InfoButton from '@/components/editor/InfoButton';
 import ProgramInfoModal from '@/components/editor/ProgramInfoModal';
 import * as monaco from 'monaco-editor';
 import { VersionFileCreateDto, VersionFileUpdateDto, VersionCommitDto, VersionFileChangeDto, VersionUpdateDto } from '@/api';
-import { AIChatPanel } from '@/components/ai';
+import { AIChatPanel, ResizablePanel } from '@/components/ai';
 
 // UTF-8 safe base64 encoding/decoding utilities
 const utf8ToBase64 = (str: string): string => {
@@ -206,6 +206,25 @@ const EditorPage: React.FC = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [openFiles]);
+
+  // Handle keyboard shortcuts for AI panel
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+K or Cmd+K to toggle AI panel
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowAIPanel(prev => !prev);
+      }
+      // ESC to close AI panel
+      if (e.key === 'Escape' && showAIPanel) {
+        e.preventDefault();
+        setShowAIPanel(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showAIPanel]);
 
   // Handle context menu clicks outside
   useEffect(() => {
@@ -1691,20 +1710,11 @@ if __name__ == "__main__":
                       Upload Files
                     </Button>
 
-                    <Button
-                      variant={showAIPanel ? "primary" : "outline"}
-                      size="sm"
-                      onClick={() => setShowAIPanel(!showAIPanel)}
-                      leftIcon={
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                      }
-                    >
-                      AI Assistant
-                    </Button>
+                    
                   </>
                 )}
+
+                
 
                 {/* Info Button - Available in both view and edit modes */}
                 <InfoButton
@@ -1713,6 +1723,19 @@ if __name__ == "__main__":
                 />
               </>
             )}
+
+            <Button
+              variant={showAIPanel ? "primary" : "outline"}
+              size="sm"
+              onClick={() => setShowAIPanel(!showAIPanel)}
+              leftIcon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              }
+            >
+              AI Assistant
+            </Button>
           </div>
         </div>
       </div>
@@ -2009,14 +2032,159 @@ if __name__ == "__main__":
 
         {/* AI Assistant Panel */}
         {showAIPanel && projectId && (
-          <div className="w-96 flex-shrink-0">
+          <ResizablePanel
+            defaultWidth={384}
+            minWidth={300}
+            maxWidth={800}
+            storageKey="editor-ai-panel-width"
+          >
             <AIChatPanel
               editorInstance={editorRef.current}
               programId={projectId}
               versionId={versionId}
               onClose={() => setShowAIPanel(false)}
+              fileOperationCallbacks={{
+                onCreateFile: (path: string, content: string) => {
+                  // Check if file already exists
+                  const exists = openFiles.some(f => f.path === path);
+                  if (exists) {
+                    console.log(`[EditorPage] File already exists, updating instead: ${path}`);
+                    setOpenFiles(prev => prev.map(f =>
+                      f.path === path
+                        ? { ...f, content, isModified: true }
+                        : f
+                    ));
+                    return;
+                  }
+
+                  // Create new file in openFiles state
+                  const language = project ? detectLanguage(path, project.language) : 'plaintext';
+                  const newFile = {
+                    path,
+                    content,
+                    language,
+                    isModified: true,
+                    isNew: true,
+                    originalContent: '',
+                    isEditorInitialized: false
+                  };
+
+                  console.log(`[EditorPage] Adding new file to openFiles: ${path}`);
+                  setOpenFiles(prev => [...prev, newFile]);
+                  setActiveFile(path);
+                },
+                onUpdateFile: async (path: string, content: string) => {
+                  console.log(`[EditorPage] AI requested update for file: ${path}`);
+
+                  // Check if the file is already open in the editor
+                  const fileIsOpen = openFiles.some(f => f.path === path);
+
+                  if (fileIsOpen) {
+                    // --- YOUR CURRENT IMPLEMENTATION (if file is open) ---
+                    // The file is already loaded into the editor's state, so we update it directly.
+                    // This provides an immediate UI update for the user.
+                    console.log(`[EditorPage] File is open. Updating state directly.`);
+                    setOpenFiles(prev => prev.map(f => {
+                      if (f.path === path) {
+                        return {
+                          ...f,
+                          content,
+                          isModified: true, // Mark as modified to enable saving
+                          isEditorInitialized: true
+                        };
+                      }
+                      return f;
+                    }));
+
+                  } else {
+                    // --- YOUR SUGGESTED ALTERNATIVE (if file is not open) ---
+                    // The file exists but is not loaded in the editor.
+                    // We must perform the update directly via API calls.
+                    console.log(`[EditorPage] File is not open. Performing direct API update.`);
+                    
+                    if (!project || !version) {
+                      setError('Cannot update file: Project or version information is missing.');
+                      return;
+                    }
+
+                    try {
+                      setIsSaving(true); // Provide visual feedback that a background operation is happening
+
+                      // Step 1: Encode the new content to Base64, as the API expects.
+                      const encodedContent = utf8ToBase64(content);
+                      const contentType = detectLanguage(path, project.language) === 'json' 
+                        ? 'application/json' 
+                        : 'text/plain';
+
+                      // Step 2: Create the DTO for the API update call.
+                      const updateDto = new VersionFileUpdateDto({
+                        content: encodedContent,
+                        contentType: contentType
+                      });
+
+                      // Step 3: Call the API to update the file directly on the server.
+                      await api.files.files_UpdateVersionFile(project.id, version.id, path, updateDto);
+                      console.log(`[EditorPage] File updated successfully via API: ${path}`);
+
+                      // Step 4 (Optional but Recommended): Reload the file tree to reflect any potential changes
+                      // This is good practice in case the update has side effects.
+                      await loadFiles(project.id, version.id);
+
+                    } catch (error) {
+                      console.error(`[EditorPage] Failed to update file via API: ${path}`, error);
+                      setError(`Failed to update file '${path}'. Please try again.`);
+                    } finally {
+                      setIsSaving(false);
+                    }
+                  }
+                },
+                onDeleteFile: async (path: string) => {
+                  console.log(`[EditorPage] AI requested file deletion: ${path}`);
+
+                  if (!project || !version) {
+                    console.error(`[EditorPage] Cannot delete file - project or version not available`);
+                    setError('Cannot delete file - project information missing');
+                    return;
+                  }
+
+                  try {
+                    // Call backend API to actually delete the file
+                    console.log(`[EditorPage] Calling API to delete file: ${path}`);
+                    await api.files.files_DeleteVersionFile(project.id, version.id, path);
+                    console.log(`[EditorPage] File deleted from backend: ${path}`);
+
+                    // Remove from open files
+                    setOpenFiles(prev => {
+                      const filtered = prev.filter(f => f.path !== path);
+                      console.log(`[EditorPage] Files after delete:`, filtered.map(f => f.path));
+                      return filtered;
+                    });
+
+                    // If active file was deleted, switch to another
+                    if (activeFile === path) {
+                      const remainingFiles = openFiles.filter(f => f.path !== path);
+                      const newActiveFile = remainingFiles.length > 0 ? remainingFiles[0].path : null;
+                      console.log(`[EditorPage] Active file was deleted, switching to:`, newActiveFile);
+                      setActiveFile(newActiveFile);
+                    }
+
+                    // Reload file tree to reflect changes
+                    console.log(`[EditorPage] Reloading file tree`);
+                    await loadFiles(project.id, version.id);
+
+                    console.log(`[EditorPage] File deletion complete: ${path}`);
+                  } catch (error) {
+                    console.error(`[EditorPage] Failed to delete file: ${path}`, error);
+                    setError(`Failed to delete file: ${path}`);
+                  }
+                },
+                onSetActiveFile: (path: string) => {
+                  console.log(`[EditorPage] Setting active file: ${path}`);
+                  setActiveFile(path);
+                }
+              }}
             />
-          </div>
+          </ResizablePanel>
         )}
       </div>
 

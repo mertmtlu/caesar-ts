@@ -28,11 +28,23 @@ const normalizeOperationType = (operationType: any): FileOperationType => {
 };
 
 /**
+ * Editor file state management callbacks
+ */
+export interface FileOperationCallbacks {
+  onCreateFile?: (path: string, content: string) => void;
+  onUpdateFile?: (path: string, content: string) => void;
+  onDeleteFile?: (path: string) => Promise<void>; // Now async - calls backend API
+  onSetActiveFile?: (path: string) => void;
+}
+
+/**
  * Custom hook for applying file operations to Monaco Editor
  * Handles CREATE, UPDATE, and DELETE operations on editor models
+ * Integrates with EditorPage state management via callbacks
  */
 export const useFileOperations = (
-  editorInstance: monaco.editor.IStandaloneCodeEditor | null
+  editorInstance: monaco.editor.IStandaloneCodeEditor | null,
+  callbacks?: FileOperationCallbacks
 ) => {
   /**
    * Detect programming language from file extension
@@ -75,13 +87,13 @@ export const useFileOperations = (
   }, []);
 
   /**
-   * Apply file operations to the Monaco editor
+   * Apply file operations to the Monaco editor AND EditorPage state
    */
   const applyFileOperations = useCallback(
     async (operations: FileOperationDto[]) => {
+      // Editor instance is optional - operations can work on state only
       if (!editorInstance) {
-        console.error('Editor instance not available');
-        return;
+        console.warn('[FileOps] Editor instance not available, will only update state');
       }
 
       for (const op of operations) {
@@ -92,93 +104,148 @@ export const useFileOperations = (
           switch (normalizedType) {
             case FileOperationType._0: // CREATE
               {
-                // Check if model already exists
-                let model = monaco.editor.getModel(uri);
+                console.log(`[FileOps] CREATE: ${op.filePath}`);
 
-                if (!model && op.content !== undefined) {
-                  // Create new model (new tab)
-                  const language = detectLanguage(op.filePath);
-                  model = monaco.editor.createModel(op.content, language, uri);
-                  console.log(`Created new file: ${op.filePath}`);
+                // Notify EditorPage to add file to openFiles state FIRST
+                if (callbacks?.onCreateFile && op.content !== undefined) {
+                  callbacks.onCreateFile(op.filePath, op.content);
+                  console.log(`[FileOps] Notified EditorPage of file creation: ${op.filePath}`);
                 }
 
-                // Switch to this file and focus line if specified
-                if (model) {
-                  editorInstance.setModel(model);
-                  if (op.focusLine && op.focusLine > 0) {
-                    editorInstance.revealLineInCenter(op.focusLine);
-                    editorInstance.setPosition({
-                      lineNumber: op.focusLine,
-                      column: 1
-                    });
+                // Only work with Monaco if editor instance is available
+                if (editorInstance) {
+                  // Check if model already exists
+                  let model = monaco.editor.getModel(uri);
+
+                  if (!model && op.content !== undefined) {
+                    // Create new Monaco model
+                    const language = detectLanguage(op.filePath);
+                    model = monaco.editor.createModel(op.content, language, uri);
+                    console.log(`[FileOps] Created Monaco model for: ${op.filePath}`);
                   }
+
+                  // Switch to this file
+                  if (model) {
+                    editorInstance.setModel(model);
+
+                    // Focus specific line if requested
+                    if (op.focusLine && op.focusLine > 0) {
+                      editorInstance.revealLineInCenter(op.focusLine);
+                      editorInstance.setPosition({
+                        lineNumber: op.focusLine,
+                        column: 1
+                      });
+                    }
+                  }
+                }
+
+                // Set as active file in EditorPage
+                if (callbacks?.onSetActiveFile) {
+                  callbacks.onSetActiveFile(op.filePath);
+                  console.log(`[FileOps] Set active file: ${op.filePath}`);
                 }
               }
               break;
 
             case FileOperationType._1: // UPDATE
               {
-                let model = monaco.editor.getModel(uri);
+                console.log(`[FileOps] UPDATE: ${op.filePath}`);
 
-                if (!model && op.content !== undefined) {
-                  // Model doesn't exist, create it
-                  const language = detectLanguage(op.filePath);
-                  model = monaco.editor.createModel(op.content, language, uri);
-                  console.log(`Created file (via update): ${op.filePath}`);
-                } else if (model && op.content !== undefined) {
-                  // Update existing model
-                  model.setValue(op.content);
-                  console.log(`Updated file: ${op.filePath}`);
+                // Always notify EditorPage callback first - it knows if file exists in state
+                if (callbacks?.onUpdateFile && op.content !== undefined) {
+                  callbacks.onUpdateFile(op.filePath, op.content);
+                  console.log(`[FileOps] Notified EditorPage of file update: ${op.filePath}`);
                 }
 
-                // Switch to this file and focus line if specified
-                if (model) {
-                  editorInstance.setModel(model);
-                  if (op.focusLine && op.focusLine > 0) {
-                    editorInstance.revealLineInCenter(op.focusLine);
-                    editorInstance.setPosition({
-                      lineNumber: op.focusLine,
-                      column: 1
-                    });
+                // Handle Monaco model separately - only if editor is available
+                if (editorInstance && op.content !== undefined) {
+                  const model = monaco.editor.getModel(uri);
+
+                  if (model) {
+                    // Monaco model exists - update it
+                    try {
+                      model.setValue(op.content);
+                      console.log(`[FileOps] Updated existing Monaco model: ${op.filePath}`);
+
+                      // Switch to this file
+                      editorInstance.setModel(model);
+
+                      // Focus specific line if requested
+                      if (op.focusLine && op.focusLine > 0) {
+                        editorInstance.revealLineInCenter(op.focusLine);
+                        editorInstance.setPosition({
+                          lineNumber: op.focusLine,
+                          column: 1
+                        });
+                      }
+                    } catch (error) {
+                      console.warn(`[FileOps] Error updating Monaco model:`, error);
+                    }
+                  } else {
+                    // No Monaco model - create one if needed
+                    console.log(`[FileOps] No Monaco model found, file will be opened when user clicks tab`);
                   }
+                } else {
+                  console.log(`[FileOps] No editor instance, state-only update: ${op.filePath}`);
+                }
+
+                // Set as active file in EditorPage
+                if (callbacks?.onSetActiveFile) {
+                  callbacks.onSetActiveFile(op.filePath);
+                  console.log(`[FileOps] Set active file: ${op.filePath}`);
                 }
               }
               break;
 
             case FileOperationType._2: // DELETE
               {
-                const modelToDelete = monaco.editor.getModel(uri);
+                console.log(`[FileOps] DELETE: ${op.filePath}`);
 
-                if (modelToDelete) {
-                  // If this is the active model, switch to another tab first
-                  if (editorInstance.getModel() === modelToDelete) {
-                    const allModels = monaco.editor.getModels();
-                    const otherModel = allModels.find(m => m !== modelToDelete);
+                // Notify EditorPage to delete from backend and state
+                if (callbacks?.onDeleteFile) {
+                  await callbacks.onDeleteFile(op.filePath);
+                  console.log(`[FileOps] EditorPage completed file deletion: ${op.filePath}`);
+                }
 
-                    if (otherModel) {
-                      editorInstance.setModel(otherModel);
-                    } else {
-                      // No other models, create an empty one
-                      editorInstance.setModel(null);
+                // Handle Monaco model disposal if editor is available
+                if (editorInstance) {
+                  const modelToDelete = monaco.editor.getModel(uri);
+
+                  if (modelToDelete) {
+                    // If this is the active model, switch to another tab first
+                    if (editorInstance.getModel() === modelToDelete) {
+                      const allModels = monaco.editor.getModels();
+                      const otherModel = allModels.find(m => m !== modelToDelete);
+
+                      if (otherModel) {
+                        editorInstance.setModel(otherModel);
+                        console.log(`[FileOps] Switched to another model before delete`);
+                      } else {
+                        // No other models, clear editor
+                        editorInstance.setModel(null);
+                        console.log(`[FileOps] Cleared editor (no models left)`);
+                      }
                     }
-                  }
 
-                  // Dispose the model
-                  modelToDelete.dispose();
-                  console.log(`Deleted file: ${op.filePath}`);
+                    // Dispose the Monaco model
+                    modelToDelete.dispose();
+                    console.log(`[FileOps] Disposed Monaco model: ${op.filePath}`);
+                  } else {
+                    console.log(`[FileOps] No Monaco model found to dispose: ${op.filePath}`);
+                  }
                 }
               }
               break;
 
             default:
-              console.warn(`Unknown operation type: ${op.operationType}`);
+              console.warn(`[FileOps] Unknown operation type: ${op.operationType}`);
           }
         } catch (error) {
-          console.error(`Error applying operation to ${op.filePath}:`, error);
+          console.error(`[FileOps] Error applying operation to ${op.filePath}:`, error);
         }
       }
     },
-    [editorInstance, detectLanguage]
+    [editorInstance, detectLanguage, callbacks]
   );
 
   return { applyFileOperations };

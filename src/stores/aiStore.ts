@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { api } from '../api/api';
-import { AIConversationRequestDto, ConversationMessage, FileOperationDto } from '../api/types';
+import { AIConversationRequestDto, ConversationMessage, FileOperationDto, OpenFileContext, AIPreferences } from '../api/types';
 
 export interface Message {
   id: string;
@@ -9,6 +9,15 @@ export interface Message {
   timestamp: Date;
   fileOperations?: FileOperationDto[];
   warnings?: string[];
+  suggestedFollowUps?: string[];
+}
+
+export interface AIPreferencesState {
+  verbosity: 'concise' | 'normal' | 'detailed';
+  explainReasoning: boolean;
+  suggestBestPractices: boolean;
+  maxFileOperations: number;
+  contextMode: 'aggressive' | 'balanced' | 'comprehensive' | 'unlimited';
 }
 
 interface AIStore {
@@ -18,12 +27,15 @@ interface AIStore {
   error: string | null;
   currentProgramId: string | null;
   currentVersionId: string | null;
+  preferences: AIPreferencesState;
+  suggestedFollowUps: string[];
 
   // Actions
-  sendMessage: (userPrompt: string) => Promise<FileOperationDto[]>;
+  sendMessage: (userPrompt: string, openFileContexts?: OpenFileContext[]) => Promise<FileOperationDto[]>;
   clearConversation: () => void;
   setCurrentProgram: (programId: string, versionId?: string) => void;
   setError: (error: string | null) => void;
+  updatePreferences: (preferences: Partial<AIPreferencesState>) => void;
 }
 
 export const useAIStore = create<AIStore>((set, get) => ({
@@ -33,9 +45,17 @@ export const useAIStore = create<AIStore>((set, get) => ({
   error: null,
   currentProgramId: null,
   currentVersionId: null,
+  preferences: {
+    verbosity: 'normal',
+    explainReasoning: true,
+    suggestBestPractices: true,
+    maxFileOperations: 5,
+    contextMode: 'balanced',
+  },
+  suggestedFollowUps: [],
 
   // Actions
-  sendMessage: async (userPrompt: string) => {
+  sendMessage: async (userPrompt: string, openFileContexts?: OpenFileContext[]) => {
     const state = get();
 
     if (!state.currentProgramId) {
@@ -76,13 +96,26 @@ export const useAIStore = create<AIStore>((set, get) => ({
       newUserMsg.timestamp = new Date();
       conversationMessages.push(newUserMsg);
 
+      // Build AI preferences
+      const aiPreferences = new AIPreferences({
+        verbosity: state.preferences.verbosity,
+        explainReasoning: state.preferences.explainReasoning,
+        suggestBestPractices: state.preferences.suggestBestPractices,
+        maxFileOperations: state.preferences.maxFileOperations,
+        contextMode: state.preferences.contextMode,
+      });
+
       // Create request
       const request = new AIConversationRequestDto({
         userPrompt,
         programId: state.currentProgramId,
         versionId: state.currentVersionId || undefined,
         conversationHistory: conversationMessages,
+        currentlyOpenFiles: openFileContexts,
+        preferences: aiPreferences,
       });
+
+      console.log('AI Request:', request);
 
       // Call API
       const response = await api.aiAssistantClient.aIAssistant_Converse(request);
@@ -106,11 +139,13 @@ export const useAIStore = create<AIStore>((set, get) => ({
         timestamp: new Date(),
         fileOperations: fileOperations as FileOperationDto[],
         warnings: aiResponse.warnings,
+        suggestedFollowUps: aiResponse.suggestedFollowUps,
       };
 
       set({
         conversationHistory: [...get().conversationHistory, assistantMessage],
         isThinking: false,
+        suggestedFollowUps: aiResponse.suggestedFollowUps || [],
       });
 
       // Return file operations for editor integration
@@ -144,6 +179,15 @@ export const useAIStore = create<AIStore>((set, get) => ({
 
   setError: (error: string | null) => {
     set({ error });
+  },
+
+  updatePreferences: (preferences: Partial<AIPreferencesState>) => {
+    set(state => ({
+      preferences: {
+        ...state.preferences,
+        ...preferences,
+      },
+    }));
   },
 }));
 

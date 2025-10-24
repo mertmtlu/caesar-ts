@@ -2,22 +2,28 @@ import React from 'react';
 import * as monaco from 'monaco-editor';
 import { X, Trash2 } from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
-import { useFileOperations } from '../../hooks/useFileOperations';
+import { useFileOperations, FileOperationCallbacks } from '../../hooks/useFileOperations';
+import { useEditorContext } from '../../hooks/useEditorContext';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
+import { AIPreferencesPanel } from './AIPreferencesPanel';
+import { SuggestedPrompts } from './SuggestedPrompts';
+import { ContextStatusBar } from './ContextStatusBar';
 
 interface AIChatPanelProps {
   editorInstance: monaco.editor.IStandaloneCodeEditor | null;
   programId: string;
   versionId?: string;
   onClose?: () => void;
+  fileOperationCallbacks?: FileOperationCallbacks;
 }
 
 export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   editorInstance,
   programId,
   versionId,
-  onClose
+  onClose,
+  fileOperationCallbacks
 }) => {
   const {
     conversationHistory,
@@ -25,10 +31,13 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
     error,
     sendMessage,
     clearConversation,
-    setCurrentProgram
+    setCurrentProgram,
+    preferences,
+    suggestedFollowUps,
   } = useAIStore();
 
-  const { applyFileOperations } = useFileOperations(editorInstance);
+  const { applyFileOperations } = useFileOperations(editorInstance, fileOperationCallbacks);
+  const { openFileContexts } = useEditorContext(editorInstance);
 
   // Set current program when component mounts or when programId changes
   React.useEffect(() => {
@@ -40,7 +49,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   const handleSend = async (message: string) => {
     try {
       // sendMessage returns FileOperationDto[] | undefined
-      const fileOperations = await sendMessage(message);
+      const fileOperations = await sendMessage(message, openFileContexts);
 
       // Apply operations to Monaco
       if (fileOperations && fileOperations.length > 0) {
@@ -50,6 +59,11 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
       console.error('Error sending message:', error);
       // Error is already handled in the store
     }
+  };
+
+  const handleSelectPrompt = (prompt: string) => {
+    // Send the suggested prompt as a message
+    handleSend(prompt);
   };
 
   const handleClearConversation = () => {
@@ -93,8 +107,24 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
         </div>
       </div>
 
+      {/* AI Preferences Panel */}
+      <AIPreferencesPanel />
+
+      {/* Context Status Bar */}
+      <ContextStatusBar
+        openFileContexts={openFileContexts}
+        preferences={preferences}
+      />
+
       {/* Messages */}
       <MessageList messages={conversationHistory} isThinking={isThinking} error={error} />
+
+      {/* Suggested Follow-ups */}
+      <SuggestedPrompts
+        prompts={suggestedFollowUps}
+        onSelectPrompt={handleSelectPrompt}
+        disabled={isThinking}
+      />
 
       {/* Input */}
       <ChatInput onSend={handleSend} disabled={isThinking} />
