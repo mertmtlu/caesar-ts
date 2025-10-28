@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Settings, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAIStore } from '../../stores/aiStore';
+import { ConfirmationModal } from '../common/Modal';
 
 export const AIPreferencesPanel: React.FC = () => {
   const { preferences, updatePreferences } = useAIStore();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showAutoApplyConfirm, setShowAutoApplyConfirm] = useState(false);
 
   const contextModeInfo = {
     aggressive: { label: 'Fast', tokens: '~15K', files: '~20-25', description: 'Faster responses, minimal context' },
@@ -172,10 +174,8 @@ export const AIPreferencesPanel: React.FC = () => {
               <button
                 onClick={() => {
                   if (!preferences.autoApplyFileOperations) {
-                    // Enabling dangerous mode - show confirmation
-                    if (confirm('⚠️ Warning: Auto-applying changes will modify your database without approval. Are you sure?')) {
-                      updatePreferences({ autoApplyFileOperations: true });
-                    }
+                    // Enabling dangerous mode - show confirmation modal
+                    setShowAutoApplyConfirm(true);
                   } else {
                     // Disabling is always safe
                     updatePreferences({ autoApplyFileOperations: false });
@@ -204,6 +204,21 @@ export const AIPreferencesPanel: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* Confirmation modal for enabling auto-apply */}
+      <ConfirmationModal
+        isOpen={showAutoApplyConfirm}
+        onClose={() => setShowAutoApplyConfirm(false)}
+        onConfirm={() => {
+          updatePreferences({ autoApplyFileOperations: true });
+          setShowAutoApplyConfirm(false);
+        }}
+        title="Enable Auto-Apply Mode?"
+        message="This will automatically apply AI-suggested file operations without your approval. Changes will be written to the editor immediately and marked as unsaved. This mode is potentially dangerous and should only be used if you fully trust the AI. Are you sure you want to continue?"
+        confirmText="Enable Auto-Apply"
+        cancelText="Cancel"
+        variant="warning"
+      />
     </div>
   );
 };
