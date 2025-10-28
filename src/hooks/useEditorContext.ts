@@ -15,19 +15,27 @@ interface UseEditorContextResult {
   setFocusedFile: (path: string) => void;
 }
 
+interface ExternalFile {
+  path: string;
+  content: string;
+  isModified?: boolean;
+  originalContent?: string;
+}
+
 /**
  * Hook to track all open files in Monaco editor and build OpenFileContext array
  * for AI Assistant integration
  */
 export const useEditorContext = (
-  editorInstance: monaco.editor.IStandaloneCodeEditor | null
+  editorInstance: monaco.editor.IStandaloneCodeEditor | null,
+  externalFiles?: ExternalFile[]
 ): UseEditorContextResult => {
   const [fileStates, setFileStates] = useState<Map<string, EditorFileState>>(new Map());
   const [openFileContexts, setOpenFileContexts] = useState<OpenFileContext[]>([]);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
-   * Build OpenFileContext array from current Monaco models
+   * Build OpenFileContext array from external files or Monaco models
    */
   const buildOpenFileContexts = useCallback(() => {
     if (!editorInstance) {
@@ -35,52 +43,88 @@ export const useEditorContext = (
       return;
     }
 
-    const models = monaco.editor.getModels();
     const contexts: OpenFileContext[] = [];
+
+    // Get cursor position and selection from editor
+    const position = editorInstance.getPosition();
+    const selection = editorInstance.getSelection();
     const currentModel = editorInstance.getModel();
     const currentUri = currentModel?.uri.toString();
 
-    // Get cursor position and selection
-    const position = editorInstance.getPosition();
-    const selection = editorInstance.getSelection();
-
-    for (const model of models) {
-      const uri = model.uri.toString();
-
-      // Skip internal Monaco models (those starting with inmemory://)
-      if (uri.startsWith('inmemory://')) {
-        continue;
+    // Determine active file path
+    let activeFilePath: string | null = null;
+    if (currentUri) {
+      activeFilePath = currentUri;
+      if (activeFilePath.startsWith('file://')) {
+        activeFilePath = activeFilePath.substring(7);
       }
-
-      // Extract file path from URI (remove file:// or inmemory:// prefix)
-      let filePath = uri;
-      if (filePath.startsWith('file://')) {
-        filePath = filePath.substring(7);
+      if (activeFilePath.startsWith('inmemory://')) {
+        activeFilePath = activeFilePath.substring(11);
       }
+    }
 
-      const currentContent = model.getValue();
-      const fileState = fileStates.get(filePath);
-      const savedContent = fileState?.savedContent || currentContent;
-      const isFocused = uri === currentUri;
-      const hasUnsavedChanges = currentContent !== savedContent;
+    // If external files are provided, use them
+    if (externalFiles && externalFiles.length > 0) {
+      for (const file of externalFiles) {
+        const isFocused = file.path === activeFilePath;
+        const hasUnsavedChanges = file.isModified ?? false;
 
-      const context = new OpenFileContext({
-        filePath,
-        content: currentContent,
-        hasUnsavedChanges,
-        isFocused,
-        cursorLine: isFocused && position ? position.lineNumber : undefined,
-        cursorColumn: isFocused && position ? position.column : undefined,
-        selectedRange: isFocused && selection && !selection.isEmpty()
-          ? `${selection.startLineNumber}:${selection.startColumn}-${selection.endLineNumber}:${selection.endColumn}`
-          : undefined,
-      });
+        const context = new OpenFileContext({
+          filePath: file.path,
+          content: file.content,
+          hasUnsavedChanges,
+          isFocused,
+          cursorLine: isFocused && position ? position.lineNumber : undefined,
+          cursorColumn: isFocused && position ? position.column : undefined,
+          selectedRange: isFocused && selection && !selection.isEmpty()
+            ? `${selection.startLineNumber}:${selection.startColumn}-${selection.endLineNumber}:${selection.endColumn}`
+            : undefined,
+        });
 
-      contexts.push(context);
+        contexts.push(context);
+      }
+    } else {
+      // Fallback to Monaco models if no external files provided
+      const models = monaco.editor.getModels();
+
+      for (const model of models) {
+        const uri = model.uri.toString();
+
+        // Skip internal Monaco models (those starting with inmemory://)
+        if (uri.startsWith('inmemory://')) {
+          continue;
+        }
+
+        // Extract file path from URI (remove file:// or inmemory:// prefix)
+        let filePath = uri;
+        if (filePath.startsWith('file://')) {
+          filePath = filePath.substring(7);
+        }
+
+        const currentContent = model.getValue();
+        const fileState = fileStates.get(filePath);
+        const savedContent = fileState?.savedContent || currentContent;
+        const isFocused = uri === currentUri;
+        const hasUnsavedChanges = currentContent !== savedContent;
+
+        const context = new OpenFileContext({
+          filePath,
+          content: currentContent,
+          hasUnsavedChanges,
+          isFocused,
+          cursorLine: isFocused && position ? position.lineNumber : undefined,
+          cursorColumn: isFocused && position ? position.column : undefined,
+          selectedRange: isFocused && selection && !selection.isEmpty()
+            ? `${selection.startLineNumber}:${selection.startColumn}-${selection.endLineNumber}:${selection.endColumn}`
+            : undefined,
+        });
+
+        contexts.push(context);
+      }
     }
 
     setOpenFileContexts(contexts);
-  }, [editorInstance, fileStates]);
+  }, [editorInstance, fileStates, externalFiles]);
 
   /**
    * Initialize file states from existing Monaco models

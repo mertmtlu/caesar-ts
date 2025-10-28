@@ -10,12 +10,20 @@ import { AIPreferencesPanel } from './AIPreferencesPanel';
 import { SuggestedPrompts } from './SuggestedPrompts';
 import { ContextStatusBar } from './ContextStatusBar';
 
+interface EditorFile {
+  path: string;
+  content: string;
+  isModified: boolean;
+  originalContent: string;
+}
+
 interface AIChatPanelProps {
   editorInstance: monaco.editor.IStandaloneCodeEditor | null;
   programId: string;
   versionId?: string;
   onClose?: () => void;
   fileOperationCallbacks?: FileOperationCallbacks;
+  openFiles?: EditorFile[];
 }
 
 export const AIChatPanel: React.FC<AIChatPanelProps> = ({
@@ -23,7 +31,8 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   programId,
   versionId,
   onClose,
-  fileOperationCallbacks
+  fileOperationCallbacks,
+  openFiles
 }) => {
   const {
     conversationHistory,
@@ -37,7 +46,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   } = useAIStore();
 
   const { applyFileOperations } = useFileOperations(editorInstance, fileOperationCallbacks);
-  const { openFileContexts } = useEditorContext(editorInstance);
+  const { openFileContexts } = useEditorContext(editorInstance, openFiles);
 
   // Set current program when component mounts or when programId changes
   React.useEffect(() => {

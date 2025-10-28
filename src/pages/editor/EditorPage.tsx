@@ -2043,6 +2043,7 @@ if __name__ == "__main__":
               programId={projectId}
               versionId={versionId}
               onClose={() => setShowAIPanel(false)}
+              openFiles={openFiles}
               fileOperationCallbacks={{
                 onCreateFile: (path: string, content: string) => {
                   // Check if file already exists

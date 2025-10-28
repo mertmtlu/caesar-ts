@@ -115,8 +115,6 @@ export const useAIStore = create<AIStore>((set, get) => ({
         preferences: aiPreferences,
       });
 
-      console.log('AI Request:', request);
-
       // Call API
       const response = await api.aiAssistantClient.aIAssistant_Converse(request);
 
@@ -125,8 +123,6 @@ export const useAIStore = create<AIStore>((set, get) => ({
       }
 
       const aiResponse = response.data;
-
-      console.log('AI Response:', aiResponse);
 
       // Convert file operations from interface to class instances
       const fileOperations = aiResponse.fileOperations || [];
