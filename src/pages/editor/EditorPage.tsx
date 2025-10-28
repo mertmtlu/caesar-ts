@@ -2081,62 +2081,51 @@ if __name__ == "__main__":
                   const fileIsOpen = openFiles.some(f => f.path === path);
 
                   if (fileIsOpen) {
-                    // --- YOUR CURRENT IMPLEMENTATION (if file is open) ---
-                    // The file is already loaded into the editor's state, so we update it directly.
-                    // This provides an immediate UI update for the user.
-                    console.log(`[EditorPage] File is open. Updating state directly.`);
+                    // File is open - update state directly (marks as modified)
+                    console.log(`[EditorPage] File is open. Updating state.`);
                     setOpenFiles(prev => prev.map(f => {
                       if (f.path === path) {
                         return {
                           ...f,
                           content,
-                          isModified: true, // Mark as modified to enable saving
+                          isModified: true, // Mark as modified - DB write happens on Save
                           isEditorInitialized: true
                         };
                       }
                       return f;
                     }));
-
                   } else {
-                    // --- YOUR SUGGESTED ALTERNATIVE (if file is not open) ---
-                    // The file exists but is not loaded in the editor.
-                    // We must perform the update directly via API calls.
-                    console.log(`[EditorPage] File is not open. Performing direct API update.`);
-                    
-                    if (!project || !version) {
-                      setError('Cannot update file: Project or version information is missing.');
-                      return;
-                    }
+                    // File is NOT open - open it with the new content (also marks as modified)
+                    // NO DIRECT DB WRITE - that happens when user clicks Save
+                    console.log(`[EditorPage] File is not open. Opening with new content.`);
 
+                    const language = project ? detectLanguage(path, project.language) : 'plaintext';
+
+                    // Try to get original content from file tree for comparison
+                    let originalContent = '';
                     try {
-                      setIsSaving(true); // Provide visual feedback that a background operation is happening
-
-                      // Step 1: Encode the new content to Base64, as the API expects.
-                      const encodedContent = utf8ToBase64(content);
-                      const contentType = detectLanguage(path, project.language) === 'json' 
-                        ? 'application/json' 
-                        : 'text/plain';
-
-                      // Step 2: Create the DTO for the API update call.
-                      const updateDto = new VersionFileUpdateDto({
-                        content: encodedContent,
-                        contentType: contentType
-                      });
-
-                      // Step 3: Call the API to update the file directly on the server.
-                      await api.files.files_UpdateVersionFile(project.id, version.id, path, updateDto);
-                      console.log(`[EditorPage] File updated successfully via API: ${path}`);
-
-                      // Step 4 (Optional but Recommended): Reload the file tree to reflect any potential changes
-                      // This is good practice in case the update has side effects.
-                      await loadFiles(project.id, version.id);
-
+                      if (project && version) {
+                        const response = await api.files.files_GetVersionFile(project.id, version.id, path);
+                        if (response.success && response.data && response.data.content) {
+                          originalContent = base64ToUtf8(response.data.content);
+                        }
+                      }
                     } catch (error) {
-                      console.error(`[EditorPage] Failed to update file via API: ${path}`, error);
-                      setError(`Failed to update file '${path}'. Please try again.`);
-                    } finally {
-                      setIsSaving(false);
+                      console.warn(`[EditorPage] Could not fetch original content for ${path}`, error);
                     }
+
+                    const newFile = {
+                      path,
+                      content,
+                      language,
+                      isModified: true, // Mark as modified since AI changed it
+                      isNew: false,
+                      originalContent: originalContent,
+                      isEditorInitialized: false
+                    };
+
+                    setOpenFiles(prev => [...prev, newFile]);
+                    setActiveFile(path);
                   }
                 },
                 onDeleteFile: async (path: string) => {

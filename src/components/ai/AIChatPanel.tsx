@@ -9,6 +9,8 @@ import { ChatInput } from './ChatInput';
 import { AIPreferencesPanel } from './AIPreferencesPanel';
 import { SuggestedPrompts } from './SuggestedPrompts';
 import { ContextStatusBar } from './ContextStatusBar';
+import { FileOperationReviewPanel } from './FileOperationReviewPanel';
+import { api } from '../../api/api';
 
 interface EditorFile {
   path: string;
@@ -43,9 +45,13 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
     setCurrentProgram,
     preferences,
     suggestedFollowUps,
+    stagedOperations,
+    stageOperations,
+    clearStagedOperations,
+    getApprovedOperations,
   } = useAIStore();
 
-  const { applyFileOperations } = useFileOperations(editorInstance, fileOperationCallbacks);
+  const { applyFileOperations, applyApprovedOperations } = useFileOperations(editorInstance, fileOperationCallbacks);
   const { openFileContexts } = useEditorContext(editorInstance, openFiles);
 
   // Set current program when component mounts or when programId changes
@@ -57,12 +63,59 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
 
   const handleSend = async (message: string) => {
     try {
-      // sendMessage returns FileOperationDto[] | undefined
+      // sendMessage returns FileOperationDto[]
       const fileOperations = await sendMessage(message, openFileContexts);
 
-      // Apply operations to Monaco
+      // Check if we have operations and decide flow based on preferences
       if (fileOperations && fileOperations.length > 0) {
-        await applyFileOperations(fileOperations);
+        if (preferences.autoApplyFileOperations) {
+          // AUTO-APPLY MODE (Dangerous): Apply immediately
+          console.log('[AIChatPanel] Auto-apply mode: Applying operations immediately');
+          await applyFileOperations(fileOperations);
+        } else {
+          // SAFE MODE (Default): Stage operations for review
+          console.log('[AIChatPanel] Safe mode: Staging operations for review');
+
+          // Capture original file contents for diff view
+          // Include both currently open files AND files from backend
+          const contentsMap = new Map<string, string>();
+
+          // Add currently open files
+          if (openFiles) {
+            openFiles.forEach(file => {
+              contentsMap.set(file.path, file.originalContent || file.content);
+            });
+          }
+
+          // Fetch original content for files that aren't open
+          for (const op of fileOperations) {
+            if (!contentsMap.has(op.filePath) && programId && versionId) {
+              try {
+                const response = await api.files.files_GetVersionFile(programId, versionId, op.filePath);
+                if (response.success && response.data && response.data.content) {
+                  // Decode base64 content (UTF-8 safe)
+                  const base64ToUtf8 = (str: string): string => {
+                    return decodeURIComponent(Array.prototype.map.call(atob(str), (c: string) => {
+                      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                  };
+                  const originalContent = base64ToUtf8(response.data.content);
+                  contentsMap.set(op.filePath, originalContent);
+                  console.log(`[AIChatPanel] Fetched original content for ${op.filePath}`);
+                } else {
+                  // File doesn't exist yet (CREATE operation) - empty original
+                  contentsMap.set(op.filePath, '');
+                }
+              } catch (error) {
+                console.warn(`[AIChatPanel] Could not fetch original content for ${op.filePath}:`, error);
+                // Default to empty for CREATE operations or if fetch fails
+                contentsMap.set(op.filePath, '');
+              }
+            }
+          }
+
+          stageOperations(fileOperations, contentsMap);
+        }
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -79,8 +132,31 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
     if (conversationHistory.length > 0) {
       if (confirm('Are you sure you want to clear the conversation history?')) {
         clearConversation();
+        clearStagedOperations(); // Also clear any staged operations
       }
     }
+  };
+
+  const handleApplyOperations = async () => {
+    const approved = getApprovedOperations();
+    if (approved.length === 0) {
+      return;
+    }
+
+    try {
+      // Apply approved operations (this updates editor state, marks as modified)
+      const operations = approved.map(po => po.operation);
+      await applyApprovedOperations(operations);
+
+      // Clear staged operations after applying
+      clearStagedOperations();
+    } catch (error) {
+      console.error('[AIChatPanel] Error applying operations:', error);
+    }
+  };
+
+  const handleRejectOperations = () => {
+    clearStagedOperations();
   };
 
   return (
@@ -127,6 +203,14 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
 
       {/* Messages */}
       <MessageList messages={conversationHistory} isThinking={isThinking} error={error} />
+
+      {/* File Operation Review Panel (only shown in safe mode when operations are staged) */}
+      {!preferences.autoApplyFileOperations && stagedOperations.length > 0 && (
+        <FileOperationReviewPanel
+          onApply={handleApplyOperations}
+          onReject={handleRejectOperations}
+        />
+      )}
 
       {/* Suggested Follow-ups */}
       <SuggestedPrompts

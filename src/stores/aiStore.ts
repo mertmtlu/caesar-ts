@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { api } from '../api/api';
 import { AIConversationRequestDto, ConversationMessage, FileOperationDto, OpenFileContext, AIPreferences } from '../api/types';
+import { PendingFileOperation } from '../types/stagedOperations';
 
 export interface Message {
   id: string;
@@ -18,6 +19,7 @@ export interface AIPreferencesState {
   suggestBestPractices: boolean;
   maxFileOperations: number;
   contextMode: 'aggressive' | 'balanced' | 'comprehensive' | 'unlimited';
+  autoApplyFileOperations: boolean; // NEW: Auto-apply without approval (dangerous)
 }
 
 interface AIStore {
@@ -29,6 +31,7 @@ interface AIStore {
   currentVersionId: string | null;
   preferences: AIPreferencesState;
   suggestedFollowUps: string[];
+  stagedOperations: PendingFileOperation[]; // NEW: Operations awaiting approval
 
   // Actions
   sendMessage: (userPrompt: string, openFileContexts?: OpenFileContext[]) => Promise<FileOperationDto[]>;
@@ -36,6 +39,14 @@ interface AIStore {
   setCurrentProgram: (programId: string, versionId?: string) => void;
   setError: (error: string | null) => void;
   updatePreferences: (preferences: Partial<AIPreferencesState>) => void;
+
+  // NEW: Staging operations
+  stageOperations: (operations: FileOperationDto[], originalContents: Map<string, string>) => void;
+  toggleOperationApproval: (operationId: string) => void;
+  approveAllOperations: () => void;
+  rejectAllOperations: () => void;
+  clearStagedOperations: () => void;
+  getApprovedOperations: () => PendingFileOperation[];
 }
 
 export const useAIStore = create<AIStore>((set, get) => ({
@@ -51,8 +62,10 @@ export const useAIStore = create<AIStore>((set, get) => ({
     suggestBestPractices: true,
     maxFileOperations: 5,
     contextMode: 'balanced',
+    autoApplyFileOperations: false, // Safe by default
   },
   suggestedFollowUps: [],
+  stagedOperations: [],
 
   // Actions
   sendMessage: async (userPrompt: string, openFileContexts?: OpenFileContext[]) => {
@@ -184,6 +197,46 @@ export const useAIStore = create<AIStore>((set, get) => ({
         ...preferences,
       },
     }));
+  },
+
+  // NEW: Staging operations management
+  stageOperations: (operations: FileOperationDto[], originalContents: Map<string, string>) => {
+    const pendingOps: PendingFileOperation[] = operations.map(op => ({
+      id: crypto.randomUUID(),
+      operation: op,
+      isApproved: false,
+      originalContent: originalContents.get(op.filePath),
+      newContent: op.content,
+      stagedAt: new Date(),
+    }));
+
+    set({ stagedOperations: pendingOps });
+  },
+
+  toggleOperationApproval: (operationId: string) => {
+    set(state => ({
+      stagedOperations: state.stagedOperations.map(op =>
+        op.id === operationId ? { ...op, isApproved: !op.isApproved } : op
+      ),
+    }));
+  },
+
+  approveAllOperations: () => {
+    set(state => ({
+      stagedOperations: state.stagedOperations.map(op => ({ ...op, isApproved: true })),
+    }));
+  },
+
+  rejectAllOperations: () => {
+    set({ stagedOperations: [] });
+  },
+
+  clearStagedOperations: () => {
+    set({ stagedOperations: [] });
+  },
+
+  getApprovedOperations: () => {
+    return get().stagedOperations.filter(op => op.isApproved);
   },
 }));
 

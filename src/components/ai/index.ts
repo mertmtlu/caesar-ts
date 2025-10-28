@@ -6,3 +6,5 @@ export { AIPreferencesPanel } from './AIPreferencesPanel';
 export { SuggestedPrompts } from './SuggestedPrompts';
 export { ContextStatusBar } from './ContextStatusBar';
 export { ResizablePanel } from './ResizablePanel';
+export { DiffViewer } from './DiffViewer';
+export { FileOperationReviewPanel } from './FileOperationReviewPanel';

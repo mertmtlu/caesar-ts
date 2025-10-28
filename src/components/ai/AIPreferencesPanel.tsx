@@ -156,7 +156,52 @@ export const AIPreferencesPanel: React.FC = () => {
                 />
               </button>
             </label>
+
+            <label className="flex items-center justify-between cursor-pointer group">
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-gray-700 dark:text-gray-300">
+                  Auto-apply Changes
+                </span>
+                <span
+                  className="text-amber-600 dark:text-amber-400"
+                  title="⚠️ Dangerous: Automatically applies file operations without approval. Changes are written to database immediately."
+                >
+                  ⚠️
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  if (!preferences.autoApplyFileOperations) {
+                    // Enabling dangerous mode - show confirmation
+                    if (confirm('⚠️ Warning: Auto-applying changes will modify your database without approval. Are you sure?')) {
+                      updatePreferences({ autoApplyFileOperations: true });
+                    }
+                  } else {
+                    // Disabling is always safe
+                    updatePreferences({ autoApplyFileOperations: false });
+                  }
+                }}
+                className={`
+                  relative inline-flex h-5 w-9 items-center rounded-full transition-colors
+                  ${preferences.autoApplyFileOperations ? 'bg-amber-500' : 'bg-gray-300 dark:bg-gray-600'}
+                `}
+              >
+                <span
+                  className={`
+                    inline-block h-3 w-3 transform rounded-full bg-white transition-transform
+                    ${preferences.autoApplyFileOperations ? 'translate-x-5' : 'translate-x-1'}
+                  `}
+                />
+              </button>
+            </label>
           </div>
+
+          {/* Warning message when auto-apply is enabled */}
+          {preferences.autoApplyFileOperations && (
+            <div className="mt-3 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded text-xs text-amber-800 dark:text-amber-300">
+              <strong>⚠️ Trust Mode Enabled:</strong> File operations will be applied automatically without review. Disable this for safer operation.
+            </div>
+          )}
         </div>
       )}
     </div>
