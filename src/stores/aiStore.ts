@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { api } from '../api/api';
 import { AIConversationRequestDto, ConversationMessage, FileOperationDto, OpenFileContext, AIPreferences } from '../api/types';
 import { PendingFileOperation } from '../types/stagedOperations';
+import { generateUUID } from '../utils/uuid';
 
 export interface Message {
   id: string;
@@ -79,7 +80,7 @@ export const useAIStore = create<AIStore>((set, get) => ({
 
     // Add user message to history
     const userMessage: Message = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       role: 'user',
       content: userPrompt,
       timestamp: new Date(),
@@ -142,7 +143,7 @@ export const useAIStore = create<AIStore>((set, get) => ({
 
       // Add assistant message to history
       const assistantMessage: Message = {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         role: 'assistant',
         content: aiResponse.displayText || '',
         timestamp: new Date(),
@@ -202,7 +203,7 @@ export const useAIStore = create<AIStore>((set, get) => ({
   // NEW: Staging operations management
   stageOperations: (operations: FileOperationDto[], originalContents: Map<string, string>) => {
     const pendingOps: PendingFileOperation[] = operations.map(op => ({
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       operation: op,
       isApproved: false,
       originalContent: originalContents.get(op.filePath),
