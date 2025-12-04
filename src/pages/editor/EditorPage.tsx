@@ -526,7 +526,7 @@ const EditorPage: React.FC = () => {
         }
         
         // Check content length - some servers have limits
-        if (content.length > 10 * 1024 * 1024) { // 10MB base64 limit
+        if (content.length > 100 * 1024 * 1024) { // 100MB base64 limit
           throw new Error('File too large for upload (base64 content exceeds 10MB)');
         }
       } else {
